@@ -1,8 +1,9 @@
 $(document).ready(function () {
     
-    var limit_value=0;
+    var solicited_value=0;
     var amount_months=parseInt($("#range").val());    
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
+    var slideToggle=1;
     
     
     $('#verify_container').keypress(function (e) {
@@ -43,29 +44,31 @@ $(document).ready(function () {
     
     function verify(flag){
         if($('#input_verify').val()===''){
-           modal_alert_message("Entre o limite disponível no seu cartão para fazer a simulação");
+           modal_alert_message("Entre o valor que deseja receber emprestado");
         }else{
-            limit_value = $('#input_verify').val();
-            limit_value = limit_value.replace('R$ ','');
-            limit_value = limit_value.replace(',','.');
-            limit_value = parseFloat(limit_value);
+            solicited_value = $('#input_verify').val();
+            solicited_value = solicited_value.replace('R$ ','');
+            solicited_value = solicited_value.replace(',','.');
+            solicited_value = parseFloat(solicited_value);            
             $.ajax({
                 url: base_url + 'index.php/welcome/verify_simulation',
                 data:{
-                    'limit_value': limit_value,
+                    'solicited_value': solicited_value,
                     'amount_months':amount_months
                 },
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
                     $('#month_value').text('R$ '+response['month_value']);
-                    $('#permited_value').text('R$ '+response['permited_value']);
+                    //$('#permited_value').text('R$ '+response['permited_value']);
                     $('#total_cust_value').text('R$ '+response['total_cust_value']);
                     if (response['success']) {
-                        response['permited_value']=response['permited_value'].replace('.',',');
-                        $('#permited_value').css('color','white');
-                        if(flag)
-                            $('.result').slideToggle(150);
+                        //response['permited_value']=response['permited_value'].replace('.',',');
+                        //$('#permited_value').css('color','white');
+                        if(flag==1 && slideToggle==1){
+                            set_global_var('slideToggle', 0);
+                            $('.result').slideToggle(150);                            
+                        }
                     }
                     else{
                         $('#permited_value').css('color','red');
@@ -81,13 +84,14 @@ $(document).ready(function () {
     
     $('#btn_contratar_emprestimo').click(function () {
         if($('#input_verify').val()===''){
-           modal_alert_message("Entre o limite disponível no seu cartão para fazer a simulação");
+           modal_alert_message("Operação não permitida");
         }else{
-            limit_value = $('#input_verify').val();
-            limit_value = limit_value.replace('R$ ','');
-            limit_value = limit_value.replace(',','.');
-            limit_value = parseFloat(limit_value);
-            url=base_url+"index.php/welcome/checkout?utm_source="+utm_source+"&limit_value="+limit_value+"&amount_months="+amount_months;
+            solicited_value = $('#input_verify').val();
+            solicited_value = solicited_value.replace('R$ ','');
+            solicited_value = solicited_value.replace(',','.');
+            solicited_value = parseFloat(solicited_value);
+            params="utm_source="+utm_source+"&solicited_value="+solicited_value+"&frm_money_use_form="+$('#money_use_form').val()+"&amount_months="+amount_months;
+            url=base_url+"index.php/welcome/checkout?"+params;
             $(location).attr('href',url);
         }
     });
@@ -107,11 +111,14 @@ $(document).ready(function () {
     
     function set_global_var(str, value) {
         switch (str) {
-            case 'limit_value':
-                limit_value = value;
+            case 'solicited_value':
+                solicited_value = value;
                 break;            
             case 'amount_months':
                 amount_months = value;
+                break;                        
+            case 'slideToggle':
+                slideToggle = value;
                 break;                        
         }
     }
@@ -126,5 +133,8 @@ $(document).ready(function () {
         }
         return vars;
     }
+    
+    
+    
     
 }); 

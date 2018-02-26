@@ -68,7 +68,17 @@
                     </fieldset>
                     <fieldset class="col-md-12 col-sm-12 col-xs-12 pd-lr10" style="margin-top:15px">
                         <p>(*) Opcional</p>
-                    </fieldset>
+                    </fieldset>        
+                    <fieldset class="col-md-12 col-sm-12 col-xs-12 pd-lr10" style="margin-top:15px">
+                        <label for="check">
+                            <span class="col-md-1 col-sm-1 pd-0">
+                                <input type="checkbox" id="check" checked="true" style="margin-top: 0;">
+                            </span> 
+                            <span class="col-md-11 col-sm-11 col-xs-12 ">
+                                Declaro que li e aceito os <u><a id="lnk_use_term">termos de uso</a></u>
+                            </span>
+                        </label>
+                    </fieldset>                    
                 </div>
                 <div class="fleft100 m-top10 text-right center-sm">
                     <button id="btn_steep_1" class="bt-white">Próximo</button>
@@ -99,7 +109,7 @@
                 </div>
                 <!--PASSO 2.2-->
                 <div id="container_form_steep_2" class="col-md-8 col-sm-8 col-xs-12 pd-40 bk-fff h441">
-                    <span class="ft-size14 fw-600 fleft100"><em>DADOS DO CARTÃO</em></span>
+                    <span class="ft-size14 fw-600 fleft100"><em>DADOS DO CARTÃO DE CRÉDITO</em></span>
                     <div class="cartao m-top30">
                         <div class="col-md-10 col-sm-10 col-xs-12 pd-0">
                             <fieldset class="fleft100 pd-lr10">
@@ -141,14 +151,15 @@
                             </fieldset>
                         </div>
                     </div>
-                    <label for="file" class="file m-top30 bk-blue cl-fff i-block-xs">
+                    <!--<label for="file" class="file m-top30 bk-blue cl-fff i-block-xs">
                         <span class="col-md-2 hidden-sm hidden-xs pull-right pd-0"><img src="<?php  echo base_url().'assets/img/icones/up.jpg'?>" alt=""></span>
-                        <span class="col-md-10 col-sm-10 col-xs-12 pull-left m-top2 pd-tb15 pd-lr20 fw-500">Envie a foto da parte frontal do seu cartão</span>
+                        <span class="col-md-10 col-sm-10 col-xs-12 pull-left m-top2 pd-tb15 pd-lr20 fw-500">Envia a foto da parte frontal do seu cartão</span>
                         <input type="file" id="file" name="file">
-                    </label>
+                    </label>-->
                 </div>
                 <div class="fleft100 m-top10 text-right">
-                    <button id="btn_steep_2" class="bt-white">Próximo</button>
+                    <button id="btn_steep_2_prev" class="bt-white">Anterior</button>
+                    <button id="btn_steep_2_next" class="bt-white">Próximo</button>
                 </div>
             </div>
             
@@ -179,7 +190,7 @@
                 <!--PASSO 3.2-->
                 <div class="col-md-3 col-sm-3 col-xs-12 bk-green2 pd-20 cl-fff h441">
                     <span class="ft-size14 fw-600 fleft100 m-top20">
-                        <em>DADOS DO CARTÃO</em>
+                        <em>DADOS DO CARTÃO DE CRÉDITO</em>
                     </span>
                     <ul class="ds fleft100">
                         <li id="li_credit_card_name"></li>
@@ -231,7 +242,8 @@
                     </fieldset>
                 </div>
                 <div class="fleft100 m-top10 text-right">
-                    <button id="btn_steep_3" class="bt-white">Próximo</button>
+                    <button id="btn_steep_3_prev" class="bt-white">Anterior</button>
+                    <button id="btn_steep_3_next" class="bt-white">Contratar</button>
                 </div>
             </div>
             
@@ -264,7 +276,7 @@
                 <!--PASSO 4.2-->
                 <div class="col-md-3 col-sm-3 col-xs-12 bk-green3 pd-20 cl-fff h441">
                     <span class="ft-size14 fw-600 fleft100 m-top20">
-                        <em>DADOS DO CARTÃO</em>
+                        <em>DADOS DO CARTÃO DE CRÉDITO</em>
                     </span>
                     <ul class="ds fleft100">
                         <li id="li_credit_card_name"></li>
@@ -307,21 +319,21 @@
                     <p class="ft-size13">
                         Você fez tudo certo, agora só falta sua assinatura no contrato para que o valor contratado seja enviado para sua conta.
                         <br><br>
-                        Após a assinatura, nossa equipe entrará em contato dentro de 24h para informa-lo
+                        Após a assinatura, nossa equipe entrará em contato dentro de 24h para informa-lo.
                     </p>
-                    <div class="fleft100 text-center check">
-                        <label for="check">
-                            <span class="col-md-2 col-sm-2 pd-0">
-                                <input type="checkbox" id="check" checked="true" style="margin-top: 0;">
-                            </span> 
-                            <span class="col-md-10 col-sm-10 ft-size10 text-left">
-                                <u>Declaro que li e aceito os <a id="lnk_use_term">termos de uso</a></u>
-                            </span>
+                    <p class="ft-size13">
+                        Agora, como medida de segurança, precisamos que envíe uma foto da parte frontal do seu cartão:
+                        <label for="file" class="file m-top30 bk-blue cl-fff i-block-xs">
+                            <span class="col-md-2 hidden-sm hidden-xs pull-right pd-0"><img src="<?php  echo base_url().'assets/img/icones/up.jpg'?>" alt=""></span>
+                            <span class="col-md-10 col-sm-10 col-xs-12 pull-left m-top2 pd-tb15 pd-lr10 fw-500">Enviar a foto:</span>
+                            <input type="file" id="file" name="file">
                         </label>
-                    </div>
+                    </p>
+                    
                 </div>
                 <div class="fleft100 m-top20 text-right">
-                    <button id="btn_steep_4" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
+                    <button id="btn_steep_4_prev" type="submit" class="bt-green mxw-250">Anterior</button>
+                    <button id="btn_steep_4_next" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
                 </div>
             </div>
             
@@ -360,7 +372,7 @@
                     <div class="fleft100 pd-tb5 pd-lr20 text-left">
                         <span class="fleft100 m-top15">
                             <small>Valor solicitado:</small>
-                            <b class="fleft100" id="permited_value"></b>
+                            <b class="fleft100" id="solicited_value"></b>
                         </span>
                         <span class="fleft100 m-top15">
                             <small>Prazo para pagamento:</small>
@@ -368,7 +380,7 @@
                         </span>
                         <span class="fleft100 m-top15">
                             <small>Valor das parcelas:</small>
-                            <b class="fleft100" id="limit_value"></b>
+                            <b class="fleft100" id="month_value"></b>
                         </span>
                         <span class="fleft100 m-top15">
                             <small>Taxa de juros ao mês:</small>

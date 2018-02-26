@@ -4,15 +4,8 @@ class Welcome extends CI_Controller {
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------
     public function index() {
-        /*
-        $this->load->model('class/crypt');
-        $a=$this->crypt->codify('Jose Ramon Glez 07367014196  (21)965913089');
-        echo $a[0].'<br>';
-        $b=$this->crypt->decodify($a);
-        echo $b.'<br>';
-        */
         $this->load->view('index');
-    }    
+    }
     
     public function checkout() {
         $datas = $this->input->get();
@@ -40,12 +33,20 @@ class Welcome extends CI_Controller {
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
         //1. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
-        $IP_hackers=[]; //TODO: botar todos os IP do JUNIOR SUMA, LUCAS BORSATO e familia
+        $IP_hackers= array(
+            '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
+            '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
+            '138.0.21.188', '168.228.84.1', '138.36.2.18', '201.35.210.135', '189.71.42.124', '138.121.232.245', '151.64.57.146', '191.17.52.46', '189.59.112.125',
+            '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
+            '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
+            '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
+            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207'
+            );
         if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){
-            $result['message']='Sua solicitação foi negada. Por favor, contate nosso atendimento';
+            $result['message']='Error IP: Sua solicitação foi negada. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
-        }        
+        }
         //2. Analisar coerencia dos dados, exemplo:
             //2.1 mesmo cpf com nome diferentes
         $clients = $this->client_model->get_client('cpf',$datas['cpf']);
@@ -76,7 +77,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-            //2.3 mesmo telefone com diferentes cpf        
+            //2.3 mesmo telefone com diferentes cpf
         $cpfs=array();
         foreach ($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
@@ -91,7 +92,7 @@ class Welcome extends CI_Controller {
         }
         
         //3. Analisar pedidos em aberto (OPEN) pelo nome, cpf, email e telefone e nao permitir nemhum em aberto
-        $clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::OPEN);
+        /*$clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::OPEN);
         if(count($clients)>0){
             $result['message']='Solicitação não permitida devido que o CPF informado tem outro pedido ativo';
             $result['success']=false;
@@ -140,12 +141,12 @@ class Welcome extends CI_Controller {
             $result['message']='Solicitação não permitida devido que o telefone informado tem outro pedido pendente';
             $result['success']=false;
             return $result;
-        }
+        }*/
                 
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::BEGINNER);
-        if(count($clients)>1){ //caso imposivel, so por inconsistencia no sistema
-            $result['message']='Solicitação não permitida devido a inconsistência no sistema. Informe nossso atendimento';
+        if(count($clients)>1){ //caso imposivel, so por inconsistencia no sistema, po puede haber más de um beginner com o mesmo CPF
+            $result['message']='Solicitação não permitida devido a inconsistência no sistema. Informe ao nossso atendimento';
             $result['success']=false;
             return $result;
         } 
@@ -156,12 +157,12 @@ class Welcome extends CI_Controller {
         }        
         if(count($clients)==1){
             if($client[0]['purchase_counter']<=$MAX_PURCHASE_TENTATIVES){
-                $result['id']=$clients[0]['id'];
+                $result['id'] = $clients[0]['id'];
                 $result['success']=true;
                 $result['action']='update_beginner';
                 return $result;
             }else{
-                $result['message']='Não autorizado. Qantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+                $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
                 $result['success']=false;
                 return $result;
             }
@@ -187,7 +188,7 @@ class Welcome extends CI_Controller {
                     $id_row = $this->client_model->update_db_steep_1($datas,$possible['id']);
                 if($id_row){
                     $result['success'] = true;
-                    $result['pk'] = $this->codify($id_row);
+                    $result['pk'] = $id_row;//$this->codify($id_row);
                 }
                 else{
                     $result['success'] = false;
@@ -206,7 +207,7 @@ class Welcome extends CI_Controller {
         //0. Conferindo CPFs do passo 1 e passo 2
         $client = $this->client_model->get_client('id', $datas['pk']);
         if($datas['cpf']!==$client['cpf']){
-            $result['message']='Operação não permitida. CPF informado não coincide com o do Passo 1';
+            $result['message']='Operação não permitida. O CPF informado não coincide com o do Passo 1';
             $result['success']=false;
             return $result;
         }
@@ -322,6 +323,10 @@ class Welcome extends CI_Controller {
         //0. Conferindo CPFs do passo 1 e passo 3
         $client = $this->client_model->get_client('id', $datas['pk']);
     
+        $a=$datas['titular_cpf'];
+        $b=$client[0]['cpf'];
+        $c=$a!==$b;
+        
         if($datas['titular_cpf']!==$client[0]['cpf']){
             $result['message']='Operação não permitida. CPF informado não coincide com o do Passo 1';
             $result['success']=false;
@@ -367,7 +372,7 @@ class Welcome extends CI_Controller {
         }
         
         //3. Ver se a conta informada esta sendo usada em outra transação em ACTIVE
-        $account_banks = $this->client_model->get_account_banks($datas['bank'], $datas['agency'], $datas['account']);        
+       /*$account_banks = $this->client_model->get_account_banks($datas['bank'], $datas['agency'], $datas['account']);        
         foreach ($account_banks as $acc) {
             $client = $this->client_model->get_client('id',$acc['client_id']);
             if($client[0]['status_id']===client_status::OPEN || $client[0]['status_id']===client_status::PENDING){
@@ -375,7 +380,7 @@ class Welcome extends CI_Controller {
                 $result['success']=false;
                 return $result;                
             }
-        }
+        }*/
         
         //4. Analisar se é para atualizar ou inserir nova linha
         $account_bank = $this->client_model->get_account_bank_by_client_id($datas['pk']);
@@ -394,7 +399,6 @@ class Welcome extends CI_Controller {
     public function insert_datas_steep_3() {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
-        $datas['pk'] = $this->decodify($datas['pk']);
         $verify_simulation = $this->verify_simulation($datas);
         if(!$this->validate_bank_datas($datas)){
             $result['success'] = false;
@@ -404,11 +408,13 @@ class Welcome extends CI_Controller {
                 $possible = $this->is_possible_steep_3_for_this_client($datas);
                 if($possible['success'] && $verify_simulation['success']){
                     if($possible['action']==='insert_account_bank')
-                        $id_row = $this->client_model->insert_db_steep_3($datas);
-                    
+                        $id_row = $this->client_model->insert_db_steep_3($datas);                    
                     else
                         $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
                     if($id_row){
+                        
+                        
+                        
                         $result['success'] = true;
                         $result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
                         $result['month_value'] =(string) $verify_simulation['month_value'];
@@ -439,19 +445,20 @@ class Welcome extends CI_Controller {
             $flag=true;
         }
         $datas['amount_months']=(int)$datas['amount_months'];
-        $datas['limit_value']=(float)$datas['limit_value'];
-        if(($datas['amount_months']>=6 && $datas['amount_months']<=12) && ($datas['limit_value']>0 && $datas['limit_value']<10000)){
-            $taxas=array(6=>24.08, 7=>27.08, 8=>30.08, 9=>33.08, 10=>36.08, 11=>39.08, 12=>42.08);            
-            $result['total_cust_value'] = $datas['limit_value']*$datas['amount_months'];
-            $result['month_value'] = $datas['limit_value'];            
-            $result['permited_value']=ceil(($result['total_cust_value']*100)/(100+$taxas[$datas['amount_months']]));
-            $result['permited_value']=sprintf("%.2f", $result['permited_value']);
-            if($result['permited_value']>500.00 && $result['permited_value']<5000.00){
+        $datas['solicited_value']=(float)$datas['solicited_value'];
+        if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
+            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){
+                $taxas=array(6=>40.63, 7=>47.65, 8=>55.01, 9=>62.75, 10=>70.87, 11=>79.40, 12=>88.35);
+                $result['total_cust_value'] = $datas['solicited_value'] + 
+                        ($datas['solicited_value']* $taxas[$datas['amount_months']]/100);
+                $result['month_value'] = $result['total_cust_value']/$datas['amount_months'];                
+                $result['total_cust_value']=sprintf("%.2f", $result['total_cust_value']);
+                $result['month_value']=sprintf("%.2f", $result['month_value']);                
                 $result['success'] = true;                
-            }else{
+            } else{
                 $result['success'] = false;
-                $result['message'] = 'O empréstimo deve ser um valor entre 500 e 5000 reais';
-            }            
+                $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
+            }
         }else{
             $result['success'] = false;
             $result['message'] = 'Os dados enviados estão errados';
@@ -502,7 +509,9 @@ class Welcome extends CI_Controller {
     
     public function validate_element($str,$pattern) {
         //TODO: buscar função que avalie uma expressão regular em PHP
-        return true;
+        //if(preg_match('/'.$pattern,$str))
+            return true;
+        //return false;
     }
     
     public function validate_cpf($cpf = null) {
@@ -542,7 +551,8 @@ class Welcome extends CI_Controller {
         $number_address = $this->validate_element($datas['number_address'], '^[0-9]{1,7}$');
         $complement = $this->validate_element($datas['complement_number_address'], '^[0-9]{1,7}$');
         $city = $this->validate_element($datas['city_address'], '^[a-zA-Z ]{1,50}$');                
-        if(!name || !email || !phone_ddd || !phone_number || !cpf || !cep || !street_address || !number_address || !complement || !city || !state)
+        if(!name || !email || !phone_ddd || !phone_number || 
+           !cpf || !cep || !street_address || !number_address || !complement || !city)
             return false;
         return true;
     }
@@ -596,10 +606,20 @@ class Welcome extends CI_Controller {
     }
     
     public function codify($str){
-        return $str;
+        $this->load->model('class/crypt');
+        return  $this->crypt->codify($str);
     }
     
     public function decodify($str){
+        $this->load->model('class/crypt');
+        return  $this->crypt->decodify($str);
+        /*
+        $this->load->model('class/crypt');
+        $a=$this->crypt->codify('Jose Ramon Glez 07367014196  (21)965913089');
+        echo $a[0].'<br>';
+        $b=$this->crypt->decodify($a);
+        echo $b.'<br>';
+        */
         return $str;
     }
     

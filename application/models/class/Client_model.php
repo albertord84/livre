@@ -61,8 +61,16 @@
         }
         
         public function update_db_steep_3($datas,$id){
+            $datas1['client_id']=$datas['pk'];
+            $datas1['bank']=$datas['bank'];
+            $datas1['agency']=$datas['agency'];
+            $datas1['account_type']=$datas['account_type'];
+            $datas1['account']=$datas['account'];
+            $datas1['dig']=$datas['dig'];
+            $datas1['titular_name']=$datas['titular_name'];
+            $datas1['titular_cpf']=$datas['titular_cpf'];            
             $this->db->where('id',$id);
-            $this->db->update('account_banks',$datas);            
+            $this->db->update('account_banks',$datas1);            
             return $id;
         }
         

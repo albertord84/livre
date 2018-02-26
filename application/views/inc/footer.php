@@ -33,12 +33,14 @@
             <ul class=" sociais i-block">
                 <li><a target="_blank" href="https://facebook.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/fb.png'?>" alt=""></a></li>
                 <li><a target="_blank" href="https://instagram.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/ig.png'?>" alt=""></a></li>
-                <li><a target="_blank" href="https://web.whatsapp.com/"><img src="<?php  echo base_url().'assets/img/icones/wpp.png'?>" alt=""></a></li>
+                <!--<li><a target="_blank" href="https://web.whatsapp.com/"><img src="<?php  echo base_url().'assets/img/icones/wpp.png'?>" alt=""></a></li>-->
             </ul>
-            <div class="fleft100 m-top80 m-top20-xs m-b20"><img src="<?php  echo base_url().'assets/img/icones/logo-footer.png'?>" alt=""></div>
+            <div class="fleft100 m-top40 m-top20-xs m-b10"><img src="<?php  echo base_url().'assets/img/icones/logo-footer.png'?>" alt=""></div>
             <p class="flef100 cl-fff">
-                Av. Paula Sousa 351, Maracanã, Rio de Janeiro - RJ, CEP: 20271-120.
-                <small class="fleft100"><br>"iformações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 24,08% a 42,08% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de adesão de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 118,39. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.420,79. CET: 42,08% a.a.</small>
+                <!--Av. Paula Sousa 351, Maracanã, Rio de Janeiro - RJ, CEP: 20271-120.-->
+                <!--<small class="fleft100"><br>"iformações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 24,08% a 42,08% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de adesão de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 118,39. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.420,79. CET: 42,08% a.a.</small>-->
+                <small class="fleft100" style="text-align:justify"><br>"Informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 40,63% a 88,35% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de abertura de cadastro de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 156,96. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.883,50. CET: 88,35% a.a.</small>
+                <small class="fleft100" style="text-align:justify"><br>"O Livre.digital é uma Fintech e atua como correspondente bancário, sob os termos da Resolução nº 3.954, de 24 de fevereiro de 2011, facilitando o processo de contratação de empréstimos, e sendo remunerado pelas instituições financeiras parceiras. <br> O Livre.digital é operado pela P B Petti Intermediação e Agenciamento de Serviços, CNPJ: 20.775.149/0001-49, Av. Paula Sousa 351, Maracanã, Rio de Janeiro - RJ, CEP: 20271-120</small>
             </p>
         </div>
     </div>

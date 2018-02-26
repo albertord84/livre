@@ -1,19 +1,20 @@
 $(document).ready(function () {
     
-    
-    
     var pk='';
-    var limit_value=0;
-    var amount_months=6;  
-    var utm_source;
+    var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
+    var solicited_value= typeof getUrlVars()["solicited_value"] !== 'undefined' ? getUrlVars()["solicited_value"] : 'NULL';
+    var amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
+    init_values();
     eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('8 H(4){4=x(4);4=y(4);4=B(4);4=t(4);4=D(4);a 4}8 J(4){4=C(4);4=u(4);4=v(4);4=z(4);4=w(4);a 4}8 x(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%2===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 w(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%3===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 y(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)+A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 z(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)-A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 B(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%5===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 v(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%6===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 t(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)*2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 u(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)/2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 D(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 C(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 r(s,E){a G(F.I()*(E-s)+s)}',46,46,'||||str|||new_str|function||return|length|new|for|var|Array||toString||replace||tmp|else|fromCharCode|if|String|charCodeAt|getRandomArbitrary|min|cs4|anti_cs4|anti_cs3|anti_cs1|cs1|cs2|anti_cs2|13|cs3|anti_cs5|cs5|max|Math|parseInt|codify|random|decodify'.split('|'),0,{}))
     init();
     
     //---------PRIMARY FUNCTIONS---------------------------------
-    $("#btn_steep_1").click(function () {        
-        utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
-        limit_value= typeof getUrlVars()["limit_value"] !== 'undefined' ? getUrlVars()["limit_value"] : 'NULL';
-        amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
+    $("#btn_steep_1").click(function () {  
+        if(!$('#check').prop('checked')){
+            modal_alert_message("Leia e aceite as políticas de privacidade e termos de uso do site");
+            return;
+        }
+        
         var cpf_value=$('#cpf').val();        
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
@@ -81,7 +82,12 @@ $(document).ready(function () {
         } 
     });
     
-    $("#btn_steep_2").click(function () {        
+    $("#btn_steep_2_prev").click(function () {  
+        $('.check2').toggle("hide");
+        $('.check1').toggle("slow");
+    });
+    
+    $("#btn_steep_2_next").click(function () {        
         if(        ($('#credit_card_name').val()).toUpperCase()==='VISA' 
                 || ($('#credit_card_name').val()).toUpperCase()==='MASTERCARD' 
                 || ($('#credit_card_name').val()).toUpperCase()==='ELO' 
@@ -160,7 +166,12 @@ $(document).ready(function () {
         }   
     });
     
-    $("#btn_steep_3").click(function () {  
+    $("#btn_steep_3_prev").click(function () {  
+        $('.check3').toggle("hide");
+        $('.check2').toggle("slow");
+    });
+        
+    $("#btn_steep_3_next").click(function () {  
         var cpf_value=$('#titular_cpf').val();        
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
         var bank = validate_element('#bank', "^[0-9]{4,4}$");        
@@ -179,7 +190,7 @@ $(document).ready(function () {
                 'dig': $('#dig').val(),
                 'titular_name': $('#titular_name').val(),
                 'titular_cpf': cpf_value,
-                'limit_value':limit_value,
+                'solicited_value':solicited_value,
                 'amount_months':amount_months,
                 'pk': pk,
             };
@@ -197,16 +208,16 @@ $(document).ready(function () {
                         $('li[id=li_bank_dig]').text($('#dig').val());
                         $('li[id=li_bank_account_name]').text($('#titular_name').val());
                         $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());                        
-                        var total_cust_value = response['total_cust_value']; 
+                        /*var total_cust_value = response['total_cust_value']; 
                         total_cust_value = total_cust_value.replace('.',',');
                         var permited_value = response['permited_value'];
                         permited_value = permited_value.replace('.',',');
-                        var limit_value_tmp = response['limit_value'];
-                        limit_value_tmp = limit_value_tmp.replace('.',',');                        
+                        var solicited_value_tmp = response['solicited_value'];
+                        solicited_value_tmp = solicited_value_tmp.replace('.',',');                        
                         $('#total_cust_value').text('R$ '+total_cust_value);
                         $('#permited_value').text('R$ '+permited_value);
                         $('#amount_months').text(response['amount_months']+' meses');
-                        $('#limit_value').text('R$ '+limit_value_tmp);                        
+                        $('#solicited_value').text('R$ '+solicited_value_tmp);  */                     
                         $('.check3').toggle("hide");
                         $('.check4').toggle("slow");
                     } else {
@@ -222,7 +233,12 @@ $(document).ready(function () {
         }
     });
     
-    $("#btn_steep_4").click(function (){
+    $("#btn_steep_4_prev").click(function () {  
+        $('.check3').toggle("hide");
+        $('.check2').toggle("slow");
+    });
+    
+    $("#btn_steep_4_next").click(function (){
         if(1){
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_4',
@@ -423,6 +439,38 @@ $(document).ready(function () {
         }
         return true;
     }
+          
+    function init_values(){
+        if(solicited_value!='NULL')
+        $.ajax({
+            url: base_url + 'index.php/welcome/verify_simulation',
+            data:{
+                'solicited_value': solicited_value,
+                'amount_months':amount_months
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                $('#month_value').text('R$ '+response['month_value']);
+                $('#total_cust_value').text('R$ '+response['total_cust_value']);
+                if(response['success']) {
+                    $('#solicited_value').text('R$ ' + solicited_value);
+                    $('#amount_months').text(amount_months +' meses');                     
+                    $('#total_cust_value').text('R$ ' + response['total_cust_value']);
+                    $('#month_value').text('R$ ' + response['month_value']);                    
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (xhr, status) {
+                modal_alert_message('Internal error Verify value');
+            }
+        });
+        
+        
+          
+    }
     
     function init(){
         $('#name').val('JOSE RAMON GONZALEZ MONTERO');
@@ -450,11 +498,6 @@ $(document).ready(function () {
         $('#account').val('125490');
         $('#dig').val('123');
     }
-
-
-
-    
-
 
     //alert(decodify(codify('Jose Ramon')));
 
