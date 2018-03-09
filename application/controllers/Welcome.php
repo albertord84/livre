@@ -3,12 +3,11 @@
 class Welcome extends CI_Controller {
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------
-    public function pdf() {        
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/fpdf/fpdf.php';
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/contrato.php';
-        
-        
-    }   
+    public function test() {
+        $this->load->model('class/client_model');        
+        $datas = $this->client_model->get_all_client_datas_by_id(1);
+        var_dump($datas);
+    }
     
     public function index() {
         $this->load->view('index');
@@ -490,6 +489,17 @@ class Welcome extends CI_Controller {
     
     
     //-------AUXILIAR FUNCTIONS----------------------------------
+    
+    public function generate_contract($client_id) {        
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/fpdf/fpdf.php';
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/contrato.php';
+        $pdf = new PDF('P','mm','A4');
+        $this->load->model('class/client_model');
+        $this->load->model('class/client_status');        
+        $datas = $this->client_model->get_all_client_datas_by_id($client_id);
+        $pdf ->GenerateContrat($datas,false,true,false);
+    }
+    
     public function validate_month($str, $pattern) {
         //TODO: buscar função que avalie uma expressão regular em PHP
         if($str>0 && $str<13)

@@ -83,6 +83,20 @@
             $this->db->order_by('clients.id', 'asc');
             return $this->db->get()->result_array();
         }
+                
+        public function get_all_client_datas_by_id($client_id){            
+            try {    
+                $this->db->select('*');
+                $this->db->from('clients');
+                $this->db->join('credit_card', 'clients.id = credit_card.client_id');
+                $this->db->join('account_banks', 'clients.id = account_banks.client_id');                
+                $this->db->where('clients.id', $client_id);
+                return $this->db->get()->result_array()[0];
+            } catch (Exception $exc) {
+                echo $exc->getTraceAsString();
+            }
+        }        
+        
         
         public function get_credit_card($key, $value){
             $this->db->select('*');
