@@ -3,9 +3,12 @@
 class Welcome extends CI_Controller {
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------
-    public function pdf() {
-        $this->load->view('contrato');
-    }
+    public function pdf() {        
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/fpdf/fpdf.php';
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/contrato.php';
+        
+        
+    }   
     
     public function index() {
         $this->load->view('index');
