@@ -35,6 +35,7 @@
                 <div class="col-md-5 col-sm-5 col-xs-12 cl-fff text-center m-top10-xs">
                     <small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
                     <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius">
+                        <option value="00">Selecione     ...</option>
                         <option value="01">Compras</option>
                         <option value="02">Quitar dívida do cartão de crédito</option>
                         <option value="03">Quitar cheque especial</option>
@@ -43,7 +44,7 @@
                         <option value="06">Educação</option>
                         <option value="07">Viagem</option>
                         <option value="08">Saúde</option>
-                        <option value="09">Outros</option>
+                        <option value="09">Outros ...</option>
                     </select>
                 </div>
                 <div class="fleft100">

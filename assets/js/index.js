@@ -85,7 +85,11 @@ $(document).ready(function () {
     $('#btn_contratar_emprestimo').click(function () {
         if($('#input_verify').val()===''){
            modal_alert_message("Operação não permitida");
-        }else{
+        }else
+        if($('#money_use_form').val()==='00'){
+            modal_alert_message("Selecione forma em que usará o dinheiro");
+        }
+        else{
             solicited_value = $('#input_verify').val();
             solicited_value = solicited_value.replace('R$ ','');
             solicited_value = solicited_value.replace(',','.');

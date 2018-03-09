@@ -59,10 +59,32 @@
                             <select id="state_address" name="local" class="btn-primeiro" id="local" required>
                                 <option value="default" selected="true">ESTADO ...</option>
                                 <option value="AC">Acre</option>
-                                <option value="RN">Rio Grande do Norte</option>
-                                <option value="SP">São Paulo</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
                                 <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
                                 <option value="RS">Rio Grande do Sul</option>                                
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
                             </select>
                         </div>
                     </fieldset>
@@ -209,8 +231,118 @@
                         <!--<input id="bank" type="text" placeholder="Banco" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>-->
                         <select id="bank" required>
                             <option value="default" selected="true">BANCO...</option>
-                            <option value="0023">S.A. ITAÚ</option>
-                            <option value="0019">BANCO DE BRASIL</option>
+                            <option value="001">BANCO DO BRASIL</option>
+                            <option value="104">CAIXA ECONÔMICA FEDERAL </option>
+                            <option value="033">BCO SANTANDER (BRASIL) S.A. </option>
+                            <option value="184">BANCO ITAÚ BBA S.A.</option>
+                            <option value="479">BANCO ITAÚ BANK S.A</option> 
+                            <option value="036">BANCO BRADESCO BBI S.A.</option>
+                            <option value="204">BANCO BRADESCO CARTÕES S.A. </option>
+                            <option value="394">BANCO BRADESCO FINANCIAMENTOS S.A</option>
+                            <option value="122">BANCO BRADESCO BERJ S.A. </option>
+                            <option value="237">BCO BRADESCO S.A.</option> 
+                            <option value="389">BCO MERCANTIL DO BRASIL S.A. </option>
+                            <option value="745">CITIBANK S.A. </option>
+                            <option value="477">CITIBANK N.A. </option>
+                            <option value="069">BCO CREFISA S.A. </option>
+                            <option value="318">BCO BMG S.A </option>
+                            <option value="652">ITAÚ UNIBANCO HOLDING S.A. </option>
+                            <option value="341">ITAÚ UNIBANCO BM S.A.</option>
+                            <option value="070">BANCO DE BRASILIA S.A </option>
+                            <option value="735">BANCO NEON S.A. </option>
+                            <option value="077">BANCO INTERMEDIUM S/A </option>
+                            <option value="741">BCO RIBEIRAO PRETO S.A. </option>
+                            <option value="739">BANCO CETELEM S.A. </option>
+                            <option value="743">BANCO SEMEAR </option>
+                            <option value="394">BCO BRADESCO FINANC. S.A. </option>
+                            <option value="747">BCO RABOBANK INTL BRASIL S.A. </option>
+                            <option value="748">BCO COOPERATIVO SICREDI S.A. </option>
+                            <option value="399">KIRTON BANK </option>
+                            <option value="757">BCO KEB HANA DO BRASIL S.A. </option>
+                            <option value="084">UNIPRIME NORTE DO PARANÁ </option>
+                            <option value="062">HIPERCARD BM S.A. </option>
+                            <option value="074">BCO. J.SAFRA S.A. </option>
+                            <option value="099">UNIPRIME CENTRAL CCC LTDA. </option>
+                            <option value="025">BCO ALFA S.A. </option>
+                            <option value="040">BCO CARGILL S.A. </option>
+                            <option value="063">BANCO BRADESCARD </option>
+                            <option value="003">BCO DA AMAZONIA S.A. </option>
+                            <option value="097">CCC NOROESTE BRASILEIRO LTDA. </option>
+                            <option value="037">BCO DO EST. DO PA S.A. </option>
+                            <option value="085">CCC URBANO </option>
+                            <option value="114">CENTRAL CECM ESP. SANTO </option>
+                            <option value="036">BCO BBI S.A. </option>
+                            <option value="004">BCO DO NORDESTE DO BRASIL S.A. </option>
+                            <option value="320">BCO CCB BRASIL S.A. </option>
+                            <option value="079">BCO ORIGINAL DO AGRO S/A </option>
+                            <option value="133">CONFEDERACAO NAC DAS CCC SOL </option>
+                            <option value="121">BCO AGIPLAN S.A.– cód. </option>
+                            <option value="083">BCO DA CHINA BRASIL S.A. </option>
+                            <option value="094">BANCO FINAXIS </option>
+                            <option value="047">BCO DO EST. DE SE S.A. cód. </option>
+                            <option value="254">PARANA BCO S.A. </option>
+                            <option value="107">BCO BBM S.A. </option>
+                            <option value="412">BCO CAPITAL S.A. </option>
+                            <option value="124">BCO WOORI BANK DO BRASIL S.A. </option>
+                            <option value="634">BCO TRIANGULO S.A. </option>
+                            <option value="132">ICBC DO BRASIL BM S.A. </option>
+                            <option value="163">COMMERZBANK BRASIL S.A. BCO </option>MÚLTIPLO 
+                            <option value="021">BCO BANESTES S.A. </option>
+                            <option value="246">BCO ABC BRASIL S.A. </option>
+                            <option value="751">SCOTIABANK BRASIL </option>
+                            <option value="746">BCO MODAL S.A. </option>
+                            <option value="241">BCO CLASSICO S.A. </option>
+                            <option value="612">BCO GUANABARA S.A. </option>
+                            <option value="604">BCO INDUSTRIAL DO BRASIL S.A.</option>
+                            <option value="505">BCO CREDIT SUISSE (BRL) S.A. </option>
+                            <option value="300">BCO LA NACION ARGENTINA </option>
+                            <option value="266">BCO CEDULA S.A. </option>
+                            <option value="376">BCO J.P. MORGAN S.A.</option>
+                            <option value="263">BCO CACIQUE S.A. </option>
+                            <option value="473">BCO CAIXA GERAL BRASIL S.A. </option>
+                            <option value="120">BCO RODOBENS S.A. </option>
+                            <option value="248">BCO BOAVISTA INTERATLANTICO S.A. </option>
+                            <option value="265">BCO FATOR S.A. </option>
+                            <option value="719">BANIF BRASIL BM S.A.</option>
+                            <option value="243">BCO MÁXIMA S.A. </option>
+                            <option value="125">BRASIL PLURAL S.A. BCO.</option>
+                            <option value="065">BANCO ANDBANK (BRASIL) S.A.</option>
+                            <option value="250">BCV – Banco de Crédito e Varejo</option>
+                            <option value="494">BCO REP ORIENTAL URUGUAY BCE </option>
+                            <option value="018">BCO TRICURY S.A. </option>
+                            <option value="422">BCO SAFRA S.A. </option>
+                            <option value="224">BCO FIBRA S.A. </option>
+                            <option value="600">BCO LUSO BRASILEIRO S.A. </option>
+                            <option value="623">BANCO PAN </option>
+                            <option value="655">BCO VOTORANTIM S.A.</option>
+                            <option value="464">BCO SUMITOMO MITSUI BRASIL S.A. </option>
+                            <option value="237">BCO BRADESCO S.A.</option>
+                            <option value="613">BCO PECUNIA S.A. </option>
+                            <option value="637">BCO SOFISA S.A. </option>
+                            <option value="653">BCO INDUSVAL S.A.</option>
+                            <option value="249">BANCO INVESTCRED UNIBANCO S.A.</option>
+                            <option value="318">BCO BMG S.A.</option>
+                            <option value="626">BCO FICSA S.A.</option>
+                            <option value="366">BCO SOCIETE GENERALE BRASIL</option>
+                            <option value="611">BCO PAULISTA S.A. </option>
+                            <option value="755">BOFA MERRILL LYNCH BM S.A. </option>
+                            <option value="089">CCR REG MOGIANA </option>
+                            <option value="643">BCO PINE S.A. </option>
+                            <option value="707">BCO DAYCOVAL S.A </option>
+                            <option value="487">DEUTSCHE BANK S.A. BCO ALEMAO </option>
+                            <option value="233">BANCO CIFRA</option>
+                            <option value="633">BCO RENDIMENTO S.A.</option>
+                            <option value="218">BANCO BONSUCESSO S.A. </option>
+                            <option value="090">CCCM SICOOB UNIMAIS</option>
+                            <option value="753">NOVO BCO CONTINENTAL S.A.</option>
+                            <option value="222">BCO CRÉDIT AGRICOLE BR S.A.</option>
+                            <option value="098">CREDIALIANÇA CCR </option>
+                            <option value="610">BCO VR S.A.</option>
+                            <option value="010">CREDICOAMO </option>
+                            <option value="217">BANCO JOHN DEERE S.A.</option>
+                            <option value="041">BCO DO ESTADO DO RS S.A.</option>
+                            <option value="654">BCO A.J. RENNER S.A.</option>
+                            <option value="212">BANCO ORIGINAL </option>
                         </select>
                     </fieldset>
                     <fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr5">
@@ -317,11 +449,6 @@
                         Parabéns <spam id="first_name"></spam>!
                     </span>
                     <p class="ft-size13">
-                        Você fez tudo certo, agora só falta sua assinatura no contrato para que o valor contratado seja enviado para sua conta.
-                        <br><br>
-                        Após a assinatura, nossa equipe entrará em contato dentro de 24h para informa-lo.
-                    </p>
-                    <p class="ft-size13">
                         Agora, como medida de segurança, precisamos que envíe uma foto da parte frontal do seu cartão:
                         <label for="file" class="file m-top30 bk-blue cl-fff i-block-xs">
                             <span class="col-md-2 hidden-sm hidden-xs pull-right pd-0"><img src="<?php  echo base_url().'assets/img/icones/up.jpg'?>" alt=""></span>
@@ -329,11 +456,19 @@
                             <input type="file" id="file" name="file">
                         </label>
                     </p>
+                    <p class="ft-size13">
+                        Agora só falta sua assinatura no contrato. Após a assinatura, nossa equipe entrará em contato dentro de 24h para informa-lo.
+                    </p>                    
+                    <!--<p class="ft-size13">
+                        Você fez tudo certo, agora só falta sua assinatura no contrato para que o valor contratado seja enviado para sua conta.
+                        <br><br>
+                        Após a assinatura, nossa equipe entrará em contato dentro de 24h para informa-lo.
+                    </p>-->
                     
                 </div>
                 <div class="fleft100 m-top20 text-right">
-                    <button id="btn_steep_4_prev" type="submit" class="bt-green mxw-250">Anterior</button>
-                    <button id="btn_steep_4_next" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
+                    <button id="btn_steep_4_prev" type="submit" class="bt-white">Anterior</button>
+                    <button id="btn_steep_4_next" type="submit" class="bt-white">Assinar e contratar</button>
                 </div>
             </div>
             

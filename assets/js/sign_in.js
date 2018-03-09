@@ -1,5 +1,4 @@
-$(document).ready(function () {
-    
+$(document).ready(function () {    
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
     var solicited_value= typeof getUrlVars()["solicited_value"] !== 'undefined' ? getUrlVars()["solicited_value"] : 'NULL';
@@ -15,7 +14,7 @@ $(document).ready(function () {
             return;
         }
         
-        var cpf_value=$('#cpf').val();        
+        var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
         email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
@@ -82,7 +81,7 @@ $(document).ready(function () {
         } 
     });
     
-    $("#btn_steep_2_prev").click(function () {  
+    $("#btn_steep_2_prev").click(function () {
         $('.check2').toggle("hide");
         $('.check1').toggle("slow");
     });
@@ -174,7 +173,7 @@ $(document).ready(function () {
     $("#btn_steep_3_next").click(function () {  
         var cpf_value=$('#titular_cpf').val();        
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
-        var bank = validate_element('#bank', "^[0-9]{4,4}$");        
+        var bank = validate_element('#bank', "^[0-9]{3,3}$");        
         var agency = validate_element('#agency', "^[0-9]{4,12}$");
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
@@ -234,8 +233,8 @@ $(document).ready(function () {
     });
     
     $("#btn_steep_4_prev").click(function () {  
-        $('.check3').toggle("hide");
-        $('.check2').toggle("slow");
+        $('.check4').toggle("hide");
+        $('.check3').toggle("slow");
     });
     
     $("#btn_steep_4_next").click(function (){
@@ -467,10 +466,8 @@ $(document).ready(function () {
                 modal_alert_message('Internal error Verify value');
             }
         });
-        
-        
-          
     }
+    
     
     function init(){
         $('#name').val('JOSE RAMON GONZALEZ MONTERO');
@@ -492,7 +489,7 @@ $(document).ready(function () {
         $('#credit_card_exp_month').val('01');
         $('#credit_card_exp_year').val('2020');
         
-        $('#bank').val('0023');
+        $('#bank').val('001');
         $('#agency').val('44598');
         $('#account_type').val('CC');
         $('#account').val('125490');
