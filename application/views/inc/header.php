@@ -5,7 +5,7 @@
     <?php require_once("analytics.php"); ?>
     
     <meta charset="UTF-8">
-    <title>CRÉDIT SOCIÉTÉ</title>
+    <title>LIVRE DIGITAL</title>
     
     <script type="text/javascript">var base_url = '<?php echo base_url();?>';</script>    
     <meta name="viewport" content="width=device-width">
@@ -45,8 +45,8 @@
                     
                 </ul>
                 <ul class=" sociais i-block">
-                    <li><a target="_blank" href="https://facebook.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/fb.png'?>" alt=""></a></li>
-                    <li><a target="_blank" href="https://instagram.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/ig.png'?>" alt=""></a></li>
+                    <li><a target="_blank" href="https://facebook.com/livre.digital"><img src="<?php  echo base_url().'assets/img/icones/fb.png'?>" alt=""></a></li>
+                    <li><a target="_blank" href="https://instagram.com/livre.digital"><img src="<?php  echo base_url().'assets/img/icones/ig.png'?>" alt=""></a></li>
                     <!--<li><a target="_blank" href="https://web.whatsapp.com/"><img src="<?php  //echo base_url().'assets/img/icones/wpp.png'?>" alt=""></a></li>-->
                 </ul>
             </div>

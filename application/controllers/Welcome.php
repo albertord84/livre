@@ -4,9 +4,11 @@ class Welcome extends CI_Controller {
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------
     public function test() {
-        $this->load->model('class/client_model');        
-        $datas = $this->client_model->get_all_client_datas_by_id(1);
-        var_dump($datas);
+       echo md5('Marcos*01+');
+    }
+    
+    public function md() {
+        echo md5('Marcos*01+');
     }
     
     public function index() {

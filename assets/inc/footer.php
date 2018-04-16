@@ -25,7 +25,7 @@
 			</form>
 		</div>
 		<div class="col-md-6 col-sm-6 col-xs-12 pd-lr50 m-top20-xs">
-			<span class="cl-fff">Acompanhe a Crédit Société</span>
+			<span class="cl-fff">Acompanhe a Livre Digital</span>
 			<ul class=" sociais i-block">
 				<li><img src="img/icones/fb.png" alt=""></li>
 				<li><img src="img/icones/ig.png" alt=""></li>

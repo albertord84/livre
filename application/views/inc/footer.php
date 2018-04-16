@@ -29,10 +29,10 @@
             </form>
         </div>
         <div class="col-md-6 col-sm-6 col-xs-12 pd-lr50 m-top20-xs">
-            <span class="cl-fff">Acompanhe a Crédit Société</span>
+            <span class="cl-fff">Acompanhe a Livre Digital</span>
             <ul class=" sociais i-block">
-                <li><a target="_blank" href="https://facebook.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/fb.png'?>" alt=""></a></li>
-                <li><a target="_blank" href="https://instagram.com/creditsociety"><img src="<?php  echo base_url().'assets/img/icones/ig.png'?>" alt=""></a></li>
+                <li><a target="_blank" href="https://facebook.com/livre.digital"><img src="<?php  echo base_url().'assets/img/icones/fb.png'?>" alt=""></a></li>
+                <li><a target="_blank" href="https://instagram.com/livre.digital"><img src="<?php  echo base_url().'assets/img/icones/ig.png'?>" alt=""></a></li>
                 <!--<li><a target="_blank" href="https://web.whatsapp.com/"><img src="<?php  echo base_url().'assets/img/icones/wpp.png'?>" alt=""></a></li>-->
             </ul>
             <div class="fleft100 m-top40 m-top20-xs m-b10"><img src="<?php  echo base_url().'assets/img/icones/logo-footer.png'?>" alt=""></div>

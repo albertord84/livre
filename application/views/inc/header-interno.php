@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="UTF-8">
-	<title>CRÉDIT SOCIÉTÉ</title>
+	<title>LIVRE DIGITAL</title>
 	<meta name="viewport" content="width=device-width">
 	<link rel="icon" type="image/png" href="<?php  echo base_url().'assets/img/favicon.png'?>">
 
