@@ -21,11 +21,11 @@ $(document).ready(function () {
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2,3}$');
         phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
-        cep = validate_element('#cep', '^[0-9]{6,10}$');
-        street_address = validate_element('#street_address', '^[a-zA-Z ]{5,}$');
+        cep = validate_element('#cep', '^[0-9]{8}$');
+        street_address = validate_element('#street_address', '^[a-zA-Z áéíóúàãẽõ]{5,}$');
         number_address = validate_element('#number_address', '^[0-9]{1,7}$');
         complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
-        city = validate_element('#city_address', '^[a-zA-Z ]{1,50}$');
+        city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$');        
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && complement && city && state){                                
             $.ajax({
@@ -170,14 +170,14 @@ $(document).ready(function () {
         $('.check2').toggle("slow");
     });
         
-    $("#btn_steep_3_next").click(function () {  
+    $("#btn_steep_3_next").click(function () {
         var cpf_value=$('#titular_cpf').val();        
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
         var bank = validate_element('#bank', "^[0-9]{3,3}$");        
         var agency = validate_element('#agency', "^[0-9]{4,12}$");
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
-        var dig = validate_element('#dig', "^[0-9]{1,12}$");            
+        var dig = validate_element('#dig', "^[0-9]{1}$");            
         var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
         if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
@@ -495,6 +495,31 @@ $(document).ready(function () {
         $('#account').val('125490');
         $('#dig').val('123');
     }
+    
+    
+    $("#verify_cep").click(function () {
+        if(validate_element("#cep",'^[0-9]{8}$')){
+            $.ajax({
+                url: base_url+'index.php/welcome/get_cep_datas',                
+                data: {
+                    'cep': $('#cep').val(),
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']){
+                        response = response['datas'];
+                        $('#street_address').val(response['logradouro']);
+                        $('#city_address').val(response['localidade']);
+                        $('#state_address').val(response['uf']);
+                    } else
+                        modal_alert_message('CEP inválido');
+                }
+        });
+        } else{
+            modal_alert_message('CEP inválido');
+        }
+    });
 
     //alert(decodify(codify('Jose Ramon')));
 

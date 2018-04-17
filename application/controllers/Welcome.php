@@ -2,14 +2,13 @@
 
 class Welcome extends CI_Controller {
     
-    //-------SHOW VIEWS FUNCTIONS--------------------------------
-    public function test() {
-       echo md5('Marcos*01+');
+    function __construct() {
+        parent::__construct();
+        $this->load_livre_system_config();
     }
     
-    public function md() {
-        echo md5('Marcos*01+');
-    }
+    
+    //-------SHOW VIEWS FUNCTIONS--------------------------------
     
     public function index() {
         $this->load->view('index');
@@ -759,5 +758,74 @@ class Welcome extends CI_Controller {
             );
         return $banks[$code];
     }
+    
+    public function get_cep_datas(){
+        $cep = $this->input->post()['cep'];
+        $datas = file_get_contents('https://viacep.com.br/ws/'.$cep.'/json/');
+        if(strpos($datas,'erro')>0){
+            $response['success']=false;
+        } else{
+            $response['success']=true;
+        }
+        $response['datas'] = json_decode($datas);
+        echo json_encode($response);
+    }
+    
+    public function send_verification_sms($phone_number, $message){        
+        $url = 'https://api-messaging.movile.com/v1/send-bulk-sms Content-Type: application/json'; //url de la petición
+        $ch = curl_init($url); //inicializamos el objeto CUrl        
+        $jsonData = array(  //el json simulamos una petición de un login
+            'destination' => $phone_number,
+            'messageText' => $message,
+            'messageText' => $message,
+            'messageText' => $message,
+            'messageText' => $message,
+            'messageText' => $message,
+            'messageText' => $message,
+        );
+        $jsonDataEncoded = json_encode($jsonData); //creamos el json a partir de nuestro arreglo
+        curl_setopt($ch, CURLOPT_POST, 1);//Indicamos que nuestra petición sera Post       
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //para que la peticion no imprima el resultado como un echo comun, y podamos manipularlo
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);//Adjuntamos el json a nuestra petición
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));//Agregamos los encabezados del contenido
+
+        //ignorar el certificado, servidor de desarrollo
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($process, CURLOPT_SSL_VERIFYHOST, FALSE);
+        //Ejecutamos la petición
+        $result = curl_exec($ch);
+        var_dump($result);
+    }
+        
+    public function load_livre_system_config(){
+        $this->load->model('class/livre_system_config_model');
+        $result = $this->livre_system_config_model->livre_system_config_vars();
+        if ($result) {
+            foreach ($result as $var_info) {
+                $this->{$var_info["name"]} = $var_info["value"];
+            }
+        } else {
+            die("Can't load system config vars...!!");
+        };
+    }
+    
+    public function iugu_simples_sale(){
+        require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
+        Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
+        Iugu_Charge::create(
+            [
+                "token"=> "TOKEN QUE VEIO DO IUGU.JS OU CRIADO VIA BIBLIOTECA",
+                "email"=>"your@email.test",
+                "items" => [
+                    [
+                        "description"=>"Item Teste",
+                        "quantity"=>"1",
+                        "price_cents"=>"1000"
+                    ]
+                ]
+            ]
+        );
+    }
+    
     
 }

@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+        
+        <?php require_once("analytics.php"); ?>
+    
 	<meta charset="UTF-8">
 	<title>LIVRE DIGITAL</title>
+        
+        <meta name="google-site-verification" content="gmGNZ5VYbuyTMWpk9dDFG6Y8W4pwGuwWFCfYYKowmEA" />
 	<meta name="viewport" content="width=device-width">
 	<link rel="icon" type="image/png" href="<?php  echo base_url().'assets/img/favicon.png'?>">
 

@@ -6,7 +6,7 @@
             parent::__construct();
         }
         
-        public  function check_payment($credit_card_datas,$user_id){
+        public  function livre_system_config_model($credit_card_datas,$user_id){
             //hacer la compra por el CET en la cantidad de meses establecida con la mundipagg
             
             //slavar en la base de datos

@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <title>LIVRE DIGITAL</title>
     
+    <meta name="google-site-verification" content="gmGNZ5VYbuyTMWpk9dDFG6Y8W4pwGuwWFCfYYKowmEA" />
     <script type="text/javascript">var base_url = '<?php echo base_url();?>';</script>    
     <meta name="viewport" content="width=device-width">
     <!--<link rel="icon" type="<?php //echo base_url().'assets/image/png'?>" href="<?php //echo base_url().'assets/img/favicon.png'?>">-->

@@ -36,10 +36,17 @@
                     <fieldset class="fleft100 col-md-12 pd-lr10">
                         <input class="cpf frm" id="cpf" type="text" placeholder="CPF">
                     </fieldset>
+                    
                     <span class="ft-size14 fw-600 m-top30 fleft100"><em>SEU ENDEREÇO</em></span>
-                    <fieldset class="col-md-4 col-sm-5 col-xs-5 pd-lr10">
-                        <input id="cep" class="frm"  type="text" placeholder="CEP" required>
+                    <fieldset class="col-md-4 col-sm-5 col-xs-12 pd-lr10">
+                        <input id="cep" class="frm"  type="text" placeholder="CEP" required>  
+                    </fieldset>                    
+                    <fieldset class="col-md-1 col-sm-2 col-xs-12 text-left">
+                        <button id="verify_cep" type="button" class="btn btn-default frm" >
+                            <img src="<?php  echo base_url().'assets/img/icones/search.png'?>" width="25px"/>
+                        </button>                        
                     </fieldset>
+                    
                     <fieldset class="fleft100 col-md-12 pd-lr10">
                         <input id="street_address" class="frm"  type="text" placeholder="ENDEREÇO" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
                     </fieldset>
@@ -58,33 +65,33 @@
                         <div class="select"  class="frm" >
                             <select id="state_address" name="local" class="btn-primeiro" id="local" required>
                                 <option value="default" selected="true">ESTADO ...</option>
-                                <option value="AC">Acre</option>
-                                <option value="AL">Alagoas</option>
-                                <option value="AP">Amapá</option>
-                                <option value="AM">Amazonas</option>
-                                <option value="BA">Bahia</option>
-                                <option value="CE">Ceará</option>
-                                <option value="DF">Distrito Federal</option>
-                                <option value="ES">Espírito Santo</option>
-                                <option value="GO">Goiás</option>
-                                <option value="MA">Maranhão</option>
-                                <option value="MT">Mato Grosso</option>
-                                <option value="MS">Mato Grosso do Sul</option>
-                                <option value="MG">Minas Gerais</option>
-                                <option value="PA">Pará</option>
-                                <option value="PB">Paraíba</option>
-                                <option value="PR">Paraná</option>
-                                <option value="PE">Pernambuco</option>
-                                <option value="PI">Piauí</option>
-                                <option value="RJ">Rio de Janeiro</option>
-                                <option value="RN">Rio Grande do Norte</option>
-                                <option value="RS">Rio Grande do Sul</option>                                
-                                <option value="RO">Rondônia</option>
-                                <option value="RR">Roraima</option>
-                                <option value="SC">Santa Catarina</option>
-                                <option value="SP">São Paulo</option>
-                                <option value="SE">Sergipe</option>
-                                <option value="TO">Tocantins</option>
+                                <option id="AC" value="AC">Acre</option>
+                                <option id="AL" value="AL">Alagoas</option>
+                                <option id="AP" value="AP">Amapá</option>
+                                <option id="AM" value="AM">Amazonas</option>
+                                <option id="BA" value="BA">Bahia</option>
+                                <option id="CE" value="CE">Ceará</option>
+                                <option id="DF" value="DF">Distrito Federal</option>
+                                <option id="ES" value="ES">Espírito Santo</option>
+                                <option id="GO" value="GO">Goiás</option>
+                                <option id="MA" value="MA">Maranhão</option>
+                                <option id="MT" value="MT">Mato Grosso</option>
+                                <option id="MS" value="MS">Mato Grosso do Sul</option>
+                                <option id="MG" value="MG">Minas Gerais</option>
+                                <option id="PA" value="PA">Pará</option>
+                                <option id="PB" value="PB">Paraíba</option>
+                                <option id="PR" value="PR">Paraná</option>
+                                <option id="PE" value="PE">Pernambuco</option>
+                                <option id="PI" value="PI">Piauí</option>
+                                <option id="RJ" value="RJ">Rio de Janeiro</option>
+                                <option id="RN" value="RN">Rio Grande do Norte</option>
+                                <option id="RS" value="RS">Rio Grande do Sul</option>                                
+                                <option id="RO" value="RO">Rondônia</option>
+                                <option id="RR" value="RR">Roraima</option>
+                                <option id="SC" value="SC">Santa Catarina</option>
+                                <option id="SP" value="SP">São Paulo</option>
+                                <option id="SE" value="SE">Sergipe</option>
+                                <option id="TO" value="TO">Tocantins</option>
                             </select>
                         </div>
                     </fieldset>
@@ -228,8 +235,7 @@
                 <div id="container_form_steep_3" class="col-md-5 col-sm-5 col-xs-12 pd-40 bk-fff h441">
                     <span class="ft-size14 fw-600 fleft100"><em>DADOS BANCÁRIOS</em></span>
                     <fieldset class="col-md-8 col-sm-8 col-xs-12 pd-lr5">
-                        <!--<input id="bank" type="text" placeholder="Banco" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>-->
-                        <select id="bank" required>
+                        <select id="bank" required style="max-height: 70px">
                             <option value="default" selected="true">BANCO...</option>
                             <option value="001">BANCO DO BRASIL</option>
                             <option value="104">CAIXA ECONÔMICA FEDERAL </option>
