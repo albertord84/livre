@@ -10,6 +10,12 @@ class Welcome extends CI_Controller {
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------
     
+    public function md() {
+        echo md5('la vida es ');
+        echo '<br><br>';
+        echo md5('bella');
+    }
+    
     public function index() {
         $this->load->view('index');
     }
@@ -477,7 +483,7 @@ class Welcome extends CI_Controller {
     }
     
     public function message() {
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/creditsociety/application/libraries/Gmail.php';        
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();        
         $datas = $this->input->post();
         $result = $this->Gmail->send_client_contact_form($datas['name'], $datas['email'], $datas['message']);
@@ -492,13 +498,13 @@ class Welcome extends CI_Controller {
     //-------AUXILIAR FUNCTIONS----------------------------------
     
     public function generate_contract($client_id) {        
+        $this->load->model('class/client_model');
+        $this->load->model('class/client_status');        
         require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/fpdf/fpdf.php';
         require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/contrato.php';
         $pdf = new PDF('P','mm','A4');
-        $this->load->model('class/client_model');
-        $this->load->model('class/client_status');        
         $datas = $this->client_model->get_all_client_datas_by_id($client_id);
-        $pdf ->GenerateContrat($datas,false,true,false);
+        $pdf->GenerateContrat($datas,false,true,false);
     }
     
     public function validate_month($str, $pattern) {
@@ -802,8 +808,8 @@ class Welcome extends CI_Controller {
         $result = $this->livre_system_config_model->livre_system_config_vars();
         if ($result) {
             foreach ($result as $var_info) {
-                $this->{$var_info["name"]} = $var_info["value"];
-            }
+                $this->system_config->{$var_info["name"]} = $var_info["value"];
+            }            
         } else {
             die("Can't load system config vars...!!");
         };

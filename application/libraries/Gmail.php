@@ -4,7 +4,7 @@
     //SMTP needs accurate times, and the PHP time zone MUST be set
     //This should be done in your php.ini, but this is how to do it if you don't have access to that
     date_default_timezone_set('Etc/UTC');
-    require_once $_SERVER['DOCUMENT_ROOT'] . '/creditsociety/application/libraries/PHPMailer-master/PHPMailerAutoload.php';
+    require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/PHPMailer-master/PHPMailerAutoload.php");
 
     class Gmail {
 
@@ -48,7 +48,7 @@
             $this->mail->Password = '78578122522624666';
 
             //Set who the message is to be sent from
-            $this->mail->setFrom('josergm86@gmail.com', 'CreditSociety');
+            $this->mail->setFrom('josergm86@gmail.com', 'LivreDigital');
         }
 
        
@@ -66,7 +66,7 @@
             //convert HTML into a basic plain-text alternative body
             $username = urlencode($username);
             $usermsg  = urlencode($usermsg);
-            $file = "http://".$_SERVER['SERVER_NAME'] . "/creditsociety/resources/emails/contact_form.php?username=$username&useremail=$useremail&userphone=$userphone&usermsg=$usermsg";
+            $file = "http://".$_SERVER['SERVER_NAME'] . "/livre/resources/emails/contact_form.php?username=$username&useremail=$useremail&usermsg=$usermsg";
             //echo $file;
             $a=file_get_contents($file);
             $this->mail->msgHTML(file_get_contents($file), dirname(__FILE__));
