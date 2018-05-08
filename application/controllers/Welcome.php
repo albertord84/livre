@@ -20,6 +20,14 @@ class Welcome extends CI_Controller {
         $this->load->view('index');
     }
     
+    public function afiliados() {
+        $this->load->view('afiliados');
+    }
+    
+    public function filiados() {
+        $this->load->view('filiados');
+    }
+    
     public function checkout() {
         $datas = $this->input->get();
         if($this->verify_simulation($datas)['success'])

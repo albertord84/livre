@@ -18,7 +18,7 @@ $(document).ready(function () {
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
         email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
-        phone_ddd = validate_element('#phone_ddd', '^[0-9]{2,3}$');
+        phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
         cep = validate_element('#cep', '^[0-9]{8}$');

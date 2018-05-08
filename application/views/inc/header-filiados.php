@@ -27,22 +27,17 @@
 	<link rel="stylesheet" href="css/media.css" />
 </head>
 <body>
-	<header class="fleft100 pd-tb30 hinter center-xs">
+	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs">
 		<div class="container">
-			<div class="logo-inter col-md-2 col-sm-2 col-xs-12 center-xs"><a href=""><img src="img/icones/logo-interna.png" alt=""></a></div>
-			<div class="col-md-7 col-sm-7 col-xs-12">
-				<ul class="mn fleft100 m-top2"> 
-					<li><a href="">RESUMO</a></li>
-					<li><a href="">TRANSAÇÕES</a></li>
-					<li><a href="">CONFIGURAÇÕES</a></li>
-					<li><a href="">AFILIADOS</a></li>
+			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="img/icones/logo.png" alt=""></a></div>
+			<div class="col-md-10 col-sm-10 col-xs-12 pd-0 text-right center-xs m-top20">
+				<ul class="menu i-block m-top10-xs">				
+					<li><a href="">Suporte</a></li>
+					<li class="tv cl-fff">|</li>
 				</ul>
-			</div>
-			<div class="col-md-3 col-sm-3 col-xs-12 text-right center-xs">
-				<ul class="menu i-block m-top10-xs">
-					<li><a href="">Conta</a></li>
-					<li class="tv">|</li>
-					<li><a href="">Sair</a></li>
+				<ul class=" sociais i-block">
+					<li><a href="" target="_blank"><img src="img/icones/ig.png"></a></li>
+					<li><a href="" target="_blank"><img src="img/icones/fb.png"></a></li>
 				</ul>
 			</div>
 		</div>
