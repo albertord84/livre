@@ -5,6 +5,7 @@ Facebook: https://www.facebook.com/felipe.golfetto
 
 /* IMPORTANDO FONTES */
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+@import url('https://fonts.googleapis.com/css?family=Rajdhani:300,400,500,600,700');
 
 @font-face {
     font-family: "Frontenac";
@@ -19,12 +20,12 @@ Facebook: https://www.facebook.com/felipe.golfetto
 
 /* PROGRAMAÇÃO FIXA */
 body{
-    background-color: #f0f1f2;
+    background-color: #f2f3f5;
     font-family: 'Roboto', sans-serif;
     padding-right: 0px !important;
     padding-left: 0px !important;
     min-width: 300px;
-    color: #232323;
+    color: black;
 }
 
 body li{
@@ -80,7 +81,7 @@ b{
 
 .container{
     width: 100%;
-    max-width: 1230px;
+    max-width: 1110px;
     padding: 0 15px;
     min-width: 300px;
     word-wrap: break-word;
@@ -111,7 +112,7 @@ b{
 }
 
 .cl-green{
-    color: #07d39c;
+    color: #00ff66;
 }
 
 .cl-grafite{
@@ -159,8 +160,12 @@ b{
     background-color: #0ba078;
 }
 
+.bk-green4{
+    background-color: #0b9570;
+}
+
 .bk-silver{
-    background-color: #e6e6e6;
+    background-color: #f6f6f6;
 }
 
 .bk-grafite{
@@ -215,7 +220,7 @@ b{
 }
 
 .pd-30{
-    padding: 30px !important;
+    padding: 30px;
 }
 
 .pd-40{
@@ -245,6 +250,11 @@ b{
         padding-bottom: 8px;
     }
 
+    .pd-tb9{
+        padding-top: 9px;
+        padding-bottom: 9px;
+    }
+
     .pd-tb10{
         padding-top: 10px;
         padding-bottom: 10px;
@@ -252,6 +262,11 @@ b{
 
     .pd-tb15{
         padding: 15px 0;
+    }
+
+    .pd-tb18{
+        padding-top: 18.5px;
+        padding-bottom: 18.5px;
     }
 
     .pd-tb20{
@@ -290,6 +305,11 @@ b{
     /* top */
     .pd-top20{
         padding-top: 20px;
+    }
+
+    /* bottom */
+    .pd-bottom20{
+        padding-bottom: 20px;
     }
 
     /* left */
@@ -344,6 +364,11 @@ b{
 
     .pd-right1{
         padding-right: 1px;
+        padding-left: 0px;
+    }
+
+    .pd-right5{
+        padding-right: 5px;
         padding-left: 0px;
     }
 
@@ -469,6 +494,10 @@ b{
 
     .m-top100{
         margin-top: 100px;
+    }
+
+    .m-top90{
+        margin-top: 90px;
     }
 
     .m-top80{
@@ -700,6 +729,11 @@ b{
 .mxw-300{
     width: 100%;
     max-width: 300px;
+}
+
+.mxw-280{
+    max-width: 280px;
+    width: 100%;
 }
 
 .mxw-250{
@@ -958,6 +992,10 @@ b{
 
 .ft-alice{
     font-family: 'Alice', serif;
+}
+
+.ft-Rajdhani{
+    font-family: 'Rajdhani', sans-serif;
 }
 
 .wrap{
