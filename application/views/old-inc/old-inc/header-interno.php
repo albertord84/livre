@@ -3,7 +3,7 @@
 <head>
         
         <?php require_once("analytics.php"); ?>
-    <script async=“1” src=“//tags.fulllab.com.br/scripts/master-tag/produto_livredigital.js”></script>
+        <script async=“1” src=“//tags.fulllab.com.br/scripts/master-tag/produto_livredigital.js”></script>
     
 	<meta charset="UTF-8">
 	<title>LIVRE DIGITAL</title>

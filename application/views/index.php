@@ -4,170 +4,182 @@
 	<meta charset="UTF-8">
 	<title>Livre.com</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="icon" type="image/png" href="<?php echo base_url().'assets/'?>img/favicon.png">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
 
 	<!-- GALERIA -->	
-	<link rel="stylesheet" type="text/css" href="galeria/css/fresco/fresco.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
 
 	<!-- Owl Carousel Assets -->
-	<link href="css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="css/carousel/owl.transitions.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="css/estilo.css" />
-	<link rel="stylesheet" href="css/definicoes.css" />
-	<link rel="stylesheet" href="css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
 </head>
 <body>
-	<header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs text-center">
-		<div class="container">
-			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
-				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href=""><img src="img/icones/logo.png" alt=""></a></div>
-				<div class="col-md-6 col-sm-6 col-xs-12 fr text-left">
-					<div class="fleft100">
-						<h3 class="fw-400 ft-Rajdhani">Empréstimo Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
-					<ul class="menu i-block m-top10-xs">				
-						<li><a href="">Suporte</a></li>
-						<li class="tv cl-black">|</li>
-					</ul>
-					<ul class=" sociais i-block">
-						<li><a href="" target="_blank"><img src="img/icones/ig.png"></a></li>
-						<li><a href="" target="_blank"><img src="img/icones/fb.png"></a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</header>
-<section class="fleft100 cover text-center" id="banner" style="background-image: url(img/banners/home.jpg);">
+    <header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs text-center">
+        <div class="container">
+            <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
+                <div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left">
+                    <a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 fr text-left">
+                    <div class="fleft100">
+                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
+                    <ul class="menu i-block m-top10-xs">				
+                        <li><a href="#contact_me">Suporte</a></li>
+                        <li class="tv cl-black">|</li>
+                    </ul>
+                    <ul class=" sociais i-block">
+                        <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                        <li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="fleft100 cover text-center" id="banner" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/home.jpg);">
 	<div class="container">
-		<div class="fleft100 m-top150">
-			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
-				<div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-					<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>
-				</div>
-			</div>
-			<div class="fleft100"><img src="img/icones/down-ar.png" class="i-block m-top50 m-b30"></div>
-		</div>
-		<div class="verific prelative m-top40 m-top20-xs text-right center-xs">
-			<div class="col-md-4 col-sm-4 col-xs-12">
-				<span class="fleft100">Quanto deseja pegar emprestado?</span>
-			</div>
-			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
-				<input type="text" class="bverde ph-fff cl-fff" placeholder="R$ 00,00">
-			</div>
-			<div class="col-md-4 col-sm-4 col-xs-12 text-center">				
-				<button class="bt-white m-top5 verificar">VERIFICAR</button>
-			</div>
-			<div class="fleft100 prelative ft-Rajdhani">
-				<div class="result d-none pabsolute center-xs">
-					<div class="fleft100 pd-30 bk-fff pd-10-xs">
-						<div class="fleft100 bverde2">
-							<div class="col-md-7 col-sm-7 col-xs-12">
-								<div class="ft-size13 col-md-7 col-sm-7 col-xs-12 pd-0 fw-600 text-right m-top5">Para solicitar o valor acima, você precisa ter este valor ou mais de limite disponível no seu cartão de crédito:</div>
-								<h3 class="ft-size22 i-block col-md-5 col-sm-5 col-xs-12 pd-0 fw-400 m-top15">R$ 5.000,00</h3>
-							</div>
-							<div class="col-md-5 col-sm-5 col-xs-12 text-center m-top10-xs">
-								<div class="fleft100 parc m-top10-xs">
-									<div class="col-md-3 col-sm-3 col-xs-12 pd-0">
-										<small class="fleft100" style="margin-top: 5px;">PARCELAS</small>
-										<b class="fleft100"><i id="result-value">1</i>X <small class="fw-300">DE:</small></b>
-									</div>
-									<div class="col-md-9 col-sm-9 col-xs-12 pd-0">
-										<h2 class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
-									</div>
-									<input value="1" min="1" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
-								</div>
-								<script>
-									// RANGER
-									var range = document.getElementById('range');
-									var result = document.getElementById('result-value');
+            <div class="fleft100 m-top150">
+                <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
+                    <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
+                        <h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>
+                    </div>
+                </div>
+                <div class="fleft100"><img src="<?php echo base_url().'assets/'?>img/icones/down-ar.png" class="i-block m-top50 m-b30"></div>
+            </div>
+            <div class="verific prelative m-top40 m-top20-xs text-right center-xs">
+                <div class="col-md-4 col-sm-4 col-xs-12">
+                    <span class="fleft100">Quanto deseja pegar emprestado?</span>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12 text-center">
+                    <input id="input_verify" type="text" class="bverde ph-fff cl-fff" placeholder="R$ 00,00">
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
+                    <button id="btn_verify" class="bt-white m-top5 verificar">VERIFICAR</button>
+                </div>
+                <div class="fleft100 prelative ft-Rajdhani">
+                    <div class="result d-none pabsolute center-xs">
+                        <div class="fleft100 pd-30 bk-fff pd-10-xs">
+                            <div class="fleft100 bverde2">
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <div class="ft-size13 col-md-7 col-sm-7 col-xs-12 pd-0 fw-600 text-right m-top5">Para solicitar o valor acima, você precisa ter este valor ou mais de limite disponível no seu cartão de crédito:</div>
+                                    <h3 class="ft-size22 i-block col-md-5 col-sm-5 col-xs-12 pd-0 fw-400 m-top15">R$ 5.000,00</h3>
+                                </div>
+                                <div class="col-md-5 col-sm-5 col-xs-12 text-center m-top10-xs">
+                                    <div class="fleft100 parc m-top10-xs">
+                                        <div class="col-md-3 col-sm-3 col-xs-12 pd-0">
+                                            <small class="fleft100" style="margin-top: 5px;">PARCELAS</small>
+                                            <b class="fleft100"><i id="result-value">1</i>X <small class="fw-300">DE:</small></b>
+                                        </div>
+                                        <div class="col-md-9 col-sm-9 col-xs-12 pd-0">
+                                            <h2 class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
+                                        </div>
+                                        <input value="1" min="1" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
+                                    </div>
+                                    <script>
+                                        // RANGER
+                                        var range = document.getElementById('range');
+                                        var result = document.getElementById('result-value');
 
-									range.addEventListener('change', function(){
-									    result.innerHTML = this.value;
-									    $(".its li").addClass('at');
-									});
-								</script>
-							</div>
-						</div>
-					</div>
-					<div class="fleft100 bk-silver pd-30  pd-10-xs">
-						<div class="col-md-3 col-sm-3 col-xs-12 text-left center-xs">
-							<div class="fleft100">
-								<small>CUSTO TOTAL (CET)</small>
-								<h3 class="fleft100"><i><strong>R$ 6.225,00</strong></i></h3>
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
-							<small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
-							<select name="" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius">
-								<option value=""></option>
-							</select>							
-						</div>						
-						<div class="col-md-5 col-sm-5 col-xs-12 cl-fff m-top10">
-							<a href="" class="bt-green fleft100">Contratar empréstimo</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
+                                        range.addEventListener('change', function(){
+                                            result.innerHTML = this.value;
+                                            $(".its li").addClass('at');
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fleft100 bk-silver pd-30  pd-10-xs">
+                            <div class="col-md-3 col-sm-3 col-xs-12 text-left center-xs">
+                                <div class="fleft100">
+                                    <small>CUSTO TOTAL (CET)</small>
+                                    <h3 class="fleft100"><i><strong>R$ 6.225,00</strong></i></h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
+                                <small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
+                                <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius">
+                                    <option value="00">Selecione     ...</option>
+                                    <option value="01">Compras</option>
+                                    <option value="02">Quitar dívida do cartão de crédito</option>
+                                    <option value="03">Quitar cheque especial</option>
+                                    <option value="04">Quitar outras dívidas</option>
+                                    <option value="05">Investir em negócio próprio</option>
+                                    <option value="06">Educação</option>
+                                    <option value="07">Viagem</option>
+                                    <option value="08">Saúde</option>
+                                    <option value="09">Outros ...</option>
+                                </select>							
+                            </div>						
+                            <div class="col-md-5 col-sm-5 col-xs-12 cl-fff">
+                                <a href="" class="bt-green fleft100">Contratar empréstimo</a>
+                                <label for="ck" class="dc m-top5"><input type="checkbox" id="ck"> <small>Declaro que li e aceito os termos de uso e a política de privacidade</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="fleft100 pd-tb30 cl-fff cover center-xs" id="real" style="background-image: url(img/banners/real.png);">
+    <section class="fleft100 pd-tb30 cl-fff cover center-xs" id="real" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/real.png);">
 	<div class="container">
-		<div class="col-md-8 col-sm-12 col-xs-12 pull-right">
-			<div class="fleft100">
-				<div class="col-md-6 col-sm-6 col-xs-12 pd-lr0-xs m-top20 m-none-xs">
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<img src="img/icones/check2.png" width="60">
-					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
-						<h2 class="ft-size28 fw-600 fleft100 wrap d-webkit clamp2">Sem verificação de crédito!</h2>
-					</div>
-				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12 m-top20">
-					<div class="fleft100 pd-lr15">
-						<h5 class="fw-300 m-b10">Sem verificação de crédito, sem verificação de crédito sem verificação.</h5>
-					</div>
-					<div class="fleft100 pd-lr15">
-						<img src="img/icones/cards.png" alt="">
-					</div>					
-				</div>
-			</div>
-			<div class="fleft100 m-top70 m-top20-xs">
-				<div class="col-md-6 col-sm-6 col-xs-12 m-top20">
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<img src="img/icones/emp.png" alt="">
-					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12">
-						<h4 class="ft-size16 fw-300 m-top5">Emprestamos para negativados e sem comprovação de renda.</h4>
-					</div>
-				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12 m-top20">
-					<div class="col-md-3 col-sm-3 col-xs-12">
-						<img src="img/icones/tx.png" alt="">
-					</div>
-					<div class="col-md-9 col-sm-9 col-xs-12">
-						<h4 class="ft-size16 fw-300 m-top5">Taxa de juros de apenas 4,99% a.m.</h4>
-					</div>
-				</div>
-			</div>
-		</div>		
+            <div class="col-md-8 col-sm-12 col-xs-12 pull-right">
+                <div class="fleft100">
+                    <div class="col-md-6 col-sm-6 col-xs-12 pd-lr0-xs m-top20 m-none-xs">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/check2.png" width="60">
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
+                            <h2 class="ft-size28 fw-600 fleft100 wrap d-webkit clamp2">Sem verificação de crédito!</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
+                        <div class="fleft100 pd-lr15">
+                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos</b></h5>
+                        </div>
+                        <div class="fleft100 pd-lr15">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" alt="">
+                        </div>					
+                    </div>
+                </div>
+                <div class="fleft100 m-top70 m-top20-xs">
+                    <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/emp.png" alt="">
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <h4 class="ft-size20 fw-300">Emprestamos para negativados e sem comprovação de renda.</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
+                        </div>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <h4 class="ft-size20 fw-300">Taxa de juros de apenas 2,99% a.m.</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>		
 	</div>
-</section>
+    </section>
 
-<section class="fleft100 pd-tb80 m-b100" id="leao">
+    <section class="fleft100 pd-tb80 m-b100" id="leao">
 	<div class="container">
 		<div class="fleft100">
 			<div class="col-md-6 col-sm-6 col-xs-12">
@@ -181,7 +193,7 @@
 		<div class="col-md-6 col-sm-6 col-xs-12 m-top80">
 			<div class="fleft100 bleftgreen pd-bottom20">
 				<div class="ft-size17">
-					O Livre.digital utiliza uma modalidade de empréstimo atrelada ao seu cartão de crédito, utilizando o limite disponível como garantia, e você recebe o dinheiro na sua conta bancária em até 1 dia útil.
+					O Livre.digital utiliza uma modalidade de empréstimo atrelada ao seu cartão de crédito, utilizando o limite disponível como garantia e o pagamento das parcelas através da sua fatura. Você recebe o dinheiro na sua conta bancária em até 1 dia útil. 
 				</div>
 			</div>
 			<p class="ft-size17 bl-silver">
@@ -195,7 +207,7 @@
 			</div>
 		</div>
 		<div class="col-md-6 col-sm-6 col-xs-12 m-top80">
-			<img src="img/banners/d.png" class="mxw-800">
+			<img src="<?php echo base_url().'assets/'?>img/banners/d.png" class="mxw-800">
 		</div>
 	</div>
 </section>
@@ -203,76 +215,13 @@
 <section id="i" class="fleft100 pd-tb40">
 	<div class="container">
 		<div class="i i-block fnone pd-tb15 col-md-10">
-			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="img/icones/i.png" width="30"></div>
+			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
 				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa. Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
 			</div>
 		</div>
 	</div>
 </section>
-</section>
-<footer class="fleft100 pd-tb40">
-	<div class="container">
-		<div class="col-md-6 col-sm-6 col-xs-12 contato">
-			<h1 class="ft-size55 pd-lr25 fw-300">Duvidas? <small class="ft-size25 fleft100">Pergunte aqui!</small></h1>
-			<form action="" class="fleft100 m-top30">
-				<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10">
-					<fieldset>
-						<input type="text" name="nome" class="ph-fff" required="required" placeholder="Nome">
-					</fieldset>
-				</div>
-				<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10">
-					<fieldset>
-						<input type="text" name="email" class="ph-fff" required="required" placeholder="E-mail" class="email">
-					</fieldset>
-				</div>
-				<div class="col-md-12 col-sm-12 col-xs-12 pd-lr10 text-center">
-					<fieldset>
-						<textarea name="mensagem" class="ph-fff" required="required" rows="4" placeholder="Escreva aqui"></textarea>
-					</fieldset>
-					<fieldset>
-						<input type="submit" name="email" value="Enviar" placeholder="E-mail" class="email">
-					</fieldset>
-				</div>
-			</form>
-		</div>
-		<div class="col-md-6 col-sm-6 col-xs-12 pd-lr50 m-top20-xs text-center">
-			<div class="fleft100 m-top30"><img src="img/icones/logo.png" alt=""></div>
-			<span class="cl-fff fleft100 m-top40 m-b10 fw-300">Acompanhe a Livre.digital</span>
-			<ul class="sociais i-block">
-				<li><a target="_blank" href=""><img src="img/icones/fb-f.png" alt=""></a></li>
-				<li><a target="_blank" href=""><img src="img/icones/ig-f.png" alt=""></a></li>
-				<li><a target="_blank" href=""><img src="img/icones/wpp.png" alt=""></a></li>
-			</ul>
-			
-			<p class="flef100 cl-fff text-justify m-top80">
-				Av. Paula Sousa 351, Maracanã, Rio de Janeiro - RJ, CEP: 20271-120.
-				<small class="fleft100"><br>"informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 24,08% a 42,08% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de adesão de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 118,39. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.420,79. CET: 42,08% a.a.</small>
-			</p>
-		</div>
-	</div>
-</footer>
-</body>
-<!--[if lt IE 9]>
-<script src="js/jquery-1.9.1.js"></script>
-<![endif]-->
-<!--[if gte IE 9]><!-->
-<script src="js/jquery-3.1.1.min.js"></script>
-<!--<![endif]-->
-<script src="js/bootstrap.min.js"></script>
-<script src="js/bootstrap-multiselect.js"></script>
-<!-- OWL SLIDER -->
-<script src="js/carousel/owl.carousel.js"></script>
-<!-- GALERIA -->
-<script type="text/javascript" src="galeria/js/fresco/fresco.js"></script>
-<!-- FILTRAR -->
-<script src="js/filtrar.js"></script> 
-<!-- VALIDATE -->
-<script src="js/validate.js" type="text/javascript"></script>
-<!-- MASCARAS -->
-<script type="text/javascript" src="js/maskinput.js"></script>
-<!-- Scripts -->
-<script type="text/javascript" src="js/script.js"></script>
+<section>
+<?php //include_once $_SERVER['DOCUMENT_ROOT']."/livre/src/application/views/"."inc/footer.php";?>
 
-
-</html>

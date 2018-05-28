@@ -17,7 +17,10 @@ class Welcome extends CI_Controller {
     }
     
     public function index() {
-        $this->load->view('index');
+        //$params['footer']= $this->load->view('inc/footer');        
+        //$params['footer']= 1234;
+        $this->load->view('index',$params);
+        $this->load->view('inc/footer');
     }
     
     public function afiliados() {

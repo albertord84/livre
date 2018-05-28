@@ -1,36 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<?php require_once("analytics.php"); ?>
-        <script async=“1” src=“//tags.fulllab.com.br/scripts/master-tag/produto_livredigital.js”></script>
-        <meta name="google-site-verification" content="gmGNZ5VYbuyTMWpk9dDFG6Y8W4pwGuwWFCfYYKowmEA" />    
-        <script type="text/javascript">var base_url = '<?php echo base_url();?>'; ; alert(base_url);</script>    
-        
-        <meta charset="UTF-8">
+	<meta charset="UTF-8">
 	<title>Livre.com</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" href="<?php  echo base_url().'assets/img/icones/favicon.png'?>"> 
+	<link rel="icon" type="image/png" href="img/favicon.png">
 
 	<!-- Font Awesome -->
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">
+	<link rel="stylesheet" href="css/font-awesome/font-awesome.min.css">
 
-        <!-- GALERIA -->	
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css'?>" />
+	<!-- GALERIA -->	
+	<link rel="stylesheet" type="text/css" href="galeria/css/fresco/fresco.css" />
 
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css'?>">
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css'?>">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-multiselect.css">
 
-        <!-- Owl Carousel Assets -->
-        <link href="<?php echo base_url().'assets/css/carousel/owl.carousel.css" rel="stylesheet'?>">
-        <link href="<?php echo base_url().'assets/css/carousel/owl.theme.css" rel="stylesheet'?>">
-        <link href="<?php echo base_url().'assets/css/carousel/owl.transitions.css" rel="stylesheet'?>">
+	<!-- Owl Carousel Assets -->
+	<link href="css/carousel/owl.carousel.css" rel="stylesheet">
+	<link href="css/carousel/owl.theme.css" rel="stylesheet">
+	<link href="css/carousel/owl.transitions.css" rel="stylesheet">
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css'?>"/>
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css'?>"/>
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css'?>"/>
-        <link rel="stylesheet" href="<?php echo base_url().'assets/css/ladda-themeless.min.css'?>">
+	<!-- CSS -->
+	<link rel="stylesheet" href="css/estilo.css" />
+	<link rel="stylesheet" href="css/definicoes.css" />
+	<link rel="stylesheet" href="css/media.css" />
 </head>
 <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">

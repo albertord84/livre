@@ -32,10 +32,10 @@
 			<div class="logo-inter col-md-2 col-sm-2 col-xs-12 center-xs"><a href=""><img src="img/icones/logo-interna.png" alt=""></a></div>
 			<div class="col-md-7 col-sm-7 col-xs-12">
 				<ul class="mn fleft100 m-top2"> 
-					<li><a href="">RESUMO</a></li>
-					<li><a href="">TRANSAÇÕES</a></li>
-					<li><a href="">CONFIGURAÇÕES</a></li>
-					<li><a href="">AFILIADOS</a></li>
+					<li><a href="resumo.php">RESUMO</a></li>
+					<li><a href="transacoes.php">TRANSAÇÕES</a></li>
+					<li><a href="configuracoes.php">CONFIGURAÇÕES</a></li>
+					<li><a href="afiliados.php">AFILIADOS</a></li>
 				</ul>
 			</div>
 			<div class="col-md-3 col-sm-3 col-xs-12 text-right center-xs">

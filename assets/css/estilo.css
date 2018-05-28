@@ -36,7 +36,7 @@ Facebook: https://www.facebook.com/felipe.golfetto
 }
 
 #bfil h2{
-  margin-top: 60px;
+  margin-top: 75px;
   color: #fff;
   font-weight: 500;
 }
@@ -77,6 +77,29 @@ Facebook: https://www.facebook.com/felipe.golfetto
 .verific .bt-green{
   padding: 12px !important;
   font-size: 17px;
+}
+
+.dc{
+  text-align: left;
+  margin-bottom: 0;
+  line-height: 15px;
+}
+
+.dc input{
+  top: 2px;
+  float: left;
+  width: 10% !important;
+  text-align: center;
+}
+
+.dc small{
+  float: left;
+  width: 90%;
+  color: black;
+  text-decoration: underline;
+  font-weight: 600;
+  margin-top: 3px;
+  line-height: 10px;
 }
 
 .sociais li{
@@ -389,7 +412,7 @@ footer small{
 }
 
 .contato{
-  background: url('../img/icones/atop.png') no-repeat left top, url('../img/icones/adown.png') no-repeat right bottom;
+  background: url('../img/icones/atop.png') no-repeat left top, url('../img/icones/adown.png') no-repeat right bottom, url('../img/icones/adownleft.png') no-repeat left bottom, url('../img/icones/atopright.png') no-repeat right top;
   padding: 60px 40px !important;
 }
 
@@ -469,7 +492,7 @@ footer small{
   background-image: url(../img/icones/b4.png) !important;
 }
 
-.fmr-check .col-md-8 input{
+.fmr-check .col-md-8 input, .fmr-check .col-md-6 input{
   background-image: url(../img/icones/b8.png) !important;
 }
 
@@ -479,6 +502,14 @@ footer small{
 
 .fmr-check hr{
   border-bottom: 2px solid #fff;
+}
+
+.bti .bt-green{
+  padding: 6px !important;
+  font-size: 10px;
+  width: 100%;
+  margin-top: 12px;
+  font-weight: 800;
 }
 
 .bt-white{
@@ -550,6 +581,64 @@ footer small{
   margin-top: 0;
 }
 
+.upl{
+  float: left;
+  width: 100%;
+  padding: 15px 10px;
+  line-height: 10px;
+  position: relative;
+  text-align: center;
+}
+
+.upl i{
+  position: absolute;
+  right: 15px;
+  top: 10px;
+}
+
+.upl small{
+  margin-top: 6px;
+  font-weight: 600;;;
+
+}
+
+.uplgreen{
+  background-color: #00ff66;
+}
+
+.uplsilver{
+  background-color: #f0f1f2;
+}
+
+.uplred{
+  background-color: #f00;
+}
+
+button.close{
+  opacity: 1;
+  top: -23px;
+  position: absolute;
+  right: 0;
+  text-shadow: none;
+  color: #fff;
+  filter: none;
+}
+
+.titlemodal{
+  padding: 10px 20px;
+  text-align: center;  
+  font-weight: 600;
+}
+
+.tmgreen{
+  background-color: #00ff66;
+}
+
+.tmred{
+  background-color: #ff0036;
+  color: #fff;
+}
+
 /* RESUMO */
 .gr span, .gr h4{
   float: left;
@@ -597,6 +686,13 @@ footer small{
   padding-right: 15px;
 }
 
+.w25{
+  width: 25%;
+  float: left;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 .pg a{
   font-weight: 500;
   color: black;
@@ -636,7 +732,7 @@ footer small{
 }
 
 .emp{
-  background: url(../img/icones/[.jpg) no-repeat top left, url(../img/icones/].jpg) no-repeat top right;
+  /*background: url(../img/icones/[.jpg) no-repeat top left, url(../img/icones/].jpg) no-repeat top right;*/
   float: left;
   width: 100%;
   padding: 5px;
@@ -689,4 +785,58 @@ footer small{
 .cf p{
   border-left: 3px solid #02fd69;
   padding-left: 15px;
+}
+
+/* transacoes */
+.enviados{
+  border: 1px solid black;
+  border-radius: 20px;
+  float: left;
+  width: 100%;
+}
+
+.enviados li{
+  width: 20%;
+  float: left;
+  padding: 0px 5px;
+}
+
+.enviados li img{
+  width: 100%;
+}
+
+/* passos */
+.pap img{
+  width: 100%;
+}
+
+.pap span{
+  line-height: 13px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.pap li{
+  float: left;
+  width: 33.3%;
+}
+
+.passo-yellow, .passo-silver, .passo-green, .passo-red{
+  display: none;
+}
+
+.pyellow .passo-yellow{
+  display: block;
+}
+
+.pgreen .passo-green{
+  display: block;
+}
+
+.psilver .passo-silver{
+  display: block;
+}
+
+.pred .passo-red{
+  display: block;
 }
