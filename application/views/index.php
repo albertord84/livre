@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="UTF-8">
-	<title>Livre.com</title>
+	<title>Livre.digital</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="icon" type="image/png" href="<?php echo base_url().'assets/'?>img/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
 
-	<!-- Font Awesome -->
+        <!-- Font Awesome -->
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
 
 	<!-- GALERIA -->	
@@ -25,6 +25,11 @@
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+        
+        <!-- JS -->
+        <script type="text/javascript">
+            var base_url = '<?php echo base_url();?>';
+        </script>
 </head>
 <body>
     <header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs text-center">
@@ -62,39 +67,42 @@
                 <div class="fleft100"><img src="<?php echo base_url().'assets/'?>img/icones/down-ar.png" class="i-block m-top50 m-b30"></div>
             </div>
             <div class="verific prelative m-top40 m-top20-xs text-right center-xs">
-                <div class="col-md-4 col-sm-4 col-xs-12">
-                    <span class="fleft100">Quanto deseja pegar emprestado?</span>
-                </div>
-                <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                    <input id="input_verify" type="text" class="bverde ph-fff cl-fff" placeholder="R$ 00,00">
-                </div>
-                <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
-                    <button id="btn_verify" class="bt-white m-top5 verificar">VERIFICAR</button>
+                <div id="verify_container">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <span class="fleft100">Quanto deseja pegar emprestado?</span>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff my_money" title="de $R 0500 até $R 3000" placeholder="R$ 3000,00">
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
+                        <button id="btn_verify" class="bt-white m-top5">VERIFICAR</button>
+                    </div>
                 </div>
                 <div class="fleft100 prelative ft-Rajdhani">
-                    <div class="result d-none pabsolute center-xs">
+                    <div id="contratar_emprestimo_container"  class="result d-none pabsolute center-xs">
                         <div class="fleft100 pd-30 bk-fff pd-10-xs">
                             <div class="fleft100 bverde2">
                                 <div class="col-md-7 col-sm-7 col-xs-12">
-                                    <div class="ft-size13 col-md-7 col-sm-7 col-xs-12 pd-0 fw-600 text-right m-top5">Para solicitar o valor acima, você precisa ter este valor ou mais de limite disponível no seu cartão de crédito:</div>
-                                    <h3 class="ft-size22 i-block col-md-5 col-sm-5 col-xs-12 pd-0 fw-400 m-top15">R$ 5.000,00</h3>
+                                    <div class="ft-size13 col-md-7 col-sm-7 col-xs-12 pd-0 fw-600 text-right m-top5">
+                                        Para solicitar o valor acima, você precisa ter este valor ou mais de limite disponível no seu cartão de crédito:
+                                    </div>
+                                    <h3 id="total_cust_value" class="ft-size22 i-block col-md-5 col-sm-5 col-xs-12 pd-0 fw-400 m-top15">R$ 5.000,00</h3>
                                 </div>
                                 <div class="col-md-5 col-sm-5 col-xs-12 text-center m-top10-xs">
                                     <div class="fleft100 parc m-top10-xs">
                                         <div class="col-md-3 col-sm-3 col-xs-12 pd-0">
                                             <small class="fleft100" style="margin-top: 5px;">PARCELAS</small>
-                                            <b class="fleft100"><i id="result-value">1</i>X <small class="fw-300">DE:</small></b>
+                                            <b class="fleft100"><i id="result-value1">12</i>X <small class="fw-300">DE:</small></b>
                                         </div>
                                         <div class="col-md-9 col-sm-9 col-xs-12 pd-0">
                                             <h2 class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
                                         </div>
-                                        <input value="1" min="1" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
+                                        <input value="12" min="6" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
                                     </div>
                                     <script>
                                         // RANGER
                                         var range = document.getElementById('range');
                                         var result = document.getElementById('result-value');
-
                                         range.addEventListener('change', function(){
                                             result.innerHTML = this.value;
                                             $(".its li").addClass('at');
@@ -107,7 +115,7 @@
                             <div class="col-md-3 col-sm-3 col-xs-12 text-left center-xs">
                                 <div class="fleft100">
                                     <small>CUSTO TOTAL (CET)</small>
-                                    <h3 class="fleft100"><i><strong>R$ 6.225,00</strong></i></h3>
+                                    <h3 class="fleft100"><i><strong id="total_cust_value1">R$ 6.225,00</strong></i></h3>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
@@ -126,8 +134,15 @@
                                 </select>							
                             </div>						
                             <div class="col-md-5 col-sm-5 col-xs-12 cl-fff">
-                                <a href="" class="bt-green fleft100">Contratar empréstimo</a>
-                                <label for="ck" class="dc m-top5"><input type="checkbox" id="ck"> <small>Declaro que li e aceito os termos de uso e a política de privacidade</small></label>
+                                <div id="btn_contratar_emprestimo" class="bt-green fleft100" style="cursor: default;">Contratar empréstimo</div>
+                                <label for="ck" class="dc m-top5">
+                                    <input type="checkbox" id="use_term" checked> 
+                                    <small>
+                                        <a href="<?php echo base_url()?>assets/others/TERMOS DE USO DUMBU.pdf" target="_blank">
+                                            Declaro que li e aceito os termos de uso e a política de privacidade
+                                        </a>
+                                    </small>
+                                </label>
                             </div>
                         </div>
                     </div>

@@ -1,8 +1,6 @@
 <?php
     
     class Client_model extends CI_Model {
-        
-        public $MAX_PURCHASE_TENTATIVES = 6;
         private $key='d318f5b3f09f0399da510a141d091f8f'.'e7e9ec3723447a642f762b2b6a15cfd7';
                 
         function __construct() {

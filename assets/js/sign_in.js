@@ -1,19 +1,15 @@
-$(document).ready(function () {    
+$(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
     var solicited_value= typeof getUrlVars()["solicited_value"] !== 'undefined' ? getUrlVars()["solicited_value"] : 'NULL';
     var amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
     init_values();
     eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('8 H(4){4=x(4);4=y(4);4=B(4);4=t(4);4=D(4);a 4}8 J(4){4=C(4);4=u(4);4=v(4);4=z(4);4=w(4);a 4}8 x(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%2===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 w(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%3===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 y(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)+A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 z(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)-A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 B(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%5===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 v(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%6===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 t(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)*2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 u(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)/2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 D(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 C(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 r(s,E){a G(F.I()*(E-s)+s)}',46,46,'||||str|||new_str|function||return|length|new|for|var|Array||toString||replace||tmp|else|fromCharCode|if|String|charCodeAt|getRandomArbitrary|min|cs4|anti_cs4|anti_cs3|anti_cs1|cs1|cs2|anti_cs2|13|cs3|anti_cs5|cs5|max|Math|parseInt|codify|random|decodify'.split('|'),0,{}))
+    
     init();
     
     //---------PRIMARY FUNCTIONS---------------------------------
-    $("#btn_steep_1").click(function () {  
-        if(!$('#check').prop('checked')){
-            modal_alert_message("Leia e aceite as políticas de privacidade e termos de uso do site");
-            return;
-        }
-        
+    $("#btn_steep_1").click(function () {        
         var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
@@ -42,7 +38,8 @@ $(document).ready(function () {
                     'complement_number_address': $('#complement_number_address').val(),
                     'city_address': $('#city_address').val(),
                     'state_address': $('#state_address').val(),
-                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL'
+                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',
+                    'key':key
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -134,6 +131,7 @@ $(document).ready(function () {
                     'credit_card_exp_year': $('#credit_card_exp_year').val(),
                     //TODO: 'credit_card_front_photo': 'nome da foto',
                     'pk': pk,
+                    'key':key
                 };
                 $.ajax({
                     url: base_url + 'index.php/welcome/insert_datas_steep_2',
@@ -192,6 +190,7 @@ $(document).ready(function () {
                 'solicited_value':solicited_value,
                 'amount_months':amount_months,
                 'pk': pk,
+                'key':key
             };
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_3',
@@ -243,6 +242,7 @@ $(document).ready(function () {
                 url: base_url + 'index.php/welcome/insert_datas_steep_4',
                 data: {
                     'pk': pk,
+                    'key':key
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -268,7 +268,6 @@ $(document).ready(function () {
         window.open(url, '_blank');
         return false;
     });
-
     
     //---------SECUNDARY FUNCTIONS-------------------------------
     $('#name').focusin(function (e) {$('#name').css("color", "black");});
@@ -349,7 +348,7 @@ $(document).ready(function () {
     $("#btn_modal_close").click(function () {
         $('#modal_alert_message').modal('hide');
     });
-       
+    
     function validate_cpf(cpf, element_selector, pattern) {        
         if(cpf.match(pattern)){
             cpf = cpf.replace(/[^\d]+/g,'');    
@@ -468,7 +467,100 @@ $(document).ready(function () {
         });
     }
     
+    $("#btn_verify_phone_number").click(function () {
+        $.ajax({
+            url: base_url+'index.php/welcome/request_sms_code',                
+            data: {
+                'phone_ddd':$('#phone_ddd').val(),
+                'phone_number': $('#phone_number').val(),
+                'key':key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']){
+                    $('#sms').modal('show');
+                } else{
+                    modal_alert_message(response['message']);
+                }
+            }
+        });
+    });    
     
+    $("#btn_verify_sms_send_code").click(function () {
+        $('#text_error_sms_confirmation').text("");
+        $.ajax({
+            url: base_url+'index.php/welcome/verify_sms_code',                
+            data: {
+                'input_sms_code_confirmation':$('#input_sms_code_confirmation').val(),
+                'key':key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']){
+                   $('#sms').modal('hide');
+                   $('#request_cep_container').css({"visibility":"visible", "display":"block"});
+                   $('#request_cep_container').setCursorPosition(1);
+                   $('#request_cep_container').focus();
+                } else{
+                    $('#input_sms_code_confirmation').val('');
+                    $('#text_error_sms_confirmation').text("Inalid code");
+                }
+            }
+        });
+    });
+    
+    $("#resend_sms_code").click(function () {
+        $('#text_error_sms_confirmation').text("");
+        $.ajax({
+            url: base_url+'index.php/welcome/request_sms_code',                
+            data: {
+                'phone_ddd':$('#phone_ddd').val(),
+                'phone_number': $('#phone_number').val(),
+                'key':key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']){
+                    $('#text_error_sms_confirmation').text("Código enviado novamente");
+                    $('#request_cep_container').focus();
+                } else{
+                    modal_alert_message(response['message']);
+                }
+            }
+        });
+        
+    });
+    
+    $("#verify_cep").click(function () {
+        if(validate_element("#cep",'^[0-9]{8}$')){
+            $.ajax({
+                url: base_url+'index.php/welcome/get_cep_datas',                
+                data: {
+                    'cep': $('#cep').val(),
+                    'key':key
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']){
+                        response = response['datas'];
+                        $('#street_address').val(response['logradouro']);
+                        $('#city_address').val(response['localidade']);
+                        $('#state_address').val(response['uf']);
+                        $('#address_container').css({"visibility":"visible", "display":"block"}); 
+                        $('#btn_steep_1').removeAttr("disabled");                         
+                    } else
+                        modal_alert_message('CEP inválido');
+                }
+            });
+        } else{
+            modal_alert_message('CEP inválido');
+        }
+    });
+
     function init(){
         $('#name').val('JOSE RAMON GONZALEZ MONTERO');
         $('#email').val('josergm86@gmail.com');
@@ -495,32 +587,5 @@ $(document).ready(function () {
         $('#account').val('125490');
         $('#dig').val('123');
     }
-    
-    
-    $("#verify_cep").click(function () {
-        if(validate_element("#cep",'^[0-9]{8}$')){
-            $.ajax({
-                url: base_url+'index.php/welcome/get_cep_datas',                
-                data: {
-                    'cep': $('#cep').val(),
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function (response) {
-                    if(response['success']){
-                        response = response['datas'];
-                        $('#street_address').val(response['logradouro']);
-                        $('#city_address').val(response['localidade']);
-                        $('#state_address').val(response['uf']);
-                    } else
-                        modal_alert_message('CEP inválido');
-                }
-        });
-        } else{
-            modal_alert_message('CEP inválido');
-        }
-    });
-
-    //alert(decodify(codify('Jose Ramon')));
 
 }); 

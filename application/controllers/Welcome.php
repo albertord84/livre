@@ -1,25 +1,40 @@
 <?php
 
 class Welcome extends CI_Controller {
-    
+            
     function __construct() {
-        parent::__construct();
-        $this->load_livre_system_config();
-    }
+        parent::__construct();        
+        /*$_SESSION
+         ['ip']
+         ['key']
+         ['transaction_values']['frm_money_use_form']
+         ['transaction_values']['utm_source']
+         ['transaction_values']['month_value'] 
+         ['transaction_values']['total_cust_value']
+         ['transaction_values']['month_value']
+         ['transaction_values']['solicited_value']
+         ['transaction_values']['amount_months']
+         ['transaction_values']['success']         
+         ['phone_values']['random_sms_code']
+         ['phone_values']['phone_ddd']
+         ['phone_values']['phone_number']
+         ['phone_values']['sms_verificated']
+         */        
+    }    
     
-    
-    //-------SHOW VIEWS FUNCTIONS--------------------------------
-    
-    public function md() {
-        echo md5('la vida es ');
-        echo '<br><br>';
-        echo md5('bella');
-    }
-    
+    //-------SHOW VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$params['footer']= $this->load->view('inc/footer');        
-        //$params['footer']= 1234;
+        $this->set_session();        
+        $params['key']=$_SESSION['key'];
         $this->load->view('index',$params);
+        $this->load->view('inc/footer');
+    }
+    
+    public function checkout() {
+        $params['key']=$_SESSION['key'];
+        $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
+        $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
+        $this->load->view('checkout',$params);
         $this->load->view('inc/footer');
     }
     
@@ -31,14 +46,6 @@ class Welcome extends CI_Controller {
         $this->load->view('filiados');
     }
     
-    public function checkout() {
-        $datas = $this->input->get();
-        if($this->verify_simulation($datas)['success'])
-            $this->load->view('checkout');
-        else
-            $this->load->view('index');
-    }
-        
     public function configuracoes() {
         $this->load->view('configuracoes');
     }
@@ -54,23 +61,12 @@ class Welcome extends CI_Controller {
     
     //-------PRINCIPALS FUNCTIONS--------------------------------
     public function is_possible_steep_1_for_this_client($datas) {
+        //1. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
+        $this->is_ip_hacker();
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
-        //1. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
-        $IP_hackers= array(
-            '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
-            '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
-            '138.0.21.188', '168.228.84.1', '138.36.2.18', '201.35.210.135', '189.71.42.124', '138.121.232.245', '151.64.57.146', '191.17.52.46', '189.59.112.125',
-            '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
-            '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
-            '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
-            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207'
-            );
-        if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){
-            $result['message']='Error IP: Sua solicitação foi negada. Por favor, contate nosso atendimento';
-            $result['success']=false;
-            return $result;
-        }
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         //2. Analisar coerencia dos dados, exemplo:
             //2.1 mesmo cpf com nome diferentes
         $clients = $this->client_model->get_client('cpf',$datas['cpf']);
@@ -180,7 +176,7 @@ class Welcome extends CI_Controller {
             return $result;
         }        
         if(count($clients)==1){
-            if($client[0]['purchase_counter']<=$MAX_PURCHASE_TENTATIVES){
+            if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
                 $result['id'] = $clients[0]['id'];
                 $result['success']=true;
                 $result['action']='update_beginner';
@@ -462,6 +458,47 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    public function message() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();        
+        $datas = $this->input->post();
+        $result = $this->Gmail->send_client_contact_form($datas['name'], $datas['email'], $datas['message']);
+        if ($result['success'])
+            $result['message'] = 'Mensagem enviada. Agradecemos seu contato!!';
+        else             
+            $result['message'] = 'Falha evinvando mensagem. Tente depois.';
+        echo json_encode($result);
+    }
+    
+    
+    //-------AUXILIAR FUNCTIONS----------------------------------
+    
+    public function set_session(){
+        session_start();
+        $_SESSION = array();
+        $ip=$_SERVER['REMOTE_ADDR'];
+        $key=md5($ip.time());
+        $_SESSION['ip']=$ip;
+        $_SESSION['key']=$key;
+    }
+
+    public function is_ip_hacker(){
+        $IP_hackers= array(
+            '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
+            '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
+            '138.0.21.188', '168.228.84.1', '138.36.2.18', '201.35.210.135', '189.71.42.124', '138.121.232.245', '151.64.57.146', '191.17.52.46', '189.59.112.125',
+            '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
+            '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
+            '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
+            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207'
+            );
+        if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){            
+            header('Location: '.base_url());
+        }
+    }
+
     public function verify_simulation($datas=NULL) {
         $flag=false;
         if(!$datas){
@@ -478,7 +515,10 @@ class Welcome extends CI_Controller {
                 $result['month_value'] = $result['total_cust_value']/$datas['amount_months'];                
                 $result['total_cust_value']=sprintf("%.2f", $result['total_cust_value']);
                 $result['month_value']=sprintf("%.2f", $result['month_value']);                
-                $result['success'] = true;                
+                $result['solicited_value']=$datas['solicited_value'];  
+                $result['amount_months']=$datas['amount_months'];                  
+                $result['success'] = true;
+                $_SESSION['transaction_values']=$result;
             } else{
                 $result['success'] = false;
                 $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
@@ -491,22 +531,7 @@ class Welcome extends CI_Controller {
             echo json_encode($result);
         else
             return $result;
-    }
-    
-    public function message() {
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();        
-        $datas = $this->input->post();
-        $result = $this->Gmail->send_client_contact_form($datas['name'], $datas['email'], $datas['message']);
-        if ($result['success'])
-            $result['message'] = 'Mensagem enviada. Agradecemos seu contato!!';
-        else             
-            $result['message'] = 'Falha evinvando mensagem. Tente depois.';
-        echo json_encode($result);
-    }
-    
-    
-    //-------AUXILIAR FUNCTIONS----------------------------------
+    }    
     
     public function generate_contract($client_id) {        
         $this->load->model('class/client_model');
@@ -788,44 +813,75 @@ class Welcome extends CI_Controller {
         echo json_encode($response);
     }
     
-    public function send_verification_sms($phone_number, $message){        
-        $url = 'https://api-messaging.movile.com/v1/send-bulk-sms Content-Type: application/json'; //url de la petición
-        $ch = curl_init($url); //inicializamos el objeto CUrl        
-        $jsonData = array(  //el json simulamos una petición de un login
-            'destination' => $phone_number,
-            'messageText' => $message,
-            'messageText' => $message,
-            'messageText' => $message,
-            'messageText' => $message,
-            'messageText' => $message,
-            'messageText' => $message,
-        );
-        $jsonDataEncoded = json_encode($jsonData); //creamos el json a partir de nuestro arreglo
-        curl_setopt($ch, CURLOPT_POST, 1);//Indicamos que nuestra petición sera Post       
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //para que la peticion no imprima el resultado como un echo comun, y podamos manipularlo
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);//Adjuntamos el json a nuestra petición
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));//Agregamos los encabezados del contenido
-
-        //ignorar el certificado, servidor de desarrollo
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($process, CURLOPT_SSL_VERIFYHOST, FALSE);
-        //Ejecutamos la petición
-        $result = curl_exec($ch);
-        var_dump($result);
-    }
-        
-    public function load_livre_system_config(){
-        $this->load->model('class/livre_system_config_model');
-        $result = $this->livre_system_config_model->livre_system_config_vars();
-        if ($result) {
-            foreach ($result as $var_info) {
-                $this->system_config->{$var_info["name"]} = $var_info["value"];
-            }            
-        } else {
-            die("Can't load system config vars...!!");
-        };
+    public function request_sms_code(){
+        $datas = $this->input->post();
+        if($datas['key']===$_SESSION['key']){
+            $phone_country_code = '+55';            
+            $phone_ddd = $datas['phone_ddd'];
+            $phone_number = $datas['phone_number'];
+            $random_code = rand(100000,999999);
+            $random_code = 123; /*eliminar*/
+            $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
+            if($response['success']){
+                $_SESSION['phone_values']['phone_ddd'] = $phone_ddd;
+                $_SESSION['phone_values']['phone_number'] = $phone_number;
+                $_SESSION['phone_values']['random_sms_code'] = $random_code;
+                $result['success']=true;
+            }else{
+                $result['success']=false;
+                $result['message']=$response['message'];
+            }
+        }else{
+            $result['success']=false;
+            $result['message']='Access violation';
+        }
+        echo json_encode($result);
     }
     
+    public function verify_sms_code(){
+        $a=$this->input->post()['input_sms_code_confirmation'];
+        $b=$_SESSION['phone_values']['random_sms_code'];
+        if($this->input->post()['key']===$_SESSION['key']){
+            if($this->input->post()['input_sms_code_confirmation']==$_SESSION['phone_values']['random_sms_code']){
+                $_SESSION['phone_values']['sms_verificated']=true;
+                $result['success']=true;                
+            }else{
+                $result['success']=false;
+                $result['message']='Código incorreto';
+            }
+        }else{
+            $result['success']=false;
+            $result['message']='Access violation';
+        }
+        echo json_encode($result);
+    }
+    
+    public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){
+        //com kaio_api
+        $response['success']=true;
+        return $response;
+    }
+
+//    public function send_verification_sms($phone_number, $message){
+//        $url = 'https://api-messaging.movile.com/v1/send-bulk-sms Content-Type: application/json'; //url de la petición
+//        $ch = curl_init($url); //inicializamos el objeto CUrl        
+//        $jsonData = array(  //el json simulamos una petición de un login
+//            'destination' => $phone_number,
+//        );
+//        $jsonDataEncoded = json_encode($jsonData); //creamos el json a partir de nuestro arreglo
+//        curl_setopt($ch, CURLOPT_POST, 1);//Indicamos que nuestra petición sera Post       
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //para que la peticion no imprima el resultado como un echo comun, y podamos manipularlo
+//        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);//Adjuntamos el json a nuestra petición
+//        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));//Agregamos los encabezados del contenido
+//
+//        //ignorar el certificado, servidor de desarrollo
+//        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+//        curl_setopt($process, CURLOPT_SSL_VERIFYHOST, FALSE);
+//        //Ejecutamos la petición
+//        $result = curl_exec($ch);
+//        var_dump($result);
+//    }
+        
     public function iugu_simples_sale(){
         require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
         Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
@@ -843,6 +899,5 @@ class Welcome extends CI_Controller {
             ]
         );
     }
-    
-    
+       
 }
