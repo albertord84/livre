@@ -6,6 +6,7 @@ class Welcome extends CI_Controller {
         parent::__construct();        
         /*$_SESSION
          ['ip']
+         ['pk']
          ['key']
          ['transaction_values']['frm_money_use_form']
          ['transaction_values']['utm_source']
@@ -14,11 +15,11 @@ class Welcome extends CI_Controller {
          ['transaction_values']['month_value']
          ['transaction_values']['solicited_value']
          ['transaction_values']['amount_months']
-         ['transaction_values']['success']         
-         ['phone_values']['random_sms_code']
-         ['phone_values']['phone_ddd']
-         ['phone_values']['phone_number']
-         ['phone_values']['sms_verificated']
+         ['transaction_values']['success']     
+         ['client_datas']['random_sms_code']
+         ['client_datas']['phone_ddd']
+         ['client_datas']['sms_verificated']
+         ['client_datas']['sms_verificated']
          */        
     }    
     
@@ -61,15 +62,29 @@ class Welcome extends CI_Controller {
     
     //-------PRINCIPALS FUNCTIONS--------------------------------
     public function is_possible_steep_1_for_this_client($datas) {
-        //1. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
+        //0. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
+        $_SESSION['is_possible_steep_1']=false;
         $this->is_ip_hacker();
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
-        $this->load->model('class/system_config');
+        $this->load->model('class/system_config');        
+        $clients = $this->client_model->get_client('cpf',$datas['cpf']);        
+        //1. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo
+        if($N=count($clients)){
+            $k=0;
+            for($i=1;$i<$N;$i++){
+                if($clients[$i]['solicited_date'] > $clients[$i-1]['solicited_date'])
+                    $k=$i;
+            }
+            if(time()-24*60*60 < $clients[$k]['solicited_date']){                
+                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
+                $result['success']=false;
+                return $result;
+            }
+        } 
         $GLOBALS['sistem_config'] = $this->system_config->load();
         //2. Analisar coerencia dos dados, exemplo:
-            //2.1 mesmo cpf com nome diferentes
-        $clients = $this->client_model->get_client('cpf',$datas['cpf']);
+            //2.1 mesmo cpf com nome diferentes        
         $nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
@@ -109,60 +124,7 @@ class Welcome extends CI_Controller {
             $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outros nomes. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
-        }
-        
-        //3. Analisar pedidos em aberto (OPEN) pelo nome, cpf, email e telefone e nao permitir nemhum em aberto
-        /*$clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::OPEN);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o CPF informado tem outro pedido ativo';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('name', $datas['name'], client_status::OPEN);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o nome informado tem outro pedido ativo';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('email', $datas['email'], client_status::OPEN);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o email informado tem outro pedido ativo';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('phone_number', $datas['phone_number'], client_status::OPEN);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o telefone informado tem outro pedido ativo';
-            $result['success']=false;
-            return $result;
-        }
-        
-        //4. Analisar pedidos em (PENDING) pelo nome, cpf, email e telefone e nao permitir nemhum em aberto
-        $clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::PENDING);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o CPF informado tem outro pedido pendente';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('name', $datas['name'], client_status::PENDING);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o nome informado tem outro pedido pendente';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('email', $datas['email'], client_status::PENDING);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o email informado tem outro pedido pendente';
-            $result['success']=false;
-            return $result;
-        }
-        $clients = $this->client_model->get_client('phone_number', $datas['phone_number'], client_status::PENDING);
-        if(count($clients)>0){
-            $result['message']='Solicitação não permitida devido que o telefone informado tem outro pedido pendente';
-            $result['success']=false;
-            return $result;
-        }*/
-                
+        }                
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::BEGINNER);
         if(count($clients)>1){ //caso imposivel, so por inconsistencia no sistema, po puede haber más de um beginner com o mesmo CPF
@@ -173,6 +135,7 @@ class Welcome extends CI_Controller {
         if(count($clients)==0){
             $result['action']='insert_beginner';
             $result['success']=true;
+            $_SESSION['is_possible_steep_1']=true;
             return $result;
         }        
         if(count($clients)==1){
@@ -180,6 +143,7 @@ class Welcome extends CI_Controller {
                 $result['id'] = $clients[0]['id'];
                 $result['success']=true;
                 $result['action']='update_beginner';
+                $_SESSION['is_possible_steep_1']=true;
                 return $result;
             }else{
                 $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
@@ -199,20 +163,24 @@ class Welcome extends CI_Controller {
         } else{
             $possible = $this->is_possible_steep_1_for_this_client($datas);
             if($possible['success']){
-                $datas['init_date']= time();
                 if($possible['action']==='insert_beginner'){
                     $datas['status_id']=  client_status::BEGINNER;
                     $id_row = $this->client_model->insert_db_steep_1($datas);
                 }
-                else
+                else{
                     $id_row = $this->client_model->update_db_steep_1($datas,$possible['id']);
+                    if($id_row)
+                        $id_row=$possible['id'];
+                }
                 if($id_row){
                     $result['success'] = true;
-                    $result['pk'] = $id_row;//$this->codify($id_row);
+                    $result['pk'] = $id_row;
+                    $_SESSION['pk'] = $id_row;
                 }
                 else{
                     $result['success'] = false;
                     $result['message'] = 'Erro interno no banco de dados';
+                    $_SESSION['is_possible_steep_1']=false;
                 }
             } else{
                 $result=$possible;
@@ -223,15 +191,19 @@ class Welcome extends CI_Controller {
         
     public function is_possible_steep_2_for_this_client($datas) {
         $this->load->model('class/client_model');
-        
+        $_SESSION['is_possible_steep_2']=false;        
         //0. Conferindo CPFs do passo 1 e passo 2
-        $client = $this->client_model->get_client('id', $datas['pk']);
+        /*$client = $this->client_model->get_client('id', $datas['pk']);
         if($datas['cpf']!==$client['cpf']){
             $result['message']='Operação não permitida. O CPF informado não coincide com o do Passo 1';
             $result['success']=false;
             return $result;
+        }*/        
+        if(!$_SESSION['is_possible_steep_1']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+            return $result;
         }
-        
         //1. Analisar cartões bloqueados e nomes de hackers
         $card_bloqued = ["5178057308185854","5178057258138580","4500040041538532", "4984537159084527"];
         $name_bloqued = [ "JUNIOR SUMA", "JUNIOR LIMA", "JUNIOR SANTOS","JUNIOR S SILVA", "FERNANDO ALVES", "LUCAS BORSATTO22", "LUCAS BORSATTO", "GABRIEL CASTELLI", "ANA SURIA", "HENDRYO SOUZA", "JOAO ANAKIM", "JUNIOR FRANCO", "FENANDO SOUZA", "CARLOS SANTOS", "DANIEL SOUZA", "SKYLE JUNIOR", "EDEDMUEDEDMUNDOEDEDMUEDEDMUNDO", "EDEMUNDO LOPPES", "JUNIOR KARLOS", "ZULMIRA FERNANDES", 'JUNIOR FREITAS'];
@@ -244,8 +216,7 @@ class Welcome extends CI_Controller {
             $result['message']='O nome no cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
-        }
-                
+        }                
         //2. Analisar se número de cartão está sendo usado em uma operação em aberto (acho que não é preciso)
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
@@ -259,11 +230,11 @@ class Welcome extends CI_Controller {
                 $cpfs[$credit_card['cpf']]=1;
         }
         if(count($cpfs)>1){
-            $result['message']='Sua solicitação foi negada.<BR> Foi detetada uma incoerencia entre o número do cartão e o CPF. Por favor, contate nosso atendimento';
+            $result['message']='Sua solicitação foi negada.<BR> Foi detectada uma incoerencia entre o número do cartão e o CPF. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
-            //3.2 Avaliando incoerencias entre credit_card_number e name
+        //3.2 Avaliando incoerencias entre credit_card_number e name
         $names=array();
         $names[$datas['cpf']]=1;
         foreach ($credit_cards as $credit_card) {
@@ -273,11 +244,11 @@ class Welcome extends CI_Controller {
                 $names[$credit_card['credit_card_name']]=1;
         }
         if(count($names)>1){
-            $result['message']='Sua solicitação foi negada.<BR> Foi detetada uma incoerencia entre o número e o nome do cartão. Por favor, contate nosso atendimento';
+            $result['message']='Sua solicitação foi negada.<BR> Foi detectada uma incoerencia entre o número e o nome do cartão. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
-            //3.3 Avaliando incoerencias entre credit_card_number e cvv
+        //3.3 Avaliando incoerencias entre credit_card_number e cvv
         $cvvs=array();
         $cvvs[$datas['cpf']]=1;
         foreach ($credit_cards as $credit_card) {
@@ -287,7 +258,7 @@ class Welcome extends CI_Controller {
                 $cvvs[$credit_card['credit_card_cvv']]=1;
         }
         if(count($cvvs)>1){
-            $result['message']='Sua solicitação foi negada.<BR> Foi detetada uma incoerencia entre o número e o nome do cartão. Por favor, contate nosso atendimento';
+            $result['message']='Sua solicitação foi negada.<BR> Foi detectada uma incoerencia entre o número e o nome do cartão. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
@@ -298,19 +269,20 @@ class Welcome extends CI_Controller {
             $result['action']='update_credit_card';
             $result['id']=$credit_cards[0]['id'];
             $result['success']=true;
+            $_SESSION['is_possible_steep_2']=true;
             return $result;            
         } else{
             $result['action']='insert_credit_card';
+            $_SESSION['is_possible_steep_2']=true;
             $result['success']=true;
             return $result;
-        }
-        
+        }        
     }
     
     public function insert_datas_steep_2() {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
-        $datas['pk'] = $this->decodify($datas['pk']);
+        $datas['pk'] = $_SESSION['pk'];
         if(!$this->validate_all_credit_card_datas($datas)){
             $result['success'] = false;
             $result['message'] = 'Erro nos dados fornecidos';
@@ -328,6 +300,7 @@ class Welcome extends CI_Controller {
                 else{
                     $result['success'] = false;
                     $result['message'] = 'Erro interno no banco de dados';
+                    $_SESSION['is_possible_steep_2']=false;
                 }
             } else{
                 $result=$possible;
@@ -340,26 +313,28 @@ class Welcome extends CI_Controller {
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
         
+        $_SESSION['is_possible_steep_3']=false;        
+        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'])){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+            return $result;
+        }        
         //0. Conferindo CPFs do passo 1 e passo 3
-        $client = $this->client_model->get_client('id', $datas['pk']);
-    
+        $client = $this->client_model->get_client('id', $datas['pk']);    
         $a=$datas['titular_cpf'];
         $b=$client[0]['cpf'];
-        $c=$a!==$b;
-        
+        $c=$a!==$b;        
         if($datas['titular_cpf']!==$client[0]['cpf']){
             $result['message']='Operação não permitida. CPF informado não coincide com o do Passo 1';
             $result['success']=false;
             return $result;
-        }
-        
+        }        
         //1. Conferindo nome do passo 1 e passo 3
         if($datas['titular_name']!==$client[0]['name']){
             $result['message']='Operação não permitida. O nome informado não coincide com o do Passo 1';
             $result['success']=false;
             return $result;
-        }
-        
+        }        
         //2. Analisar incoerencias conta-nome e conta-cpf
             //2.1 Incoerencia conta-nome
         $all_accounts = $this->client_model->get_account_banks($datas['bank'],$datas['agency'],$datas['account']);
@@ -390,35 +365,33 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        
-        //3. Ver se a conta informada esta sendo usada em outra transação em ACTIVE
-       /*$account_banks = $this->client_model->get_account_banks($datas['bank'], $datas['agency'], $datas['account']);        
-        foreach ($account_banks as $acc) {
-            $client = $this->client_model->get_client('id',$acc['client_id']);
-            if($client[0]['status_id']===client_status::OPEN || $client[0]['status_id']===client_status::PENDING){
-                $result['message']='Sua solicitação foi negada. A conta bancária informada está sendo usada em outro empréstimo anterior ';
-                $result['success']=false;
-                return $result;                
-            }
-        }*/
-        
         //4. Analisar se é para atualizar ou inserir nova linha
         $account_bank = $this->client_model->get_account_bank_by_client_id($datas['pk']);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
             $result['id']=$account_bank[0]['id'];
             $result['success']=true;
+            $_SESSION['is_possible_steep_3']=true;
             return $result;
         } else{
             $result['action']='insert_account_bank';
             $result['success']=true;
+            $_SESSION['is_possible_steep_3']=true;
             return $result;
         }
     }
     
     public function insert_datas_steep_3() {
+        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'])){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+            return $result;
+        }        
         $this->load->model('class/client_model');
         $datas = $this->input->post();
+        $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
+        $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
+        $datas['pk' ] =  $_SESSION['pk'];
         $verify_simulation = $this->verify_simulation($datas);
         if(!$this->validate_bank_datas($datas)){
             $result['success'] = false;
@@ -431,10 +404,7 @@ class Welcome extends CI_Controller {
                         $id_row = $this->client_model->insert_db_steep_3($datas);                    
                     else
                         $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
-                    if($id_row){
-                        
-                        
-                        
+                    if($id_row){                        
                         $result['success'] = true;
                         $result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
                         $result['month_value'] =(string) $verify_simulation['month_value'];
@@ -444,6 +414,7 @@ class Welcome extends CI_Controller {
                     }
                     else{
                         $result['success'] = false;
+                        $_SESSION['is_possible_steep_3']=false;
                         $result['message'] = 'Erro interno no banco de dados';
                     }
                 } else{
@@ -823,9 +794,9 @@ class Welcome extends CI_Controller {
             $random_code = 123; /*eliminar*/
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
-                $_SESSION['phone_values']['phone_ddd'] = $phone_ddd;
-                $_SESSION['phone_values']['phone_number'] = $phone_number;
-                $_SESSION['phone_values']['random_sms_code'] = $random_code;
+                $_SESSION['client_datas']['phone_ddd'] = $phone_ddd;
+                $_SESSION['client_datas']['sms_verificated'] = $phone_number;
+                $_SESSION['client_datas']['random_sms_code'] = $random_code;
                 $result['success']=true;
             }else{
                 $result['success']=false;
@@ -840,10 +811,10 @@ class Welcome extends CI_Controller {
     
     public function verify_sms_code(){
         $a=$this->input->post()['input_sms_code_confirmation'];
-        $b=$_SESSION['phone_values']['random_sms_code'];
+        $b=$_SESSION['client_datas']['random_sms_code'];
         if($this->input->post()['key']===$_SESSION['key']){
-            if($this->input->post()['input_sms_code_confirmation']==$_SESSION['phone_values']['random_sms_code']){
-                $_SESSION['phone_values']['sms_verificated']=true;
+            if($this->input->post()['input_sms_code_confirmation']==$_SESSION['client_datas']['random_sms_code']){
+                $_SESSION['client_datas']['sms_verificated']=true;
                 $result['success']=true;                
             }else{
                 $result['success']=false;

@@ -578,14 +578,14 @@ $(document).ready(function () {
         $('#credit_card_number').val('4415241617725370');
         $('#credit_card_cvv').val('123');
         $('#credit_card_name').val('JOSE R GONZALEZ');
-        $('#credit_card_exp_month').val('01');
-        $('#credit_card_exp_year').val('2020');
+        $('#credit_card_exp_month').val('08');
+        $('#credit_card_exp_year').val('2026');
         
         $('#bank').val('001');
         $('#agency').val('44598');
         $('#account_type').val('CC');
         $('#account').val('125490');
-        $('#dig').val('123');
+        $('#dig').val('3');
     }
 
 }); 

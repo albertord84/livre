@@ -30,6 +30,10 @@
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
         </script>
+        
+        <?php include_once "pixel_facebook.php";?>
+        <?php include_once "pixel_gtags.php";?>
+        <?php include_once "pixel_adwords.php";?>
 </head>
 <body>
     <header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs text-center">

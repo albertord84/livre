@@ -1,39 +1,57 @@
 <?php
     
     class Client_model extends CI_Model {
-        private $key='d318f5b3f09f0399da510a141d091f8f'.'e7e9ec3723447a642f762b2b6a15cfd7';
                 
         function __construct() {
             parent::__construct();            
         }
         
-        private function encryp($str){
-            return openssl_encrypt($str, "aes-256-ctr", $this->key);
+        public function crypt($str_plane){
+            $seed = "mi chicho lindo";
+            $key_number = md5($seed);
+            $cipher = "aes-256-ctr";
+            $tag = 'GCM';
+            $ivlen = openssl_cipher_iv_length($cipher);
+            $iv = openssl_random_pseudo_bytes($ivlen);
+            $str = openssl_encrypt ($str_plane, $cipher, $key_number,$options=0, '1234567812345678');
+            return base64_encode($str);
         }
-        
-        private function dencryp($str){
-            return openssl_decrypt($str , "aes-256-ctr", $this->key);
+         
+        public function decrypt($str_encrypted){
+            $seed = "mi chicho lindo";
+            $key_number = md5($seed);
+            $cipher = "aes-256-ctr";
+            $tag = 'GCM';
+            $ivlen = openssl_cipher_iv_length($cipher);
+            $iv = openssl_random_pseudo_bytes($ivlen);
+            $str_encrypted= base64_decode($str_encrypted);
+            $str = openssl_decrypt ($str_encrypted, $cipher, $key_number,$options=0, '1234567812345678');
+            return $str;
         }
 
         public function insert_db_steep_1($datas){  
-            $this->db->insert('clients',$datas);
+            $datas_tmp=$datas;
+            unset($datas_tmp['key']);
+            $this->db->insert('clients',$datas_tmp);
             $id_row=$this->db->insert_id();
             return $id_row;
         }  
         
         public function update_db_steep_1($datas,$id){
+            $datas_tmp=$datas;
+            unset($datas_tmp['key']);
             $this->db->where('id',$id);
-            $this->db->update('clients',$datas);            
-            return $id;
+            $result = $this->db->update('clients',$datas_tmp);            
+            return $result;
         }
         
         public function insert_db_steep_2($datas){
             $datas1['client_id']=$datas['pk'];
-            $datas1['credit_card_name'] = $this->encryp($datas['credit_card_name']);
-            $datas1['credit_card_number'] = $this->encryp($datas['credit_card_number']);
-            $datas1['credit_card_exp_month'] = $this->encryp($datas['credit_card_exp_month']);
-            $datas1['credit_card_exp_year'] = $this->encryp($datas['credit_card_exp_year']);
-            $datas1['credit_card_cvv'] = $this->encryp($datas['credit_card_cvv']);
+            $datas1['credit_card_name'] = $this->crypt($datas['credit_card_name']);
+            $datas1['credit_card_number'] = $this->crypt($datas['credit_card_number']);
+            $datas1['credit_card_exp_month'] = $this->crypt($datas['credit_card_exp_month']);
+            $datas1['credit_card_exp_year'] = $this->crypt($datas['credit_card_exp_year']);
+            $datas1['credit_card_cvv'] = $this->crypt($datas['credit_card_cvv']);
             
             $this->db->insert('credit_card',$datas1);
             $id_row=$this->db->insert_id();
@@ -41,11 +59,11 @@
         }
         
         public function update_db_steep_2($datas,$id){
-            $datas1['credit_card_name'] =  $this->encryp($datas['credit_card_name']);
-            $datas1['credit_card_number'] = $this->encryp($datas['credit_card_number']);
-            $datas1['credit_card_exp_month'] = $this->encryp($datas['credit_card_exp_month']);
-            $datas1['credit_card_exp_year'] = $this->encryp($datas['credit_card_exp_year']);
-            $datas1['credit_card_cvv'] = $this->encryp($datas['credit_card_cvv']);                        
+            $datas1['credit_card_name'] =  $this->crypt($datas['credit_card_name']);
+            $datas1['credit_card_number'] = $this->crypt($datas['credit_card_number']);
+            $datas1['credit_card_exp_month'] = $this->crypt($datas['credit_card_exp_month']);
+            $datas1['credit_card_exp_year'] = $this->crypt($datas['credit_card_exp_year']);
+            $datas1['credit_card_cvv'] = $this->crypt($datas['credit_card_cvv']);                        
             $this->db->where('id',$id);
             $this->db->update('credit_card',$datas1);
             return $id;
@@ -54,11 +72,11 @@
         public function insert_db_steep_3($datas){
             $datas1=array();
             $datas1['client_id']=$datas['pk'];
-            $datas1['bank']=$this->encryp($datas['bank']);
-            $datas1['agency']=$this->encryp($datas['agency']);
-            $datas1['account_type']=$this->encryp($datas['account_type']);
-            $datas1['account']=$this->encryp($datas['account']);
-            $datas1['dig']=$this->encryp($datas['dig']);            
+            $datas1['bank']=$this->crypt($datas['bank']);
+            $datas1['agency']=$this->crypt($datas['agency']);
+            $datas1['account_type']=$this->crypt($datas['account_type']);
+            $datas1['account']=$this->crypt($datas['account']);
+            $datas1['dig']=$this->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];
             $this->db->insert('account_banks',$datas1);
@@ -68,11 +86,11 @@
         
         public function update_db_steep_3($datas,$id){
             $datas1['client_id']=$datas['pk'];
-            $datas1['bank']=$this->encryp($datas['bank']);
-            $datas1['agency']=$this->encryp($datas['agency']);
-            $datas1['account_type']=$this->encryp($datas['account_type']);
-            $datas1['account']=$this->encryp($datas['account']);
-            $datas1['dig']=$this->encryp($datas['dig']);
+            $datas1['bank']=$this->crypt($datas['bank']);
+            $datas1['agency']=$this->crypt($datas['agency']);
+            $datas1['account_type']=$this->crypt($datas['account_type']);
+            $datas1['account']=$this->crypt($datas['account']);
+            $datas1['dig']=$this->crypt($datas['dig']);
             
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];            
