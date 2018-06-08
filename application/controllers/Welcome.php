@@ -976,4 +976,97 @@ class Welcome extends CI_Controller {
             }  
         }  
     } 
+    
+    function upload_file(){
+        $this->load->model('class/client_model');
+        //print_r($_FILES);
+        if($_SESSION['pk']){
+            $client = $this->client_model->get_client('id', $_SESSION['pk']);                
+            $cpf = $client[0]['cpf'];
+            if(!$_SESSION['time_start'])
+                $_SESSION['time_start'] = time();
+            $now = $_SESSION['time_start'];
+            $path_name = "assets/img_users/".$cpf."_".$now;
+            
+            if(is_dir($path_name) || mkdir($path_name, 0755)){
+            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 200000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $filename = $label.$_FILES["file"]["name"];
+                            /*echo "Upload: " . $_FILES["file"]["name"] . "<br>";
+                            echo "Type: " . $_FILES["file"]["type"] . "<br>";
+                            echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
+                            echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";*/                    
+                            if (file_exists($path_name."/". $filename)) {
+                                $result['message'] .= $filename . " já foi carregado. ";
+                            } else {
+                                move_uploaded_file($_FILES["file"]["tmp_name"],
+                                $path_name."/". $filename);
+                                $result['message'] = "Guardado " . $filename;
+                                $result['success'] = true;
+                            }
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel criar pasta dos arquivos";
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }    
+        echo json_encode($result);
+    }    
 }
