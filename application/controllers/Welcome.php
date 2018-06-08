@@ -986,7 +986,7 @@ class Welcome extends CI_Controller {
             if(!$_SESSION['time_start'])
                 $_SESSION['time_start'] = time();
             $now = $_SESSION['time_start'];
-            $path_name = "assets/img_users/".$cpf."_".$now;
+            $path_name = "assets/data_users/".$cpf."_".$now;
             
             if(is_dir($path_name) || mkdir($path_name, 0755)){
             
