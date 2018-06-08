@@ -498,6 +498,7 @@
                                     <span class="ft-size14 fw-600 fleft100 m-top20">COMPROVANTES</span>
                                     <small class="fleft100 fw-600">Clique para fazer upload.</small>
                                 </div>
+                                
                                 <h5 class="fleft100 text-left fw-600 pd-lr5 m-top20">Cartão</h5>
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="cartao">
@@ -569,15 +570,11 @@
                             <div class="fleft100 pd-tb5 pd-lr20 text-left">
                                 <span class="fleft100 m-top15">
                                     <small>Valor solicitado:</small>
-                                    <h2 class="fw-100 cl-green">R$ <b class="fw-500">5.000,00</b></h2>
-                                </span>
-                                <span class="fleft100 m-top15">
-                                    <small>Valor solicitado:</small>
-                                    <h4 class="fleft100 fw-300">R$ 2.400,00</h4>
-                                </span>
+                                    <h2 class="fw-100 cl-green">R$ <?php echo $solicited_value;?> <b class="fw-500"></b></h2>
+                                </span>                                
                                 <span class="fleft100 m-top15">
                                     <small>Prazo para pagamento:</small>
-                                    <h4 class="fleft100 fw-300">12 meses</h4>
+                                    <h4 class="fleft100 fw-300"><?php echo $amount_months;?> meses</h4>
                                 </span>
                                 <span class="fleft100 m-top15">
                                     <small>Taxa de juros ao mês:</small>
@@ -585,7 +582,7 @@
                                 </span>
                                 <span class="fleft100 m-top15">
                                     <small>Custo Efetivo Total:</small>
-                                    <h4 class="fleft100 fw-300">R$ 6.225,00</h4>
+                                    <h4 class="fleft100 fw-300">R$ <?php echo $total_cust_value;?></h4>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
                                     <small class="ft-size10">IOF:</small>

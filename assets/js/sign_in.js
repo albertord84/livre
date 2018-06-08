@@ -143,8 +143,8 @@ $(document).ready(function () {
                             $('li[id=li_credit_card_name]').text($('#credit_card_name').val());
                             $('li[id=li_credit_card_number]').text($('#credit_card_number').val());
                             $('li[id=li_credit_card_cvv]').text($('#credit_card_cvv').val());
-                            $('li[id=li_credit_card_exp_month]').text($('#credit_card_exp_month').val());
-                            $('li[id=li_credit_card_exp_year]').text($('#credit_card_exp_year').val());
+                            $('li[id=li_credit_card_exp_month]').text( $('#credit_card_exp_month').val()+' / '+$('#credit_card_exp_year').val() );
+                            //$('li[id=li_credit_card_exp_year]').text();
                             $('.check2').toggle("hide");
                             $('.check3').toggle("slow");
                         } else {
@@ -202,20 +202,10 @@ $(document).ready(function () {
                         $('li[id=li_bank_name]').text($('#bank').val());
                         $('li[id=li_bank_angency]').text($('#agency').val());
                         $('li[id=li_bank_account_type]').text($('#account_type').val());
-                        $('li[id=li_bank_account]').text($('#account').val());
-                        $('li[id=li_bank_dig]').text($('#dig').val());
+                        $('li[id=li_bank_account]').text($('#account').val()+'-'+$('#dig').val());
+                        //$('li[id=li_bank_dig]').text();
                         $('li[id=li_bank_account_name]').text($('#titular_name').val());
-                        $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());                        
-                        /*var total_cust_value = response['total_cust_value']; 
-                        total_cust_value = total_cust_value.replace('.',',');
-                        var permited_value = response['permited_value'];
-                        permited_value = permited_value.replace('.',',');
-                        var solicited_value_tmp = response['solicited_value'];
-                        solicited_value_tmp = solicited_value_tmp.replace('.',',');                        
-                        $('#total_cust_value').text('R$ '+total_cust_value);
-                        $('#permited_value').text('R$ '+permited_value);
-                        $('#amount_months').text(response['amount_months']+' meses');
-                        $('#solicited_value').text('R$ '+solicited_value_tmp);  */                     
+                        $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());   
                         $('.check3').toggle("hide");
                         $('.check4').toggle("slow");
                     } else {
@@ -558,6 +548,29 @@ $(document).ready(function () {
             });
         } else{
             modal_alert_message('CEP inválido');
+        }
+    });
+        
+    $("#cartao").change(function (evt) {
+        var files = evt.target.files; 
+        f= files[0];
+        if(!(f==undefined)){
+            if(    f.name.match(".*\.jpg")   || f.name.match(".*\.png") 
+                || f.name.match(".*\.jpeg" ) || f.name.match(".*\.bmp")
+                || f.name.match(".*\.tif")) {
+               var reader = new FileReader();
+               reader.onload = function(evt) { 
+                  try {
+                  myimage.src=evt.target.result;
+                      //...
+                   } catch (err) {
+                      //...
+                   }
+               };
+            } else{
+                alert('no selecciono una imagen');
+            }
+            reader.readAsDataURL(f); 
         }
     });
 

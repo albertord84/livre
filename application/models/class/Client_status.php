@@ -3,9 +3,11 @@
 class client_status {
 
     const BEGINNER= 1;
-    const OPEN = 2;
-    const ENDED = 3;
-    const PENDING = 4;
+    const PENDING = 2;
+    const APPROVED = 3;
+    const TRANSFERRED = 4;
+    const WRONG_TRANSFERRED = 5;
+    const DENIED = 6;
     
 
     static public function Defines($const) {

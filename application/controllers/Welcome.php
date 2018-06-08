@@ -12,7 +12,6 @@ class Welcome extends CI_Controller {
          ['transaction_values']['utm_source']
          ['transaction_values']['month_value'] 
          ['transaction_values']['total_cust_value']
-         ['transaction_values']['month_value']
          ['transaction_values']['solicited_value']
          ['transaction_values']['amount_months']
          ['transaction_values']['success']     
@@ -24,6 +23,10 @@ class Welcome extends CI_Controller {
     }    
     
     //-------SHOW VIEWS FUNCTIONS--------------------------------    
+    public function test() {
+        echo base_url();
+    }
+    
     public function index() {
         $this->set_session();        
         $params['key']=$_SESSION['key'];
@@ -35,6 +38,10 @@ class Welcome extends CI_Controller {
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
+        $params['total_cust_value']  = str_replace('.', ',', $_SESSION['transaction_values']['total_cust_value']); 
+        $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
+        $params['amount_months']  = $_SESSION['transaction_values']['amount_months']; 
+        $params['month_value']  = $_SESSION['transaction_values']['month_value']; 
         $this->load->view('checkout',$params);
         $this->load->view('inc/footer');
     }
@@ -62,29 +69,46 @@ class Welcome extends CI_Controller {
     
     //-------PRINCIPALS FUNCTIONS--------------------------------
     public function is_possible_steep_1_for_this_client($datas) {
-        //0. Analisar se IP tem sido marcado como hacker ou se nome, cpf, email e telefone aparecem desde mais de três IPs
-        $_SESSION['is_possible_steep_1']=false;
-        $this->is_ip_hacker();
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
-        $this->load->model('class/system_config');        
-        $clients = $this->client_model->get_client('cpf',$datas['cpf']);        
-        //1. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $_SESSION['is_possible_steep_1']=false;
+        
+        //1. Analisar se IP tem sido marcado como hacker
+        $this->is_ip_hacker();
+        $clients = $this->client_model->get_client('cpf',$datas['cpf']);
+        //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
-            $k=0;
-            for($i=1;$i<$N;$i++){
-                if($clients[$i]['solicited_date'] > $clients[$i-1]['solicited_date'])
-                    $k=$i;
-            }
-            if(time()-24*60*60 < $clients[$k]['solicited_date']){                
-                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
+            if($clients[$N-1]['status_id'] == client_status::DENIED){                
+                $result['message']='Você ja teve um pedido anteriomnete que foi negado. Por favor, contate nosso atendimento';
+                $result['success']=false;
+                return $result;
+            }else
+            if($clients[$N-1]['status_id'] == client_status::APPROVED){                
+                $result['message']='Você tem um pedido que foi aprovado e no momento está sendo feita a transferência para sua conta';
+                $result['success']=false;
+                return $result;
+            }else
+            if($clients[$N-1]['status_id'] == client_status::PENDING){                
+                $result['message']='Você fez um pedido recentemente, aguarde ser analisado. Casso dúvidas, contate nosso atendimento';
+                $result['success']=false;
+                return $result;
+            }else
+            if($clients[$N-1]['status_id'] == client_status::WRONG_TRANSFERRED){                
+                $result['message']='Seu pedido foi aprovado, mas ocorreu um erro na transferência. Contate nosso atendimento';
                 $result['success']=false;
                 return $result;
             }
-        } 
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        //2. Analisar coerencia dos dados, exemplo:
-            //2.1 mesmo cpf com nome diferentes        
+        }        
+        //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo        
+        if(time()- $clients[$N-1]['solicited_date'] < 24*60*60){
+            $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
+            $result['success']=false;
+            return $result;
+        }        
+        //4. Analisar coerencia dos dados, exemplo:
+            //4.1 mesmo cpf com nome diferentes        
         $nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
@@ -98,7 +122,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-            //2.2 mesmo telefone com nome diferentes
+            //4.2 mesmo telefone com nome diferentes
         $clients = $this->client_model->get_client('phone_number',$datas['phone_number']);
         $nomes=array();
         foreach ($clients as $client) {
@@ -112,7 +136,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-            //2.3 mesmo telefone com diferentes cpf
+            //4.3 mesmo telefone com diferentes cpf
         $cpfs=array();
         foreach($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
@@ -131,13 +155,13 @@ class Welcome extends CI_Controller {
             $result['message']='Solicitação não permitida devido a inconsistência no sistema. Informe ao nossso atendimento';
             $result['success']=false;
             return $result;
-        } 
+        }
         if(count($clients)==0){
             $result['action']='insert_beginner';
             $result['success']=true;
             $_SESSION['is_possible_steep_1']=true;
             return $result;
-        }        
+        }
         if(count($clients)==1){
             if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
                 $result['id'] = $clients[0]['id'];
@@ -154,57 +178,56 @@ class Welcome extends CI_Controller {
     }
             
     public function insert_datas_steep_1(){
-        $this->load->model('class/client_model');
         $datas = $this->input->post();
-        $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
-        if(!$this->validate_all_general_user_datas($datas)){
-            $result['success'] = false;
-            $result['message'] = 'Erro nos dados fornecidos';
-        } else{
-            $possible = $this->is_possible_steep_1_for_this_client($datas);
-            if($possible['success']){
-                if($possible['action']==='insert_beginner'){
-                    $datas['status_id']=  client_status::BEGINNER;
-                    $id_row = $this->client_model->insert_db_steep_1($datas);
-                }
-                else{
-                    $id_row = $this->client_model->update_db_steep_1($datas,$possible['id']);
-                    if($id_row)
-                        $id_row=$possible['id'];
-                }
-                if($id_row){
-                    $result['success'] = true;
-                    $result['pk'] = $id_row;
-                    $_SESSION['pk'] = $id_row;
-                }
-                else{
-                    $result['success'] = false;
-                    $result['message'] = 'Erro interno no banco de dados';
-                    $_SESSION['is_possible_steep_1']=false;
-                }
+        if($datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/client_model');            
+            $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
+            if(!$this->validate_all_general_user_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados fornecidos';
             } else{
-                $result=$possible;
-            }
+                $possible = $this->is_possible_steep_1_for_this_client($datas);
+                if(!$_SESSION['is_possible_steep_1']){
+                    $result['message']= $possible['message'];
+                    $result['success']=false;
+                } else
+                if($possible['success']){
+                    if($possible['action']==='insert_beginner'){
+                        $datas['status_id']=  client_status::BEGINNER;
+                        $id_row = $this->client_model->insert_db_steep_1($datas);
+                    }
+                    else{
+                        $id_row = $this->client_model->update_db_steep_1($datas,$possible['id']);
+                        if($id_row)
+                            $id_row=$possible['id'];
+                    }
+                    if($id_row){
+                        $result['success'] = true;
+                        $result['pk'] = $id_row;
+                        $_SESSION['pk'] = $id_row;
+                    }
+                    else{
+                        $result['success'] = false;
+                        $result['message'] = 'Erro interno no banco de dados';
+                        $_SESSION['is_possible_steep_1']=false;
+                    }
+                } else{
+                    $result=$possible;
+                }
+            }            
         }
         echo json_encode($result);
     }
         
-    public function is_possible_steep_2_for_this_client($datas) {
+    public function is_possible_steep_2_for_this_client($datas) {        
         $this->load->model('class/client_model');
-        $_SESSION['is_possible_steep_2']=false;        
-        //0. Conferindo CPFs do passo 1 e passo 2
-        /*$client = $this->client_model->get_client('id', $datas['pk']);
-        if($datas['cpf']!==$client['cpf']){
-            $result['message']='Operação não permitida. O CPF informado não coincide com o do Passo 1';
-            $result['success']=false;
-            return $result;
-        }*/        
-        if(!$_SESSION['is_possible_steep_1']){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-            return $result;
-        }
-        //1. Analisar cartões bloqueados e nomes de hackers
+        $_SESSION['is_possible_steep_2']=false;
+        //1. Analisar se IP tem sido marcado como hacker
+        $this->is_ip_hacker();
+        //2. Analisar cartões bloqueados e nomes de hackers
         $card_bloqued = ["5178057308185854","5178057258138580","4500040041538532", "4984537159084527"];
         $name_bloqued = [ "JUNIOR SUMA", "JUNIOR LIMA", "JUNIOR SANTOS","JUNIOR S SILVA", "FERNANDO ALVES", "LUCAS BORSATTO22", "LUCAS BORSATTO", "GABRIEL CASTELLI", "ANA SURIA", "HENDRYO SOUZA", "JOAO ANAKIM", "JUNIOR FRANCO", "FENANDO SOUZA", "CARLOS SANTOS", "DANIEL SOUZA", "SKYLE JUNIOR", "EDEDMUEDEDMUNDOEDEDMUEDEDMUNDO", "EDEMUNDO LOPPES", "JUNIOR KARLOS", "ZULMIRA FERNANDES", 'JUNIOR FREITAS'];
         if(in_array($datas['credit_card_number'],$card_bloqued)){
@@ -216,8 +239,8 @@ class Welcome extends CI_Controller {
             $result['message']='O nome no cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
-        }                
-        //2. Analisar se número de cartão está sendo usado em uma operação em aberto (acho que não é preciso)
+        }
+        
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -280,45 +303,48 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_2() {
-        $this->load->model('class/client_model');
         $datas = $this->input->post();
-        $datas['pk'] = $_SESSION['pk'];
-        if(!$this->validate_all_credit_card_datas($datas)){
-            $result['success'] = false;
-            $result['message'] = 'Erro nos dados fornecidos';
-        } else{
-            $possible = $this->is_possible_steep_2_for_this_client($datas);
-            if($possible['success']){
-                if($possible['action']==='insert_credit_card'){
-                    $id_row = $this->client_model->insert_db_steep_2($datas);
-                }
-                else
-                    $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
-                if($id_row){
-                    $result['success'] = true;
-                }
-                else{
-                    $result['success'] = false;
-                    $result['message'] = 'Erro interno no banco de dados';
-                    $_SESSION['is_possible_steep_2']=false;
-                }
+        if(!$_SESSION['is_possible_steep_1'] || $datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/client_model');            
+            $datas['pk'] = $_SESSION['pk'];
+            if(!$this->validate_all_credit_card_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados fornecidos';
             } else{
-                $result=$possible;
+                $possible = $this->is_possible_steep_2_for_this_client($datas);
+                if(!$_SESSION['is_possible_steep_2']){
+                    $result['message']= $possible['message'];
+                    $result['success']=false;
+                } else
+                if($possible['success']){
+                    if($possible['action']==='insert_credit_card'){
+                        $id_row = $this->client_model->insert_db_steep_2($datas);
+                    }
+                    else
+                        $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
+                    if($id_row){
+                        $result['success'] = true;
+                    }
+                    else{
+                        $result['success'] = false;
+                        $result['message'] = 'Erro interno no banco de dados';
+                        $_SESSION['is_possible_steep_2']=false;
+                    }
+                } else{
+                    $result=$possible;
+                }
             }
         }
         echo json_encode($result);
     }
     
     public function is_possible_steep_3_for_this_client($datas) {
+        $_SESSION['is_possible_steep_3']=false;       
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
-        
-        $_SESSION['is_possible_steep_3']=false;        
-        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'])){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-            return $result;
-        }        
         //0. Conferindo CPFs do passo 1 e passo 3
         $client = $this->client_model->get_client('id', $datas['pk']);    
         $a=$datas['titular_cpf'];
@@ -382,23 +408,28 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_3() {
-        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'])){
+        $datas = $this->input->post();
+        if(!$_SESSION['is_possible_steep_1'] || !$_SESSION['is_possible_steep_2'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
-            return $result;
-        }        
-        $this->load->model('class/client_model');
-        $datas = $this->input->post();
-        $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
-        $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
-        $datas['pk' ] =  $_SESSION['pk'];
-        $verify_simulation = $this->verify_simulation($datas);
-        if(!$this->validate_bank_datas($datas)){
-            $result['success'] = false;
-            $result['message'] = 'Erro nos dados bancários fornecidos';
-        } else
+        }else{
+            
+            $this->load->model('class/client_model');
+            
+            $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
+            $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
+            $datas['pk' ] =  $_SESSION['pk'];
+            $verify_simulation = $this->verify_simulation($datas);
+            if(!$this->validate_bank_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados bancários fornecidos';
+            } else
             {
                 $possible = $this->is_possible_steep_3_for_this_client($datas);
+                if(!$_SESSION['is_possible_steep_3']){
+                    $result['message']= $possible['message'];
+                    $result['success']=false;
+                } else
                 if($possible['success'] && $verify_simulation['success']){
                     if($possible['action']==='insert_account_bank')
                         $id_row = $this->client_model->insert_db_steep_3($datas);                    
@@ -406,11 +437,11 @@ class Welcome extends CI_Controller {
                         $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
                     if($id_row){                        
                         $result['success'] = true;
-                        $result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
+                        /*$result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
                         $result['month_value'] =(string) $verify_simulation['month_value'];
                         $result['permited_value'] = (string)$verify_simulation['permited_value'];
                         $result['amount_months'] = (string)$datas['amount_months'];
-                        $result['limit_value'] = (string)$datas['limit_value'];
+                        $result['limit_value'] = (string)$datas['limit_value'];*/
                     }
                     else{
                         $result['success'] = false;
@@ -421,11 +452,18 @@ class Welcome extends CI_Controller {
                     $result=$possible;
                 }
             }
+        }
         echo json_encode($result);
     }
     
     public function insert_datas_steep_4() {
-        $result['success'] = true;
+        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] || $datas['key']!==$_SESSION['key'])){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $result['success'] = true;
+            $_SESSION['is_possible_steep_4'] =true;
+        }
         echo json_encode($result);
     }
     
@@ -907,5 +945,35 @@ class Welcome extends CI_Controller {
             ]
         );
     }
-       
+    
+    public function upload_imaage(){
+        if ($_FILES['file']['error'] >0){
+            $result['success']=false;
+            $result['message']='Error: '.$_FILES['file']['error'];
+        } else
+        if(move_uploaded_file($_FILES['file']['tmp_name'], base_url().'assets/user_images/' . $_FILES['file']['name']))
+        {
+            $result['success']=true;
+            $result['message']='FOto subida';
+        }else{
+            $result['success']=false;
+            $result['message']='Error moviendo la imagen';
+        }
+        echo json_encode($result);
+    }
+    
+    function ajax_upload(){  
+        if(isset($_FILES["image_file"]["name"])){  
+            $config['upload_path'] = './upload/';  
+            $config['allowed_types'] = 'jpg|jpeg|png|gif';  
+            $this->load->library('upload', $config);  
+            if(!$this->upload->do_upload('image_file')){  
+                echo $this->upload->display_errors();  
+            }  
+            else {  
+                $data = $this->upload->data();  
+                echo '<img src="'.base_url().'upload/'.$data["file_name"].'" width="300" height="225" class="img-thumbnail" />';  
+            }  
+        }  
+    } 
 }
