@@ -830,6 +830,7 @@ class Welcome extends CI_Controller {
             $phone_number = $datas['phone_number'];
             $random_code = rand(100000,999999);
             $random_code = 123; /*eliminar*/
+            $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
                 $_SESSION['client_datas']['phone_ddd'] = $phone_ddd;
@@ -866,8 +867,44 @@ class Welcome extends CI_Controller {
     }
     
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){
+        $response['success'] = TRUE;        
+        return $response;
         //com kaio_api
-        $response['success']=true;
+        $full_number = "552182856319";//$phone_country_code.$phone_ddd.$phone_number;
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api-messaging.movile.com/v1/send-sms",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
+          CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Code '.$message.'"}',
+          CURLOPT_HTTPHEADER => array(
+            "authenticationtoken: D8UvJQd-bb5sXzA-vnJWr13qmMBTQWomtj1oiysq",
+            "username: seiva",
+            "content-type: application/json"
+          ),
+        ));
+
+        $response_curl = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        
+        $response = [];
+        if ($err) {
+          //echo "cURL Error #:" . $err;
+            $response['success'] = FALSE;
+            $response['message'] = $err;
+        } else {
+            $response['success'] = TRUE;
+        }        
+        
         return $response;
     }
 
