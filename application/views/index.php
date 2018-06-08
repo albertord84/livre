@@ -36,6 +36,8 @@
         <?php include_once "pixel_adwords.php";?>
 </head>
 <body>
+    
+    
     <header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs text-center">
         <div class="container">
             <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
