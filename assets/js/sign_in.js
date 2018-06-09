@@ -83,6 +83,46 @@ $(document).ready(function () {
         $('.check1').toggle("slow");
     });
     
+    $("#btn_steep_2_next_new").click(function () {  
+        Iugu.setAccountID("80BF7285A577436483EE04E0A80B63F4");
+        Iugu.setTestMode(true);
+        alert("solicitando token");
+        var data = JSON.stringify({
+            "account_id": "80BF7285A577436483EE04E0A80B63F4",
+            "method": "credit_card",
+            "test": "true",
+            "data": {
+              "number": "378282246310005",
+              "verification_value": "1234",
+              "first_name": "JORGE",
+              "last_name": "MORENO",
+              "month": "06",
+              "year": "2020"
+            }
+          });
+          
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+          }
+        });
+
+        xhr.open("POST", "https://api.iugu.com/v1/payment_token");
+
+        xhr.send(data);
+        
+        /*Iugu.createPaymentToken(this, function(response) {
+            if (response.errors) {
+                    alert("Erro salvando cartão");
+            } else {
+                    alert("Token criado:" + response.id);
+            }	
+        });*/
+    });
+    
     $("#btn_steep_2_next").click(function () {        
         if(        ($('#credit_card_name').val()).toUpperCase()==='VISA' 
                 || ($('#credit_card_name').val()).toUpperCase()==='MASTERCARD' 
@@ -608,7 +648,7 @@ $(document).ready(function () {
         // maby check size or type here with upload.getSize() and upload.getType()
 
         // execute upload
-        upload.doUpload();
+        upload.doUpload(0);
         //alert("file upload");
     });    
     
@@ -619,7 +659,7 @@ $(document).ready(function () {
         // maby check size or type here with upload.getSize() and upload.getType()
 
         // execute upload
-        upload.doUpload();
+        upload.doUpload(1);
         //alert("file upload");
     });
     
@@ -630,7 +670,7 @@ $(document).ready(function () {
         // maby check size or type here with upload.getSize() and upload.getType()
 
         // execute upload
-        upload.doUpload();
+        upload.doUpload(2);
         //alert("file upload");
     });
     
@@ -641,7 +681,7 @@ $(document).ready(function () {
         // maby check size or type here with upload.getSize() and upload.getType()
 
         // execute upload
-        upload.doUpload();
+        upload.doUpload(3);
         //alert("file upload");
     });
     
@@ -659,13 +699,15 @@ $(document).ready(function () {
         return this.file.name;
     };
     
-    Upload.prototype.doUpload = function () {
+    Upload.prototype.doUpload = function (id) {
         var that = this;
         var formData = new FormData();
 
         // add assoc key values, this will be posts values
         formData.append("file", this.file, this.getName());
-        formData.append("upload_file", true);
+        formData.append("upload_file", true);        
+        formData.append("id", id);        
+        formData.append("key", key);        
 
         $.ajax({
             type: "POST",

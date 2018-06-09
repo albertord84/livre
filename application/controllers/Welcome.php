@@ -9,6 +9,10 @@ class Welcome extends CI_Controller {
          ['pk']
          ['key']
          ['time_start']
+         ['front_credit_card']
+         ['selfie_with_credit_card']
+         ['open_identity']
+         ['selfie_with_identity']
          ['transaction_values']['frm_money_use_form']
          ['transaction_values']['utm_source']
          ['transaction_values']['month_value'] 
@@ -829,7 +833,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999);            
+            $random_code = rand(100000,999999); $random_code = 123;            
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -868,6 +872,9 @@ class Welcome extends CI_Controller {
     
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
+        $response['success'] = TRUE;
+        return $response;
+        
         $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
         $curl = curl_init();
@@ -925,13 +932,15 @@ class Welcome extends CI_Controller {
         
     function upload_file(){
         $this->load->model('class/client_model');
-        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] || $datas['key']!==$_SESSION['key'])){
+        $datas = $this->input->post();
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             $client = $this->client_model->get_client('id', $_SESSION['pk']);                
             $cpf = $client[0]['cpf'];
             if(!$_SESSION['time_start'])
                 $_SESSION['time_start'] = time();
             $now = $_SESSION['time_start'];
-            $path_name = "assets/data_users/".$cpf."_".$now;            
+            $path_name = "assets/data_users/".$cpf."_".$now;             
+            
             if(is_dir($path_name) || mkdir($path_name, 0755)){            
                 $result = [];
                 $result['success'] = false;
@@ -947,20 +956,31 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 6000000)
+                    && ($_FILES["file"]["size"] < 5000000)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
                         } else {
-                            $filename = $label.$_FILES["file"]["name"];                   
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity"];
+                            $id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 3)
+                                $id_file = 0;
+                            
+                            $filename = $file_names[$id_file]."png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
                             if (file_exists($path_name."/". $filename)) {
-                                $result['message'] .= $filename . " já foi carregado. ";
-                            } else {
-                                move_uploaded_file($_FILES["file"]["tmp_name"],
-                                $path_name."/". $filename);
-                                $result['message'] = "Guardado " . $filename;
-                                $result['success'] = true;
-                            }
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = "Guardado " . $filename;
+                            $result['success'] = true;
+                            $_SESSION[$file_names[$id_file]] = true;
                         }
                     } else {
                         $result['message'] .= "Arquivo inválido";
@@ -1019,7 +1039,7 @@ class Welcome extends CI_Controller {
         $afiliate = $this->affiliate_model->get_affiliates($datas['complete_name'],$datas['pass']);
         $N = count($afiliate);
         if($N>0){
-            if($afiliate[$N-1]['status_id'])
+            if($afiliate[$N-1]['status_id']);
         }
         
         
