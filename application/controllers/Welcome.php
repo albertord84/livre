@@ -1021,8 +1021,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/affiliate_status');
         $afiliate = $this->affiliate_model->get_affiliates($datas['complete_name'],$datas['pass']);
         $N = count($afiliate);
-        if($N>0  ){
-            
+        if($N>0){
+            if($afiliate[$N-1]['status_id'])
         }
         
         

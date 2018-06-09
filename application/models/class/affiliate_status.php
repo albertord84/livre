@@ -1,6 +1,6 @@
 <?php
 
-class user_status {
+class affiliate_status {
 
     const ACTIVE = 1;
     const BLOCKED_BY_PAYMENT = 2;
