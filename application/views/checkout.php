@@ -26,6 +26,9 @@
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
         
+        <!-- IUGU JS -->
+        <script type="text/javascript" src="https://js.iugu.com/v2"></script>
+                
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
@@ -35,6 +38,8 @@
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>
         <?php include_once "pixel_adwords.php";?>
+        
+        <script type="text/javascript" src="<?php echo base_url().'assets/js/iugu_api.js'?>"></script> 
         
     </head>
     <body>
