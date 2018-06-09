@@ -828,8 +828,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999);
-            $random_code = 123; /*eliminar*/
+            $random_code = rand(100000,999999);            
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -866,11 +865,9 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){
-        $response['success'] = TRUE;        
-        return $response;
+    public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        $full_number = "552182856319";//$phone_country_code.$phone_ddd.$phone_number;
+        $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
         $curl = curl_init();
 
@@ -883,7 +880,7 @@ class Welcome extends CI_Controller {
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
           //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
-          CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Code '.$message.'"}',
+          CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Para validar seu telefone na livre.digital use o codigo '.$message.'"}',
           CURLOPT_HTTPHEADER => array(
             "authenticationtoken: D8UvJQd-bb5sXzA-vnJWr13qmMBTQWomtj1oiysq",
             "username: seiva",
