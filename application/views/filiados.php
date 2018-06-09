@@ -4,45 +4,53 @@
 	<meta charset="UTF-8">
 	<title>Livre.com</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
 
 	<!-- GALERIA -->	
-	<link rel="stylesheet" type="text/css" href="galeria/css/fresco/fresco.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
 
 	<!-- Owl Carousel Assets -->
-	<link href="css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="css/carousel/owl.transitions.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="css/estilo.css" />
-	<link rel="stylesheet" href="css/definicoes.css" />
-	<link rel="stylesheet" href="css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+        
+        <script type="text/javascript">
+            var base_url = '<?php echo base_url();?>';
+        </script>
+        <?php include_once "pixel_facebook.php";?>
+        <?php include_once "pixel_gtags.php";?>
+        <?php include_once "pixel_adwords.php";?>
+        
 </head>
 <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs">
 		<div class="container">
-			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="img/icones/logo.png" alt=""></a></div>
+			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 			<div class="col-md-10 col-sm-10 col-xs-12 pd-0 text-right center-xs m-top20">
 				<ul class="menu i-block m-top10-xs">				
-					<li><a href="">Suporte</a></li>
+					<li><a href="#contact_me">Suporte</a></li>
 					<li class="tv cl-fff">|</li>
 				</ul>
 				<ul class=" sociais i-block">
-					<li><a href="" target="_blank"><img src="img/icones/ig.png"></a></li>
-					<li><a href="" target="_blank"><img src="img/icones/fb.png"></a></li>
+					<li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+					<li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
 				</ul>
 			</div>
 		</div>
 	</header>
-<section class="fleft100 cover" id="bfil" style="background-image: url(img/banners/filiados.jpg);">
+<section class="fleft100 cover" id="bfil" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/filiados.jpg);">
 	<div class="container">
 		<div class="col-md-10 col-sm-10 col-xs-12 pull-right">
 			<h1 class="ft-size45 cl-fff">É CORRESPONDENTE <br>BANCÁRIO?</h1>
@@ -57,7 +65,7 @@
 			<div class="col-md-8 col-sm-8 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top8 text-center">
-						<img src="img/icones/mercado.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/mercado.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Comissão mais alta do mercado! <br>10% sobre o valor emprestado.
@@ -67,7 +75,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top8 text-center">
-						<img src="img/icones/pg.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/pg.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Pagamento semanal
@@ -77,7 +85,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-tb18 pd-lr10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/br.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/br.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Sem burocracia
@@ -87,7 +95,7 @@
 			<div class="col-md-7 col-sm-7 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top8 text-center">
-						<img src="img/icones/cr.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/cr.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Sem análise de crédito e sem <br>restrições para os clientes
@@ -97,7 +105,7 @@
 			<div class="col-md-7 col-sm-7 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/on.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/on.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Totalmente on-line
@@ -105,7 +113,7 @@
 				</div>
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top10 text-center">
-						<img src="img/icones/op.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/op.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Operação finalizada em <br>2 minutos
@@ -115,7 +123,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-lr15 pd-tb20 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/cort.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/cort.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Corte de custos operacionais <small class="fleft100 m-top5 ft-size11">(malote, motoboy, impressão, xerox, etc)</small>
@@ -125,7 +133,7 @@
 			<div class="fleft100 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-15 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/temp.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/temp.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10 m-top2 ft-size15">
 						Economia de tempo na aprovação da operação
@@ -138,7 +146,7 @@
 			<div class="col-md-7 col-sm-7 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top8 text-center">
-						<img src="img/icones/cr.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/cr.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Sem análise de crédito e sem restrições
@@ -148,7 +156,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-tb18 pd-lr10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/br.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/br.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Sem burocracia
@@ -158,7 +166,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top10 m-b10 text-center">
-						<img src="img/icones/on.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/on.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10 m-top10">
 						Tratamento on-line
@@ -168,7 +176,7 @@
 			<div class="col-md-7 col-sm-7 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top8 text-center">
-						<img src="img/icones/rd.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/rd.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Feito também para negativados e sem comprovação de renda
@@ -178,7 +186,7 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-15 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 m-top2 text-center">
-						<img src="img/icones/op.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/op.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10 m-b5 m-top2">
 						Operação finalizada em 2 minutos
@@ -188,7 +196,7 @@
 			<div class="col-md-7 col-sm-7 col-xs-12 pd-lr10">
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/txx.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/txx.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Taxa de juros competitiva
@@ -196,7 +204,7 @@
 				</div>
 				<div class="fleft100 bd bk-fff pd-10 m-top10">
 					<div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center">
-						<img src="img/icones/temp.png" alt="">
+						<img src="<?php echo base_url().'assets/'?>img/icones/temp.png" alt="">
 					</div>
 					<div class="col-md-10 col-sm-10 col-xs-10">
 						Dinheiro na conta em 24 horas
@@ -246,25 +254,27 @@
 				<div class="fleft100 pd-lr20 pd-tb25 bk-fff m-top20">
 					<span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-						<input type="text" placeholder="Nome completo">
+                                            <input id="complete_name" type="text" placeholder="Nome completo">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-						<input type="text" placeholder="E-mail">
+                                            <input id="email" type="text" placeholder="E-mail">
 					</fieldset>
 					<fieldset class="col-md-4 col-sm-4 col-xs-4 pd-lr10">
-						<input type="text" placeholder="DDD">
+                                            <input id="phone_ddd" type="text" placeholder="DDD">
 					</fieldset>
 					<fieldset class="col-md-8 col-sm-8 col-xs-8 pd-lr10">
-						<input type="text" placeholder="Telefone">
+                                            <input id="phone_number" type="text" placeholder="Telefone">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-						<input type="text" placeholder="Senha">
+                                            <input id="pass" type="text" placeholder="Senha">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-						<input type="text" placeholder="Confirme sua senha">
-					</fieldset>						
+                                            <input id="pass_confirmation" type="text" placeholder="Confirme sua senha">
+					</fieldset>
 				</div>
-				<div class="fleft100 m-top10 text-right center-xs"><button class="bt-green px1">Próximo</button></div>
+				<div class="fleft100 m-top10 text-right center-xs">
+                                    <button id="btn_sigin_affiliate" class="bt-green px1">Próximo</button>
+                                </div>
 			</div>
 
 			<div class="cad2 d-none fleft100">
@@ -278,7 +288,7 @@
 							<li>*********</li>
 							<li>*********</li>
 						</ul>
-						<div class="fleft100 text-center m-top50"><img src="img/icones/check.png" alt=""></div>
+						<div class="fleft100 text-center m-top50"><img src="<?php echo base_url().'assets/'?>img/icones/check.png" alt=""></div>
 					</div>
 					<div class="col-md-8 col-sm-8 col-xs-12 pd-40 bk-fff h441">
 						<span class="ft-size14 fw-600 fleft100">DADOS BANCÁRIOS</span>
