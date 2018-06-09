@@ -28,7 +28,7 @@
 		<div class="fleft100 pd-20">
 			<div class="col-md-4 col-sm-4 col-xs-12 pd-0 center-xs">
 				<div class="col-md-2 col-sm-2 col-xs-12 pd-0">
-					<img src="img/icones/avatar.jpg" class="mxw-50">
+					<img src="<?php echo base_url().'assets/'?>img/icones/avatar.jpg" class="mxw-50">
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">
 					<h3>Luiz Emprestimo</h3>
@@ -50,7 +50,7 @@
 				</div>
 			</div>
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
-				<img src="img/icones/grafico.jpg" class="mxw-280">
+				<img src="<?php echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">
 			</div>
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
@@ -76,7 +76,7 @@
 			</div>
 			<ul class="zebra fleft100 ft-size12 cl-black">
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -89,10 +89,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -105,10 +105,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -121,10 +121,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -137,10 +137,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -153,10 +153,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -169,10 +169,10 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 				<li>
-					<div class="w5 m-top15 m-top10-xs"><img src="img/icones/ck.png" alt=""></div>
+					<div class="w5 m-top15 m-top10-xs"><img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt=""></div>
 					<div class="w10 fw-500 m-top15 m-top10-xs">#ADQWEC</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">Ana Torres Souza</div>
 					<div class="w15 fw-500 m-top15 m-top10-xs">31-07-17 / 15h45</div>
@@ -185,7 +185,7 @@
 						<small class="fleft100">Dados bancários</small>
 						Itaú - AG. 8522 - CC. 45230-5
 					</div>
-					<div class="w5 fw-500 m-top10"><a href=""><img src="img/icones/add.png" alt=""></a></div>
+					<div class="w5 fw-500 m-top10"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/add.png" alt=""></a></div>
 				</li>
 			</ul>
 			<ul class="pg text-right m-top20 fleft100">

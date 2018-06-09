@@ -8,6 +8,7 @@ class Welcome extends CI_Controller {
          ['ip']
          ['pk']
          ['key']
+         ['time_start']
          ['transaction_values']['frm_money_use_form']
          ['transaction_values']['utm_source']
          ['transaction_values']['month_value'] 
@@ -904,29 +905,8 @@ class Welcome extends CI_Controller {
         } else {
             $response['success'] = TRUE;
         }        
-        
         return $response;
     }
-
-//    public function send_verification_sms($phone_number, $message){
-//        $url = 'https://api-messaging.movile.com/v1/send-bulk-sms Content-Type: application/json'; //url de la petición
-//        $ch = curl_init($url); //inicializamos el objeto CUrl        
-//        $jsonData = array(  //el json simulamos una petición de un login
-//            'destination' => $phone_number,
-//        );
-//        $jsonDataEncoded = json_encode($jsonData); //creamos el json a partir de nuestro arreglo
-//        curl_setopt($ch, CURLOPT_POST, 1);//Indicamos que nuestra petición sera Post       
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //para que la peticion no imprima el resultado como un echo comun, y podamos manipularlo
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);//Adjuntamos el json a nuestra petición
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));//Agregamos los encabezados del contenido
-//
-//        //ignorar el certificado, servidor de desarrollo
-//        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-//        curl_setopt($process, CURLOPT_SSL_VERIFYHOST, FALSE);
-//        //Ejecutamos la petición
-//        $result = curl_exec($ch);
-//        var_dump($result);
-//    }
         
     public function iugu_simples_sale(){
         require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
@@ -945,55 +925,20 @@ class Welcome extends CI_Controller {
             ]
         );
     }
-    
-    public function upload_imaage(){
-        if ($_FILES['file']['error'] >0){
-            $result['success']=false;
-            $result['message']='Error: '.$_FILES['file']['error'];
-        } else
-        if(move_uploaded_file($_FILES['file']['tmp_name'], base_url().'assets/user_images/' . $_FILES['file']['name']))
-        {
-            $result['success']=true;
-            $result['message']='FOto subida';
-        }else{
-            $result['success']=false;
-            $result['message']='Error moviendo la imagen';
-        }
-        echo json_encode($result);
-    }
-    
-    function ajax_upload(){  
-        if(isset($_FILES["image_file"]["name"])){  
-            $config['upload_path'] = './upload/';  
-            $config['allowed_types'] = 'jpg|jpeg|png|gif';  
-            $this->load->library('upload', $config);  
-            if(!$this->upload->do_upload('image_file')){  
-                echo $this->upload->display_errors();  
-            }  
-            else {  
-                $data = $this->upload->data();  
-                echo '<img src="'.base_url().'upload/'.$data["file_name"].'" width="300" height="225" class="img-thumbnail" />';  
-            }  
-        }  
-    } 
-    
+        
     function upload_file(){
         $this->load->model('class/client_model');
-        //print_r($_FILES);
-        if($_SESSION['pk']){
+        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] || $datas['key']!==$_SESSION['key'])){
             $client = $this->client_model->get_client('id', $_SESSION['pk']);                
             $cpf = $client[0]['cpf'];
             if(!$_SESSION['time_start'])
                 $_SESSION['time_start'] = time();
             $now = $_SESSION['time_start'];
-            $path_name = "assets/data_users/".$cpf."_".$now;
-            
-            if(is_dir($path_name) || mkdir($path_name, 0755)){
-            
+            $path_name = "assets/data_users/".$cpf."_".$now;            
+            if(is_dir($path_name) || mkdir($path_name, 0755)){            
                 $result = [];
                 $result['success'] = false;
                 $result['message'] = "";
-
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
                     $allowedExts = array("gif", "jpeg", "jpg", "png");
@@ -1005,16 +950,12 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 200000)
+                    && ($_FILES["file"]["size"] < 6000000)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
                         } else {
-                            $filename = $label.$_FILES["file"]["name"];
-                            /*echo "Upload: " . $_FILES["file"]["name"] . "<br>";
-                            echo "Type: " . $_FILES["file"]["type"] . "<br>";
-                            echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
-                            echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";*/                    
+                            $filename = $label.$_FILES["file"]["name"];                   
                             if (file_exists($path_name."/". $filename)) {
                                 $result['message'] .= $filename . " já foi carregado. ";
                             } else {
@@ -1053,7 +994,6 @@ class Welcome extends CI_Controller {
                      default: $message = 'Error: carga de arquivo não completada.';
                               break;
                     }
-
                     $result['success'] = false;
                     $result['message'] .= $message;
                 }
@@ -1068,5 +1008,24 @@ class Welcome extends CI_Controller {
             $result['message'] = "Sessão expirou";
         }    
         echo json_encode($result);
-    }    
+    }
+    
+    
+    
+    
+    //funções para afiliados ----------------------------------
+    public function insert_affiliate(){
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/affiliate_status');
+        $afiliate = $this->affiliate_model->get_affiliates($datas['complete_name'],$datas['pass']);
+        $N = count($afiliate);
+        if($N>0 && ){
+            
+        }
+        
+        
+    }
+    
 }
