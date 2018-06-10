@@ -644,9 +644,6 @@ $(document).ready(function () {
     $("#cartao").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
-
-        // maby check size or type here with upload.getSize() and upload.getType()
-
         // execute upload
         upload.doUpload(0);
         //alert("file upload");
@@ -655,9 +652,6 @@ $(document).ready(function () {
     $("#selcartao").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
-
-        // maby check size or type here with upload.getSize() and upload.getType()
-
         // execute upload
         upload.doUpload(1);
         //alert("file upload");
@@ -666,9 +660,6 @@ $(document).ready(function () {
     $("#id").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
-
-        // maby check size or type here with upload.getSize() and upload.getType()
-
         // execute upload
         upload.doUpload(2);
         //alert("file upload");
@@ -677,9 +668,6 @@ $(document).ready(function () {
     $("#selid").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
-
-        // maby check size or type here with upload.getSize() and upload.getType()
-
         // execute upload
         upload.doUpload(3);
         //alert("file upload");
