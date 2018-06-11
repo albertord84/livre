@@ -246,6 +246,7 @@ class Welcome extends CI_Controller {
             return $result;
         }
         
+        /*
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -304,7 +305,11 @@ class Welcome extends CI_Controller {
             $_SESSION['is_possible_steep_2']=true;
             $result['success']=true;
             return $result;
-        }        
+        }*/        
+        
+        $_SESSION['is_possible_steep_2']=true;
+        $result['success']=true;
+        return $result;
     }
     
     public function insert_datas_steep_2() {
@@ -325,7 +330,8 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){
-                    if($possible['action']==='insert_credit_card'){
+                    $result['success'] = true;
+                    /*if($possible['action']==='insert_credit_card'){
                         $id_row = $this->client_model->insert_db_steep_2($datas);
                     }
                     else
@@ -337,7 +343,7 @@ class Welcome extends CI_Controller {
                         $result['success'] = false;
                         $result['message'] = 'Erro interno no banco de dados';
                         $_SESSION['is_possible_steep_2']=false;
-                    }
+                    }*/
                 } else{
                     $result=$possible;
                 }
@@ -1028,6 +1034,24 @@ class Welcome extends CI_Controller {
     }
     
     
+    public function sign_contract() {
+        $this->load->model('class/client_model');
+        $datas = $this->input->post();
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            if(($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']) || $datas['ucpf']){
+                $result['success'] = TRUE;                
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }
+        echo json_encode($result);
+    }
     
     
     //funções para afiliados ----------------------------------

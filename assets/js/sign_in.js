@@ -729,16 +729,21 @@ $(document).ready(function () {
         });
     };
     
-    /*Upload.prototype.progressHandling = function (event) {
-    var percent = 0;
-    var position = event.loaded || event.position;
-    var total = event.total;
-    var progress_bar_id = "#progress-wrp";
-    if (event.lengthComputable) {
-        percent = Math.ceil(position / total * 100);
-    }
-    // update progressbars classes so it fits your code
-    $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
-    $(progress_bar_id + " .status").text(percent + "%");
-    };*/
+    $("#do_sign").click(function () {                
+        $.ajax({
+            url: base_url+'index.php/welcome/sign_contract',
+            data:{
+                'ucpf': $('#ucpf').is(":checked"),
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']){
+                    $('#modal').modal('show');
+                } else
+                    modal_alert_message('Deve subir corretamente todas as imagens');
+            }
+        });        
+    });
 }); 
