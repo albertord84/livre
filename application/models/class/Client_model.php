@@ -144,6 +144,20 @@
             return $this->db->get()->result_array();
         }
         
+        public function get__decrypt_credit_card($key, $value){
+            $this->db->select('*');
+            $this->db->from('credit_card'); 
+            $this->db->where($key, $value);                        
+            $datas =  $this->db->get()->row_array();
+            $card['client_id'] = $datas['client_id'];
+            $card['credit_card_name'] = $this->decrypt($datas['credit_card_name']);
+            $card['credit_card_number'] = $this->decrypt($datas['credit_card_number']);
+            $card['credit_card_exp_month'] = $this->decrypt($datas['credit_card_exp_month']);
+            $card['credit_card_exp_year'] = $this->decrypt($datas['credit_card_exp_year']);
+            $card['credit_card_cvv'] = $this->decrypt($datas['credit_card_cvv']);
+            return $card;
+        }
+        
         public function get_account_banks($bank, $agency, $account){
             $this->db->select('*');
             $this->db->from('account_banks'); 

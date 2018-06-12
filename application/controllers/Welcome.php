@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {
+    public function index() {        
         $this->set_session();        
         $params['key']=$_SESSION['key'];
         $this->load->view('index',$params);
@@ -1055,7 +1055,54 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    
+    public function get_token($id){
+        
+        $this->load->model('class/client_model');
+        $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
+        
+        $name = $credit_card['credit_card_name'];
+        $names = explode(' ', $name);
+        $lastname = $names[count($names) - 1];
+        unset($names[count($names) - 1]);
+        $firstname = join(' ', $names);
+
+        $postData = array(
+            'account_id' => '80BF7285A577436483EE04E0A80B63F4',
+            'method' => 'credit_card',
+            'test' => 'true',
+            'data' => array(
+                            'number' => $credit_card['credit_card_number'],
+                            'verification_value' => $credit_card['credit_card_cvv'],
+                            'first_name' => $firstname,
+                            'last_name' => "$lastname",
+                            'month' => $credit_card['credit_card_exp_month'],
+                            'year' => $credit_card['credit_card_exp_year']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/payment_token";
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        if(is_object($parsed_response) && $parsed_response->id){
+            return $parsed_response->id;
+        }
+        else {
+            return 0;
+        }
+    }
+
+
     //funções para afiliados ----------------------------------
     public function insert_affiliate(){
         $this->is_ip_hacker();
