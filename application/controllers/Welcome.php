@@ -227,8 +227,12 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
         
-    public function is_possible_steep_2_for_this_client($datas) {        
-        $this->load->model('class/client_model');
+    public function is_possible_steep_2_for_this_client($datas) { 
+        $_SESSION['is_possible_steep_2']=true;
+        $result['success']=true;
+        return $result;
+        
+        /*$this->load->model('class/client_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
         $this->is_ip_hacker();
@@ -246,7 +250,7 @@ class Welcome extends CI_Controller {
             return $result;
         }
         
-        /*
+        
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -306,10 +310,6 @@ class Welcome extends CI_Controller {
             $result['success']=true;
             return $result;
         }*/        
-        
-        $_SESSION['is_possible_steep_2']=true;
-        $result['success']=true;
-        return $result;
     }
     
     public function insert_datas_steep_2() {
@@ -320,17 +320,25 @@ class Welcome extends CI_Controller {
         }else{
             $this->load->model('class/client_model');            
             $datas['pk'] = $_SESSION['pk'];
-            if(!$this->validate_all_credit_card_datas($datas)){
+            /*if(!$this->validate_all_credit_card_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
-            } else{
+            } else{*/
                 $possible = $this->is_possible_steep_2_for_this_client($datas);
                 if(!$_SESSION['is_possible_steep_2']){
                     $result['message']= $possible['message'];
                     $result['success']=false;
                 } else
-                if($possible['success']){
-                    $result['success'] = true;
+                if($possible['success']){                    
+                    $result_update = $this->client_model->update_token_card($_SESSION['pk'], $datas['token_id']);
+                    if($result_update){
+                        $result['success'] = true;
+                    }
+                    else{
+                        $result['success'] = false;
+                        $result['message'] = 'Erro interno no banco de dados';
+                        $_SESSION['is_possible_steep_2']=false;
+                    }
                     /*if($possible['action']==='insert_credit_card'){
                         $id_row = $this->client_model->insert_db_steep_2($datas);
                     }
@@ -347,7 +355,7 @@ class Welcome extends CI_Controller {
                 } else{
                     $result=$possible;
                 }
-            }
+            //}
         }
         echo json_encode($result);
     }
@@ -1038,12 +1046,18 @@ class Welcome extends CI_Controller {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            if(($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']) || $datas['ucpf']){
+            
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
                 $result['success'] = TRUE;                
             }
             else{
-                $result['success'] = false;
-                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+                if($datas['ucpf'] == 'false'){
+                    $result['success'] = false;
+                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+                }
+                else{
+                    $result['success'] = TRUE;                
+                }
             }
         }
         else{

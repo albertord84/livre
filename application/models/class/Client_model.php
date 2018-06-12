@@ -69,6 +69,19 @@
             return $id;
         }
         
+        public function update_token_card($id, $token){    
+            $result = NULL;
+            try{
+                $this->db->where('id', $id);
+                $this->db->update('clients',['token' => $token]);
+                $result =  $this->db->affected_rows();
+            } catch (Exception $exception) {
+               echo 'Error accediendo a la base de datos';
+            } finally {
+               return $result;
+            }
+        }
+        
         public function insert_db_steep_3($datas){
             $datas1=array();
             $datas1['client_id']=$datas['pk'];
