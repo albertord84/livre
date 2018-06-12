@@ -200,6 +200,11 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){
+                    $datas['number_plots'] = $_SESSION['transaction_values']['amount_months'];
+                    $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
+                    $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
+                    $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
+                    
                     if($possible['action']==='insert_beginner'){
                         $datas['status_id']=  client_status::BEGINNER;
                         $id_row = $this->client_model->insert_db_steep_1($datas);
@@ -1102,6 +1107,52 @@ class Welcome extends CI_Controller {
         }
     }
 
+    public function do_payment($id){
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $token = $this->get_token($id);
+        
+        $postData = array(
+            'token' => $token,
+            'email' => $client['email'],
+            'month' => $client['number_plots'],
+            'items' => array(
+                            'description' => 'money',
+                            'quantity' => 1,
+                            'price_cents' => $client['total_effective_cost']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && $parsed_response->success){
+            $response['success'] = true;
+            $response['message'] = $parsed_response->message;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->message;
+        }
+        
+        return $response;
+    }
 
     //funções para afiliados ----------------------------------
     public function insert_affiliate(){
