@@ -87,6 +87,11 @@
     <script src="<?php echo base_url().'assets/'?>js/script.js" type="text/javascript"></script>
     <!-- Proper Scripts -->    
     <script src="<?php echo base_url().'assets/'?>js/index.js" type="text/javascript"></script>
-    <script src="<?php echo base_url().'assets/'?>js/sign_in.js" type="text/javascript"></script>
+    
+    <script src="<?php echo base_url().'assets/js/sign_in.js'?>" type="text/javascript"></script>
+    <script src="<?php echo base_url().'assets/js/affiliates.js'?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'assets/'?>js/talkme_painel.js" type="text/javascript"></script>
+    
+    
+    
 </html>

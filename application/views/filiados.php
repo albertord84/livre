@@ -254,26 +254,26 @@
 				<div class="fleft100 pd-lr20 pd-tb25 bk-fff m-top20">
 					<span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-                                            <input id="complete_name" type="text" placeholder="Nome completo">
+                                            <input id="affiliate_complete_name" type="text" placeholder="Nome completo">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-                                            <input id="email" type="text" placeholder="E-mail">
+                                            <input id="affiliate_email" type="text" placeholder="E-mail">
 					</fieldset>
 					<fieldset class="col-md-4 col-sm-4 col-xs-4 pd-lr10">
-                                            <input id="phone_ddd" type="text" placeholder="DDD">
+                                            <input id="affiliate_phone_ddd" type="text" placeholder="DDD">
 					</fieldset>
 					<fieldset class="col-md-8 col-sm-8 col-xs-8 pd-lr10">
-                                            <input id="phone_number" type="text" placeholder="Telefone">
+                                            <input id="affiliate_phone_number" type="text" placeholder="Telefone">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-                                            <input id="pass" type="text" placeholder="Senha">
+                                            <input id="affiliate_pass" type="text" placeholder="Senha">
 					</fieldset>
 					<fieldset class="fleft100 col-md-12 pd-lr10">
-                                            <input id="pass_confirmation" type="text" placeholder="Confirme sua senha">
+                                            <input id="affiliate_pass_confirmation" type="text" placeholder="Confirme sua senha">
 					</fieldset>
 				</div>
 				<div class="fleft100 m-top10 text-right center-xs">
-                                    <button id="btn_sigin_affiliate" class="bt-green px1">Próximo</button>
+                                    <button id="btn_sigin_affiliate" class="bt-green">Próximo</button>
                                 </div>
 			</div>
 

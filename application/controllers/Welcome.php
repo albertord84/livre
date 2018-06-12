@@ -30,7 +30,7 @@ class Welcome extends CI_Controller {
     
     public function index() {
         $this->set_session();        
-        $params['key']=$_SESSION['key'];
+        $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
@@ -48,22 +48,27 @@ class Welcome extends CI_Controller {
     }
     
     public function afiliados() {
+        $params['view']='afiliados';
         $this->load->view('afiliados');
     }
     
     public function filiados() {
+        $params['view']='filiados';
         $this->load->view('filiados');
     }
     
     public function configuracoes() {
+        $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
     
     public function resumo() {
+        $params['view']='resumo';
         $this->load->view('resumo');
     }
     
     public function transacoes() {
+        $params['view']='transacoes';
         $this->load->view('transacoes');
     }
     
@@ -1016,13 +1021,32 @@ class Welcome extends CI_Controller {
         $datas = $this->input->post();
         $this->load->model('class/affiliate_model');
         $this->load->model('class/affiliate_status');
-        $afiliate = $this->affiliate_model->get_affiliates($datas['complete_name'],$datas['pass']);
+        $afiliate = $this->affiliate_model->get_affiliates_by_credentials($datas['affiliate_complete_name'],$datas['affiliate_pass']);
         $N = count($afiliate);
         if($N>0){
-            if($afiliate[$N-1]['status_id'])
+            if($afiliate[$N-1]['status_id'] === affiliate_status::ACTIVE){
+                $result['success']=false;
+                $result['message']='Você já possui uma conta ativa';
+            }else
+            if($afiliate[$N-1]['status_id'] === affiliate_status::BEGINNER){
+                $action='update_afiliate';                
+            }
+        }else{
+            if($action =='update_afiliate')
+                $id = $this->affiliate_model->update_afiliate($N-1,$datas);
+            else
+                $id = $this->affiliate_model->insert_afiliate($datas);
+            if($id){
+                $result['success']=true;
+            }else{
+                $result['message']='Erro guardando no banco de dados. Reporte ao nosso atendimento';
+                $result['success']=false;
+            }
         }
-        
-        
     }
+    
+    
+    
+    
     
 }

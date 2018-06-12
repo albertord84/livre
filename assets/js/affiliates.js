@@ -4,22 +4,22 @@ $(document).ready(function () {
     
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_sigin_affiliate").click(function () {
-        if($('#pass').val()!==$('#pass_confirmation').val()){
+        if($('#affiliate_pass').val()!==$('#affiliate_pass_confirmation').val()){
             modal_alert_message('As senhas devem ser iguais');
         }else{            
-            name  = validate_element('#complete_name', '^[A-Z ]{6,150}$');
-            email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
-            phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
-            phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');        
+            name  = validate_element('#affiliate_complete_name', '^[A-Za-z ]{6,150}$');
+            email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+            phone_ddd = validate_element('#affiliate_phone_ddd', '^[0-9]{2}$');
+            phone_number = validate_element('#affiliate_phone_number', '^[0-9]{7,10}$');        
             if(name!=="false" && email && phone_ddd && phone_number ){                                
                 $.ajax({
                     url: base_url + 'index.php/welcome/insert_affiliate',
                     data:{
-                        'complete_name': $('#complete_name').val(),
-                        'email': $('#email').val(),
-                        'phone_ddd': $('#phone_ddd').val(),
-                        'phone_number': $('#phone_number').val(),
-                        'pass': $('#pass').val()
+                        'complete_name': $('#affiliate_complete_name').val(),
+                        'email': $('#affiliate_email').val(),
+                        'phone_ddd': $('#affiliate_phone_ddd').val(),
+                        'phone_number': $('#affiliate_phone_number').val(),
+                        'pass': $('#affiliate_pass').val()
                     },
                     type: 'POST',
                     dataType: 'json',

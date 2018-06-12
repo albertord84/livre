@@ -3,9 +3,9 @@
 class affiliate_status {
 
     const ACTIVE = 1;
-    const BLOCKED_BY_PAYMENT = 2;
+    //const BLOCKED_BY_PAYMENT = 2;
     const DELETED = 4;
-    const PENDENT_BY_PAYMENT = 6;
+    //const PENDENT_BY_PAYMENT = 6;
     const BEGINNER= 8;
     const DONT_DISTURB= 11;
 
