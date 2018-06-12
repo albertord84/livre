@@ -77,7 +77,7 @@
                         <img src="<?php echo base_url().'assets/'?>img/icones/ass.jpg" class="w100">				
                     </div>	
                     <div class="fleft100 m-top10 text-right center-sm">
-                        <button class="bt-green">Pronto!</button>
+                        <button class="bt-green" data-dismiss="modal">Pronto!</button>
                     </div>
                 </div>
             </div>
@@ -557,7 +557,7 @@
                                 </div>
                             </div>
                             <div class="fleft100 m-top20 text-right">
-                                <button type="submit" class="bt-green mxw-250" data-toggle="modal" data-target="#modal" data-whatever="@mdo">Assinar e contratar</button>
+                                <button id="do_sign" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
                             </div>
 
                             <!-- apenas para abrir os modais ocultos -->

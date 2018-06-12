@@ -7,7 +7,35 @@ $(document).ready(function () {
     * ademas deben especificarse los campos como aparece en la API
    */
   
-    $("#btn_steep_2_next_new").click(function () {    
+    $("#btn_steep_2_next").click(function () {  
+        alert("solicitando token");
+        var data = JSON.stringify({
+            "account_id": "80BF7285A577436483EE04E0A80B63F4",
+            "method": "credit_card",
+            "test": "true",
+            "data": {
+              "number": "378282246310005",
+              "verification_value": "1234",
+              "first_name": "JORGE",
+              "last_name": "MORENO",
+              "month": "06",
+              "year": "2020"
+            }
+          });
+          
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === this.DONE) {
+            console.log(this.responseText);
+          }
+        });
+
+        xhr.open("POST", "https://api.iugu.com/v1/payment_token");
+
+        xhr.send(data);
+        
         Iugu.createPaymentToken(this, function(response) {
             if (response.errors) {
                     alert("Erro salvando cartão");
