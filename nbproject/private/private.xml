@@ -3,18 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/opt/lampp/htdocs/livre/application/views/filiados.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/models/class/Affiliate_model.php</file>
             <file>file:/opt/lampp/htdocs/livre/assets/js/affiliates.js</file>
             <file>file:/opt/lampp/htdocs/livre/application/models/class/Client_model.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/controllers/Welcome.php</file>
-=======
-            <file>file:/opt/lampp/htdocs/livre/application/views/checkout.php</file>
-            <file>file:/opt/lampp/htdocs/livre/application/controllers/Welcome.php</file>
-            <file>file:/opt/lampp/htdocs/livre/assets/js/sign_in.js</file>
-            <file>file:/opt/lampp/htdocs/livre/assets/js/iugu_api.js</file>
->>>>>>> 73857bd4d1d58ecd54cd6f358029ec4a42194712
         </group>
     </open-files>
 </project-private>

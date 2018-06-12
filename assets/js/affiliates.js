@@ -3,29 +3,38 @@ $(document).ready(function () {
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
     
     //---------PRIMARY FUNCTIONS---------------------------------
-    $("#btn_sigin_affiliate").click(function () {
+    $("#btn_sigin_affiliate_steep1").click(function () {
         if($('#affiliate_pass').val()!==$('#affiliate_pass_confirmation').val()){
             modal_alert_message('As senhas devem ser iguais');
-        }else{            
-            name  = validate_element('#affiliate_complete_name', '^[A-Za-z ]{6,150}$');
+        }else{
+            complete_name  = validate_element('#affiliate_complete_name', '^[A-ZÃÕÇÁÉÍÓÚÀÈÌÒÙ ]{6,150}$');
+            username  = validate_element('#affiliate_username', '^[A-Za-z0-9._]{6,150}$');
             email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
             phone_ddd = validate_element('#affiliate_phone_ddd', '^[0-9]{2}$');
             phone_number = validate_element('#affiliate_phone_number', '^[0-9]{7,10}$');        
-            if(name!=="false" && email && phone_ddd && phone_number ){                                
+            if(complete_name!=="false" && username!=="false" && email && phone_ddd && phone_number ){                                
                 $.ajax({
-                    url: base_url + 'index.php/welcome/insert_affiliate',
+                    url: base_url + 'index.php/welcome/insert_affiliate_steep1',
                     data:{
                         'complete_name': $('#affiliate_complete_name').val(),
+                        'username': $('#affiliate_username').val(),
                         'email': $('#affiliate_email').val(),
                         'phone_ddd': $('#affiliate_phone_ddd').val(),
                         'phone_number': $('#affiliate_phone_number').val(),
-                        'pass': $('#affiliate_pass').val()
+                        'pass': $('#affiliate_pass').val(),
+                        'key':key
                     },
                     type: 'POST',
                     dataType: 'json',
                     success: function (response) {
-                        if (response['success']) {
-                            set_global_var('pk',response['pk']);                                 
+                        if(response['success']) {
+                            $('li[id=li_complete_name]').text($('#affiliate_complete_name').val());
+                            $('#titular_name').val($('#affiliate_complete_name').val());
+                            $('li[id=li_username]').text($('#affiliate_username').val());
+                            $('li[id=li_email]').text($('#affiliate_email').val());        
+                            $('li[id=li_phone]').text( "("+$('#affiliate_phone_ddd').val()+")"+$('#affiliate_phone_number').val() );        
+                            $('.cad1').toggle("hide");
+                            $('.cad2').toggle("slow");   
                         }
                         else{
                             modal_alert_message(response['message']);
@@ -37,11 +46,57 @@ $(document).ready(function () {
                 });            
             } else{
                 modal_alert_message("Erro nos dados fornecidos. Por favor, verifique.");
-            } 
+            }
         }
     });
     
-        
+    
+    $("#btn_sigin_affiliate_steep2").click(function () {
+        var cpf_value=$('#titular_cpf').val();
+        cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
+        var bank = validate_element('#bank', "^[0-9]{3,3}$");        
+        var agency = validate_element('#agency', "^[0-9]{4,12}$");
+        var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
+        var account = validate_element('#account', "^[0-9]{4,12}$");
+        var dig = validate_element('#dig', "^[0-9]{1}$");            
+        var titular_name = validate_element('#titular_name','^[A-ZÃÕÇÁÉÍÓÚÀÈÌÒÙ ]{6,150}$');            
+        var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
+        if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
+            datas={
+                'bank': $('#bank').val(),
+                'agency': $('#agency').val(),
+                'account_type': $('#account_type').val(),
+                'account': $('#account').val(),
+                'dig': $('#dig').val(),
+                'titular_name': $('#titular_name').val(),
+                'titular_cpf': cpf_value,
+                'key':key
+            };
+            $.ajax({
+                url: base_url + 'index.php/welcome/insert_affiliate_steep2',
+                data: datas,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response['success']) {  
+                        var name = $('#affiliate_complete_name').val();
+                        name = name.split(" ");
+                        $('#affiliate_first_name').text(name[0]);                        
+                        $('.cad2').toggle("hide");
+                        $('.cad3').toggle("slow");
+                    } else {
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error in Steep 3');
+                }
+            });
+        } else{
+            modal_alert_message('Verifique os dados fornecidos');            
+        }
+    });
+    
     //---------SECUNDARY FUNCTIONS-------------------------------
        
     $('#container_form_steep_1').keypress(function (e) {
@@ -155,5 +210,19 @@ $(document).ready(function () {
             return true;
         }
     }
+    
+    
+    function init_signin(){        
+        $('#affiliate_complete_name').val('JOSÉ RAMÓN GONZÁLEZ MONTERO');
+        $('#affiliate_username').val('josergm86');
+        $('#affiliate_email').val('josergm86@gmail.com');
+        $('#affiliate_phone_ddd').val('21');
+        $('#affiliate_phone_number').val('965913089');
+        $('#affiliate_pass').val('jr24666gm');
+        $('#affiliate_pass_confirmation').val('jr24666gm');
+        $('#titular_cpf').val('07367014196');
+    }
+    
+    init_signin();
 
 }); 
