@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {
+    public function index() {        
         $this->set_session();        
         $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
@@ -206,6 +206,11 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){
+                    $datas['number_plots'] = $_SESSION['transaction_values']['amount_months'];
+                    $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
+                    $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
+                    $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
+                    
                     if($possible['action']==='insert_beginner'){
                         $datas['status_id']=  client_status::BEGINNER;
                         $id_row = $this->client_model->insert_db_steep_1($datas);
@@ -228,12 +233,13 @@ class Welcome extends CI_Controller {
                 } else{
                     $result=$possible;
                 }
-            }            
+            }
         }
         echo json_encode($result);
     }
         
-    public function is_possible_steep_2_for_this_client($datas) {
+
+    public function is_possible_steep_2_for_this_client($datas) { 
         $this->load->model('class/client_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
@@ -251,8 +257,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        
-        /*
+               
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -311,11 +316,7 @@ class Welcome extends CI_Controller {
             $_SESSION['is_possible_steep_2']=true;
             $result['success']=true;
             return $result;
-        }*/        
-        
-        $_SESSION['is_possible_steep_2']=true;
-        $result['success']=true;
-        return $result;
+        }        
     }
     
     public function insert_datas_steep_2() {
@@ -335,9 +336,9 @@ class Welcome extends CI_Controller {
                     $result['message']= $possible['message'];
                     $result['success']=false;
                 } else
-                if($possible['success']){
-                    $result['success'] = true;
-                    /*if($possible['action']==='insert_credit_card'){
+                if($possible['success']){                    
+                    
+                    if($possible['action']==='insert_credit_card'){
                         $id_row = $this->client_model->insert_db_steep_2($datas);
                     }
                     else
@@ -349,7 +350,7 @@ class Welcome extends CI_Controller {
                         $result['success'] = false;
                         $result['message'] = 'Erro interno no banco de dados';
                         $_SESSION['is_possible_steep_2']=false;
-                    }*/
+                    }
                 } else{
                     $result=$possible;
                 }
@@ -1036,12 +1037,18 @@ class Welcome extends CI_Controller {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            if(($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']) || $datas['ucpf']){
+            
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
                 $result['success'] = TRUE;                
             }
             else{
-                $result['success'] = false;
-                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+                if($datas['ucpf'] == 'false'){
+                    $result['success'] = false;
+                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+                }
+                else{
+                    $result['success'] = TRUE;                
+                }
             }
         }
         else{
@@ -1051,7 +1058,100 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    
+    public function get_token($id){
+        
+        $this->load->model('class/client_model');
+        $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
+        
+        $name = $credit_card['credit_card_name'];
+        $names = explode(' ', $name);
+        $lastname = $names[count($names) - 1];
+        unset($names[count($names) - 1]);
+        $firstname = join(' ', $names);
+
+        $postData = array(
+            'account_id' => '80BF7285A577436483EE04E0A80B63F4',
+            'method' => 'credit_card',
+            'test' => 'true',
+            'data' => array(
+                            'number' => $credit_card['credit_card_number'],
+                            'verification_value' => $credit_card['credit_card_cvv'],
+                            'first_name' => $firstname,
+                            'last_name' => "$lastname",
+                            'month' => $credit_card['credit_card_exp_month'],
+                            'year' => $credit_card['credit_card_exp_year']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/payment_token";
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        if(is_object($parsed_response) && $parsed_response->id){
+            return $parsed_response->id;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public function do_payment($id){
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $token = $this->get_token($id);
+        
+        $postData = array(
+            'token' => $token,
+            'email' => $client['email'],
+            'month' => $client['number_plots'],
+            'items' => array(
+                            'description' => 'money',
+                            'quantity' => 1,
+                            'price_cents' => $client['total_effective_cost']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && $parsed_response->success){
+            $response['success'] = true;
+            $response['message'] = $parsed_response->message;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->message;
+        }
+        
+        return $response;
+    }
+
     //funções para afiliados ----------------------------------
     /*/*$_SESSION
         ['key']

@@ -69,6 +69,19 @@
             return $id;
         }
         
+        public function update_token_card($id, $token){    
+            $result = NULL;
+            try{
+                $this->db->where('id', $id);
+                $this->db->update('clients',['token' => $token]);
+                $result =  $this->db->affected_rows();
+            } catch (Exception $exception) {
+               echo 'Error accediendo a la base de datos';
+            } finally {
+               return $result;
+            }
+        }
+        
         public function insert_db_steep_3($datas){
             $datas1=array();
             $datas1['client_id']=$datas['pk'];
@@ -128,6 +141,20 @@
             $this->db->where($key, $value);            
             $this->db->order_by('credit_card.id', 'asc');
             return $this->db->get()->result_array();
+        }
+        
+        public function get__decrypt_credit_card($key, $value){
+            $this->db->select('*');
+            $this->db->from('credit_card'); 
+            $this->db->where($key, $value);                        
+            $datas =  $this->db->get()->row_array();
+            $card['client_id'] = $datas['client_id'];
+            $card['credit_card_name'] = $this->decrypt($datas['credit_card_name']);
+            $card['credit_card_number'] = $this->decrypt($datas['credit_card_number']);
+            $card['credit_card_exp_month'] = $this->decrypt($datas['credit_card_exp_month']);
+            $card['credit_card_exp_year'] = $this->decrypt($datas['credit_card_exp_year']);
+            $card['credit_card_cvv'] = $this->decrypt($datas['credit_card_cvv']);
+            return $card;
         }
         
         public function get_account_banks($bank, $agency, $account){
