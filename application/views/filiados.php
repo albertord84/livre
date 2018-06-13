@@ -40,7 +40,11 @@
 		<div class="container">
 			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 			<div class="col-md-10 col-sm-10 col-xs-12 pd-0 text-right center-xs m-top20">
-				<ul class="menu i-block m-top10-xs">				
+				<ul class="menu i-block m-top10-xs">
+					<li><a href="#login">Entrar</a></li>
+                                        <li class="tv cl-fff">|</li>
+					<li><a href="#cadastrar_agora">Cadastro</a></li>
+                                        <li class="tv cl-fff">|</li>
 					<li><a href="#contact_me">Suporte</a></li>
 					<li class="tv cl-fff">|</li>
 				</ul>
@@ -250,6 +254,7 @@
 
         <div class="fleft100 m-top60 text-center fmr-check" id="cadastro">
             <div class="container">
+                <A name="cadastrar_agora"></A>
                 <!--STEEP 1.1-->
                 <div class="pd-0 col-md-4 col-sm-9 col-xs-12 cad1 fnone i-block text-left">
                     <h1 class="fw-300 fleft100">Cadastre-se grátis!</h1>
@@ -257,10 +262,7 @@
                         <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                         <fieldset class="fleft100 col-md-12 pd-lr10">
                             <input id="affiliate_complete_name" type="text" placeholder="NOME COMPLETO" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
-                        </fieldset>
-                        <fieldset class="fleft100 col-md-12 pd-lr10">
-                            <input id="affiliate_username" type="text" placeholder="Nome de usuário">
-                        </fieldset>
+                        </fieldset>                        
                         <fieldset class="fleft100 col-md-12 pd-lr10">
                             <input id="affiliate_email" type="text" placeholder="E-mail">
                         </fieldset>
@@ -290,7 +292,6 @@
                             <span class="ft-size14 fw-600 fleft100 m-top20">SEUS DADOS</span>
                             <ul class="ds fleft100">
                                 <li id="li_complete_name"></li>
-                                <li id="li_username"></li>
                                 <li id="li_email"></li>
                                 <li id="li_phone"></li>
                                 <li id="li_pass">*********</li>

@@ -8,16 +8,14 @@ $(document).ready(function () {
             modal_alert_message('As senhas devem ser iguais');
         }else{
             complete_name  = validate_element('#affiliate_complete_name', '^[A-ZÃÕÇÁÉÍÓÚÀÈÌÒÙ ]{6,150}$');
-            username  = validate_element('#affiliate_username', '^[A-Za-z0-9._]{6,150}$');
             email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
             phone_ddd = validate_element('#affiliate_phone_ddd', '^[0-9]{2}$');
             phone_number = validate_element('#affiliate_phone_number', '^[0-9]{7,10}$');        
-            if(complete_name!=="false" && username!=="false" && email && phone_ddd && phone_number ){                                
+            if(complete_name!=="false" && email && phone_ddd && phone_number ){                                
                 $.ajax({
                     url: base_url + 'index.php/welcome/insert_affiliate_steep1',
                     data:{
                         'complete_name': $('#affiliate_complete_name').val(),
-                        'username': $('#affiliate_username').val(),
                         'email': $('#affiliate_email').val(),
                         'phone_ddd': $('#affiliate_phone_ddd').val(),
                         'phone_number': $('#affiliate_phone_number').val(),
@@ -30,7 +28,6 @@ $(document).ready(function () {
                         if(response['success']) {
                             $('li[id=li_complete_name]').text($('#affiliate_complete_name').val());
                             $('#titular_name').val($('#affiliate_complete_name').val());
-                            $('li[id=li_username]').text($('#affiliate_username').val());
                             $('li[id=li_email]').text($('#affiliate_email').val());        
                             $('li[id=li_phone]').text( "("+$('#affiliate_phone_ddd').val()+")"+$('#affiliate_phone_number').val() );        
                             $('.cad1').toggle("hide");
@@ -49,8 +46,7 @@ $(document).ready(function () {
             }
         }
     });
-    
-    
+        
     $("#btn_sigin_affiliate_steep2").click(function () {
         var cpf_value=$('#titular_cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
@@ -96,6 +92,36 @@ $(document).ready(function () {
             modal_alert_message('Verifique os dados fornecidos');            
         }
     });
+    
+     $("#btn_login_affiliate").click(function () {      
+        email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+        if(email){
+            $.ajax({
+                url: base_url + 'index.php/welcome/login_affiliate',
+                data:{
+                    'email': $('#affiliate_email').val(),
+                    'pass': $('#affiliate_pass').val(),
+                    'key':key
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']) {
+                         $(location).attr('href', base_url + 'index.php/welcome/afiliados'); 
+                    }
+                    else{
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error in Steep 1');
+                }
+            });          
+        } else{
+            modal_alert_message("Erro nos dados fornecidos. Por favor, verifique.");
+        }
+    });
+        
     
     //---------SECUNDARY FUNCTIONS-------------------------------
        

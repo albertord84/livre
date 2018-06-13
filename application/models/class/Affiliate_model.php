@@ -6,11 +6,11 @@ class Affiliate_model extends CI_Model{
         parent::__construct();            
     }
         
-    public function get_affiliates_by_credentials($username,$pass){
+    public function get_affiliates_by_credentials($email,$pass){
         try {    
             $this->db->select('*');
             $this->db->from('affiliates');
-            $this->db->where('affiliates.username', $username);
+            $this->db->where('affiliates.email', $email);
             $this->db->where('affiliates.pass', $pass);
             return $this->db->get()->result_array();
         } catch (Exception $exc) {
