@@ -26,6 +26,9 @@
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
 	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
         
+        <!-- IUGU JS -->
+        <script type="text/javascript" src="https://js.iugu.com/v2"></script>
+                
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
@@ -35,6 +38,8 @@
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>
         <?php include_once "pixel_adwords.php";?>
+        
+        <script type="text/javascript" src="<?php echo base_url().'assets/js/iugu_api.js'?>"></script> 
         
     </head>
     <body>
@@ -72,7 +77,7 @@
                         <img src="<?php echo base_url().'assets/'?>img/icones/ass.jpg" class="w100">				
                     </div>	
                     <div class="fleft100 m-top10 text-right center-sm">
-                        <button class="bt-green">Pronto!</button>
+                        <button class="bt-green" data-dismiss="modal">Pronto!</button>
                     </div>
                 </div>
             </div>
@@ -552,7 +557,7 @@
                                 </div>
                             </div>
                             <div class="fleft100 m-top20 text-right">
-                                <button type="submit" class="bt-green mxw-250" data-toggle="modal" data-target="#modal" data-whatever="@mdo">Assinar e contratar</button>
+                                <button id="do_sign" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
                             </div>
 
                             <!-- apenas para abrir os modais ocultos -->

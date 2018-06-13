@@ -122,13 +122,13 @@ $(document).ready(function () {
         var year = validate_year('#credit_card_exp_year', "^[2-20-01-20-9]{4,4}$");            
         var date = validate_date($('#credit_card_exp_month').val(),$('#credit_card_exp_year').val(), '#credit_card_exp_month', '#credit_card_exp_year');
         if (number && name && cvv && month && year) {
-            if(date){
-                datas={
+            if(date){                
+                var datas={
+                    'credit_card_name': $('#credit_card_name').val(),
                     'credit_card_number': $('#credit_card_number').val(),
                     'credit_card_cvv': $('#credit_card_cvv').val(),
-                    'credit_card_name': $('#credit_card_name').val(),
                     'credit_card_exp_month': $('#credit_card_exp_month').val(),
-                    'credit_card_exp_year': $('#credit_card_exp_year').val(),
+                    'credit_card_exp_year': $('#credit_card_exp_year').val(),                                
                     //TODO: 'credit_card_front_photo': 'nome da foto',
                     'pk': pk,
                     'key':key
@@ -495,7 +495,7 @@ $(document).ready(function () {
                    $('#request_cep_container').focus();
                 } else{
                     $('#input_sms_code_confirmation').val('');
-                    $('#text_error_sms_confirmation').text("Inalid code");
+                    $('#text_error_sms_confirmation').text("Codigo incorreto. Tente de novo");
                 }
             }
         });
@@ -600,5 +600,110 @@ $(document).ready(function () {
         $('#account').val('125490');
         $('#dig').val('3');
     }
+    
+    $("#cartao").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(0);
+        //alert("file upload");
+    });    
+    
+    $("#selcartao").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(1);
+        //alert("file upload");
+    });
+    
+    $("#id").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(2);
+        //alert("file upload");
+    });
+    
+    $("#selid").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(3);
+        //alert("file upload");
+    });
+    
+    var Upload = function (file) {
+    this.file = file;
+    };
 
+    Upload.prototype.getType = function() {
+        return this.file.type;
+    };
+    Upload.prototype.getSize = function() {
+        return this.file.size;
+    };
+    Upload.prototype.getName = function() {
+        return this.file.name;
+    };
+    
+    Upload.prototype.doUpload = function (id) {
+        var that = this;
+        var formData = new FormData();
+
+        // add assoc key values, this will be posts values
+        formData.append("file", this.file, this.getName());
+        formData.append("upload_file", true);        
+        formData.append("id", id);        
+        formData.append("key", key);        
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: base_url+'index.php/welcome/upload_file',
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    //myXhr.upload.addEventListener('progress', that.progressHandling, false);
+                }
+                return myXhr;
+            },
+            success: function (response) {
+                // your callback here
+                if(response['success']){
+                    modal_alert_message('Arquivo subido com sucesso!');
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (error) {
+                // handle error
+            },
+            async: true,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 60000
+        });
+    };
+    
+    $("#do_sign").click(function () {                
+        $.ajax({
+            url: base_url+'index.php/welcome/sign_contract',
+            data:{
+                'ucpf': $('#ucpf').is(":checked"),
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']){
+                    $('#modal').modal('show');
+                } else
+                    modal_alert_message(response['message']);
+            }
+        });        
+    });
 }); 

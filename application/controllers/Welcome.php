@@ -8,6 +8,11 @@ class Welcome extends CI_Controller {
          ['ip']
          ['pk']
          ['key']
+         ['time_start']
+         ['front_credit_card']
+         ['selfie_with_credit_card']
+         ['open_identity']
+         ['selfie_with_identity']
          ['transaction_values']['frm_money_use_form']
          ['transaction_values']['utm_source']
          ['transaction_values']['month_value'] 
@@ -27,9 +32,9 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {
+    public function index() {        
         $this->set_session();        
-        $params['key']=$_SESSION['key'];
+        $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
@@ -47,22 +52,31 @@ class Welcome extends CI_Controller {
     }
     
     public function afiliados() {
-        $this->load->view('afiliados');
+        //if($_SESSION['affiliate_loged']){
+            //$params = $this->load_afiliate_information($_SESSION['affiliate_loged_datas']['id']);
+            $this->load->view('afiliados',$params);
+        //}else
+            //$this->load->view('filiados');
     }
     
     public function filiados() {
-        $this->load->view('filiados');
+        $this->set_session();        
+        $params['key']=$_SESSION['key']; 
+        $this->load->view('filiados',$params);
     }
     
     public function configuracoes() {
+        $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
     
     public function resumo() {
+        $params['view']='resumo';
         $this->load->view('resumo');
     }
     
     public function transacoes() {
+        $params['view']='transacoes';
         $this->load->view('transacoes');
     }
     
@@ -195,6 +209,11 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){
+                    $datas['number_plots'] = $_SESSION['transaction_values']['amount_months'];
+                    $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
+                    $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
+                    $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
+                    
                     if($possible['action']==='insert_beginner'){
                         $datas['status_id']=  client_status::BEGINNER;
                         $id_row = $this->client_model->insert_db_steep_1($datas);
@@ -217,12 +236,13 @@ class Welcome extends CI_Controller {
                 } else{
                     $result=$possible;
                 }
-            }            
+            }
         }
         echo json_encode($result);
     }
         
-    public function is_possible_steep_2_for_this_client($datas) {        
+
+    public function is_possible_steep_2_for_this_client($datas) { 
         $this->load->model('class/client_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
@@ -240,7 +260,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        
+               
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -319,7 +339,8 @@ class Welcome extends CI_Controller {
                     $result['message']= $possible['message'];
                     $result['success']=false;
                 } else
-                if($possible['success']){
+                if($possible['success']){                    
+                    
                     if($possible['action']==='insert_credit_card'){
                         $id_row = $this->client_model->insert_db_steep_2($datas);
                     }
@@ -413,9 +434,7 @@ class Welcome extends CI_Controller {
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
         }else{
-            
-            $this->load->model('class/client_model');
-            
+            $this->load->model('class/client_model');            
             $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
             $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
             $datas['pk' ] =  $_SESSION['pk'];
@@ -437,11 +456,6 @@ class Welcome extends CI_Controller {
                         $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
                     if($id_row){                        
                         $result['success'] = true;
-                        /*$result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
-                        $result['month_value'] =(string) $verify_simulation['month_value'];
-                        $result['permited_value'] = (string)$verify_simulation['permited_value'];
-                        $result['amount_months'] = (string)$datas['amount_months'];
-                        $result['limit_value'] = (string)$datas['limit_value'];*/
                     }
                     else{
                         $result['success'] = false;
@@ -828,8 +842,8 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999);
-            $random_code = 123; /*eliminar*/
+            $random_code = rand(100000,999999); $random_code = 123;            
+            $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
                 $_SESSION['client_datas']['phone_ddd'] = $phone_ddd;
@@ -865,31 +879,47 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){
+    public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        $response['success']=true;
+        $response['success'] = TRUE;
+        return $response;
+        
+        $full_number = $phone_country_code.$phone_ddd.$phone_number;
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api-messaging.movile.com/v1/send-sms",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
+          CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Para validar seu telefone na livre.digital use o codigo '.$message.'"}',
+          CURLOPT_HTTPHEADER => array(
+            "authenticationtoken: D8UvJQd-bb5sXzA-vnJWr13qmMBTQWomtj1oiysq",
+            "username: seiva",
+            "content-type: application/json"
+          ),
+        ));
+
+        $response_curl = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        
+        $response = [];
+        if ($err) {
+          //echo "cURL Error #:" . $err;
+            $response['success'] = FALSE;
+            $response['message'] = $err;
+        } else {
+            $response['success'] = TRUE;
+        }        
         return $response;
     }
-
-//    public function send_verification_sms($phone_number, $message){
-//        $url = 'https://api-messaging.movile.com/v1/send-bulk-sms Content-Type: application/json'; //url de la petición
-//        $ch = curl_init($url); //inicializamos el objeto CUrl        
-//        $jsonData = array(  //el json simulamos una petición de un login
-//            'destination' => $phone_number,
-//        );
-//        $jsonDataEncoded = json_encode($jsonData); //creamos el json a partir de nuestro arreglo
-//        curl_setopt($ch, CURLOPT_POST, 1);//Indicamos que nuestra petición sera Post       
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //para que la peticion no imprima el resultado como un echo comun, y podamos manipularlo
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);//Adjuntamos el json a nuestra petición
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));//Agregamos los encabezados del contenido
-//
-//        //ignorar el certificado, servidor de desarrollo
-//        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-//        curl_setopt($process, CURLOPT_SSL_VERIFYHOST, FALSE);
-//        //Ejecutamos la petición
-//        $result = curl_exec($ch);
-//        var_dump($result);
-//    }
         
     public function iugu_simples_sale(){
         require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
@@ -908,35 +938,341 @@ class Welcome extends CI_Controller {
             ]
         );
     }
-    
-    public function upload_imaage(){
-        if ($_FILES['file']['error'] >0){
-            $result['success']=false;
-            $result['message']='Error: '.$_FILES['file']['error'];
-        } else
-        if(move_uploaded_file($_FILES['file']['tmp_name'], base_url().'assets/user_images/' . $_FILES['file']['name']))
-        {
-            $result['success']=true;
-            $result['message']='FOto subida';
-        }else{
-            $result['success']=false;
-            $result['message']='Error moviendo la imagen';
+        
+    function upload_file(){
+        $this->load->model('class/client_model');
+        $datas = $this->input->post();
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            $client = $this->client_model->get_client('id', $_SESSION['pk']);                
+            $cpf = $client[0]['cpf'];
+            if(!$_SESSION['time_start'])
+                $_SESSION['time_start'] = time();
+            $now = $_SESSION['time_start'];
+            $path_name = "assets/data_users/".$cpf."_".$now;             
+            
+            if(is_dir($path_name) || mkdir($path_name, 0755)){            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 5000000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity"];
+                            $id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 3)
+                                $id_file = 0;
+                            
+                            $filename = $file_names[$id_file]."png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
+                            if (file_exists($path_name."/". $filename)) {
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = "Guardado " . $filename;
+                            $result['success'] = true;
+                            $_SESSION[$file_names[$id_file]] = true;
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel criar pasta dos arquivos";
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }    
+        echo json_encode($result);
+    }
+        
+    public function sign_contract() {
+        $this->load->model('class/client_model');
+        $datas = $this->input->post();
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
+                $result['success'] = TRUE;                
+            }
+            else{
+                if($datas['ucpf'] == 'false'){
+                    $result['success'] = false;
+                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
+                }
+                else{
+                    $result['success'] = TRUE;                
+                }
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
         }
         echo json_encode($result);
     }
     
-    function ajax_upload(){  
-        if(isset($_FILES["image_file"]["name"])){  
-            $config['upload_path'] = './upload/';  
-            $config['allowed_types'] = 'jpg|jpeg|png|gif';  
-            $this->load->library('upload', $config);  
-            if(!$this->upload->do_upload('image_file')){  
-                echo $this->upload->display_errors();  
-            }  
-            else {  
-                $data = $this->upload->data();  
-                echo '<img src="'.base_url().'upload/'.$data["file_name"].'" width="300" height="225" class="img-thumbnail" />';  
-            }  
-        }  
-    } 
+    public function get_token($id){
+        
+        $this->load->model('class/client_model');
+        $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
+        
+        $name = $credit_card['credit_card_name'];
+        $names = explode(' ', $name);
+        $lastname = $names[count($names) - 1];
+        unset($names[count($names) - 1]);
+        $firstname = join(' ', $names);
+
+        $postData = array(
+            'account_id' => '80BF7285A577436483EE04E0A80B63F4',
+            'method' => 'credit_card',
+            'test' => 'true',
+            'data' => array(
+                            'number' => $credit_card['credit_card_number'],
+                            'verification_value' => $credit_card['credit_card_cvv'],
+                            'first_name' => $firstname,
+                            'last_name' => "$lastname",
+                            'month' => $credit_card['credit_card_exp_month'],
+                            'year' => $credit_card['credit_card_exp_year']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/payment_token";
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        if(is_object($parsed_response) && $parsed_response->id){
+            return $parsed_response->id;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public function do_payment($id){
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $token = $this->get_token($id);
+        
+        $postData = array(
+            'token' => $token,
+            'email' => $client['email'],
+            'month' => $client['number_plots'],
+            'items' => array(
+                            'description' => 'money',
+                            'quantity' => 1,
+                            'price_cents' => $client['total_effective_cost']
+                        )            
+        );        
+        
+        $postFields = http_build_query($postData);
+        
+        $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && $parsed_response->success){
+            $response['success'] = true;
+            $response['message'] = $parsed_response->message;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->message;
+        }
+        
+        return $response;
+    }
+
+    //funções para afiliados ----------------------------------
+    /*/*$_SESSION
+        ['key']
+        ['pk']
+        ['affiliates_steep_1']
+        ['user_datas']
+     */
+    
+    public function insert_affiliate_steep1(){
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $datas['pass']=md5($datas['pass']);
+        if($datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $_SESSION['affiliates_steep_1']=false;
+            $this->load->model('class/affiliate_status');
+            $this->load->model('class/affiliate_model');
+            $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
+            $N = count($afiliate);            
+            if($N>0){
+                if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
+                    $_SESSION['action'] = 'not_action';
+                    $result['success']=false;
+                    $result['message']='O email informado já tem associado uma conta ativa';
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::BEGINNER){
+                    $_SESSION['action'] ='update_afiliate';                
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::DELETED){
+                    $_SESSION['action'] ='insert_afiliate';                
+                }
+            }else{
+                $_SESSION['action'] = 'insert_afiliate';
+            }
+            if($_SESSION['action'] != 'not_action'){                
+                $datas['status_id'] = affiliate_status::BEGINNER;
+                $t = time();
+                $datas['init_date'] = $t;
+                $datas['status_date'] = $t;
+                if($_SESSION['action'] =='update_afiliate'){
+                    $id=0;
+                    if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
+                        $id = $afiliate[$N-1]['id'];
+                }
+                else
+                    $id = $this->affiliate_model->insert_afiliate($datas);
+                if($id){
+                    $result['success']=true;
+                    $_SESSION['affiliates_steep_1']=true;
+                    $_SESSION['pk'] = $id;
+                    $_SESSION['user_datas']=$datas;
+                } else{
+                    $result['message']='Erro guardando no banco de dados. Reporte ao nosso atendimento';
+                    $result['success']=false;
+                }
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function insert_affiliate_steep2() {
+        $_SESSION['affiliates_steep_2']=false;
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        if(!$_SESSION['affiliates_steep_1'] || $datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/client_model');
+            if(!$this->validate_bank_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados bancários fornecidos';
+            } else {
+                $xxx=$_SESSION['pk'];
+                $account_bank = $this->client_model->get_account_bank_by_client_id($_SESSION['pk']);
+                if($N = count($account_bank)){
+                   $id_row = 0;
+                   if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
+                       $id_row = $account_bank[$N-1]['client_id'];
+                }
+                else{
+                    $datas['client_id'] = $_SESSION['pk'];
+                    $datas['propietary_type'] = 1;                    
+                    $id_row = $this->affiliate_model->insert_affiliate_data_bank($datas);                     
+                }
+                if($id_row){
+                    $_SESSION['affiliates_steep_2'] = true;
+                    $result['success'] = true;
+                }
+                else{
+                    $result['success'] = false;
+                    $result['message'] = 'Erro interno no banco de dados';
+                }
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function login_affiliate(){
+        $_SESSION['affiliate_loged']=false;
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $datas['pass']=md5($datas['pass']);
+        $afiliate = $this->affiliate_model->get_affiliates_by_credentials($datas['email'],$datas['pass']);
+        $N = count($afiliate);
+        if($N>0 && $afiliate[$N-1]['status_id'] != affiliate_status::ACTIVE){
+            $result['success'] = false;
+            $result['resource'] = 'filiados';
+            $result['message'] = 'Você deve se cadastrar primeiro';
+        } else{
+            $result['success'] = true;
+            $_SESSION['affiliate_loged']=true;
+            $_SESSION['affiliate_loged_datas'] = $afiliate[$N-1];
+        }
+        echo json_encode($result);
+    }
+    
 }

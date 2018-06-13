@@ -1,6 +1,6 @@
 </section>
     <footer class="fleft100 pd-tb40">
-        <A name="contact_me"></A>
+        <A name="contact_me"></A>        
         <div class="container">
             <div class="col-md-6 col-sm-6 col-xs-12 contato">
                 <h1 class="ft-size55 pd-lr25 fw-300">
@@ -87,6 +87,11 @@
     <script src="<?php echo base_url().'assets/'?>js/script.js" type="text/javascript"></script>
     <!-- Proper Scripts -->    
     <script src="<?php echo base_url().'assets/'?>js/index.js" type="text/javascript"></script>
-    <script src="<?php echo base_url().'assets/'?>js/sign_in.js" type="text/javascript"></script>
+    
+    <script src="<?php echo base_url().'assets/js/sign_in.js'?>" type="text/javascript"></script>
+    <script src="<?php echo base_url().'assets/js/affiliates.js'?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'assets/'?>js/talkme_painel.js" type="text/javascript"></script>
+    
+    
+    
 </html>
