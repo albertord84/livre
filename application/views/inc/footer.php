@@ -30,9 +30,9 @@
             </div>
             <div class="col-md-6 col-sm-6 col-xs-12 pd-lr50 m-top20-xs text-center">
                 <div class="fleft100 m-top30"><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></div>
-                <span class="cl-fff fleft100 m-top40 m-b10 fw-300">Acompanhe a Crédit Société</span>
+                <span class="cl-fff fleft100 m-top40 m-b10 fw-300">Acompanhe a Livre.digital</span>
                 <ul class="sociais i-block">
-                    <li><a target="_blank" href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr"><img src="<?php echo base_url().'assets/'?>img/icones/fb-f.png" alt=""></a></li>
+                    <li><a target="_blank" href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr"><img src="<?php echo base_url().'assets/'?>img/icones/fb-f.png" alt=""></a></li>
                     <li><a target="_blank" href="https://www.instagram.com/livre.digital/"><img src="<?php echo base_url().'assets/'?>img/icones/ig-f.png" alt=""></a></li>
                     <!--<li><a target="_blank" href=""><img src="<?php //echo base_url().'assets/'?>img/icones/wpp.png" alt=""></a></li>-->
                 </ul>
