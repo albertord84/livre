@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {        
+    public function index() {          
         $this->set_session();        
         $params['key']=$_SESSION['key'];
         $this->load->view('index',$params);
@@ -338,7 +338,10 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        $result['success'] = true;
+                        /*verificar cartao de credito haciendo la cobrança*/
+                        $response = $this->do_payment($id_row);
+                        $result['success'] = $response['success'];
+                        $result['message'] = $response['message'];
                     }
                     else{
                         $result['success'] = false;
@@ -840,7 +843,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); $random_code = 123;            
+            $random_code = rand(100000,999999); $random_code = 123;//eliminar $random_code = 123;            
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -879,8 +882,8 @@ class Welcome extends CI_Controller {
     
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        $response['success'] = TRUE;
-        return $response;
+        $response['success'] = TRUE; /*eliminar estas*/
+        return $response;            /* dos lineas  */
         
         $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
@@ -1041,7 +1044,8 @@ class Welcome extends CI_Controller {
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             
             if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
-                $result['success'] = TRUE;                
+                $result['success'] = TRUE; 
+                //hacer mas cosas
             }
             else{
                 if($datas['ucpf'] == 'false'){
@@ -1118,11 +1122,11 @@ class Welcome extends CI_Controller {
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
-            'month' => $client['number_plots'],
+            'months' => 1,//$client['number_plots'],
             'items' => array(
                             'description' => 'money',
                             'quantity' => 1,
-                            'price_cents' => $client['total_effective_cost']
+                            'price_cents' => 1000//$client['total_effective_cost']
                         )            
         );        
         
@@ -1143,12 +1147,82 @@ class Welcome extends CI_Controller {
         $response = [];
                 
         if(is_object($parsed_response) && $parsed_response->success){
+            $this->client_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
             $response['message'] = $parsed_response->message;
         }
         else {
             $response['success'] = false;
             $response['message'] = $parsed_response->message;
+        }
+        
+        return $response;
+    }
+
+    public function refund_bill($id){
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $id_bill = $client['invoice_id'];
+        
+        $url = 'https://api.iugu.com/v1/invoices/'.$id_bill.'/refund?api_token='.$API_TOKEN;
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        //curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && $parsed_response->status = "refunded"){            
+            $response['success'] = true;
+            $response['message'] = $parsed_response->status;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->errors;
+        }
+        
+        return $response;
+    }
+    
+    public function get_bill($id){
+        //--url https://api.iugu.com/v1/invoices/id
+            
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $id_bill = $client['invoice_id'];
+        
+        $url = 'https://api.iugu.com/v1/invoices/'.$id_bill.'?api_token='.$API_TOKEN;
+        
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && !$parsed_response->errors){            
+            $response['success'] = true;            
+            $response['bill'] = $parsed_response;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->errors;
         }
         
         return $response;
