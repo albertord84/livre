@@ -34,7 +34,7 @@ class Welcome extends CI_Controller {
     
     public function index() {          
         $this->set_session();        
-        $params['key']=$_SESSION['key'];
+        $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
@@ -52,22 +52,31 @@ class Welcome extends CI_Controller {
     }
     
     public function afiliados() {
-        $this->load->view('afiliados');
+        //if($_SESSION['affiliate_loged']){
+            //$params = $this->load_afiliate_information($_SESSION['affiliate_loged_datas']['id']);
+            $this->load->view('afiliados',$params);
+        //}else
+            //$this->load->view('filiados');
     }
     
     public function filiados() {
-        $this->load->view('filiados');
+        $this->set_session();        
+        $params['key']=$_SESSION['key']; 
+        $this->load->view('filiados',$params);
     }
     
     public function configuracoes() {
+        $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
     
     public function resumo() {
+        $params['view']='resumo';
         $this->load->view('resumo');
     }
     
     public function transacoes() {
+        $params['view']='transacoes';
         $this->load->view('transacoes');
     }
     
@@ -227,13 +236,13 @@ class Welcome extends CI_Controller {
                 } else{
                     $result=$possible;
                 }
-            }            
+            }
         }
         echo json_encode($result);
     }
         
+
     public function is_possible_steep_2_for_this_client($datas) { 
-        
         $this->load->model('class/client_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
@@ -428,9 +437,7 @@ class Welcome extends CI_Controller {
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
         }else{
-            
-            $this->load->model('class/client_model');
-            
+            $this->load->model('class/client_model');            
             $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
             $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
             $datas['pk' ] =  $_SESSION['pk'];
@@ -452,11 +459,6 @@ class Welcome extends CI_Controller {
                         $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
                     if($id_row){                        
                         $result['success'] = true;
-                        /*$result['total_cust_value'] =(string) $verify_simulation['total_cust_value'];
-                        $result['month_value'] =(string) $verify_simulation['month_value'];
-                        $result['permited_value'] = (string)$verify_simulation['permited_value'];
-                        $result['amount_months'] = (string)$datas['amount_months'];
-                        $result['limit_value'] = (string)$datas['limit_value'];*/
                     }
                     else{
                         $result['success'] = false;
@@ -1036,8 +1038,7 @@ class Welcome extends CI_Controller {
         }    
         echo json_encode($result);
     }
-    
-    
+        
     public function sign_contract() {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
@@ -1229,18 +1230,123 @@ class Welcome extends CI_Controller {
     }
 
     //funções para afiliados ----------------------------------
-    public function insert_affiliate(){
+    /*/*$_SESSION
+        ['key']
+        ['pk']
+        ['affiliates_steep_1']
+        ['user_datas']
+     */
+    
+    public function insert_affiliate_steep1(){
         $this->is_ip_hacker();
         $datas = $this->input->post();
-        $this->load->model('class/affiliate_model');
-        $this->load->model('class/affiliate_status');
-        $afiliate = $this->affiliate_model->get_affiliates($datas['complete_name'],$datas['pass']);
-        $N = count($afiliate);
-        if($N>0){
-            if($afiliate[$N-1]['status_id']);
+        $datas['pass']=md5($datas['pass']);
+        if($datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $_SESSION['affiliates_steep_1']=false;
+            $this->load->model('class/affiliate_status');
+            $this->load->model('class/affiliate_model');
+            $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
+            $N = count($afiliate);            
+            if($N>0){
+                if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
+                    $_SESSION['action'] = 'not_action';
+                    $result['success']=false;
+                    $result['message']='O email informado já tem associado uma conta ativa';
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::BEGINNER){
+                    $_SESSION['action'] ='update_afiliate';                
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::DELETED){
+                    $_SESSION['action'] ='insert_afiliate';                
+                }
+            }else{
+                $_SESSION['action'] = 'insert_afiliate';
+            }
+            if($_SESSION['action'] != 'not_action'){                
+                $datas['status_id'] = affiliate_status::BEGINNER;
+                $t = time();
+                $datas['init_date'] = $t;
+                $datas['status_date'] = $t;
+                if($_SESSION['action'] =='update_afiliate'){
+                    $id=0;
+                    if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
+                        $id = $afiliate[$N-1]['id'];
+                }
+                else
+                    $id = $this->affiliate_model->insert_afiliate($datas);
+                if($id){
+                    $result['success']=true;
+                    $_SESSION['affiliates_steep_1']=true;
+                    $_SESSION['pk'] = $id;
+                    $_SESSION['user_datas']=$datas;
+                } else{
+                    $result['message']='Erro guardando no banco de dados. Reporte ao nosso atendimento';
+                    $result['success']=false;
+                }
+            }
         }
-        
-        
+        echo json_encode($result);
+    }
+    
+    public function insert_affiliate_steep2() {
+        $_SESSION['affiliates_steep_2']=false;
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        if(!$_SESSION['affiliates_steep_1'] || $datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/client_model');
+            if(!$this->validate_bank_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados bancários fornecidos';
+            } else {
+                $xxx=$_SESSION['pk'];
+                $account_bank = $this->client_model->get_account_bank_by_client_id($_SESSION['pk']);
+                if($N = count($account_bank)){
+                   $id_row = 0;
+                   if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
+                       $id_row = $account_bank[$N-1]['client_id'];
+                }
+                else{
+                    $datas['client_id'] = $_SESSION['pk'];
+                    $datas['propietary_type'] = 1;                    
+                    $id_row = $this->affiliate_model->insert_affiliate_data_bank($datas);                     
+                }
+                if($id_row){
+                    $_SESSION['affiliates_steep_2'] = true;
+                    $result['success'] = true;
+                }
+                else{
+                    $result['success'] = false;
+                    $result['message'] = 'Erro interno no banco de dados';
+                }
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function login_affiliate(){
+        $_SESSION['affiliate_loged']=false;
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $datas['pass']=md5($datas['pass']);
+        $afiliate = $this->affiliate_model->get_affiliates_by_credentials($datas['email'],$datas['pass']);
+        $N = count($afiliate);
+        if($N>0 && $afiliate[$N-1]['status_id'] != affiliate_status::ACTIVE){
+            $result['success'] = false;
+            $result['resource'] = 'filiados';
+            $result['message'] = 'Você deve se cadastrar primeiro';
+        } else{
+            $result['success'] = true;
+            $_SESSION['affiliate_loged']=true;
+            $_SESSION['affiliate_loged_datas'] = $afiliate[$N-1];
+        }
+        echo json_encode($result);
     }
     
 }

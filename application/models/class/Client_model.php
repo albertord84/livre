@@ -29,7 +29,7 @@
             return $str;
         }
 
-        public function insert_db_steep_1($datas){  
+        public function insert_db_steep_1($datas){
             $datas_tmp=$datas;
             unset($datas_tmp['key']);
             $this->db->insert('clients',$datas_tmp);
@@ -103,8 +103,7 @@
             $datas1['agency']=$this->crypt($datas['agency']);
             $datas1['account_type']=$this->crypt($datas['account_type']);
             $datas1['account']=$this->crypt($datas['account']);
-            $datas1['dig']=$this->crypt($datas['dig']);
-            
+            $datas1['dig']=$this->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];            
             $this->db->where('id',$id);

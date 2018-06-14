@@ -495,7 +495,7 @@ $(document).ready(function () {
                    $('#request_cep_container').focus();
                 } else{
                     $('#input_sms_code_confirmation').val('');
-                    $('#text_error_sms_confirmation').text("Inalid code");
+                    $('#text_error_sms_confirmation').text("Codigo incorreto. Tente de novo");
                 }
             }
         });
