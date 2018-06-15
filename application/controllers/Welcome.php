@@ -23,7 +23,7 @@ class Welcome extends CI_Controller {
          ['client_datas']['random_sms_code']
          ['client_datas']['phone_ddd']
          ['client_datas']['sms_verificated']
-         ['client_datas']['sms_verificated']
+         ['client_datas']['verified_phone']
          */        
     }    
     
@@ -123,7 +123,7 @@ class Welcome extends CI_Controller {
         }        
         //4. Analisar coerencia dos dados, exemplo:
             //4.1 mesmo cpf com nome diferentes        
-        $nomes=array();
+        /*$nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
@@ -131,36 +131,41 @@ class Welcome extends CI_Controller {
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){
+        if(count($nomes)>1){*/
+        if($clients[0]['name'] != $datas['name']){
             $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
             //4.2 mesmo telefone com nome diferentes
         $clients = $this->client_model->get_client('phone_number',$datas['phone_number']);
-        $nomes=array();
+        /*$nomes=array();
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
                 $nomes[$client['name']]+=1;
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outros nomes. Por favor, contate nosso atendimento';
+        if(count($nomes)>1){*/
+        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
+            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
         }
             //4.3 mesmo telefone com diferentes cpf
-        $cpfs=array();
+        /*$cpfs=array();
         foreach($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
                 $cpfs[$client['cpf']]+=1;
             else
                 $cpfs[$client['cpf']]=1;
         }
-        if(count($cpfs)>1){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outros nomes. Por favor, contate nosso atendimento';
+        if(count($cpfs)>1){*/
+        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
+            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro cpf. Por favor, contate nosso atendimento';
             $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
         }                
         //5. Analisar BEGINNER purchase_counter pelo cpf
@@ -170,19 +175,40 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
+        //6. Verificar que no haya cambiado el nro de telefono
+        if(isset($_SESSION['client_datas']['verified_phone']) && $_SESSION['client_datas']['verified_phone'] != $datas['phone_number']){
+            $_SESSION['client_datas']['sms_verificated'] = false;
+        }
+        
         if(count($clients)==0){
-            $result['action']='insert_beginner';
-            $result['success']=true;
-            $_SESSION['is_possible_steep_1']=true;
-            return $result;
+            if($_SESSION['client_datas']['sms_verificated'] === true){
+                $result['action']='insert_beginner';
+                $result['success']=true;
+                $_SESSION['is_possible_steep_1']=true;
+                return $result;
+            }
+            else
+            {
+                $result['message']='Deve verificar novamente seu telefone';
+                $result['success']=false;
+                return $result;
+            }
         }
         if(count($clients)==1){
             if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
-                $result['id'] = $clients[0]['id'];
-                $result['success']=true;
-                $result['action']='update_beginner';
-                $_SESSION['is_possible_steep_1']=true;
-                return $result;
+                if($_SESSION['client_datas']['sms_verificated'] === true){
+                    $result['id'] = $clients[0]['id'];
+                    $result['success']=true;
+                    $result['action']='update_beginner';
+                    $_SESSION['is_possible_steep_1']=true;
+                    return $result;
+                }
+                else
+                {
+                    $result['message']='Deve verificar novamente seu telefone';
+                    $result['success']=false;
+                    return $result;
+                }
             }else{
                 $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
                 $result['success']=false;
@@ -190,7 +216,7 @@ class Welcome extends CI_Controller {
             }
         }
     }
-            
+    
     public function insert_datas_steep_1(){
         $datas = $this->input->post();
         if($datas['key']!==$_SESSION['key']){
@@ -226,7 +252,7 @@ class Welcome extends CI_Controller {
                     if($id_row){
                         $result['success'] = true;
                         $result['pk'] = $id_row;
-                        $_SESSION['pk'] = $id_row;
+                        $_SESSION['pk'] = $id_row;                        
                     }
                     else{
                         $result['success'] = false;
@@ -348,7 +374,8 @@ class Welcome extends CI_Controller {
                         $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
                         /*verificar cartao de credito haciendo la cobrança*/
-                        $response = $this->do_payment($id_row);
+                        //$response = $this->do_payment($id_row);
+                        $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
                         $result['message'] = $response['message'];
                     }
@@ -869,7 +896,8 @@ class Welcome extends CI_Controller {
         $b=$_SESSION['client_datas']['random_sms_code'];
         if($this->input->post()['key']===$_SESSION['key']){
             if($this->input->post()['input_sms_code_confirmation']==$_SESSION['client_datas']['random_sms_code']){
-                $_SESSION['client_datas']['sms_verificated']=true;
+                $_SESSION['client_datas']['verified_phone'] = $_SESSION['client_datas']['sms_verificated'];
+                $_SESSION['client_datas']['sms_verificated'] = true;                
                 $result['success']=true;                
             }else{
                 $result['success']=false;
@@ -973,14 +1001,14 @@ class Welcome extends CI_Controller {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
                         } else {
-                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity"];
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
                             $id_file = $datas['id'];
                             if(!is_numeric($id_file))
                                 $id_file = 0;
-                            if($id_file < 0 || $id_file > 3)
+                            if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file]."png";
+                            $filename = $file_names[$id_file].".png";
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
                             if (file_exists($path_name."/". $filename)) {
@@ -1042,20 +1070,25 @@ class Welcome extends CI_Controller {
     public function sign_contract() {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
+        
+        $cpf_upload = true;
+        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+            $cpf_upload = false;
+        }
+            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             
-            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
-                $result['success'] = TRUE; 
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
+                $result['success'] = TRUE;
+                $value_ucpf = 0;
+                if($datas['ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->client_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 //hacer mas cosas
             }
-            else{
-                if($datas['ucpf'] == 'false'){
-                    $result['success'] = false;
-                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
-                }
-                else{
-                    $result['success'] = TRUE;                
-                }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
             }
         }
         else{

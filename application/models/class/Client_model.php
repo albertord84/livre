@@ -82,6 +82,19 @@
             }
         }
         
+        public function save_cpf_card($id, $ucpf){    
+            $result = NULL;
+            try{
+                $this->db->where('id', $id);
+                $this->db->update('clients',['ucpf' => $ucpf]);
+                $result =  $this->db->affected_rows();
+            } catch (Exception $exception) {
+               echo 'Error accediendo a la base de datos';
+            } finally {
+               return $result;
+            }
+        }
+        
         public function insert_db_steep_3($datas){
             $datas1=array();
             $datas1['client_id']=$datas['pk'];
