@@ -1098,7 +1098,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function get_token($id){
+    public function get_token_iugu($id){
         
         $this->load->model('class/client_model');
         $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
@@ -1151,7 +1151,7 @@ class Welcome extends CI_Controller {
         $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->client_model->get_client('id', $id)[0];
         
-        $token = $this->get_token($id);
+        $token = $this->get_token_iugu($id);
         
         $postData = array(
             'token' => $token,
@@ -1227,8 +1227,7 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_bill($id){
-        //--url https://api.iugu.com/v1/invoices/id
+    public function get_bill($id){        
             
         $this->load->model('class/client_model');
         
@@ -1260,6 +1259,59 @@ class Welcome extends CI_Controller {
         }
         
         return $response;
+    }
+    
+    public function get_topazio_API_token() {
+        $this->load->model('class/client_model');
+        
+        //Obteniendo code
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/grant-code");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"9b6103b5-ed33-36b8-9276-76663067c710\",\"redirect_uri\":\"http://localhost/\"}");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return 0;
+        }
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);        
+        $code = substr($parsed_response->redirect_uri, 23);//obtiene code
+        
+        //Obteniendo access token
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/access-token");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=authorization_code&code=".$code);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/x-www-form-urlencoded";
+        $headers[] = "Authorization: Basic OWI2MTAzYjUtZWQzMy0zNmI4LTkyNzYtNzY2NjMwNjdjNzEwOjk2NjcyYjVkLWEyMmItM2RjMi04OWVmLTNlNTU0ZWNmYTk0NA==";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return 0;
+        }
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);        
+        $API_token = $parsed_response->access_token; //obtiene token*/
+        
+        return $API_token;
+    }
+    
+    public function topazio_emprestimo($id) {
+        //$API_token = $this->get_topazio_API_token();
     }
 
     //funções para afiliados ----------------------------------
