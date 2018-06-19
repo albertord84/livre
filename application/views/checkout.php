@@ -70,15 +70,18 @@
         <!-- ASSINATURA MODAL -->
         <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog mxw-450" role="document">
-                <div class="modal-content b-none">
+                <div class="modal-content b-none">                    
                    <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
-                    <div class="titlemodal tmgreen"><img src="<?php echo base_url().'assets/'?>img/icones/lapis.png"> Utilize a mesma assinatura da sua identidade.</div>
+                    <div class="titlemodal tmgreen">
+                        <a style="font-size:20px; position: absolute; right: 15px; cursor: pointer;" data-dismiss="modal" >&times;</a>
+                        <img src="<?php echo base_url().'assets/'?>img/icones/lapis.png"> Utilize a mesma assinatura da sua identidade.                        
+                    </div>
                     <div class="prelative fleft100 pd-20 bk-fff text-center"> 				
                         <img src="<?php echo base_url().'assets/'?>img/icones/ass.jpg" class="w100">				
                     </div>	
-                    <div class="fleft100 m-top10 text-right center-sm">
+<!--                    <div class="fleft100 m-top10 text-right center-sm">
                         <button class="bt-green" data-dismiss="modal">Pronto!</button>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div><!-- /ASSINATURA MODAL -->
@@ -548,7 +551,8 @@
                                     </label>
                                 </div>
                                 <div class="fleft100 pd-lr5 m-top10">
-                                    <label for="ucpf" class="dc m-top5">
+                                    <label for="ucpf_img" class="dc m-top5">
+                                        <input type="file" id="ucpf_img" class="hidden">
                                         <input type="checkbox" id="ucpf" style="margin-top: 2px;"> 
                                         <small style="text-decoration: none;">
                                             <b class="fleft100">Minha identidade não possui CPF</b> Marque para fazer upload do seu CPF
@@ -557,13 +561,14 @@
                                 </div>
                             </div>
                             <div class="fleft100 m-top20 text-right">
+                                <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
                                 <button id="do_sign" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
                             </div>
 
                             <!-- apenas para abrir os modais ocultos -->
-                            <div class="fleft100 m-top20 text-right">
+<!--                            <div class="fleft100 m-top20 text-right">
                                 <button type="submit" class="bt-green mxw-250" data-toggle="modal" data-target="#erro" data-whatever="@mdo">Ver modal de erro</button>
-                            </div>
+                            </div>-->
 			</div>			
 		</div>
                 

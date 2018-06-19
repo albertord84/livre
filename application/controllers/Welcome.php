@@ -23,7 +23,7 @@ class Welcome extends CI_Controller {
          ['client_datas']['random_sms_code']
          ['client_datas']['phone_ddd']
          ['client_datas']['sms_verificated']
-         ['client_datas']['sms_verificated']
+         ['client_datas']['verified_phone']
          */        
     }    
     
@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {        
+    public function index() {          
         $this->set_session();        
         $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
@@ -123,7 +123,7 @@ class Welcome extends CI_Controller {
         }        
         //4. Analisar coerencia dos dados, exemplo:
             //4.1 mesmo cpf com nome diferentes        
-        $nomes=array();
+        /*$nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
@@ -131,36 +131,41 @@ class Welcome extends CI_Controller {
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){
+        if(count($nomes)>1){*/
+        if($clients[0]['name'] != $datas['name']){
             $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
             //4.2 mesmo telefone com nome diferentes
         $clients = $this->client_model->get_client('phone_number',$datas['phone_number']);
-        $nomes=array();
+        /*$nomes=array();
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
                 $nomes[$client['name']]+=1;
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outros nomes. Por favor, contate nosso atendimento';
+        if(count($nomes)>1){*/
+        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
+            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
         }
             //4.3 mesmo telefone com diferentes cpf
-        $cpfs=array();
+        /*$cpfs=array();
         foreach($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
                 $cpfs[$client['cpf']]+=1;
             else
                 $cpfs[$client['cpf']]=1;
         }
-        if(count($cpfs)>1){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outros nomes. Por favor, contate nosso atendimento';
+        if(count($cpfs)>1){*/
+        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
+            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro cpf. Por favor, contate nosso atendimento';
             $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
         }                
         //5. Analisar BEGINNER purchase_counter pelo cpf
@@ -170,19 +175,40 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
+        //6. Verificar que no haya cambiado el nro de telefono
+        if(isset($_SESSION['client_datas']['verified_phone']) && $_SESSION['client_datas']['verified_phone'] != $datas['phone_number']){
+            $_SESSION['client_datas']['sms_verificated'] = false;
+        }
+        
         if(count($clients)==0){
-            $result['action']='insert_beginner';
-            $result['success']=true;
-            $_SESSION['is_possible_steep_1']=true;
-            return $result;
+            if($_SESSION['client_datas']['sms_verificated'] === true){
+                $result['action']='insert_beginner';
+                $result['success']=true;
+                $_SESSION['is_possible_steep_1']=true;
+                return $result;
+            }
+            else
+            {
+                $result['message']='Deve verificar novamente seu telefone';
+                $result['success']=false;
+                return $result;
+            }
         }
         if(count($clients)==1){
             if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
-                $result['id'] = $clients[0]['id'];
-                $result['success']=true;
-                $result['action']='update_beginner';
-                $_SESSION['is_possible_steep_1']=true;
-                return $result;
+                if($_SESSION['client_datas']['sms_verificated'] === true){
+                    $result['id'] = $clients[0]['id'];
+                    $result['success']=true;
+                    $result['action']='update_beginner';
+                    $_SESSION['is_possible_steep_1']=true;
+                    return $result;
+                }
+                else
+                {
+                    $result['message']='Deve verificar novamente seu telefone';
+                    $result['success']=false;
+                    return $result;
+                }
             }else{
                 $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
                 $result['success']=false;
@@ -190,7 +216,7 @@ class Welcome extends CI_Controller {
             }
         }
     }
-            
+    
     public function insert_datas_steep_1(){
         $datas = $this->input->post();
         if($datas['key']!==$_SESSION['key']){
@@ -226,7 +252,7 @@ class Welcome extends CI_Controller {
                     if($id_row){
                         $result['success'] = true;
                         $result['pk'] = $id_row;
-                        $_SESSION['pk'] = $id_row;
+                        $_SESSION['pk'] = $id_row;                        
                     }
                     else{
                         $result['success'] = false;
@@ -347,7 +373,11 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        $result['success'] = true;
+                        /*verificar cartao de credito haciendo la cobrança*/
+                        //$response = $this->do_payment($id_row);
+                        $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
+                        $result['success'] = $response['success'];
+                        $result['message'] = $response['message'];
                     }
                     else{
                         $result['success'] = false;
@@ -842,7 +872,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); $random_code = 123;            
+            $random_code = rand(100000,999999); $random_code = 123;//eliminar $random_code = 123;            
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -866,7 +896,8 @@ class Welcome extends CI_Controller {
         $b=$_SESSION['client_datas']['random_sms_code'];
         if($this->input->post()['key']===$_SESSION['key']){
             if($this->input->post()['input_sms_code_confirmation']==$_SESSION['client_datas']['random_sms_code']){
-                $_SESSION['client_datas']['sms_verificated']=true;
+                $_SESSION['client_datas']['verified_phone'] = $_SESSION['client_datas']['sms_verificated'];
+                $_SESSION['client_datas']['sms_verificated'] = true;                
                 $result['success']=true;                
             }else{
                 $result['success']=false;
@@ -881,8 +912,8 @@ class Welcome extends CI_Controller {
     
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        $response['success'] = TRUE;
-        return $response;
+        $response['success'] = TRUE; /*eliminar estas*/
+        return $response;            /* dos lineas  */
         
         $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
@@ -970,14 +1001,14 @@ class Welcome extends CI_Controller {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
                         } else {
-                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity"];
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
                             $id_file = $datas['id'];
                             if(!is_numeric($id_file))
                                 $id_file = 0;
-                            if($id_file < 0 || $id_file > 3)
+                            if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file]."png";
+                            $filename = $file_names[$id_file].".png";
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
                             if (file_exists($path_name."/". $filename)) {
@@ -1039,19 +1070,25 @@ class Welcome extends CI_Controller {
     public function sign_contract() {
         $this->load->model('class/client_model');
         $datas = $this->input->post();
+        
+        $cpf_upload = true;
+        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+            $cpf_upload = false;
+        }
+            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             
-            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity']){
-                $result['success'] = TRUE;                
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
+                $result['success'] = TRUE;
+                $value_ucpf = 0;
+                if($datas['ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->client_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                //hacer mas cosas
             }
-            else{
-                if($datas['ucpf'] == 'false'){
-                    $result['success'] = false;
-                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";
-                }
-                else{
-                    $result['success'] = TRUE;                
-                }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
             }
         }
         else{
@@ -1061,7 +1098,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function get_token($id){
+    public function get_token_iugu($id){
         
         $this->load->model('class/client_model');
         $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
@@ -1114,16 +1151,16 @@ class Welcome extends CI_Controller {
         $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->client_model->get_client('id', $id)[0];
         
-        $token = $this->get_token($id);
+        $token = $this->get_token_iugu($id);
         
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
-            'month' => $client['number_plots'],
+            'months' => 1,//$client['number_plots'],
             'items' => array(
                             'description' => 'money',
                             'quantity' => 1,
-                            'price_cents' => $client['total_effective_cost']
+                            'price_cents' => 1000//$client['total_effective_cost']
                         )            
         );        
         
@@ -1144,6 +1181,7 @@ class Welcome extends CI_Controller {
         $response = [];
                 
         if(is_object($parsed_response) && $parsed_response->success){
+            $this->client_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
             $response['message'] = $parsed_response->message;
         }
@@ -1153,6 +1191,127 @@ class Welcome extends CI_Controller {
         }
         
         return $response;
+    }
+
+    public function refund_bill($id){
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $id_bill = $client['invoice_id'];
+        
+        $url = 'https://api.iugu.com/v1/invoices/'.$id_bill.'/refund?api_token='.$API_TOKEN;
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_POST,true);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        //curl_setopt($handler, CURLOPT_POSTFIELDS, $postFields);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && $parsed_response->status = "refunded"){            
+            $response['success'] = true;
+            $response['message'] = $parsed_response->status;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->errors;
+        }
+        
+        return $response;
+    }
+    
+    public function get_bill($id){        
+            
+        $this->load->model('class/client_model');
+        
+        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $client = $this->client_model->get_client('id', $id)[0];
+        
+        $id_bill = $client['invoice_id'];
+        
+        $url = 'https://api.iugu.com/v1/invoices/'.$id_bill.'?api_token='.$API_TOKEN;
+        
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $url);  
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER,true);  
+        $response = curl_exec($handler);        
+        $parsed_response = json_decode($response);        
+        $info = curl_getinfo($handler);
+        $string = curl_error($handler);
+        curl_close($handler);
+        
+        $response = [];
+                
+        if(is_object($parsed_response) && !$parsed_response->errors){            
+            $response['success'] = true;            
+            $response['bill'] = $parsed_response;
+        }
+        else {
+            $response['success'] = false;
+            $response['message'] = $parsed_response->errors;
+        }
+        
+        return $response;
+    }
+    
+    public function get_topazio_API_token() {
+        $this->load->model('class/client_model');
+        
+        //Obteniendo code
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/grant-code");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"9b6103b5-ed33-36b8-9276-76663067c710\",\"redirect_uri\":\"http://localhost/\"}");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return 0;
+        }
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);        
+        $code = substr($parsed_response->redirect_uri, 23);//obtiene code
+        
+        //Obteniendo access token
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/access-token");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=authorization_code&code=".$code);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/x-www-form-urlencoded";
+        $headers[] = "Authorization: Basic OWI2MTAzYjUtZWQzMy0zNmI4LTkyNzYtNzY2NjMwNjdjNzEwOjk2NjcyYjVkLWEyMmItM2RjMi04OWVmLTNlNTU0ZWNmYTk0NA==";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return 0;
+        }
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);        
+        $API_token = $parsed_response->access_token; //obtiene token*/
+        
+        return $API_token;
+    }
+    
+    public function topazio_emprestimo($id) {
+        //$API_token = $this->get_topazio_API_token();
     }
 
     //funções para afiliados ----------------------------------

@@ -633,6 +633,20 @@ $(document).ready(function () {
         //alert("file upload");
     });
     
+    $("#ucpf").change(function() {
+        if(this.checked) {
+            $('#ucpf_img').trigger('click'); 
+        }
+    });
+    
+    $("#ucpf_img").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(4);
+        //alert("file upload");
+    });
+    
     var Upload = function (file) {
     this.file = file;
     };
@@ -705,5 +719,20 @@ $(document).ready(function () {
                     modal_alert_message(response['message']);
             }
         });        
+    });
+    
+    $("#phone_number").keydown(function (e) {   
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();            
+        }        
     });
 }); 

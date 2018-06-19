@@ -69,11 +69,24 @@
             return $id;
         }
         
-        public function update_token_card($id, $token){    
+        public function save_generated_bill($id, $invoice_id){    
             $result = NULL;
             try{
                 $this->db->where('id', $id);
-                $this->db->update('clients',['token' => $token]);
+                $this->db->update('clients',['invoice_id' => $invoice_id]);
+                $result =  $this->db->affected_rows();
+            } catch (Exception $exception) {
+               echo 'Error accediendo a la base de datos';
+            } finally {
+               return $result;
+            }
+        }
+        
+        public function save_cpf_card($id, $ucpf){    
+            $result = NULL;
+            try{
+                $this->db->where('id', $id);
+                $this->db->update('clients',['ucpf' => $ucpf]);
                 $result =  $this->db->affected_rows();
             } catch (Exception $exception) {
                echo 'Error accediendo a la base de datos';
@@ -155,7 +168,7 @@
             $card['credit_card_exp_year'] = $this->decrypt($datas['credit_card_exp_year']);
             $card['credit_card_cvv'] = $this->decrypt($datas['credit_card_cvv']);
             return $card;
-        }
+        }        
         
         public function get_account_banks($bank, $agency, $account){
             $this->db->select('*');
