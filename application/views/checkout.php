@@ -67,11 +67,11 @@
             </div>
 	</header>
 
-        <!-- ASSINATURA MODAL -->
+<!--         ASSINATURA MODAL 
         <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog mxw-450" role="document">
                 <div class="modal-content b-none">                    
-                   <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
+                     <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> 
                     <div class="titlemodal tmgreen">
                         <a style="font-size:20px; position: absolute; right: 15px; cursor: pointer;" data-dismiss="modal" >&times;</a>
                         <img src="<?php echo base_url().'assets/'?>img/icones/lapis.png"> Utilize a mesma assinatura da sua identidade.                        
@@ -79,6 +79,22 @@
                     <div class="prelative fleft100 pd-20 bk-fff text-center"> 				
                         <img src="<?php echo base_url().'assets/'?>img/icones/ass.jpg" class="w100">				
                     </div>	
+                    <div class="fleft100 m-top10 text-right center-sm">
+                        <button class="bt-green" data-dismiss="modal">Pronto!</button>
+                    </div>
+                </div>
+            </div>
+        </div> /ASSINATURA MODAL -->
+        <!-- ASSINATURA MODAL -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+            <div class="modal-dialog mxw-700" role="document">
+                <div class="modal-content b-none">                    
+                   <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
+                    <div class="titlemodal tmgreen">
+                        <a style="font-size:20px; position: absolute; right: 15px; cursor: pointer;" data-dismiss="modal" >&times;</a>
+                        <img src="<?php echo base_url().'assets/'?>img/icones/lapis.png"> Utilize a mesma assinatura da sua identidade.                        
+                    </div>
+                    <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:700px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/5f4a76f0ef046dd99a6ed09f1510153f" width="700"></iframe></div>
 <!--                    <div class="fleft100 m-top10 text-right center-sm">
                         <button class="bt-green" data-dismiss="modal">Pronto!</button>
                     </div>-->
@@ -563,6 +579,8 @@
                             <div class="fleft100 m-top20 text-right">
                                 <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
                                 <button id="do_sign" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
+                                <!--<a href="https://secure.rightsignature.com/templates/a928ddf8-3448-471a-8715-5c380f20f4de/template-signer-link/ab8c91ff6a6120267167cbca08615106" class="embed_button embed_green_button" id="embed_d1e97fc8-9f46-4fe0-af4a-bd5141821f37" data-guid="d1e97fc8-9f46-4fe0-af4a-bd5141821f37">Sign Document</a><script charset="ISO-8859-1" src="https://secure.rightsignature.com/embed.js"></script>-->
+                                <!--<div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe></div>-->
                             </div>
 
                             <!-- apenas para abrir os modais ocultos -->
@@ -619,4 +637,24 @@
 		</div> -->
 	</div>
 </section>
+<div class="modal fade"  id="show_sign" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+    <div id="show_sign_modal" class="modal-dialog modal-sm" role="document">                                                          
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="btn_modal_close_sign" type="button" class="close" style="background:#fff;" data-dismiss="modal" aria-label="Close">
+                    <img src="<?php echo base_url() . 'assets/img/icones/índice.png'; ?>"> 
+                </button>
+                <h5 class="modal-title" id="myModalLabel2"><b>Assinar</b></h5>                        
+            </div>
+            <div class="modal-body">                                            
+                <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe>
+            </div>
+            <div class="modal-footer text-center">
+                <button id="accept_modal_sign" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                    <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                </button>
+            </div>
+        </div>
+    </div>                                                        
+</div>
 <?php //include_once "inc/footer.php";?>
