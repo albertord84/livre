@@ -33,7 +33,7 @@
         
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>
-        <?php include_once "pixel_adwords.php";?>
+        <?php //include_once "pixel_adwords.php";?>
 </head>
 <body>
     
@@ -50,15 +50,14 @@
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
-                    <ul class="menu i-block m-top10-xs">				
+                    <ul class="menu i-block m-top10-xs">
                         <li><a href="#contact_me">Suporte </a></li>
                         <li class="tv cl-black">|</li>
-                        <li><a href="#contact_me"> Afiliados</a></li>
+                        <li><a href="<?php echo base_url()?>index.php/welcome/filiados"> Afiliados</a></li>
                         <li class="tv cl-black">|</li>
-                    </ul>
-                    <ul class=" sociais i-block">
                         <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
-                        <li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                        <li class="tv cl-black">|</li>
+                        <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
                     </ul>
                 </div>
             </div>
@@ -225,7 +224,7 @@
 			<div class="fleft100 bleftgreen pd-top20">
 				<div class="ft-size17">
 					<h3 class="ft-size30"><i><b>E melhor!</b></i></h3>
-					Sem a necessidade de enviar documentos e esperar pela aprovação do crédito.
+					O envio dos documentos é totalmente digital.
 				</div>
 			</div>
 		</div>
@@ -240,7 +239,7 @@
 		<div class="i i-block fnone pd-tb15 col-md-10">
 			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
-				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa. Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
+				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
 			</div>
 		</div>
 	</div>

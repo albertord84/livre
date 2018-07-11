@@ -32,25 +32,34 @@
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">
 					<h3>Luiz Emprestimo</h3>
-					<span class="fleft100 pd-tb10">24.255.255/0001-22</span>
 					<div class="col-md-7 col-sm-6 col-xs-12 pd-right5 pd-lr0-xs">
-						Luiz Carlos da Costa <br>luiz@luizemprestimo <br>Senha: soverte <br>www.luiz.com.br
+						<br>Luiz Carlos da Costa <br>(21) 2222-2222 <br> luiz@luizemprestimo <br>
 					</div>
 					<div class="col-md-5 col-sm-6 col-xs-12 pd-left5 pd-lr0-xs m-top10-xs">
-						(21) 2222-2222 <br>Itau: 6655 <br>CC: 20022-0 <br>155.155.155-55
+                                            <br><b>Itau</b> <br>Agência: 6655 <br>CC: 20022-0 <br>155.155.155-55
 					</div>
 				</div>
 			</div>
-			<div class="col-md-4 col-sm-4 col-xs-12 center-xs">
-				<div class="col-md-4 col-sm-4 col-xs-12 pd-lr5 m-top10"><span class="fleft100">Empréstimos</span><span class="emp">28</span></div>
-				<div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10"><span class="fleft100">Valor total</span><span class="emp">R$32.820,00</span></div>
-				<div class="col-md-2 col-sm-2 col-xs-12 pd-lr5 porc text-center">▲ <span class="fleft100">20%</span></div>
-				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
-					<a href="">?afiliado=luizemprestimo</a>
-				</div>
+			<div class="col-md-4 col-sm-4 col-xs-12 center-xs">                                
+				<div class="col-md-12 col-sm-12 col-xs-12 pd-lr5 m-top10 text-center">Este mês</div>                                
+                                    <div class="col-md-12 col-sm-12 col-xs-12 pd-lr5 m-top10 text-center">                              
+                                    <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">
+                                        <span class="fleft100">Empréstimos</span>
+                                        <span class="emp">28</span>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">
+                                        <span class="fleft100">Valor total</span>
+                                        <span class="emp">R$32.820,00</span>
+                                    </div>
+                                    <!--<div class="col-md-2 col-sm-2 col-xs-12 pd-lr5 porc text-center">▲ <span class="fleft100">20%</span></div>-->
+                                </div>  
 			</div>
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
-				<img src="<?php echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">
+				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
+                                    <p>Mande esse link para seus clientes</p>
+					<a href="https://livre.digital/livre/?afiliado=luizcarlosdacosta">https://livre.digital/livre/?afiliado=luizcarlosdacosta</a>
+				</div>
+				<!--<img src="<?php //echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">-->
 			</div>
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
@@ -83,7 +92,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -99,7 +108,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -115,7 +124,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -131,7 +140,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -147,7 +156,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -163,7 +172,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
@@ -179,7 +188,7 @@
 					<div class="w10 cl-blue m-top15 m-top10-xs fw-500">R$ 6.000,00</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados do cartão</small>
-						MARCIO ARAÚJO PAIVA - Final 2336 24/Janeiro - CVV 333
+						MARCIO ARAÚJO PAIVA - Final 2336 - 24/01 - CVV 333
 					</div>
 					<div class="w20 fw-500 text-left center-xs m-top10-xs">
 						<small class="fleft100">Dados bancários</small>
