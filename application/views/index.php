@@ -44,14 +44,16 @@
                 <div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left">
                     <a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 fr text-left">
+                <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
+                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
+                <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
                     <ul class="menu i-block m-top10-xs">				
-                        <li><a href="#contact_me">Suporte</a></li>
+                        <li><a href="#contact_me">Suporte </a></li>
+                        <li class="tv cl-black">|</li>
+                        <li><a href="#contact_me"> Afiliados</a></li>
                         <li class="tv cl-black">|</li>
                     </ul>
                     <ul class=" sociais i-block">
@@ -78,10 +80,10 @@
                         <span class="fleft100">Quanto deseja pegar emprestado?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff my_money" title="de $R 0500 até $R 3000" placeholder="R$ 3000,00">
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff my_money" title="de $R 0500 até $R 3000" placeholder="R$____,__">
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
-                        <button id="btn_verify" class="bt-white m-top5">VERIFICAR</button>
+                        <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
                     </div>
                 </div>
                 <div class="fleft100 prelative ft-Rajdhani">
@@ -166,12 +168,12 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/check2.png" width="60">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
-                            <h2 class="ft-size28 fw-600 fleft100 wrap d-webkit clamp2">Sem verificação de crédito!</h2>
+                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit clamp2">Pague as prestações através da fatura do seu cartão de crédito!</h2>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
                         <div class="fleft100 pd-lr15">
-                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos</b></h5>
+                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos.</b></h5>
                         </div>
                         <div class="fleft100 pd-lr15">
                             <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" alt="">
@@ -184,7 +186,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/emp.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Emprestamos para negativados e sem comprovação de renda.</h4>
+                            <h4 class="ft-size20 fw-300">Análise de crédito instantânea.</h4>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
@@ -192,7 +194,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros de apenas 2,99% a.m.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros de a partir de 2,99% a.m.</h4>
                         </div>
                     </div>
                 </div>
@@ -204,7 +206,7 @@
 	<div class="container">
 		<div class="fleft100">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<h1 class="fw-300 fleft100 text-left">fácil<b class="">fácil</b> <span>{</span></h1>
+				<h1 class="fw-300 fleft100 text-left">crédito<b class="">fácil</b> <span>{</span></h1>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 center-xs">
 				<h2>Solicitar um empréstimo no Livre.digital leva apenas <b>2 minutos</b> e a resposta é instantânea!</h2>
