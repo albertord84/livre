@@ -127,7 +127,7 @@
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
                                 <small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
-                                <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius">
+                                <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius border-1px">
                                     <option value="00">Selecione     ...</option>
                                     <option value="01">Compras</option>
                                     <option value="02">Quitar dívida do cartão de crédito</option>
@@ -141,7 +141,7 @@
                                 </select>							
                             </div>						
                             <div class="col-md-5 col-sm-5 col-xs-12 cl-fff">
-                                <div id="btn_contratar_emprestimo" class="bt-green fleft100" style="cursor: default;">Contratar empréstimo</div>
+                                <div id="btn_contratar_emprestimo" class="bt-green fleft100 btn-verificar" style="cursor: default;">Contratar empréstimo</div>
                                 <label for="ck" class="dc m-top5">
                                     <input type="checkbox" id="use_term" checked> 
                                     <small>

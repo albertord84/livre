@@ -169,10 +169,10 @@
                             <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10">
                                 <input id="phone_ddd" type="text" placeholder="DDD">
                             </fieldset>
-                            <fieldset class="col-md-6 col-sm-6 col-xs-6 pd-lr10">
+                            <fieldset class="col-md-6 col-sm-6 col-xs-9 pd-lr10">
                                 <input id="phone_number" type="text" placeholder="Celular">
                             </fieldset>
-                            <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10 bti">
+                            <fieldset class="col-md-3 col-sm-3 col-xs-12 pd-lr10 bti">
                                 <!--<button class="bt-green" data-toggle="modal" data-target="#sms" data-whatever="@mdo">Verificar</button>-->
                                 <button id="btn_verify_phone_number" class="bt-green" data-toggle="modal" data-whatever="@mdo">Verificar</button>
                             </fieldset>
@@ -182,7 +182,7 @@
                                 <fieldset class="col-md-4 col-sm-5 col-xs-5 pd-lr10">
                                     <input id="cep" type="text" placeholder="CEP">
                                 </fieldset>
-                                <fieldset class="col-md-4 col-sm-4 col-xs-3 pd-lr10 bti">
+                                <fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr10 bti">
                                     <button id="verify_cep" class="bt-green">Buscar</button>
                                 </fieldset>
                             </div>
@@ -279,9 +279,12 @@
                                 <input type="file" id="file" name="file">
                             </label> -->
                         </div>
-                        <div class="fleft100 m-top10 text-right">
-                            <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
-                            <button id="btn_steep_2_next" class="bt-green px2">Próximo</button>
+                        <div class="fleft100 m-top10 text-right col-12">                            
+                            <div class="m-top10 text-right col-6">
+                                <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
+                                <button id="btn_steep_2_next" class="bt-green px2">Próximo</button>                            
+                            </div>
+                            
                         </div>
                     </div>
                     

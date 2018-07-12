@@ -37,7 +37,7 @@
                     <!--<li><a target="_blank" href=""><img src="<?php //echo base_url().'assets/'?>img/icones/wpp.png" alt=""></a></li>-->
                 </ul>
                 <p class="flef100 cl-fff text-justify m-top80">
-                    Av. Paula Sousa 351, Maracanã, Rio de Janeiro - RJ, CEP: 20271-120.
+                    Alameda Santos, 1767, CXPST 1069 EDIF 1767-1773, Cerqueira Cesar, São Paulo - SP, CEP: 01419-100.
                     <small class="fleft100"><br>"informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 24,08% a 42,08% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de adesão de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 118,39. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.420,79. CET: 42,08% a.a.</small>
                 </p>
             </div>

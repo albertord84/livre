@@ -68,6 +68,8 @@ Facebook: https://www.facebook.com/felipe.golfetto
   width: 70%;
 }
 
+.border-1px{border: 1px solid #ccc;}
+
 .verific span{
   line-height: 1.5; 
   font-size: 16px;
