@@ -33,8 +33,12 @@ class Welcome extends CI_Controller {
     }
     
     public function index() {
-        $this->set_session();        
+        $this->set_session(); 
+         $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['key']=$_SESSION['key'];       
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;       
+        var_dump($params);
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
