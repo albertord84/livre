@@ -79,9 +79,9 @@
                         <span class="fleft100">Quanto deseja pegar emprestado?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff my_money" title="de $R 0500 até $R 3000" placeholder="R$____,__">
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 0500 até R$ 3000" placeholder="R$ 0.00" maxlength="11">                        
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
+                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
                             <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos.</b></h5>
                         </div>
                         <div class="fleft100 pd-lr15">
-                            <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" alt="">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" style="width:90%" alt="">
                         </div>					
                     </div>
                 </div>

@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {          
+    public function index() {
         $this->set_session();        
         $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
@@ -424,7 +424,7 @@ class Welcome extends CI_Controller {
                 $names[$acc['titular_name']]=1;
         }
         if(count($names)>1){
-            $result['message']='Solicitação negada. A conta informada tem sido atrelada a outo cliente anteriormente';
+            $result['message']='A conta informada já foi cadastrada em nosso sistema, entre em contato através do e-mail.';
             $result['success']=false;
             return $result;
         }
@@ -438,7 +438,7 @@ class Welcome extends CI_Controller {
                 $names[$acc['titular_cpf']]=1;
         }
         if(count($names)>1){
-            $result['message']='Solicitação negada. A conta informada tem sido atrelada a outo cpf anteriormente';
+            $result['message']='A conta informada já foi cadastrada em nosso sistema, entre em contato através do e-mail.';
             $result['success']=false;
             return $result;
         }
