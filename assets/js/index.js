@@ -48,6 +48,13 @@ $(document).ready(function () {
         $("#input_verify").focus();
     });
     
+    
+
+    var valsrch = $('#input_verify').val();
+    $('#input_verify').val('').focus().val(valsrch);
+
+
+    
     function verify(flag){        
         if($('#input_verify').val()===''){
            modal_alert_message("Preencha com o valor que deseja solicitar o empréstimo. Lembre-se que ele deve ser menor que o seu limite no cartão de crédito.");
