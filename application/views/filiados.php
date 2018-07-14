@@ -4,27 +4,27 @@
 	<meta charset="UTF-8">
 	<title>Livre.digital</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/img/icones/favicon.png'?>">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css?'.$SCRIPT_VERSION?>">
 
 	<!-- GALERIA -->	
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION?>" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION?>">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION?>">
 
 	<!-- Owl Carousel Assets -->
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION?>">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.theme.css?'.$SCRIPT_VERSION?>">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.transitions.css?'.$SCRIPT_VERSION?>">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION?>" />
         
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
@@ -40,18 +40,50 @@
 		<div class="container">
 			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 			<div class="col-md-10 col-sm-10 col-xs-12 pd-0 text-right center-xs m-top20">
+                                <ul class=" sociais i-block">
+                                    <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                                    <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+				</ul>
 				<ul class="menu i-block m-top10-xs">
-					<li><a href="#login">Login</a></li>
                                         <li class="tv cl-fff">|</li>
-					<li><a href="#cadastrar_agora">Cadastre-se</a></li>
+                                        <li><a href="#cadastrar_agora">Cadastre-se</a></li>
                                         <li class="tv cl-fff">|</li>
 					<li><a href="#contact_me">Suporte</a></li>
-					<li class="tv cl-fff">|</li>
+                                        <li class="tv cl-fff">|</li>
+                                        <li class = "dropdown_open nav navbar-nav navbar-right" class="col-md-12">                                            
+                                            <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                                Login<spam class="caret"></spam>
+                                            </a>
+                                            <ul class="dropdown-menu" id ="main_dropdown">
+                                                <li>
+                                                    <div class="col-md-12 pd-10" style="width: 270px">
+                                                        <div id="login_container2">
+                                                            <form id="usersLoginForm2" action="#" method="#" class="form text-center" role="form" accept-charset="UTF-8">
+                                                                <div class="form-group center" style="font-family:sans-serif; font-size:0.9em">
+                                                                    EXCLUSIVO PARA AFILIADOS                                                            </div>
+                                                                <div class="form-group center" style="font-family:sans-serif; font-size:0.7em">
+                                                                    Use email e senha                                                            </div>
+                                                                <div class="form-group">
+                                                                    <input id="userLogin2" type="text" class="form-control" placeholder="E-mail"  required="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                        <input id="userPassword2" type="password" class="form-control" placeholder="Senha" required="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button id="" class="bt-green btn-block ladda-button" type="button" data-style="expand-left" data-spinner-color="#ffffff">
+                                                                        <spam class="ladda-label">ENTRAR</spam>
+                                                                    </button>
+                                                                </div>
+                                                                <div id="container_login_message2" class="form-group" style="text-align:justify;visibility:hidden; font-family:sans-serif; font-size:0.9em">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul> 
+                                        </li>                                        
 				</ul>
-				<ul class=" sociais i-block">
-					<li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
-					<li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
-				</ul>
+				
 			</div>
 		</div>
 	</header>
@@ -460,4 +492,36 @@
             </div>
         </div>
     </section>
+    
+    <!--modal_container_filiates_login-->
+<!--    <div class="modal fade" style="top:10%" id="modal_filiates_login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div id="modal_container_filiates_login" class="modal-dialog modal-sm" role="document">                                                          
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btn_modal_close" type="button" class="close" style="background:#fff;" data-dismiss="modal" aria-label="Close">
+                        <img src="<?php echo base_url() . 'assets/img/icones/índice.png'; ?>"> 
+                    </button>
+                    <h5 class="modal-title" id="myModalLabel"><b>Login</b></h5>                        
+                </div>
+                <div class="modal-body">                                            
+                    <fieldset  class="fleft100  pd-lr10">
+                        <input style="width:95%" id="affiliate_email_login" type="text" placeholder="E-mail">
+                    </fieldset>
+                    <fieldset  class="fleft100 pd-lr10 m-top10">
+                        <input style="width:95%" id="affiliate_pass_login" type="password" placeholder="Senha">
+                    </fieldset>                       
+                </div>
+                <div class="modal-footer text-center">
+                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                    </button>
+                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                    </button>
+                </div>
+            </div>
+        </div>                                                        
+    </div> -->
+    
+    
 <?php include_once "inc/footer.php";?>

@@ -7,24 +7,24 @@
 	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
 
         <!-- Font Awesome -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">
 
 	<!-- GALERIA -->	
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION;?>" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION;?>">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION;?>">
 
 	<!-- Owl Carousel Assets -->
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.theme.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.transitions.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
         
         <!-- JS -->
         <script type="text/javascript">

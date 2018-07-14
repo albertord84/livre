@@ -235,8 +235,19 @@ $(document).ready(function () {
             $(element_selector).css("color", "black");
             return true;
         }
-    }
+    }    
     
+//    $("#lnk_filiates_login").click(function () {
+//        $('#modal_filiates_login').modal('show');
+//    });    
+//    
+//    $("#btn_modal_close").click(function () {
+//        $('#modal_filiates_login').modal('hide');
+//    });
+    
+//    $("#accept_modal_alert_message").click(function () {
+//        $('#modal_filiates_login').modal('hide');
+//    });
     
     function init_signin(){        
         $('#affiliate_complete_name').val('JOSÉ RAMÓN GONZÁLEZ MONTERO');

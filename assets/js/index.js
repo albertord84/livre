@@ -91,7 +91,7 @@ $(document).ready(function () {
                     }
                 });                
             } else{
-                modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000---');
+                modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');
             }
         }
     }
