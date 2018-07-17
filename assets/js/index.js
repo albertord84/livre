@@ -48,44 +48,51 @@ $(document).ready(function () {
         $("#input_verify").focus();
     });
     
+    $("#input_verify").maskMoney({symbol:'R$ ', thousands:'.', decimal:',', symbolStay: true});
+    
     function verify(flag){        
         if($('#input_verify').val()===''){
-           modal_alert_message("Entre o valor que deseja receber emprestado");
+           modal_alert_message("Preencha com o valor que deseja solicitar o empréstimo. Lembre-se que ele deve ser menor que o seu limite no cartão de crédito.");
         }else{
             solicited_value = $('#input_verify').val();
             solicited_value = solicited_value.replace('R$ ','');
+            solicited_value = solicited_value.replace('.','');
             solicited_value = solicited_value.replace(',','.');
-            solicited_value = parseFloat(solicited_value); 
-            $.ajax({
-                url: base_url + 'index.php/welcome/verify_simulation',
-                data:{
-                    'solicited_value': solicited_value,
-                    'amount_months':amount_months
-                },
-                type: 'POST',
-                dataType: 'json',
-                success: function (response) {
-                    $('#month_value').text('R$ '+response['month_value']);
-                    //$('#permited_value').text('R$ '+response['permited_value']);
-                    $('#total_cust_value').text('R$ '+response['total_cust_value']);
-                    $('#total_cust_value1').text('R$ '+response['total_cust_value']);
-                    if (response['success']) {
-                        //response['permited_value']=response['permited_value'].replace('.',',');
-                        //$('#permited_value').css('color','white');
-                        if(flag==1 && slideToggle==1){
-                            set_global_var('slideToggle', 0);
-                            $('.result').slideToggle(150); 
+            solicited_value = parseFloat(solicited_value);
+            if(solicited_value>=500 && solicited_value<=3000){
+                $.ajax({
+                    url: base_url + 'index.php/welcome/verify_simulation',
+                    data:{
+                        'solicited_value': solicited_value,
+                        'amount_months':amount_months
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        $('#month_value').text('R$ '+response['month_value']);
+                        //$('#permited_value').text('R$ '+response['permited_value']);
+                        $('#total_cust_value').text('R$ '+response['total_cust_value']);
+                        $('#total_cust_value1').text('R$ '+response['total_cust_value']);
+                        if (response['success']) {
+                            //response['permited_value']=response['permited_value'].replace('.',',');
+                            //$('#permited_value').css('color','white');
+                            if(flag==1 && slideToggle==1){
+                                set_global_var('slideToggle', 0);
+                                $('.result').slideToggle(150); 
+                            }
                         }
+                        else{
+                            $('#permited_value').css('color','red');
+                            modal_alert_message(response['message']);
+                        }
+                    },
+                    error: function (xhr, status) {
+                        modal_alert_message('Internal error Verify value');
                     }
-                    else{
-                        $('#permited_value').css('color','red');
-                        modal_alert_message(response['message']);
-                    }
-                },
-                error: function (xhr, status) {
-                    modal_alert_message('Internal error Verify value');
-                }
-            });              
+                });                
+            } else{
+                modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');
+            }
         }
     }
     

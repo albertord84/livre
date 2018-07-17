@@ -17,7 +17,7 @@
 	.imovel {margin-top: 30px;padding-left: 15px !important;padding-right: 15px !important;}
 }
 
-@media screen and (max-width:768px){
+@media screen and (max-width:768px){        
 	.fleft100-xs{float: left;width: 100%;}
 	.fnone-xs{float: none;}
 	.center-xs{text-align: center !important;}
@@ -74,6 +74,8 @@
 
 	#bfil h1{margin-left:0;font-size: 29px;}
 	#bfil{height: auto;padding-bottom: 100px;}
+        .spacement{margin-top: 3px;}
+        .btn-verificar{margin-top:10px}
 }
 
 @media screen and (max-width: 480px){

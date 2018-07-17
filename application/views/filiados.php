@@ -2,29 +2,29 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="UTF-8">
-	<title>Livre.com</title>
+	<title>Livre.digital</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/img/icones/favicon.png'?>">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css?'.$SCRIPT_VERSION?>">
 
 	<!-- GALERIA -->	
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION?>" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION?>">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION?>">
 
 	<!-- Owl Carousel Assets -->
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION?>">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.theme.css?'.$SCRIPT_VERSION?>">
+	<link  rel="stylesheet" href="<?php echo base_url().'assets/css/carousel/owl.transitions.css?'.$SCRIPT_VERSION?>">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION?>" />
         
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
@@ -40,25 +40,57 @@
 		<div class="container">
 			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 			<div class="col-md-10 col-sm-10 col-xs-12 pd-0 text-right center-xs m-top20">
+                                <ul class=" sociais i-block">
+                                    <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                                    <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+				</ul>
 				<ul class="menu i-block m-top10-xs">
-					<li><a href="#login">Entrar</a></li>
                                         <li class="tv cl-fff">|</li>
-					<li><a href="#cadastrar_agora">Cadastro</a></li>
+                                        <li><a href="#cadastrar_agora">Cadastre-se</a></li>
                                         <li class="tv cl-fff">|</li>
 					<li><a href="#contact_me">Suporte</a></li>
-					<li class="tv cl-fff">|</li>
+                                        <li class="tv cl-fff">|</li>
+                                        <li class = "dropdown_open nav navbar-nav navbar-right" class="col-md-12">                                            
+                                            <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                                Login<spam class="caret"></spam>
+                                            </a>
+                                            <ul class="dropdown-menu" id ="main_dropdown">
+                                                <li>
+                                                    <div class="col-md-12 pd-10" style="width: 270px">
+                                                        <div id="login_container2">
+                                                            <form id="usersLoginForm2" action="#" method="#" class="form text-center" role="form" accept-charset="UTF-8">
+                                                                <div class="form-group center" style="font-family:sans-serif; font-size:0.9em">
+                                                                    EXCLUSIVO PARA AFILIADOS                                                            </div>
+                                                                <div class="form-group center" style="font-family:sans-serif; font-size:0.7em">
+                                                                    Use email e senha                                                            </div>
+                                                                <div class="form-group">
+                                                                    <input id="userLogin2" type="text" class="form-control" placeholder="E-mail"  required="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                        <input id="userPassword2" type="password" class="form-control" placeholder="Senha" required="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button id="" class="bt-green btn-block ladda-button" type="button" data-style="expand-left" data-spinner-color="#ffffff">
+                                                                        <spam class="ladda-label">ENTRAR</spam>
+                                                                    </button>
+                                                                </div>
+                                                                <div id="container_login_message2" class="form-group" style="text-align:justify;visibility:hidden; font-family:sans-serif; font-size:0.9em">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul> 
+                                        </li>                                        
 				</ul>
-				<ul class=" sociais i-block">
-					<li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
-					<li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
-				</ul>
+				
 			</div>
 		</div>
 	</header>
     <section class="fleft100 cover" id="bfil" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/filiados.jpg);">
         <div class="container">
             <div class="col-md-10 col-sm-10 col-xs-12 pull-right">
-                <h1 class="ft-size45 cl-fff">É CORRESPONDENTE <br>BANCÁRIO?</h1>
+                <h1 class="ft-size45 cl-fff">QUER GANHAR UMA <br>RENDA EXTRA?</h1>
                 <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do empréstimo!</h2>
             </div>
         </div>
@@ -83,7 +115,7 @@
                                     <img src="<?php echo base_url().'assets/'?>img/icones/pg.png" alt="">
                                 </div>
                                 <div class="col-md-10 col-sm-10 col-xs-10">
-                                    Pagamento semanal
+                                    Pagamento diário
                                 </div>
                             </div>
                         </div>
@@ -103,7 +135,7 @@
                                     <img src="<?php echo base_url().'assets/'?>img/icones/cr.png" alt="">
                                 </div>
                                 <div class="col-md-10 col-sm-10 col-xs-10">
-                                    Sem análise de crédito e sem <br>restrições para os clientes
+                                    Análise de crédito <br>instantánea
                                 </div>
                             </div>
                         </div>
@@ -154,7 +186,7 @@
                                                     <img src="<?php echo base_url().'assets/'?>img/icones/cr.png" alt="">
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                                    Sem análise de crédito e sem restrições
+                                                    Análise de crédito instantánea
                                             </div>
                                     </div>
                             </div>
@@ -174,7 +206,7 @@
                                                     <img src="<?php echo base_url().'assets/'?>img/icones/on.png" alt="">
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10 m-top10">
-                                                    Tratamento on-line
+                                                    Totalmente on-line
                                             </div>
                                     </div>
                             </div>
@@ -184,7 +216,7 @@
                                                     <img src="<?php echo base_url().'assets/'?>img/icones/rd.png" alt="">
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                                    Feito também para negativados e sem comprovação de renda
+                                                    Empréstimo através do limite disponível no cartão de crédito
                                             </div>
                                     </div>
                             </div>			
@@ -230,23 +262,23 @@
                             <h1 class="ft-size55 fw-300 fleft100 pd-lr15">Como funciona</h1>
                             <div class="col-md-6 col-sm-6 col-xs-12 m-top40" style="border-right: 3px solid #fff;padding-bottom: 10px;">
                                     <p class="ft-size17">
-                                            O programa de afiliados do Live.com é ideal para lojas de crédito que fazem atendimento ao público. 
+                                            O programa de afiliados do Live.digital é ideal para lojas de crédito que fazem atendimento ao público e pessoas físicas que buscam uma renda extra. 
                                             <br><br>
-                                            Não fazemos verificação de crédito, o cliente precisa apenas ter limite disponível no cartão de crédito.
+                                            A verificação de crédito é feita na mesma hora e a resposta é imediata.
                                             <br><br>
-                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do Live.com ao invés dos demais. 
+                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do Live.digital. 
                                             <br><br>
-                                            Aceitamos clientes negativados e sem comprovação de renda, sendo o ideal para clientes dessa categoria, porque aplicamos uma taxa de juros até 75% mais baixa! Clientes de consignado também podem ser nossos clientes, com taxas melhores e sem burocracia!
+                                            
                                     </p>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12 m-top80">
                                     <p class="ft-size17">
                                             Para realizar a operação, o afiliado precisa apenas contratar o empréstimo em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
                                             <br><br>
-                                            Traga seus clientes para o Live.com! 
-                                            Receba até 10 vezes mais do que a sua comissão atual, semanalmente, sem burocracia, sem custos operacionais para o seu negócio e com muito mais benefícios para seus clientes!
+                                            Traga seus clientes para o Live.digital! 
+                                            Receba até 10 vezes mais do que a sua comissão atual, diariamente, sem burocracia, sem custos operacionais para o seu negócio e com muito mais benefícios para seus clientes!
                                             <br><br>
-                                            Inove com a gente!
+                                            Seja livre!
                                     </p>
                             </div>
                     </div>
@@ -436,7 +468,7 @@
                                 <input  id="dig"  type="text" placeholder="Dig.">
                             </fieldset>	
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="titular_name" type="text">
+                                <input id="titular_name" type="text" placeholder="Nome completo ou Razão Social">
                             </fieldset>	
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="titular_cpf" type="text" placeholder="CPF ou CNPJ">
@@ -450,15 +482,46 @@
                 <!--STEEP 3.1-->
                 <div class="cad3 d-none fleft100">
                     <div class="pd-0 col-md-4 col-sm-9 col-xs-12 fnone i-block text-left">
-                        <h1 class="fw-300 fleft100">Cadastre-se grátis!</h1>
                         <div class="fleft100 pd-30 bk-fff m-top20">
                             <h1 class="ft-size45 text-center cl-green m-b20">Pronto!</h1>
                             <h3>Obrigado, <li id="affiliate_first_name"></li>!</h3>
-                            <h4 class="m-top20">Em até 24h seus dados serão verificados e seu acesso a conta será liberada.  <br><br>Você vai receber um e-mail da nossa equipe com instruções de como utilizar nossa plataforma.</h4>
+                            <h4 class="m-top20">Em até 24h seus dados serão verificados e seu acesso a conta será liberado.  <br><br>Você vai receber um e-mail da nossa equipe com instruções de como utilizar nossa plataforma.</h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    
+    <!--modal_container_filiates_login-->
+<!--    <div class="modal fade" style="top:10%" id="modal_filiates_login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div id="modal_container_filiates_login" class="modal-dialog modal-sm" role="document">                                                          
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btn_modal_close" type="button" class="close" style="background:#fff;" data-dismiss="modal" aria-label="Close">
+                        <img src="<?php echo base_url() . 'assets/img/icones/índice.png'; ?>"> 
+                    </button>
+                    <h5 class="modal-title" id="myModalLabel"><b>Login</b></h5>                        
+                </div>
+                <div class="modal-body">                                            
+                    <fieldset  class="fleft100  pd-lr10">
+                        <input style="width:95%" id="affiliate_email_login" type="text" placeholder="E-mail">
+                    </fieldset>
+                    <fieldset  class="fleft100 pd-lr10 m-top10">
+                        <input style="width:95%" id="affiliate_pass_login" type="password" placeholder="Senha">
+                    </fieldset>                       
+                </div>
+                <div class="modal-footer text-center">
+                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                    </button>
+                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                    </button>
+                </div>
+            </div>
+        </div>                                                        
+    </div> -->
+    
+    
 <?php include_once "inc/footer.php";?>

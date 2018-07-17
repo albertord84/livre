@@ -7,24 +7,24 @@
 	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
 
         <!-- Font Awesome -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/font-awesome/font-awesome.min.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">
 
 	<!-- GALERIA -->	
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/'?>galeria/css/fresco/fresco.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION;?>" />
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap.min.css">
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/bootstrap-multiselect.css">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION;?>">
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION;?>">
 
 	<!-- Owl Carousel Assets -->
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="<?php echo base_url().'assets/'?>css/carousel/owl.transitions.css" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.theme.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+	<link href="<?php echo base_url().'assets/css/carousel/owl.transitions.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/estilo.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/definicoes.css" />
-	<link rel="stylesheet" href="<?php echo base_url().'assets/'?>css/media.css" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
+	<link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
         
         <!-- JS -->
         <script type="text/javascript">
@@ -33,7 +33,7 @@
         
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>
-        <?php include_once "pixel_adwords.php";?>
+        <?php //include_once "pixel_adwords.php";?>
 </head>
 <body>
     
@@ -44,19 +44,20 @@
                 <div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left">
                     <a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a>
                 </div>
-                <div class="col-md-6 col-sm-6 col-xs-12 fr text-left">
+                <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
+                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
-                    <ul class="menu i-block m-top10-xs">				
-                        <li><a href="#contact_me">Suporte</a></li>
+                <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
+                    <ul class="menu i-block m-top10-xs">
+                        <li><a href="#contact_me">Suporte </a></li>
                         <li class="tv cl-black">|</li>
-                    </ul>
-                    <ul class=" sociais i-block">
+                        <li><a href="<?php echo base_url()?>index.php/welcome/filiados"> Afiliados</a></li>
+                        <li class="tv cl-black">|</li>
                         <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
-                        <li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                        <li class="tv cl-black">|</li>
+                        <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
                     </ul>
                 </div>
             </div>
@@ -78,10 +79,10 @@
                         <span class="fleft100">Quanto deseja pegar emprestado?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff my_money" title="de $R 0500 até $R 3000" placeholder="R$ 3000,00">
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 0500 até R$ 3000" placeholder="R$ 0.00" maxlength="11">                        
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">				
-                        <button id="btn_verify" class="bt-white m-top5">VERIFICAR</button>
+                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">
+                        <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
                     </div>
                 </div>
                 <div class="fleft100 prelative ft-Rajdhani">
@@ -126,7 +127,7 @@
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
                                 <small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
-                                <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius">
+                                <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius border-1px">
                                     <option value="00">Selecione     ...</option>
                                     <option value="01">Compras</option>
                                     <option value="02">Quitar dívida do cartão de crédito</option>
@@ -140,7 +141,7 @@
                                 </select>							
                             </div>						
                             <div class="col-md-5 col-sm-5 col-xs-12 cl-fff">
-                                <div id="btn_contratar_emprestimo" class="bt-green fleft100" style="cursor: default;">Contratar empréstimo</div>
+                                <div id="btn_contratar_emprestimo" class="bt-green fleft100 btn-verificar" style="cursor: default;">Contratar empréstimo</div>
                                 <label for="ck" class="dc m-top5">
                                     <input type="checkbox" id="use_term" checked> 
                                     <small>
@@ -166,15 +167,15 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/check2.png" width="60">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
-                            <h2 class="ft-size28 fw-600 fleft100 wrap d-webkit clamp2">Sem verificação de crédito!</h2>
+                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit clamp2">Pague as prestações através da fatura do seu cartão de crédito!</h2>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
                         <div class="fleft100 pd-lr15">
-                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos</b></h5>
+                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos.</b></h5>
                         </div>
                         <div class="fleft100 pd-lr15">
-                            <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" alt="">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" style="width:90%" alt="">
                         </div>					
                     </div>
                 </div>
@@ -184,7 +185,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/emp.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Emprestamos para negativados e sem comprovação de renda.</h4>
+                            <h4 class="ft-size20 fw-300">Análise de crédito instantânea.</h4>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
@@ -192,7 +193,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros de apenas 2,99% a.m.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros de a partir de 2,99% a.m.</h4>
                         </div>
                     </div>
                 </div>
@@ -204,7 +205,7 @@
 	<div class="container">
 		<div class="fleft100">
 			<div class="col-md-6 col-sm-6 col-xs-12">
-				<h1 class="fw-300 fleft100 text-left">fácil<b class="">fácil</b> <span>{</span></h1>
+				<h1 class="fw-300 fleft100 text-left">crédito<b class="">fácil</b> <span>{</span></h1>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 center-xs">
 				<h2>Solicitar um empréstimo no Livre.digital leva apenas <b>2 minutos</b> e a resposta é instantânea!</h2>
@@ -223,7 +224,7 @@
 			<div class="fleft100 bleftgreen pd-top20">
 				<div class="ft-size17">
 					<h3 class="ft-size30"><i><b>E melhor!</b></i></h3>
-					Sem a necessidade de enviar documentos e esperar pela aprovação do crédito.
+					O envio dos documentos é totalmente digital.
 				</div>
 			</div>
 		</div>
@@ -238,7 +239,7 @@
 		<div class="i i-block fnone pd-tb15 col-md-10">
 			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
-				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa. Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
+				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
 			</div>
 		</div>
 	</div>

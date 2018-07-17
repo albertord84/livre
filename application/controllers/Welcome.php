@@ -32,15 +32,20 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {   
-        //$this->basicCustomerTopazio();
-        $this->set_session();        
+    public function index() {
+        $this->set_session(); 
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
     
     public function checkout() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
@@ -53,6 +58,9 @@ class Welcome extends CI_Controller {
     }
     
     public function afiliados() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         //if($_SESSION['affiliate_loged']){
             //$params = $this->load_afiliate_information($_SESSION['affiliate_loged_datas']['id']);
             $this->load->view('afiliados',$params);
@@ -61,22 +69,34 @@ class Welcome extends CI_Controller {
     }
     
     public function filiados() {
-        $this->set_session();        
+        $this->set_session();
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['key']=$_SESSION['key']; 
         $this->load->view('filiados',$params);
     }
     
     public function configuracoes() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
     
     public function resumo() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['view']='resumo';
         $this->load->view('resumo');
     }
     
     public function transacoes() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['view']='transacoes';
         $this->load->view('transacoes');
     }
@@ -425,7 +445,7 @@ class Welcome extends CI_Controller {
                 $names[$acc['titular_name']]=1;
         }
         if(count($names)>1){
-            $result['message']='Solicitação negada. A conta informada tem sido atrelada a outo cliente anteriormente';
+            $result['message']='A conta informada já foi cadastrada em nosso sistema, entre em contato através do e-mail.';
             $result['success']=false;
             return $result;
         }
@@ -439,7 +459,7 @@ class Welcome extends CI_Controller {
                 $names[$acc['titular_cpf']]=1;
         }
         if(count($names)>1){
-            $result['message']='Solicitação negada. A conta informada tem sido atrelada a outo cpf anteriormente';
+            $result['message']='A conta informada já foi cadastrada em nosso sistema, entre em contato através do e-mail.';
             $result['success']=false;
             return $result;
         }

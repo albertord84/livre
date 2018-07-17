@@ -37,7 +37,7 @@
         
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>
-        <?php include_once "pixel_adwords.php";?>
+        <?php //include_once "pixel_adwords.php";?>
         
         <script type="text/javascript" src="<?php echo base_url().'assets/js/iugu_api.js'?>"></script> 
         
@@ -169,10 +169,10 @@
                             <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10">
                                 <input id="phone_ddd" type="text" placeholder="DDD">
                             </fieldset>
-                            <fieldset class="col-md-6 col-sm-6 col-xs-6 pd-lr10">
+                            <fieldset class="col-md-6 col-sm-6 col-xs-9 pd-lr10">
                                 <input id="phone_number" type="text" placeholder="Celular">
                             </fieldset>
-                            <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10 bti">
+                            <fieldset class="col-md-3 col-sm-3 col-xs-12 pd-lr10 bti">
                                 <!--<button class="bt-green" data-toggle="modal" data-target="#sms" data-whatever="@mdo">Verificar</button>-->
                                 <button id="btn_verify_phone_number" class="bt-green" data-toggle="modal" data-whatever="@mdo">Verificar</button>
                             </fieldset>
@@ -182,7 +182,7 @@
                                 <fieldset class="col-md-4 col-sm-5 col-xs-5 pd-lr10">
                                     <input id="cep" type="text" placeholder="CEP">
                                 </fieldset>
-                                <fieldset class="col-md-4 col-sm-4 col-xs-3 pd-lr10 bti">
+                                <fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr10 bti">
                                     <button id="verify_cep" class="bt-green">Buscar</button>
                                 </fieldset>
                             </div>
@@ -279,9 +279,12 @@
                                 <input type="file" id="file" name="file">
                             </label> -->
                         </div>
-                        <div class="fleft100 m-top10 text-right">
-                            <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
-                            <button id="btn_steep_2_next" class="bt-green px2">Próximo</button>
+                        <div class="fleft100 m-top10 text-right col-12">                            
+                            <div class="m-top10 text-right col-6">
+                                <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
+                                <button id="btn_steep_2_next" class="bt-green px2">Próximo</button>                            
+                            </div>
+                            
                         </div>
                     </div>
                     
@@ -523,7 +526,7 @@
                                     <small class="fleft100 fw-600">Clique para fazer upload.</small>
                                 </div>
                                 
-                                <h5 class="fleft100 text-left fw-600 pd-lr5 m-top20">Cartão</h5>
+                                <h5 class="fleft100 text-left fw-600 pd-lr5 m-top20">Cartão de crédito</h5>
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="cartao">
                                         <input type="file" id="cartao" class="hidden">
@@ -595,11 +598,15 @@
                     <div class="col-md-12 col-sm-5 col-xs-8 fnone i-block rs">
                         <div class="bverde4 cl-fff">
                             <span class="ft-size12">RESUMO DO EMPRÉSTIMO:</span>
-                            <div class="fleft100 pd-tb5 pd-lr20 text-left">
+                            <div class="fleft100 pd-tb5 pd-lr15 text-left">
+                                <span class="fleft100 m-top15">
+                                    <small>Valor das parcelas:</small>
+                                    <h2 class="fw-100 cl-green">R$ <?php echo $solicited_value;?> <b class="fw-500"></b></h2>
+                                </span>                      
                                 <span class="fleft100 m-top15">
                                     <small>Valor solicitado:</small>
-                                    <h2 class="fw-100 cl-green">R$ <?php echo $solicited_value;?> <b class="fw-500"></b></h2>
-                                </span>                                
+                                    <h4 class="fleft100 fw-300"><?php echo $amount_months;?> meses</h4>
+                                </span>
                                 <span class="fleft100 m-top15">
                                     <small>Prazo para pagamento:</small>
                                     <h4 class="fleft100 fw-300"><?php echo $amount_months;?> meses</h4>
@@ -613,16 +620,16 @@
                                     <h4 class="fleft100 fw-300">R$ <?php echo $total_cust_value;?></h4>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
-                                    <small class="ft-size10">IOF:</small>
-                                    <span class="fleft100 fw-300 ft-size10">R$00,00</span>
+                                    <small class="ft-size11">IOF:</small>
+                                    <span class="fleft100 fw-300 ft-size11">R$00,00</span>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
-                                    <small class="ft-size10">CET:</small>
-                                    <span class="fleft100 fw-300 ft-size10">00%</span>
+                                    <small class="ft-size11">CET:</small>
+                                    <span class="fleft100 fw-300 ft-size11">00%</span>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
-                                    <small class="ft-size10">CET ANUAL:</small>
-                                    <span class="fleft100 fw-300 ft-size10">00%</span>
+                                    <small class="ft-size11">CET ANUAL:</small>
+                                    <span class="fleft100 fw-300 ft-size11">00%</span>
                                 </span>
                             </div>
                         </div>
