@@ -32,7 +32,8 @@ class Welcome extends CI_Controller {
         echo base_url();
     }
     
-    public function index() {          
+    public function index() {   
+        //$this->basicCustomerTopazio();
         $this->set_session();        
         $params['key']=$_SESSION['key'];       
         $this->load->view('index',$params);
@@ -1308,6 +1309,34 @@ class Welcome extends CI_Controller {
         $API_token = $parsed_response->access_token; //obtiene token*/
         
         return $API_token;
+    }
+
+    public function basicCustomerTopazio(){        
+        
+        $API_token = "507287d2-c60a-3aea-bbbf-e155293f5feb";//$this->get_topazio_API_token();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "client_id: 9b6103b5-ed33-36b8-9276-76663067c710";
+        $headers[] = "access_token: ".$API_token;
+        $headers[] = "Accept: text/plain";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);        
     }
     
     public function topazio_emprestimo($id) {

@@ -713,10 +713,10 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                //if(response['success']){
+                if(response['success']){
                     $('#modal').modal('show');
-                //} else
-                //    modal_alert_message(response['message']);
+                } else
+                    modal_alert_message(response['message']);
             }
         });        
     });
