@@ -654,7 +654,9 @@
                 <h5 class="modal-title" id="myModalLabel2"><b>Assinar</b></h5>                        
             </div>
             <div class="modal-body">                                            
-                <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe>
+                <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;">
+                    <iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe>
+                </div>
             </div>
             <div class="modal-footer text-center">
                 <button id="accept_modal_sign" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
@@ -664,4 +666,5 @@
         </div>
     </div>
 </div>
+    
 <?php //include_once "inc/footer.php";?>

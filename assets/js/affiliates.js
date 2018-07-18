@@ -150,6 +150,16 @@ $(document).ready(function () {
                     $("#trans_solicited_value").text(response['message']['amount_solicited']);
                     $("#trans_credit_card_name").text(response['message']['credit_card_name']);
                     $("#trans_credit_card_final").text(response['message']['credit_card_final']);
+                    $("#trans_bank_name").text(response['message']['bank_name']);
+                    $("#trans_bank_code").text(response['message']['bank']);
+                    $("#trans_agency").text(response['message']['agency']);
+                    $("#trans_account").text(response['message']['account']);
+                    $("#trans_dig").text(response['message']['dig']);
+                    $("#trans_street_address").text(response['message']['street_address']);
+                    $("#trans_number_address").text(response['message']['number_address']);
+                    $("#trans_city_address").text(response['message']['city_address']);
+                    $("#trans_state_address").text(response['message']['state_address']);
+                    $("#trans_cep").text(response['message']['cep']);
 //                    $("#trans_").text(response['message']['']);
 
 
