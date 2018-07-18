@@ -531,7 +531,19 @@
                                     <label for="cartao">
                                         <input type="file" id="cartao" class="hidden">
                                         <div class="upl uplgreen c-pointer">
-                                            <i class="far fa-check-circle"></i>
+                                            <div id="check_front_credit_card">
+                                                <?php 
+                                                    if($_SESSION['front_credit_card']){
+                                                ?>
+                                                        <i class="fa fa-check-square-o"></i>
+                                                <?php 
+                                                    } else {
+                                                ?>
+                                                        <i class="fa fa-square-o"></i>
+                                                <?php 
+                                                    } 
+                                                ?>
+                                            </div>
                                             <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
                                             <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
                                         </div>
@@ -541,7 +553,19 @@
                                     <label for="selcartao">
                                         <input type="file" id="selcartao" class="hidden">
                                         <div class="upl uplsilver c-pointer">
-                                            <i class="fas fa-arrow-up"></i>
+                                            <div id="check_selfie_credit_card">
+                                                <?php 
+                                                    if($_SESSION['selfie_with_credit_card']){
+                                                ?>
+                                                        <i class="fa fa-check-square-o"></i>
+                                                <?php 
+                                                    } else {
+                                                ?>
+                                                        <i class="fa fa-square-o"></i>
+                                                <?php 
+                                                    } 
+                                                ?>
+                                            </div>
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
                                             <small class="fleft100">Selfie segurando <br>seu cartão</small>
                                         </div>
@@ -553,7 +577,19 @@
                                     <label for="id">
                                         <input type="file" id="id" class="hidden">
                                         <div class="upl uplred c-pointer">
-                                            <i class="far fa-times-circle"></i>
+                                            <div id="check_open_identity">
+                                                <?php 
+                                                    if($_SESSION['open_identity']){
+                                                ?>
+                                                        <i class="fa fa-check-square-o"></i>
+                                                <?php 
+                                                    } else {
+                                                ?>
+                                                        <i class="fa fa-square-o"></i>
+                                                <?php 
+                                                    } 
+                                                ?>
+                                            </div>
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
                                             <small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
                                         </div>
@@ -563,7 +599,19 @@
                                     <label for="selid">
                                         <input type="file" id="selid" class="hidden">
                                         <div class="upl uplsilver c-pointer">
-                                            <i class="fas fa-arrow-up"></i>
+                                            <div id="check_selfie_with_identity">
+                                                <?php 
+                                                    if($_SESSION['selfie_with_identity']){
+                                                ?>
+                                                        <i class="fa fa-check-square-o"></i>
+                                                <?php 
+                                                    } else {
+                                                ?>
+                                                        <i class="fa fa-square-o"></i>
+                                                <?php 
+                                                    } 
+                                                ?>
+                                            </div>
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
                                             <small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
                                         </div>
@@ -654,7 +702,7 @@
                 <h5 class="modal-title" id="myModalLabel2"><b>Assinar</b></h5>                        
             </div>
             <div class="modal-body">                                            
-                <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe>
+                <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe></div>
             </div>
             <div class="modal-footer text-center">
                 <button id="accept_modal_sign" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
