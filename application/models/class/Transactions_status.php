@@ -1,6 +1,6 @@
 <?php
 
-class client_status {
+class transactions_status {
 
     const BEGINNER= 1;
     const PENDING = 2;

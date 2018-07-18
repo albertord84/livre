@@ -326,8 +326,8 @@ $(document).ready(function () {
         return vars;
     }
     
-    function modal_alert_message(text_message){
-        $('#modal_alert_message').modal('show');
+    function modal_alert_message(text_message){       
+        $('#modal_alert_message').modal('show');        
         $('#message_text').text(text_message);
     }
     
@@ -686,6 +686,22 @@ $(document).ready(function () {
                 // your callback here
                 if(response['success']){
                     modal_alert_message('Arquivo subido com sucesso!');
+                    switch (id) {
+                        case 0:
+                            document.getElementById("check_front_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            break;
+                        case 1:
+                            document.getElementById("check_selfie_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            break;
+                        case 2:
+                            document.getElementById("check_open_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            break;
+                        case 3:
+                            document.getElementById("check_selfie_with_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            break;
+                        default:
+                            ;                        
+                    }
                 }
                 else{
                     modal_alert_message(response['message']);

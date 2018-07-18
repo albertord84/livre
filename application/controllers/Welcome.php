@@ -159,33 +159,33 @@ class Welcome extends CI_Controller {
     ['client_datas']['verified_phone']
     */     
     public function is_possible_steep_1_for_this_client($datas) {
-        $this->load->model('class/client_model');
-        $this->load->model('class/client_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $_SESSION['is_possible_steep_1']=false;
         
         //1. Analisar se IP tem sido marcado como hacker
         $this->is_ip_hacker();
-        $clients = $this->client_model->get_client('cpf',$datas['cpf']);
+        $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
-            if($clients[$N-1]['status_id'] == client_status::DENIED){                
+            if($clients[$N-1]['status_id'] == transactions_status::DENIED){                
                 $result['message']='Você ja teve um pedido anteriomnete que foi negado. Por favor, contate nosso atendimento';
                 $result['success']=false;
                 return $result;
             }else
-            if($clients[$N-1]['status_id'] == client_status::APPROVED){                
+            if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
                 $result['message']='Você tem um pedido que foi aprovado e no momento está sendo feita a transferência para sua conta';
                 $result['success']=false;
                 return $result;
             }else
-            if($clients[$N-1]['status_id'] == client_status::PENDING){                
+            if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
                 $result['message']='Você fez um pedido recentemente, aguarde ser analisado. Casso dúvidas, contate nosso atendimento';
                 $result['success']=false;
                 return $result;
             }else
-            if($clients[$N-1]['status_id'] == client_status::WRONG_TRANSFERRED){                
+            if($clients[$N-1]['status_id'] == transactions_status::WRONG_TRANSFERRED){                
                 $result['message']='Seu pedido foi aprovado, mas ocorreu um erro na transferência. Contate nosso atendimento';
                 $result['success']=false;
                 return $result;
@@ -214,7 +214,7 @@ class Welcome extends CI_Controller {
             return $result;
         }
             //4.2 mesmo telefone com nome diferentes
-        $clients = $this->client_model->get_client('phone_number',$datas['phone_number']);
+        $clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
         /*$nomes=array();
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
@@ -245,7 +245,7 @@ class Welcome extends CI_Controller {
             return $result;
         }                
         //5. Analisar BEGINNER purchase_counter pelo cpf
-        $clients = $this->client_model->get_client('cpf', $datas['cpf'], client_status::BEGINNER);
+        $clients = $this->transaction_model->get_client('cpf', $datas['cpf'], transactions_status::BEGINNER);
         if(count($clients)>1){ //caso imposivel, so por inconsistencia no sistema, po puede haber más de um beginner com o mesmo CPF
             $result['message']='Solicitação não permitida devido a inconsistência no sistema. Informe ao nossso atendimento';
             $result['success']=false;
@@ -299,7 +299,7 @@ class Welcome extends CI_Controller {
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
         }else{
-            $this->load->model('class/client_model');            
+            $this->load->model('class/transaction_model');            
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
@@ -317,11 +317,11 @@ class Welcome extends CI_Controller {
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
                     
                     if($possible['action']==='insert_beginner'){
-                        $datas['status_id']=  client_status::BEGINNER;
-                        $id_row = $this->client_model->insert_db_steep_1($datas);
+                        $datas['status_id']=  transactions_status::BEGINNER;
+                        $id_row = $this->transaction_model->insert_db_steep_1($datas);
                     }
                     else{
-                        $id_row = $this->client_model->update_db_steep_1($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_1($datas,$possible['id']);
                         if($id_row)
                             $id_row=$possible['id'];
                     }
@@ -344,7 +344,7 @@ class Welcome extends CI_Controller {
     }
        
     public function is_possible_steep_2_for_this_client($datas) { 
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
         $this->is_ip_hacker();
@@ -364,7 +364,7 @@ class Welcome extends CI_Controller {
                
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
-        $credit_cards = $this->client_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
+        $credit_cards = $this->transaction_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
         $cpfs=array();
         $cpfs[$datas['cpf']]=1;
         foreach ($credit_cards as $credit_card) {
@@ -408,7 +408,7 @@ class Welcome extends CI_Controller {
         }
         
         //4. Analisar se é para atualizar ou inserir nova linha
-        $credit_cards = $this->client_model->get_credit_card('client_id', $datas['pk']);
+        $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
             $result['action']='update_credit_card';
             $result['id']=$credit_cards[0]['id'];
@@ -429,7 +429,7 @@ class Welcome extends CI_Controller {
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
         }else{
-            $this->load->model('class/client_model');            
+            $this->load->model('class/transaction_model');            
             $datas['pk'] = $_SESSION['pk'];
             if(!$this->validate_all_credit_card_datas($datas)){
                 $result['success'] = false;
@@ -443,10 +443,10 @@ class Welcome extends CI_Controller {
                 if($possible['success']){                    
                     
                     if($possible['action']==='insert_credit_card'){
-                        $id_row = $this->client_model->insert_db_steep_2($datas);
+                        $id_row = $this->transaction_model->insert_db_steep_2($datas);
                     }
                     else
-                        $id_row = $this->client_model->update_db_steep_2($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
                         /*verificar cartao de credito haciendo la cobrança*/
                         //$response = $this->do_payment($id_row);
@@ -469,10 +469,10 @@ class Welcome extends CI_Controller {
     
     public function is_possible_steep_3_for_this_client($datas) {
         $_SESSION['is_possible_steep_3']=false;       
-        $this->load->model('class/client_model');
-        $this->load->model('class/client_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
         //0. Conferindo CPFs do passo 1 e passo 3
-        $client = $this->client_model->get_client('id', $datas['pk']);    
+        $client = $this->transaction_model->get_client('id', $datas['pk']);    
         $a=$datas['titular_cpf'];
         $b=$client[0]['cpf'];
         $c=$a!==$b;        
@@ -489,7 +489,7 @@ class Welcome extends CI_Controller {
         }        
         //2. Analisar incoerencias conta-nome e conta-cpf
             //2.1 Incoerencia conta-nome
-        $all_accounts = $this->client_model->get_account_banks($datas['bank'],$datas['agency'],$datas['account']);
+        $all_accounts = $this->transaction_model->get_account_banks($datas['bank'],$datas['agency'],$datas['account']);
         $names=array();
         $names[$datas['titular_name']]=1;
         foreach($all_accounts as $acc){
@@ -518,7 +518,7 @@ class Welcome extends CI_Controller {
             return $result;
         }
         //4. Analisar se é para atualizar ou inserir nova linha
-        $account_bank = $this->client_model->get_account_bank_by_client_id($datas['pk']);
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk']);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
             $result['id']=$account_bank[0]['id'];
@@ -539,7 +539,7 @@ class Welcome extends CI_Controller {
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
         }else{
-            $this->load->model('class/client_model');            
+            $this->load->model('class/transaction_model');            
             $datas['solicited_value'] = $_SESSION['transaction_values']['solicited_value'];        
             $datas['amount_months' ] =  $_SESSION['transaction_values']['amount_months'];
             $datas['pk' ] =  $_SESSION['pk'];
@@ -557,9 +557,9 @@ class Welcome extends CI_Controller {
                 if($possible['success'] && $verify_simulation['success']){
                     $datas['propietary_type'] = 0;
                     if($possible['action']==='insert_account_bank')
-                        $id_row = $this->client_model->insert_db_steep_3($datas);                    
+                        $id_row = $this->transaction_model->insert_db_steep_3($datas);                    
                     else
-                        $id_row = $this->client_model->update_db_steep_3($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['id']);
                     if($id_row){                        
                         $result['success'] = true;
                     }
@@ -685,12 +685,12 @@ class Welcome extends CI_Controller {
             $result['success']=false;
         }else{
             $this->load->model('class/affiliate_model');
-            $this->load->model('class/client_model');
+            $this->load->model('class/transaction_model');
             if(!$this->validate_bank_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados bancários fornecidos';
             } else {
-                $account_bank = $this->client_model->get_account_bank_by_client_id($_SESSION['pk']);
+                $account_bank = $this->transaction_model->get_account_bank_by_client_id($_SESSION['pk']);
                 if($N = count($account_bank)){
                    $id_row = 0;
                    if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
@@ -809,12 +809,12 @@ class Welcome extends CI_Controller {
     }    
     
     public function generate_contract($client_id) {        
-        $this->load->model('class/client_model');
-        $this->load->model('class/client_status');        
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');        
         require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/fpdf/fpdf.php';
         require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/contrat/contrato.php';
         $pdf = new PDF('P','mm','A4');
-        $datas = $this->client_model->get_all_client_datas_by_id($client_id);
+        $datas = $this->transaction_model->get_all_client_datas_by_id($client_id);
         $pdf->GenerateContrat($datas,false,true,false);
     }
     
@@ -1068,10 +1068,10 @@ class Welcome extends CI_Controller {
     }
         
     public function upload_file(){
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            $client = $this->client_model->get_client('id', $_SESSION['pk']);                
+            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                
             $cpf = $client[0]['cpf'];
             if(!$_SESSION['time_start'])
                 $_SESSION['time_start'] = time();
@@ -1165,7 +1165,7 @@ class Welcome extends CI_Controller {
     }
         
     public function sign_contract() {
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         $datas = $this->input->post();
         
         $cpf_upload = true;
@@ -1180,7 +1180,7 @@ class Welcome extends CI_Controller {
                 $value_ucpf = 0;
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
-                $this->client_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 //hacer mas cosas
             }
             else{                
@@ -1197,8 +1197,8 @@ class Welcome extends CI_Controller {
     
     public function get_token_iugu($id){
         
-        $this->load->model('class/client_model');
-        $credit_card = $this->client_model->get__decrypt_credit_card('client_id',$id);
+        $this->load->model('class/transaction_model');
+        $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
         
         $name = $credit_card['credit_card_name'];
         $names = explode(' ', $name);
@@ -1243,10 +1243,10 @@ class Welcome extends CI_Controller {
     }
 
     public function do_payment($id){
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         
         $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
-        $client = $this->client_model->get_client('id', $id)[0];
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
         $token = $this->get_token_iugu($id);
         
@@ -1278,7 +1278,7 @@ class Welcome extends CI_Controller {
         $response = [];
                 
         if(is_object($parsed_response) && $parsed_response->success){
-            $this->client_model->save_generated_bill($id, $parsed_response->invoice_id);
+            $this->transaction_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
             $response['message'] = $parsed_response->message;
         }
@@ -1291,10 +1291,10 @@ class Welcome extends CI_Controller {
     }
 
     public function refund_bill($id){
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         
         $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
-        $client = $this->client_model->get_client('id', $id)[0];
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
         
@@ -1326,10 +1326,10 @@ class Welcome extends CI_Controller {
     
     public function get_bill($id){        
             
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         
         $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
-        $client = $this->client_model->get_client('id', $id)[0];
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
         
@@ -1359,7 +1359,7 @@ class Welcome extends CI_Controller {
     }
     
     public function get_topazio_API_token() {
-        $this->load->model('class/client_model');
+        $this->load->model('class/transaction_model');
         
         //Obteniendo code
         $ch = curl_init();
