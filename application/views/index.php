@@ -53,7 +53,7 @@
                     <ul class="menu i-block m-top10-xs">
                         <li><a href="#contact_me">Suporte </a></li>
                         <li class="tv cl-black">|</li>
-                        <li><a href="<?php echo base_url()?>index.php/welcome/filiados"> Afiliados</a></li>
+                        <li><a href="<?php echo base_url()?>index.php/welcome/afhome"> Afiliados</a></li>
                         <li class="tv cl-black">|</li>
                         <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
                         <li class="tv cl-black">|</li>

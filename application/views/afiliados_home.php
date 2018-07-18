@@ -58,19 +58,20 @@
                                                 <li>
                                                     <div class="col-md-12 pd-10" style="width: 270px">
                                                         <div id="login_container2">
-                                                            <form id="usersLoginForm2" action="#" method="#" class="form text-center" role="form" accept-charset="UTF-8">
+                                                            <form id="frm_affiliates_login" action="#" method="#" class="form text-center" role="form" accept-charset="UTF-8">
                                                                 <div class="form-group center" style="font-family:sans-serif; font-size:0.9em">
                                                                     EXCLUSIVO PARA AFILIADOS                                                            </div>
                                                                 <div class="form-group center" style="font-family:sans-serif; font-size:0.7em">
-                                                                    Use email e senha                                                            </div>
-                                                                <div class="form-group">
-                                                                    <input id="userLogin2" type="text" class="form-control" placeholder="E-mail"  required="">
+                                                                    Use email e senha                                                            
                                                                 </div>
                                                                 <div class="form-group">
-                                                                        <input id="userPassword2" type="password" class="form-control" placeholder="Senha" required="">
+                                                                    <input id="affiliate_email_login" type="text" class="form-control" placeholder="E-mail"  required="">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <button id="" class="bt-green btn-block ladda-button" type="button" data-style="expand-left" data-spinner-color="#ffffff">
+                                                                        <input id="affiliate_pass_login" type="password" class="form-control" placeholder="Senha" required="">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button id="btn_afiliate_login" class="bt-green btn-block ladda-button" type="button" data-style="expand-left" data-spinner-color="#ffffff">
                                                                         <spam class="ladda-label">ENTRAR</spam>
                                                                     </button>
                                                                 </div>
@@ -492,36 +493,5 @@
             </div>
         </div>
     </section>
-    
-    <!--modal_container_filiates_login-->
-<!--    <div class="modal fade" style="top:10%" id="modal_filiates_login" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div id="modal_container_filiates_login" class="modal-dialog modal-sm" role="document">                                                          
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button id="btn_modal_close" type="button" class="close" style="background:#fff;" data-dismiss="modal" aria-label="Close">
-                        <img src="<?php echo base_url() . 'assets/img/icones/índice.png'; ?>"> 
-                    </button>
-                    <h5 class="modal-title" id="myModalLabel"><b>Login</b></h5>                        
-                </div>
-                <div class="modal-body">                                            
-                    <fieldset  class="fleft100  pd-lr10">
-                        <input style="width:95%" id="affiliate_email_login" type="text" placeholder="E-mail">
-                    </fieldset>
-                    <fieldset  class="fleft100 pd-lr10 m-top10">
-                        <input style="width:95%" id="affiliate_pass_login" type="password" placeholder="Senha">
-                    </fieldset>                       
-                </div>
-                <div class="modal-footer text-center">
-                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
-                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
-                    </button>
-                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
-                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
-                    </button>
-                </div>
-            </div>
-        </div>                                                        
-    </div> -->
-    
     
 <?php include_once "inc/footer.php";?>
