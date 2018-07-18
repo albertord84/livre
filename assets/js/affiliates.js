@@ -31,7 +31,7 @@ $(document).ready(function () {
                             $('li[id=li_email]').text($('#affiliate_email').val());        
                             $('li[id=li_phone]').text( "("+$('#affiliate_phone_ddd').val()+")"+$('#affiliate_phone_number').val() );        
                             $('.cad1').toggle("hide");
-                            $('.cad2').toggle("slow");   
+                            $('.cad2').toggle("slow");
                         }
                         else{
                             modal_alert_message(response['message']);
@@ -93,21 +93,21 @@ $(document).ready(function () {
         }
     });
     
-     $("#btn_login_affiliate").click(function () {      
-        email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+    $("#btn_afiliate_login").click(function () {
+        email = validate_element('#affiliate_email_login', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
         if(email){
             $.ajax({
                 url: base_url + 'index.php/welcome/login_affiliate',
                 data:{
-                    'email': $('#affiliate_email').val(),
-                    'pass': $('#affiliate_pass').val(),
+                    'email': $('#affiliate_email_login').val(),
+                    'pass': $('#affiliate_pass_login').val(),
                     'key':key
                 },
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
                     if(response['success']) {
-                         $(location).attr('href', base_url + 'index.php/welcome/afiliados'); 
+                         $(location).attr('href', base_url + 'index.php/welcome/painel');
                     }
                     else{
                         modal_alert_message(response['message']);
@@ -121,9 +121,53 @@ $(document).ready(function () {
             modal_alert_message("Erro nos dados fornecidos. Por favor, verifique.");
         }
     });
+    
+    $('.btn_see_trnsaction').click(function () {
+        var id = this.id;   
+        $.ajax({
+            url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
+            data:{
+                'id': id
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']) {
+                    /*year=date.getFullYear();
+                    day=date.getDate();
+                    hour=date.getHours();
+                    minutes=date.getMinutes();
+                    seconds=date.getSeconds();
+                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/
+                    
+                    $("#trans_id").text(response['message']['id']);
+                    $("#trans_name").text(response['message']['name']);
+                    $("#trans_email").text(response['message']['email']);
+                    $("#trans_cpf").text(response['message']['cpf']);
+                    $("#trans_phone_ddd").text(response['message']['phone_ddd']);
+                    $("#trans_phone_number").text(response['message']['phone_number']);
+                    $("#trans_date").text('DD-MM-YY / HH:MM');
+                    $("#trans_solicited_value").text(response['message']['amount_solicited']);
+                    $("#trans_credit_card_name").text(response['message']['credit_card_name']);
+                    $("#trans_credit_card_final").text(response['message']['credit_card_final']);
+//                    $("#trans_").text(response['message']['']);
+
+
+                    $('#trans').modal('show');
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (xhr, status) {
+                modal_alert_message('Internal error');
+            }
+        }); 
+        
+    });
         
     
-    //---------SECUNDARY FUNCTIONS-------------------------------
+    //----------------------SECUNDARY FUNCTIONS-------------------------------
        
     $('#container_form_steep_1').keypress(function (e) {
         if (e.which == 13) {
@@ -142,6 +186,13 @@ $(document).ready(function () {
     $('#container_form_steep_3').keypress(function (e) {
         if (e.which == 13) {
             $("#btn_steep_3").click();
+            return false;
+        }
+    });
+    
+    $('#frm_affiliates_login').keypress(function (e) {
+        if (e.which == 13) {
+            $("#btn_afiliate_login").click();
             return false;
         }
     });
@@ -178,7 +229,7 @@ $(document).ready(function () {
         $('#modal_alert_message').modal('hide');
     });
     
-    function validate_cpf(cpf, element_selector, pattern) {        
+    function validate_cpf(cpf, element_selector, pattern) {
         if(cpf.match(pattern)){
             cpf = cpf.replace(/[^\d]+/g,'');    
             if(cpf == '') {
@@ -235,19 +286,7 @@ $(document).ready(function () {
             $(element_selector).css("color", "black");
             return true;
         }
-    }    
-    
-//    $("#lnk_filiates_login").click(function () {
-//        $('#modal_filiates_login').modal('show');
-//    });    
-//    
-//    $("#btn_modal_close").click(function () {
-//        $('#modal_filiates_login').modal('hide');
-//    });
-    
-//    $("#accept_modal_alert_message").click(function () {
-//        $('#modal_filiates_login').modal('hide');
-//    });
+    }   
     
     function init_signin(){        
         $('#affiliate_complete_name').val('JOSÉ RAMÓN GONZÁLEZ MONTERO');
@@ -260,6 +299,6 @@ $(document).ready(function () {
         $('#titular_cpf').val('07367014196');
     }
     
-    init_signin();
+    //init_signin();
 
 }); 

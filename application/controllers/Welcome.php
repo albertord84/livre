@@ -1,43 +1,22 @@
 <?php
 
+ini_set('xdebug.var_display_max_depth', 17);
+ini_set('xdebug.var_display_max_children', 256);
+ini_set('xdebug.var_display_max_data', 8024);
+
 class Welcome extends CI_Controller {
             
     function __construct() {
-        parent::__construct();        
-        /*$_SESSION
-         ['ip']
-         ['pk']
-         ['key']
-         ['time_start']
-         ['front_credit_card']
-         ['selfie_with_credit_card']
-         ['open_identity']
-         ['selfie_with_identity']
-         ['transaction_values']['frm_money_use_form']
-         ['transaction_values']['utm_source']
-         ['transaction_values']['month_value'] 
-         ['transaction_values']['total_cust_value']
-         ['transaction_values']['solicited_value']
-         ['transaction_values']['amount_months']
-         ['transaction_values']['success']     
-         ['client_datas']['random_sms_code']
-         ['client_datas']['phone_ddd']
-         ['client_datas']['sms_verificated']
-         ['client_datas']['verified_phone']
-         */        
+        parent::__construct();              
     }    
     
-    //-------SHOW VIEWS FUNCTIONS--------------------------------    
-    public function test() {
-        echo base_url();
-    }
-    
+    //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
         $this->set_session(); 
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['key']=$_SESSION['key'];       
+        $params['key']=$_SESSION['key'];
         $this->load->view('index',$params);
         $this->load->view('inc/footer');
     }
@@ -57,32 +36,58 @@ class Welcome extends CI_Controller {
         $this->load->view('inc/footer');
     }
     
-    public function afiliados() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        //if($_SESSION['affiliate_loged']){
-            //$params = $this->load_afiliate_information($_SESSION['affiliate_loged_datas']['id']);
-            $this->load->view('afiliados',$params);
-        //}else
-            //$this->load->view('filiados');
-    }
-    
-    public function filiados() {
+    //-------AFFILIATES and ADMIN VIEWS FUNCTIONS--------------------------------    
+    public function afhome() {
         $this->set_session();
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['key']=$_SESSION['key']; 
-        $this->load->view('filiados',$params);
+        $this->load->view('afiliados_home',$params);
     }
     
-    public function configuracoes() {
+    public function painel() {
+        if($_SESSION['logged_id']>0){
+            if($_SESSION['logged_role'] === 'AFFIL'){
+                header('Location: '.base_url().'index.php/welcome/afiliados');
+            } elseif($_SESSION['logged_role'] === 'ADMIN'){
+                header('Location: '.base_url().'index.php/welcome/admin');
+            }
+        }else
+            header('Location: '.base_url().'index.php/welcome/afhome');
+    }
+    
+    public function afiliados() {
+        if($_SESSION['logged_role'] === 'AFFIL'){
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/Crypt');
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
+            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions($_SESSION['affiliate_logged_datas']['code'],0,$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);                
+            $_SESSION['affiliate_logged_datas']['bank_name'] =  $this->Crypt->get_bank_by_code($_SESSION['affiliate_logged_datas']['bank']);
+            $_SESSION['affiliate_logged_datas']['amount_transactions']=count($_SESSION['affiliate_logged_transactions']);
+            if($_SESSION['affiliate_logged_datas']['amount_transactions']){
+                $_SESSION['affiliate_logged_datas']['total_value'] = 0;
+                foreach($_SESSION['affiliate_logged_transactions'] as $transaction){
+                    $_SESSION['affiliate_logged_datas']['total_value'] += $transaction['amount_solicited'];
+                }
+            }else{
+                $_SESSION['affiliate_logged_datas']['total_value'] = '0.00';
+            }
+            $this->load->view('afiliados',$params);            
+        } else{
+            header('Location: '.base_url().'index.php/welcome/afhome');
+        }
+    }
+    
+    public function admin() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='configuracoes';
-        $this->load->view('configuracoes');
+        $params['view']='resumo';
+        $this->load->view('resumo');
     }
     
     public function resumo() {
@@ -93,16 +98,66 @@ class Welcome extends CI_Controller {
         $this->load->view('resumo');
     }
     
-    public function transacoes() {
+    public function configuracoes() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $params['view']='configuracoes';
+        $this->load->view('configuracoes');
+    }
+    
+    public function transacoes() {
+        $datas = $this->input->post();
+        if(!count($datas))$datas=NULL;
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/Crypt');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;        
+        $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
+        $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
+                NULL,
+                (isset($datas['num_page'])?$datas['num_page']:0),
+                $GLOBALS['s$istem_config']->TRANSACTIONS_BY_PAGE,
+                $datas['token'],
+                $datas['start_period'],
+                $datas['end_period']
+            );
         $params['view']='transacoes';
         $this->load->view('transacoes');
     }
     
+    public function logout() {
+        session_unset();
+        session_destroy();
+        header('Location: '.base_url().'index.php/welcome/afhome');
+    }
     
-    //-------PRINCIPALS FUNCTIONS--------------------------------
+    
+    //-------CLIENTS FUNCTIONS--------------------------------    
+    /*
+    //varaiveis armazenadas na sessao para a solicitação de um empréstimo
+    $_SESSION
+    ['ip']
+    ['pk']
+    ['key']
+    ['time_start']
+    ['front_credit_card']
+    ['selfie_with_credit_card']
+    ['open_identity']
+    ['selfie_with_identity']
+    ['transaction_values']['frm_money_use_form']
+    ['transaction_values']['utm_source']
+    ['transaction_values']['month_value'] 
+    ['transaction_values']['total_cust_value']
+    ['transaction_values']['solicited_value']
+    ['transaction_values']['amount_months']
+    ['transaction_values']['success']     
+    ['client_datas']['random_sms_code']
+    ['client_datas']['phone_ddd']
+    ['client_datas']['sms_verificated']
+    ['client_datas']['verified_phone']
+    */     
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/client_model');
         $this->load->model('class/client_status');
@@ -287,8 +342,7 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-        
-
+       
     public function is_possible_steep_2_for_this_client($datas) { 
         $this->load->model('class/client_model');
         $_SESSION['is_possible_steep_2']=false;
@@ -501,6 +555,7 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success'] && $verify_simulation['success']){
+                    $datas['propietary_type'] = 0;
                     if($possible['action']==='insert_account_bank')
                         $id_row = $this->client_model->insert_db_steep_3($datas);                    
                     else
@@ -546,7 +601,153 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    //-------AFFILIATES FUNCTIONS----------------------------------
+    /*
+    //varaiveis armazenadas na sessao para cadastro de un afiliado
+    $_SESSION
+    ['pk']
+    ['key']
+    ['affiliates_steep_1']
+    ['affiliate_datas']
+    $_SESSION['affiliates_steep_2']
     
+    //varaiveis armazenadas na sessao para cadastro de un afiliado
+    $_SESSION
+    ['logged_id']
+    ['logged_role']
+    ['affiliate_logged_datas']
+    ['affiliate_logged_transactions']
+    */
+    
+    public function insert_affiliate_steep1(){
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $datas['pass']=md5($datas['pass']);
+        $_SESSION['affiliates_steep_1']=false;
+        if($datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/affiliate_status');
+            $this->load->model('class/affiliate_model');
+            $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
+            $N = count($afiliate);            
+            if($N>0){
+                if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
+                    $action = 'not_action';
+                    $result['success']=false;
+                    $result['message']='O email informado já tem associado uma conta ativa';
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::BEGINNER){
+                    $action ='update_afiliate';                
+                }else
+                if($afiliate[$N-1]['status_id'] == affiliate_status::DELETED){
+                    $action ='insert_afiliate';                
+                }
+            }else{
+                $action = 'insert_afiliate';
+            }
+            if($action != 'not_action'){                
+                $datas['status_id'] = affiliate_status::BEGINNER;
+                $t = time();
+                $datas['init_date'] = $t;
+                $datas['status_date'] = $t;
+                $cad = explode('-', str_replace('@', '-', $datas['email']));
+                $datas['code'] = $cad[0];
+                if($action =='update_afiliate'){
+                    if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
+                       $id = $afiliate[$N-1]['id'];
+                }
+                else
+                    $id = $this->affiliate_model->insert_afiliate($datas);
+                if($id){
+                    $result['success']=true;
+                    $_SESSION['affiliates_steep_1']=true;
+                    $_SESSION['pk'] = $id;
+                    $_SESSION['affiliate_datas']=$datas;
+                } else{
+                    $result['message']='Erro guardando no banco de dados. Reporte ao nosso atendimento';
+                    $result['success']=false;
+                }
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function insert_affiliate_steep2() {
+        $_SESSION['affiliates_steep_2']=false;
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        if(!$_SESSION['affiliates_steep_1'] || $datas['key']!==$_SESSION['key']){
+            $result['message']='Autorização negada. Violação de acesso';
+            $result['success']=false;
+        }else{
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/client_model');
+            if(!$this->validate_bank_datas($datas)){
+                $result['success'] = false;
+                $result['message'] = 'Erro nos dados bancários fornecidos';
+            } else {
+                $account_bank = $this->client_model->get_account_bank_by_client_id($_SESSION['pk']);
+                if($N = count($account_bank)){
+                   $id_row = 0;
+                   if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
+                       $id_row = $account_bank[$N-1]['client_id'];
+                }
+                else{
+                    $datas['client_id'] = $_SESSION['pk'];
+                    $datas['propietary_type'] = 1;
+                    $id_row = $this->affiliate_model->insert_affiliate_data_bank($datas);                     
+                }
+                if($id_row){
+                    $_SESSION['affiliates_databank_signin_datas'] = $datas;
+                    $_SESSION['affiliates_steep_2'] = true;
+                    //enviar email de nuevo afiliado al atendimento
+                    require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+                    $this->Gmail = new Gmail();
+                    $result = $this->Gmail->send_mail(
+                        $GLOBALS['sistem_config']->ATENDENT_EMAIL,
+                        'Nova solicitação de afiliado',
+                        'Nova solicitação de afiliado', 
+                        'O afiliado '.['affiliate_datas']['email'].' tá pedindo autorizo de cadastro.'
+                    );
+                    $result['success'] = true;
+                }
+                else{
+                    $result['success'] = false;
+                    $result['message'] = 'Erro interno no banco de dados';
+                }
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function login_affiliate(){
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/affiliate_status');
+        $this->is_ip_hacker();
+        $datas = $this->input->post();
+        $datas['pass']=md5($datas['pass']);
+        $afiliate = $this->affiliate_model->get_affiliates_by_credentials($datas['email'],$datas['pass']);
+        $N = count($afiliate);
+        if($N>0 && $afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
+            $_SESSION['logged_id'] = $afiliate[$N-1]['id'];
+            $_SESSION['logged_role'] = $afiliate[$N-1]['role'];            
+            $result['resource'] = 'filiados';
+            $result['success'] = true;
+        } else{
+            $_SESSION['logged_id'] = -1;
+            $result['message'] = 'Você deve se cadastrar primeiro';
+            $result['resource'] = 'afiliados';
+            $result['success'] = false;
+        }
+        echo json_encode($result);
+    }
+    
+   
+
     //-------AUXILIAR FUNCTIONS----------------------------------
     
     public function set_session(){
@@ -746,133 +947,8 @@ class Welcome extends CI_Controller {
     
     public function decodify($str){
         $this->load->model('class/crypt');
-        return  $this->crypt->decodify($str);
-        /*
-        $this->load->model('class/crypt');
-        $a=$this->crypt->codify('Jose Ramon Glez 07367014196  (21)965913089');
-        echo $a[0].'<br>';
-        $b=$this->crypt->decodify($a);
-        echo $b.'<br>';
-        */
+        return  $this->crypt->decodify($str);        
         return $str;
-    }
-    
-    public function get_bank_by_code($code){        
-        $banks=array(
-            '001'=>'BANCO DO BRASIL',
-            '104'=>'CAIXA ECONÔMICA FEDERAL',
-            '033'=>'BCO SANTANDER (BRASIL) S.A.',
-            '389'=>'BCO MERCANTIL DO BRASIL S.A.',
-            '745'=>'CITIBANK S.A.',
-            '477'=>'CITIBANK N.A.',
-            '069'=>'BCO CREFISA S.A.',
-            '318'=>'BCO BMG S.A.',
-            '184'=>'BANCO ITAÚ BBA S.A.',
-            '479'=>'BANCO ITAÚ BANK S.A.',
-            '652'=>'ITAÚ UNIBANCO HOLDING S.A.',
-            '341'=>'ITAÚ UNIBANCO BM S.A.',
-            '237'=>'BCO BRADESCO S.A.',
-            '036'=>'BANCO BRADESCO BBI S.A.',
-            '204'=>'BANCO BRADESCO CARTÕES S.A.',
-            '394'=>'BANCO BRADESCO FINANCIAMENTOS S.A',
-            '122'=>'BANCO BRADESCO BERJ S.A.',
-            '070'=>'BANCO DE BRASILIA S.A.',
-            '735'=>'BANCO NEON S.A.',
-            '077'=>'BANCO INTERMEDIUM S.A.',
-            '741'=>'BCO RIBEIRAO PRETO S.A.',
-            '739'=>'BANCO CETELEM S.A.',
-            '743'=>'BANCO SEMEAR',
-            '394'=>'BCO BRADESCO FINANC. S.A.',
-            '747'=>'BCO RABOBANK INTL BRASIL S.A.',
-            '748'=>'BCO COOPERATIVO SICREDI S.A.',
-            '399'=>'KIRTON BANK',
-            '757'=>'BCO KEB HANA DO BRASIL S.A.',
-            '084'=>'UNIPRIME NORTE DO PARANÁ',
-            '062'=>'HIPERCARD BM S.A.',
-            '074'=>'BCO. J.SAFRA S.A.',
-            '099'=>'UNIPRIME CENTRAL CCC LTDA.',
-            '025'=>'BCO ALFA S.A.',
-            '040'=>'BCO CARGILL S.A.',
-            '063'=>'BANCO BRADESCARD',
-            '003'=>'BCO DA AMAZONIA S.A.',
-            '097'=>'CCC NOROESTE BRASILEIRO LTDA.',
-            '037'=>'BCO DO EST. DO PA S.A.',
-            '085'=>'CCC URBANO',
-            '114'=>'CENTRAL CECM ESP. SANTO',
-            '036'=>'BCO BBI S.A.',
-            '004'=>'BCO DO NORDESTE DO BRASIL S.A.',
-            '320'=>'BCO CCB BRASIL S.A.',
-            '079'=>'BCO ORIGINAL DO AGRO S.A.',
-            '133'=>'CONFEDERACAO NAC DAS CCC SOL',
-            '121'=>'BCO AGIPLAN S.A.',
-            '083'=>'BCO DA CHINA BRASIL S.A.',
-            '094'=>'BANCO FINAXIS',
-            '047'=>'BCO DO EST. DE SE S.A.',
-            '254'=>'PARANA BCO S.A.',
-            '107'=>'BCO BBM S.A.',
-            '412'=>'BCO CAPITAL S.A.',
-            '124'=>'BCO WOORI BANK DO BRASIL S.A.',
-            '634'=>'BCO TRIANGULO S.A.',
-            '132'=>'ICBC DO BRASIL BM S.A.',
-            '163'=>'COMMERZBANK BRASIL S.A. BCO MÚLTIPLO',
-            '021'=>'BCO BANESTES S.A.',
-            '246'=>'BCO ABC BRASIL S.A.',
-            '751'=>'SCOTIABANK BRASIL',
-            '746'=>'BCO MODAL S.A.',
-            '241'=>'BCO CLASSICO S.A.',
-            '612'=>'BCO GUANABARA S.A.',
-            '604'=>'BCO INDUSTRIAL DO BRASIL S.A.',
-            '505'=>'BCO CREDIT SUISSE (BRL) S.A.',
-            '300'=>'BCO LA NACION ARGENTINA',
-            '266'=>'BCO CEDULA S.A.',
-            '376'=>'BCO J.P. MORGAN S.A.',
-            '263'=>'BCO CACIQUE S.A.',
-            '473'=>'BCO CAIXA GERAL BRASIL S.A.',
-            '120'=>'BCO RODOBENS S.A.',
-            '248'=>'BCO BOAVISTA INTERATLANTICO S.A.',
-            '265'=>'BCO FATOR S.A.',
-            '719'=>'BANIF BRASIL BM S.A.',
-            '243'=>'BCO MÁXIMA S.A.',
-            '125'=>'BRASIL PLURAL S.A. BCO.',
-            '065'=>'BANCO ANDBANK (BRASIL) S.A.',
-            '250'=>'BCV – Banco de Crédito e Varejo',
-            '494'=>'BCO REP ORIENTAL URUGUAY BCE',
-            '018'=>'BCO TRICURY S.A.',
-            '422'=>'BCO SAFRA S.A.',
-            '224'=>'BCO FIBRA S.A.',
-            '600'=>'BCO LUSO BRASILEIRO S.A.',
-            '623'=>'BANCO PAN',
-            '655'=>'BCO VOTORANTIM S.A.',
-            '464'=>'BCO SUMITOMO MITSUI BRASIL S.A.',
-            '237'=>'BCO BRADESCO S.A.',
-            '613'=>'BCO PECUNIA S.A.',
-            '637'=>'BCO SOFISA S.A.',
-            '653'=>'BCO INDUSVAL S.A.',
-            '249'=>'BANCO INVESTCRED UNIBANCO S.A.',
-            '318'=>'BCO BMG S.A.',
-            '626'=>'BCO FICSA S.A.',
-            '366'=>'BCO SOCIETE GENERALE BRASIL',
-            '611'=>'BCO PAULISTA S.A.',
-            '755'=>'BOFA MERRILL LYNCH BM S.A.',
-            '089'=>'CCR REG MOGIANA',
-            '643'=>'BCO PINE S.A.',
-            '707'=>'BCO DAYCOVAL S.A',
-            '487'=>'DEUTSCHE BANK S.A. BCO ALEMAO',
-            '233'=>'BANCO CIFRA',
-            '633'=>'BCO RENDIMENTO S.A.',
-            '218'=>'BANCO BONSUCESSO S.A.',
-            '090'=>'CCCM SICOOB UNIMAIS',
-            '753'=>'NOVO BCO CONTINENTAL S.A.',
-            '222'=>'BCO CRÉDIT AGRICOLE BR S.A.',
-            '098'=>'CREDIALIANÇA CCR',
-            '610'=>'BCO VR S.A.',
-            '010'=>'CREDICOAMO',
-            '217'=>'BANCO JOHN DEERE S.A.',
-            '041'=>'BCO DO ESTADO DO RS S.A.',
-            '654'=>'BCO A.J. RENNER S.A.',
-            '212'=>'BANCO ORIGINAL'
-            );
-        return $banks[$code];
     }
     
     public function get_cep_datas(){
@@ -991,7 +1067,7 @@ class Welcome extends CI_Controller {
         );
     }
         
-    function upload_file(){
+    public function upload_file(){
         $this->load->model('class/client_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
@@ -1362,125 +1438,19 @@ class Welcome extends CI_Controller {
     public function topazio_emprestimo($id) {
         //$API_token = $this->get_topazio_API_token();
     }
-
-    //funções para afiliados ----------------------------------
-    /*/*$_SESSION
-        ['key']
-        ['pk']
-        ['affiliates_steep_1']
-        ['user_datas']
-     */
     
-    public function insert_affiliate_steep1(){
-        $this->is_ip_hacker();
+    public function get_transaction_datas_by_id(){
         $datas = $this->input->post();
-        $datas['pass']=md5($datas['pass']);
-        if($datas['key']!==$_SESSION['key']){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-        }else{
-            $_SESSION['affiliates_steep_1']=false;
-            $this->load->model('class/affiliate_status');
-            $this->load->model('class/affiliate_model');
-            $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
-            $N = count($afiliate);            
-            if($N>0){
-                if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
-                    $_SESSION['action'] = 'not_action';
-                    $result['success']=false;
-                    $result['message']='O email informado já tem associado uma conta ativa';
-                }else
-                if($afiliate[$N-1]['status_id'] == affiliate_status::BEGINNER){
-                    $_SESSION['action'] ='update_afiliate';                
-                }else
-                if($afiliate[$N-1]['status_id'] == affiliate_status::DELETED){
-                    $_SESSION['action'] ='insert_afiliate';                
-                }
-            }else{
-                $_SESSION['action'] = 'insert_afiliate';
-            }
-            if($_SESSION['action'] != 'not_action'){                
-                $datas['status_id'] = affiliate_status::BEGINNER;
-                $t = time();
-                $datas['init_date'] = $t;
-                $datas['status_date'] = $t;
-                if($_SESSION['action'] =='update_afiliate'){
-                    $id=0;
-                    if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
-                        $id = $afiliate[$N-1]['id'];
-                }
-                else
-                    $id = $this->affiliate_model->insert_afiliate($datas);
-                if($id){
-                    $result['success']=true;
-                    $_SESSION['affiliates_steep_1']=true;
-                    $_SESSION['pk'] = $id;
-                    $_SESSION['user_datas']=$datas;
-                } else{
-                    $result['message']='Erro guardando no banco de dados. Reporte ao nosso atendimento';
-                    $result['success']=false;
-                }
+        $result['message'] = 'Transação não encontrada';
+        $result['success']=false;
+        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+            if($transactions['id'] == $datas['id']){
+                $result['message'] = $transactions;
+                $result['success']=true;
+                break;
             }
         }
         echo json_encode($result);
     }
-    
-    public function insert_affiliate_steep2() {
-        $_SESSION['affiliates_steep_2']=false;
-        $this->is_ip_hacker();
-        $datas = $this->input->post();
-        if(!$_SESSION['affiliates_steep_1'] || $datas['key']!==$_SESSION['key']){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-        }else{
-            $this->load->model('class/affiliate_model');
-            $this->load->model('class/client_model');
-            if(!$this->validate_bank_datas($datas)){
-                $result['success'] = false;
-                $result['message'] = 'Erro nos dados bancários fornecidos';
-            } else {
-                $xxx=$_SESSION['pk'];
-                $account_bank = $this->client_model->get_account_bank_by_client_id($_SESSION['pk']);
-                if($N = count($account_bank)){
-                   $id_row = 0;
-                   if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
-                       $id_row = $account_bank[$N-1]['client_id'];
-                }
-                else{
-                    $datas['client_id'] = $_SESSION['pk'];
-                    $datas['propietary_type'] = 1;                    
-                    $id_row = $this->affiliate_model->insert_affiliate_data_bank($datas);                     
-                }
-                if($id_row){
-                    $_SESSION['affiliates_steep_2'] = true;
-                    $result['success'] = true;
-                }
-                else{
-                    $result['success'] = false;
-                    $result['message'] = 'Erro interno no banco de dados';
-                }
-            }
-        }
-        echo json_encode($result);
-    }
-    
-    public function login_affiliate(){
-        $_SESSION['affiliate_loged']=false;
-        $this->is_ip_hacker();
-        $datas = $this->input->post();
-        $datas['pass']=md5($datas['pass']);
-        $afiliate = $this->affiliate_model->get_affiliates_by_credentials($datas['email'],$datas['pass']);
-        $N = count($afiliate);
-        if($N>0 && $afiliate[$N-1]['status_id'] != affiliate_status::ACTIVE){
-            $result['success'] = false;
-            $result['resource'] = 'filiados';
-            $result['message'] = 'Você deve se cadastrar primeiro';
-        } else{
-            $result['success'] = true;
-            $_SESSION['affiliate_loged']=true;
-            $_SESSION['affiliate_loged_datas'] = $afiliate[$N-1];
-        }
-        echo json_encode($result);
-    }
-    
+   
 }

@@ -662,7 +662,7 @@
                 </button>
             </div>
         </div>
-    </div>                                                        
+    </div>
 </div>
 <section>    
 <?php //include_once "inc/footer.php";?>

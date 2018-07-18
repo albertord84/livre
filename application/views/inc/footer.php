@@ -1,6 +1,6 @@
 </section>
     <footer class="fleft100 pd-tb40">
-        <A name="contact_me"></A>        
+        <A name="contact_me"></A>
         <div class="container">
             <div class="col-md-6 col-sm-6 col-xs-12 contato">
                 <h1 class="ft-size55 pd-lr25 fw-300">
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>                                                        
-    </div> 
+    </div>
 </body>
     <!--[if lt IE 9]>
     <script src="js/jquery-1.9.1.js"></script>
