@@ -326,8 +326,8 @@ $(document).ready(function () {
         return vars;
     }
     
-    function modal_alert_message(text_message){
-        $('#modal_alert_message').modal('show');
+    function modal_alert_message(text_message){       
+        $('#modal_alert_message').modal('show');        
         $('#message_text').text(text_message);
     }
     
@@ -457,7 +457,7 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {
+    $("#btn_verify_phone_number").click(function () {        
         $.ajax({
             url: base_url+'index.php/welcome/request_sms_code',                
             data: {
