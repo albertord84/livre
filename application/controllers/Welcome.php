@@ -64,12 +64,10 @@ class Welcome extends CI_Controller {
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-
             $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
             $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions($_SESSION['affiliate_logged_datas']['code'],0,$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);                
             $_SESSION['affiliate_logged_datas']['bank_name'] =  $this->Crypt->get_bank_by_code($_SESSION['affiliate_logged_datas']['bank']);
             $_SESSION['affiliate_logged_datas']['amount_transactions']=count($_SESSION['affiliate_logged_transactions']);
-
             if($_SESSION['affiliate_logged_datas']['amount_transactions']){
                 $_SESSION['affiliate_logged_datas']['total_value'] = 0;
                 foreach($_SESSION['affiliate_logged_transactions'] as $transaction){
@@ -953,8 +951,6 @@ class Welcome extends CI_Controller {
         return $str;
     }
     
-    
-    
     public function get_cep_datas(){
         $cep = $this->input->post()['cep'];
         $datas = file_get_contents('https://viacep.com.br/ws/'.$cep.'/json/');
@@ -1441,6 +1437,20 @@ class Welcome extends CI_Controller {
     
     public function topazio_emprestimo($id) {
         //$API_token = $this->get_topazio_API_token();
+    }
+    
+    public function get_transaction_datas_by_id(){
+        $datas = $this->input->post();
+        $result['message'] = 'Transação não encontrada';
+        $result['success']=false;
+        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+            if($transactions['id'] == $datas['id']){
+                $result['message'] = $transactions;
+                $result['success']=true;
+                break;
+            }
+        }
+        echo json_encode($result);
     }
    
 }

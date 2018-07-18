@@ -4,26 +4,27 @@
 <div class="modal fade" id="trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 	<div class="modal-dialog mxw-1100" role="document">
 		<div class="modal-content b-none">
-           <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
+                    <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
 			<div class="fleft100 pd-20 bk-fff ft-size13"> 				
                             <div class="w5 m-top15 m-top10-xs center-xs"><img src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
 				<div class="w25 fw-500 m-top15 m-top10-xs center-xs">
-					#ADQWEC Ana Torres Souza Cruz <br>
-					E-mail: anasilva@gmail.com <br>
-					CPF: 555.555.555-55 <br>
-					Cel.: 21 2656-5626
+                                    <p>#<span id="trans_id"></span> <span id="trans_name"></span> <br>
+					E-mail: <span id="trans_email"></span> <br>
+					CPF: <span id="trans_cpf"></span> <br>
+					Cel.: (<span id="trans_phone_ddd"></span>) <span id="trans_phone_number"></span> 
+                                    </p>
 				</div>
-				<div class="w15 fw-500 m-top15 m-top10-xs center-xs">31-07-17 / 15h45</div>
-				<div class="w10 cl-blue m-top15 m-top10-xs center-xs fw-500">R$ 6.000,00</div>
+				<div class="w15 fw-500 m-top15 m-top10-xs center-xs"><span id="trans_date"></span></div>
+				<div class="w10 cl-blue m-top15 m-top10-xs center-xs fw-500"><span id="trans_solicited_value"></span></div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
-					MARCIO ARAUJO PAIVA - Final 2336 <br>
-					24/Julho - CVV 245
+					<span id="trans_credit_card_name"></span> - Final <span id="trans_credit_card_final"></span> <br>
+					<!--24/Julho - CVV 245
 
 					<div class="fleft100">
 						<small class="fleft100 cl-silver m-top20">Dados do cartão</small>
 						Investimento em estudos
-					</div>
+					</div>-->
 				</div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados bancários</small>
@@ -72,7 +73,7 @@
 	<div class="container">
 		<h4 class="pd-lr15 m-b10 fw-500 fleft100"><em>Transações</em></h4>
                 <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
-		<div class="trans cl-fff fleft100 pd-20">
+                    <div class="trans cl-fff fleft100 pd-20">
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <span class="fleft100">Digite sua busca aqui:</span>
                             <input name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
@@ -99,7 +100,7 @@
 			<div class="col-md-2 col-sm-2 col-xs-12 text-center m-top10 m-top20-xs">
                             <input type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
 			</div>
-		</div>
+                    </div>
                 </form>
 		<h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados:</h4>
 		<ul class="zebra fleft100 ft-size12 cl-black">
@@ -123,8 +124,7 @@
                             <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                 <?php 
                                     echo $transaction['credit_card_name'].'<br>';
-                                    $N = strlen($transaction['credit_card_number']);
-                                    echo 'Final - '.substr($transaction['credit_card_number'],$N-4,$N); 
+                                    echo 'Final - '. $transaction['credit_card_final']; 
                                 ?>  
                             </div>
                             <div class="w20 fw-500 text-left center-xs m-top10-xs">
@@ -134,7 +134,11 @@
                                     echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                 ?>
                             </div>
-                            <div class="w5 fw-500 m-top10"><a href="" data-toggle="modal" data-target="#trans" data-whatever="@mdo"><img src="<?php echo base_url().'assets/img/icones/add.png'?>" alt=""></a></div>
+                            <div class="w5 fw-500 m-top10">
+                                <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
+                                    <img id="<?php echo $transaction['id']; ?>" class="btn_see_trnsaction" src="<?php echo base_url().'assets/img/icones/add.png'?>" alt="">
+                                </a>
+                            </div>
 			</li>
                     <?php }?> 
 		</ul>
@@ -152,7 +156,28 @@
 		</ul>
 	</div>
 </section>
-</section>
+    <!--modal_container_alert_message-->
+    <div class="modal fade" style="top:10%" id="modal_alert_message" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div id="modal_container_alert_message" class="modal-dialog modal-sm" role="document">                                                          
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="btn_modal_close" type="button" class="close" style="background:#fff;" data-dismiss="modal" aria-label="Close">
+                        <img src="<?php echo base_url() . 'assets/img/icones/índice.png'; ?>"> 
+                    </button>
+                    <h5 class="modal-title" id="myModalLabel"><b>Mensagem</b></h5>                        
+                </div>
+                <div class="modal-body">                                            
+                    <p id="message_text"></p>                        
+                </div>
+                <div class="modal-footer text-center">
+                    <button id="accept_modal_alert_message" type="button" class="btn btn-primary active text-center ladda-button" data-style="expand-left" data-spinner-color="#ffffff">
+                        <spam class="ladda-label"><div style="color:white; font-weight:bold">ACEITAR</div></spam>
+                    </button>
+                </div>
+            </div>
+        </div>                                                        
+    </div>
+    
 </body>
  <!--[if lt IE 9]>
         <script src="js/jquery-1.9.1.js"></script>

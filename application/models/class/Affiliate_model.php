@@ -28,7 +28,7 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
-            $this->db->where('account_banks.propietary_type','0');
+            $this->db->where('account_banks.propietary_type','1');
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
             $this->db->limit($page*$amount_by_page, $amount_by_page);
@@ -36,8 +36,10 @@ class Affiliate_model extends CI_Model{
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
-                $result[$i]['credit_card_name'] = $cr->decrypt($transaction['credit_card_name']);
                 $result[$i]['credit_card_number'] = $cr->decrypt($transaction['credit_card_number']);
+                $result[$i]['credit_card_name'] = $cr->decrypt($transaction['credit_card_name']);
+                $N = strlen($result[$i]['credit_card_number']);
+                $result[$i]['credit_card_final'] = substr($result[$i]['credit_card_number'], $N-4, $N);
                 $result[$i]['credit_card_cvv'] = $cr->decrypt($transaction['credit_card_cvv']);
                 $result[$i]['credit_card_exp_month'] = $cr->decrypt($transaction['credit_card_name']);                
                 $result[$i]['dates'] = $this->load_transaction_dates($transaction['id']);

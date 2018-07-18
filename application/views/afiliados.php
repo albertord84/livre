@@ -74,6 +74,7 @@
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
 			<div class="trans cl-fff fleft100 pd-20">
+                            <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
 				<div class="col-md-7 col-sm-7 col-xs-12 pd-0">
 					<span class="fleft100 cl-black pd-lr15">Digite sua busca aqui:</span>
 					<div class="col-md-8 col-sm-8 col-xs-12">					
@@ -83,7 +84,7 @@
 						<a href="" class="cl-fff bk-blue pd-5 fleft100 m-top5 ft-size16">Pesquisar</a>
 					</div>
 				</div>				
-				<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
+                                <!--<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
 					<span class="fleft100 cl-black">Filtro</span>
 					<div class="col-md-7 col-sm-7 col-xs-12  pd-0">
 						<input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
@@ -91,7 +92,9 @@
 					<div class="col-md-5 col-sm-5 col-xs-12">
 						<a href="" class="cl-fff bk-blue pd-8 fleft100 add">+ Adicionar filtro</a>
 					</div>
-				</div>
+				</div>-->
+                                
+                            </form>
 			</div>
 			<ul class="zebra fleft100 ft-size12 cl-black">
                             <?php foreach($_SESSION['affiliate_logged_transactions'] as $transaction) { ?>
@@ -114,9 +117,8 @@
                                     <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                         <small class="fleft100">Dados do cartão</small>
                                         <?php 
-                                            echo $transaction['credit_card_name'].'<br>';
-                                            $N = strlen($transaction['credit_card_number']);
-                                            echo 'Final - '.substr($transaction['credit_card_number'],$N-4,$N); 
+                                            echo $transaction['credit_card_name'].'<br>';                                            
+                                            echo 'Final - '.$transaction['credit_card_final']; 
                                         ?>                                              
                                     </div>
                                     <div class="w20 fw-500 text-left center-xs m-top10-xs">
