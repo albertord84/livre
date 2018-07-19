@@ -1409,13 +1409,40 @@ class Welcome extends CI_Controller {
 
     public function basicCustomerTopazio(){        
         
-        $API_token = "507287d2-c60a-3aea-bbbf-e155293f5feb";//$this->get_topazio_API_token();
+        $API_token = $this->get_topazio_API_token();
+        
+        $cpf = "12345678901";
+        $name = "Julio Petro";
+        $cep = "24040200";
+        $street = "Miguel 42";
+        $number = "25";
+        $district = "Ponta Celeste";
+        $city = "Mi ciudad";
+        $state = "SP";
+        $phone = "21212121212121";
+        $email = "julio@julio.com.br";
+        $cnpj_livre = "23456789012";
+        
+        $fields =   "{\n  \"document\": \"".$cpf
+                    ."\",\n  \"nameOrCompanyName\": \"".$name
+                    ."\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n "
+                    ."  \"postalCode\": ".$cep
+                    .",\n    \"street\": \"".$street
+                    ."\",\n    \"number\": \"".$number
+                    ."\",\n    \"complement\": \"\",\n    \"district\": \"".$district
+                    ."\",\n    \"city\": \"".$city
+                    ."\",\n    \"state\": \"".$state
+                    ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
+                    ."\",\n    \"email\": \"".$email
+                    ."\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"".$cnpj_livre
+                    ."\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
