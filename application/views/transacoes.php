@@ -20,7 +20,6 @@
 					<small class="fleft100 cl-silver">Dados do cartão</small>
 					<span id="trans_credit_card_name"></span> - Final <span id="trans_credit_card_final"></span> <br>
 					<!--24/Julho - CVV 245
-
 					<div class="fleft100">
 						<small class="fleft100 cl-silver m-top20">Dados do cartão</small>
 						Investimento em estudos
@@ -28,11 +27,15 @@
 				</div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados bancários</small>
-					Itau - AG. 8888 - CC. 58866-6
+					(<span id="trans_bank_code"></span>) <span id="trans_bank_name"></span> <br>
+                                        AG. <span id="trans_agency"></span> <br>
+                                        CC. <span id="trans_account"></span>-<span id="trans_dig"></span>
 
 					<div class="fleft100">
 						<small class="fleft100 cl-silver m-top20">Endereço</small>
-						Rua das flores, 399 - Pirai <br>RJ - CEP. 22222222
+                                                <span id="trans_street_address"></span>, <span id="trans_number_address"></span> <br> 
+                                                <span id="trans_city_address"></span>, <span id="trans_state_address"></span> 
+                                                <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
 				<div class="w5 fw-500 m-top10 center-xs"><a href=""><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
