@@ -181,14 +181,14 @@ $(document).ready(function () {
        
     $('#container_form_steep_1').keypress(function (e) {
         if (e.which == 13) {
-            $("#btn_steep_1").click();
+            $("#btn_sigin_affiliate_steep1").click();
             return false;
         }
     });
 
     $('#container_form_steep_2').keypress(function (e) {
         if (e.which == 13) {
-            $("#btn_steep_2").click();
+            $("#btn_sigin_affiliate_steep2").click();
             return false;
         }
     });

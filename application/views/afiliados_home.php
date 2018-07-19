@@ -291,7 +291,7 @@
                 <!--STEEP 1.1-->
                 <div class="pd-0 col-md-4 col-sm-9 col-xs-12 cad1 fnone i-block text-left">
                     <h1 class="fw-300 fleft100">Cadastre-se grátis!</h1>
-                    <div class="fleft100 pd-lr20 pd-tb25 bk-fff m-top20">
+                    <div id="container_form_steep_1" class="fleft100 pd-lr20 pd-tb25 bk-fff m-top20">
                         <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                         <fieldset class="fleft100 col-md-12 pd-lr10">
                             <input id="affiliate_complete_name" type="text" placeholder="NOME COMPLETO" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
@@ -318,7 +318,7 @@
                 </div>
 
                 <div class="cad2 d-none fleft100">
-                    <div class="pd-0 col-md-7 col-sm-9 col-xs-12  fnone i-block text-left">
+                    <div id="container_form_steep_2" class="pd-0 col-md-7 col-sm-9 col-xs-12  fnone i-block text-left">
                         <h1 class="fw-300 fleft100 m-b20">Cadastre-se grátis!</h1>
                         <!--STEEP 2.1-->
                         <div class="col-md-4 col-sm-4 col-xs-12 bk-green pd-10 cl-fff h441">
