@@ -28,7 +28,7 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
-            $this->db->where('account_banks.propietary_type','1');
+            $this->db->where('account_banks.propietary_type','0');
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
             $this->db->limit($page*$amount_by_page, $amount_by_page);
