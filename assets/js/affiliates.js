@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
+    var actual_page = 1;
     
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_sigin_affiliate_steep1").click(function () {
@@ -176,6 +177,15 @@ $(document).ready(function () {
         
     });
         
+    $('#prev_page').click(function () {
+        if(actual_page>1)
+            actual_page--;
+        
+    });
+    
+    $('#next_page').click(function () {
+        
+    });
     
     //----------------------SECUNDARY FUNCTIONS-------------------------------
        

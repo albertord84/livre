@@ -3,7 +3,7 @@
 class transactions_status {
 
     const BEGINNER= 1;
-    const PENDING = 2;
+    const PENDING = 22;
     const APPROVED = 3;
     const TRANSFERRED = 4;
     const WRONG_TRANSFERRED = 5;

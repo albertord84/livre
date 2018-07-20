@@ -32,7 +32,8 @@ class Affiliate_model extends CI_Model{
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
             $this->db->limit($page*$amount_by_page, $amount_by_page);
-            $this->db->order_by("transactions.id", "desc");
+            $this->db->order_by("transactions.status_id", "desc");
+            $this->db->order_by("transactions.id", "asc");
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){

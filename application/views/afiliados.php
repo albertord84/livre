@@ -67,7 +67,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
 				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
                                     <p>Mande esse link para seus clientes</p>
-					<a href="https://livre.digital/livre/?afiliado=luizcarlosdacosta">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
+					<a href="https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?>">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
 				</div>
 				<!--<img src="<?php //echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">-->
 			</div>
@@ -127,21 +127,14 @@
                                             echo $transaction['bank_name'].'<br>';
                                             echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                         ?>
-                                    </div>                                    
+                                    </div>
 				</li>
                             <?php }?>
 			</ul>
 			<ul class="pg text-right m-top20 fleft100">
-				<li><a href="">1</a></li>
-				<li><a href="">2</a></li>
-				<li><a href="">3</a></li>
-				<li><a href="">4</a></li>
-				<li><a href="">5</a></li>
-				<li><a href="">6</a></li>
-				<li><a href="">7</a></li>
-				<li><a href="">8</a></li>
-				<li><a href="">9</a></li>
-				<li><a href="">>></a></li>
+                            <li><a id="prev_page" href=""><<</a></li>				
+                            <li><a id="actual_page" href="">1</a></li>
+                            <li><a id="next_page" href="">>></a></li>
 			</ul>
 		</div>
 	</div>
