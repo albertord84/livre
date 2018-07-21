@@ -688,16 +688,20 @@ $(document).ready(function () {
                     modal_alert_message('Arquivo subido com sucesso!');
                     switch (id) {
                         case 0:
-                            document.getElementById("check_front_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_front_credit_card').removeClass('uplred');
+                            $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
                             break;
                         case 1:
-                            document.getElementById("check_selfie_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_selfie_credit_card').removeClass('uplred');
+                            $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
                             break;
                         case 2:
-                            document.getElementById("check_open_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_open_identity').removeClass('uplred');
+                            $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
                             break;
                         case 3:
-                            document.getElementById("check_selfie_with_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_selfie_with_identity').removeClass('uplred');
+                            $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
                             break;
                         default:
                             ;                        
@@ -705,6 +709,26 @@ $(document).ready(function () {
                 }
                 else{
                     modal_alert_message(response['message']);
+                    switch (id) {
+                        case 0:
+                            $('#check_front_credit_card').removeClass('uplsilver');
+                            $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 1:
+                            $('#check_selfie_credit_card').removeClass('uplsilver');
+                            $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            break;
+                        case 2:
+                            $('#check_open_identity').removeClass('uplsilver');
+                            $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 3:
+                            $('#check_selfie_with_identity').removeClass('uplsilver');
+                            $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            break;
+                        default:
+                            ;                        
+                    }
                 }
             },
             error: function (error) {

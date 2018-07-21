@@ -34,8 +34,11 @@
                 <?php }?>
 		<div class="fleft100 pd-20">
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-0 center-xs">
-				<div class="col-md-2 col-sm-2 col-xs-12 pd-0">
-                                        <img src="<?php echo base_url().'assets/'?>img/icones/avatar.jpg" class="mxw-50">
+                            <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
+                                    <label for="avatar" style="cursor: pointer">
+                                        <input type="file" id="avatar" class="hidden">
+                                        <img style="border-radius: 50px" src="<?php echo base_url().'assets/'?>img/icones/avatar_no_photo.jpg" class="mxw-50">
+                                    </label>    
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">
                                     <h3><?php echo $_SESSION['affiliate_logged_datas']['complete_name'];?></h3>

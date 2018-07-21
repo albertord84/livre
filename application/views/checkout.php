@@ -615,20 +615,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="cartao">
                                         <input type="file" id="cartao" class="hidden">
-                                        <div class="upl uplgreen c-pointer">
-                                            <div id="check_front_credit_card">
-                                                <?php 
-                                                    if($_SESSION['front_credit_card']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['front_credit_card']){
+                                        ?>
+                                        <div id="check_front_credit_card" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_front_credit_card" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>  
                                             <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
                                             <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
                                         </div>
@@ -637,20 +634,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="selcartao">
                                         <input type="file" id="selcartao" class="hidden">
-                                        <div class="upl uplsilver c-pointer">
-                                            <div id="check_selfie_credit_card">
-                                                <?php 
-                                                    if($_SESSION['selfie_with_credit_card']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['selfie_with_credit_card']){
+                                        ?>
+                                        <div id="check_selfie_credit_card" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_selfie_credit_card" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
                                             <small class="fleft100">Selfie segurando <br>seu cartão</small>
                                         </div>
@@ -661,20 +655,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">						
                                     <label for="id">
                                         <input type="file" id="id" class="hidden">
-                                        <div class="upl uplred c-pointer">
-                                            <div id="check_open_identity">
-                                                <?php 
-                                                    if($_SESSION['open_identity']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['open_identity']){
+                                        ?>
+                                        <div id="check_open_identity" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_open_identity" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
                                             <small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
                                         </div>
@@ -682,21 +673,18 @@
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="selid">
-                                        <input type="file" id="selid" class="hidden">
-                                        <div class="upl uplsilver c-pointer">
-                                            <div id="check_selfie_with_identity">
-                                                <?php 
-                                                    if($_SESSION['selfie_with_identity']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <input type="file" id="selid" class="hidden">                                        
+                                        <?php 
+                                            if($_SESSION['selfie_with_identity']){
+                                        ?>
+                                        <div id="check_selfie_with_identity" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_selfie_with_identity" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
                                             <small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
                                         </div>

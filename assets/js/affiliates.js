@@ -353,5 +353,111 @@ $(document).ready(function () {
         $('#titular_cpf').val('07367014196');
     }
     
-    //init_signin();
+    
+    /************UPLOADING PHOTO/***********/    
+    $("#avatar").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(0);
+        //alert("file upload");
+    });
+    
+    var Upload = function (file) {
+    this.file = file;
+    };
+
+    Upload.prototype.getType = function() {
+        return this.file.type;
+    };
+    Upload.prototype.getSize = function() {
+        return this.file.size;
+    };
+    Upload.prototype.getName = function() {
+        return this.file.name;
+    };
+    
+    Upload.prototype.doUpload = function (id) {
+        var that = this;
+        var formData = new FormData();
+
+        // add assoc key values, this will be posts values
+        formData.append("file", this.file, this.getName());
+        formData.append("upload_file", true);        
+        formData.append("id", id);        
+        formData.append("key", key);        
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: base_url+'index.php/welcome/upload_file',
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    //myXhr.upload.addEventListener('progress', that.progressHandling, false);
+                }
+                return myXhr;
+            },
+            success: function (response) {
+                // your callback here
+                if(response['success']){
+                    modal_alert_message('Arquivo subido com sucesso!');
+                    switch (id) {
+                        case 0:
+                            $('#check_front_credit_card').removeClass('uplred');
+                            $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
+                            break;
+                        case 1:
+                            $('#check_selfie_credit_card').removeClass('uplred');
+                            $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
+                            break;
+                        case 2:
+                            $('#check_open_identity').removeClass('uplred');
+                            $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
+                            break;
+                        case 3:
+                            $('#check_selfie_with_identity').removeClass('uplred');
+                            $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
+                            break;
+                        default:
+                            ;                        
+                    }
+                }
+                else{
+                    modal_alert_message(response['message']);
+                    switch (id) {
+                        case 0:
+                            $('#check_front_credit_card').removeClass('uplsilver');
+                            $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 1:
+                            $('#check_selfie_credit_card').removeClass('uplsilver');
+                            $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            break;
+                        case 2:
+                            $('#check_open_identity').removeClass('uplsilver');
+                            $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 3:
+                            $('#check_selfie_with_identity').removeClass('uplsilver');
+                            $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            break;
+                        default:
+                            ;                        
+                    }
+                }
+            },
+            error: function (error) {
+                // handle error
+            },
+            async: true,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 60000
+        });
+    };    
+    /************END UPLOADING PHOTO/***********/
+
 }); 
