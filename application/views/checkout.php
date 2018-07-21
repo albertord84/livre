@@ -327,118 +327,203 @@
                                         <!--<input type="text" placeholder="Banco">-->
                                         <select id="bank" required style="max-height: 70px">
                                             <option value="default" selected="true">BANCO...</option>
-                                            <option value="001">BANCO DO BRASIL</option>
-                                            <option value="104">CAIXA ECONÔMICA FEDERAL </option>
-                                            <option value="033">BCO SANTANDER (BRASIL) S.A. </option>
-                                            <option value="184">BANCO ITAÚ BBA S.A.</option>
-                                            <option value="479">BANCO ITAÚ BANK S.A</option> 
-                                            <option value="036">BANCO BRADESCO BBI S.A.</option>
-                                            <option value="204">BANCO BRADESCO CARTÕES S.A. </option>
-                                            <option value="394">BANCO BRADESCO FINANCIAMENTOS S.A</option>
-                                            <option value="122">BANCO BRADESCO BERJ S.A. </option>
-                                            <option value="237">BCO BRADESCO S.A.</option> 
-                                            <option value="389">BCO MERCANTIL DO BRASIL S.A. </option>
-                                            <option value="745">CITIBANK S.A. </option>
-                                            <option value="477">CITIBANK N.A. </option>
-                                            <option value="069">BCO CREFISA S.A. </option>
-                                            <option value="318">BCO BMG S.A </option>
-                                            <option value="652">ITAÚ UNIBANCO HOLDING S.A. </option>
-                                            <option value="341">ITAÚ UNIBANCO BM S.A.</option>
-                                            <option value="070">BANCO DE BRASILIA S.A </option>
-                                            <option value="735">BANCO NEON S.A. </option>
-                                            <option value="077">BANCO INTERMEDIUM S/A </option>
-                                            <option value="741">BCO RIBEIRAO PRETO S.A. </option>
-                                            <option value="739">BANCO CETELEM S.A. </option>
-                                            <option value="743">BANCO SEMEAR </option>
-                                            <option value="394">BCO BRADESCO FINANC. S.A. </option>
-                                            <option value="747">BCO RABOBANK INTL BRASIL S.A. </option>
-                                            <option value="748">BCO COOPERATIVO SICREDI S.A. </option>
-                                            <option value="399">KIRTON BANK </option>
-                                            <option value="757">BCO KEB HANA DO BRASIL S.A. </option>
-                                            <option value="084">UNIPRIME NORTE DO PARANÁ </option>
-                                            <option value="062">HIPERCARD BM S.A. </option>
-                                            <option value="074">BCO. J.SAFRA S.A. </option>
-                                            <option value="099">UNIPRIME CENTRAL CCC LTDA. </option>
-                                            <option value="025">BCO ALFA S.A. </option>
-                                            <option value="040">BCO CARGILL S.A. </option>
-                                            <option value="063">BANCO BRADESCARD </option>
-                                            <option value="003">BCO DA AMAZONIA S.A. </option>
-                                            <option value="097">CCC NOROESTE BRASILEIRO LTDA. </option>
-                                            <option value="037">BCO DO EST. DO PA S.A. </option>
-                                            <option value="085">CCC URBANO </option>
-                                            <option value="114">CENTRAL CECM ESP. SANTO </option>
-                                            <option value="036">BCO BBI S.A. </option>
-                                            <option value="004">BCO DO NORDESTE DO BRASIL S.A. </option>
-                                            <option value="320">BCO CCB BRASIL S.A. </option>
-                                            <option value="079">BCO ORIGINAL DO AGRO S/A </option>
-                                            <option value="133">CONFEDERACAO NAC DAS CCC SOL </option>
-                                            <option value="121">BCO AGIPLAN S.A.– cód. </option>
-                                            <option value="083">BCO DA CHINA BRASIL S.A. </option>
-                                            <option value="094">BANCO FINAXIS </option>
-                                            <option value="047">BCO DO EST. DE SE S.A. cód. </option>
-                                            <option value="254">PARANA BCO S.A. </option>
-                                            <option value="107">BCO BBM S.A. </option>
-                                            <option value="412">BCO CAPITAL S.A. </option>
-                                            <option value="124">BCO WOORI BANK DO BRASIL S.A. </option>
-                                            <option value="634">BCO TRIANGULO S.A. </option>
-                                            <option value="132">ICBC DO BRASIL BM S.A. </option>
-                                            <option value="163">COMMERZBANK BRASIL S.A. BCO </option>MÚLTIPLO 
-                                            <option value="021">BCO BANESTES S.A. </option>
-                                            <option value="246">BCO ABC BRASIL S.A. </option>
-                                            <option value="751">SCOTIABANK BRASIL </option>
-                                            <option value="746">BCO MODAL S.A. </option>
-                                            <option value="241">BCO CLASSICO S.A. </option>
-                                            <option value="612">BCO GUANABARA S.A. </option>
-                                            <option value="604">BCO INDUSTRIAL DO BRASIL S.A.</option>
-                                            <option value="505">BCO CREDIT SUISSE (BRL) S.A. </option>
-                                            <option value="300">BCO LA NACION ARGENTINA </option>
-                                            <option value="266">BCO CEDULA S.A. </option>
-                                            <option value="376">BCO J.P. MORGAN S.A.</option>
-                                            <option value="263">BCO CACIQUE S.A. </option>
-                                            <option value="473">BCO CAIXA GERAL BRASIL S.A. </option>
-                                            <option value="120">BCO RODOBENS S.A. </option>
-                                            <option value="248">BCO BOAVISTA INTERATLANTICO S.A. </option>
-                                            <option value="265">BCO FATOR S.A. </option>
-                                            <option value="719">BANIF BRASIL BM S.A.</option>
-                                            <option value="243">BCO MÁXIMA S.A. </option>
-                                            <option value="125">BRASIL PLURAL S.A. BCO.</option>
-                                            <option value="065">BANCO ANDBANK (BRASIL) S.A.</option>
-                                            <option value="250">BCV – Banco de Crédito e Varejo</option>
-                                            <option value="494">BCO REP ORIENTAL URUGUAY BCE </option>
-                                            <option value="018">BCO TRICURY S.A. </option>
-                                            <option value="422">BCO SAFRA S.A. </option>
-                                            <option value="224">BCO FIBRA S.A. </option>
-                                            <option value="600">BCO LUSO BRASILEIRO S.A. </option>
-                                            <option value="623">BANCO PAN </option>
-                                            <option value="655">BCO VOTORANTIM S.A.</option>
-                                            <option value="464">BCO SUMITOMO MITSUI BRASIL S.A. </option>
-                                            <option value="237">BCO BRADESCO S.A.</option>
-                                            <option value="613">BCO PECUNIA S.A. </option>
-                                            <option value="637">BCO SOFISA S.A. </option>
-                                            <option value="653">BCO INDUSVAL S.A.</option>
-                                            <option value="249">BANCO INVESTCRED UNIBANCO S.A.</option>
-                                            <option value="318">BCO BMG S.A.</option>
-                                            <option value="626">BCO FICSA S.A.</option>
-                                            <option value="366">BCO SOCIETE GENERALE BRASIL</option>
-                                            <option value="611">BCO PAULISTA S.A. </option>
-                                            <option value="755">BOFA MERRILL LYNCH BM S.A. </option>
-                                            <option value="089">CCR REG MOGIANA </option>
-                                            <option value="643">BCO PINE S.A. </option>
-                                            <option value="707">BCO DAYCOVAL S.A </option>
-                                            <option value="487">DEUTSCHE BANK S.A. BCO ALEMAO </option>
+                                            <option value="117">ADVANCED CC LTDA</option>
+                                            <option value="172">ALBATROSS CCV S.A</option>
+                                            <option value="188">ATIVA S.A. INVESTIMENTOS CCTVM</option>
+                                            <option value="280">AVISTA S.A. CFI</option>
+                                            <option value="80">B&T CC LTDA.</option>
+                                            <option value="63">BANCO BRADESCARD</option>
+                                            <option value="208">BANCO BTG PACTUAL S.A.</option>
                                             <option value="233">BANCO CIFRA</option>
-                                            <option value="633">BCO RENDIMENTO S.A.</option>
-                                            <option value="218">BANCO BONSUCESSO S.A. </option>
-                                            <option value="090">CCCM SICOOB UNIMAIS</option>
-                                            <option value="753">NOVO BCO CONTINENTAL S.A.</option>
-                                            <option value="222">BCO CRÉDIT AGRICOLE BR S.A.</option>
-                                            <option value="098">CREDIALIANÇA CCR </option>
-                                            <option value="610">BCO VR S.A.</option>
-                                            <option value="010">CREDICOAMO </option>
+                                            <option value="94">BANCO FINAXIS</option>
+                                            <option value="12">BANCO INBURSA</option>
+                                            <option value="77">BANCO INTER</option>
+                                            <option value="249">BANCO INVESTCRED UNIBANCO S.A.</option>
+                                            <option value="29">BANCO ITAÚ CONSIGNADO S.A.</option>
                                             <option value="217">BANCO JOHN DEERE S.A.</option>
-                                            <option value="041">BCO DO ESTADO DO RS S.A.</option>
+                                            <option value="212">BANCO ORIGINAL</option>
+                                            <option value="623">BANCO PAN</option>
+                                            <option value="743">BANCO SEMEAR</option>
+                                            <option value="754">BANCO SISTEMA</option>
+                                            <option value="82">BANCO TOPÁZIO S.A.</option>
+                                            <option value="756">BANCOOB</option>
+                                            <option value="268">BARIGUI CH</option>
+                                            <option value="81">BBN BCO BRASILEIRO DE NEGOCIOS S.A.</option>
                                             <option value="654">BCO A.J. RENNER S.A.</option>
-                                            <option value="212">BANCO ORIGINAL </option>
+                                            <option value="246">BCO ABC BRASIL S.A.</option>
+                                            <option value="75">BCO ABN AMRO S.A.</option>
+                                            <option value="121">BCO AGIBANK S.A.</option>
+                                            <option value="25">BCO ALFA S.A.</option>
+                                            <option value="641">BCO ALVORADA S.A.</option>
+                                            <option value="65">BCO ANDBANK S.A.</option>
+                                            <option value="213">BCO ARBI S.A.</option>
+                                            <option value="96">BCO B3 S.A.</option>
+                                            <option value="24">BCO BANDEPE S.A.</option>
+                                            <option value="21">BCO BANESTES S.A.</option>
+                                            <option value="36">BCO BBI S.A.</option>
+                                            <option value="318">BCO BMG S.A.</option>
+                                            <option value="752">BCO BNP PARIBAS BRASIL S A</option>
+                                            <option value="107">BCO BOCOM BBM S.A.</option>
+                                            <option value="122">BCO BRADESCO BERJ S.A.</option>
+                                            <option value="204">BCO BRADESCO CARTOES S.A.</option>
+                                            <option value="394">BCO BRADESCO FINANC. S.A.</option>
+                                            <option value="237">BCO BRADESCO S.A.</option>
+                                            <option value="218">BCO BS2 S.A.</option>
+                                            <option value="473">BCO CAIXA GERAL BRASIL S.A.</option>
+                                            <option value="412">BCO CAPITAL S.A.</option>
+                                            <option value="40">BCO CARGILL S.A.</option>
+                                            <option value="320">BCO CCB BRASIL S.A.</option>
+                                            <option value="266">BCO CEDULA S.A.</option>
+                                            <option value="739">BCO CETELEM S.A.</option>
+                                            <option value="745">BCO CITIBANK S.A.</option>
+                                            <option value="241">BCO CLASSICO S.A.</option>
+                                            <option value="95">BCO CONFIDENCE DE CÂMBIO S.A.</option>
+                                            <option value="748">BCO COOPERATIVO SICREDI S.A.</option>
+                                            <option value="222">BCO CRÉDIT AGRICOLE BR S.A.</option>
+                                            <option value="505">BCO CREDIT SUISSE (BRL) S.A.</option>
+                                            <option value="69">BCO CREFISA S.A.</option>
+                                            <option value="3">BCO DA AMAZONIA S.A.</option>
+                                            <option value="83">BCO DA CHINA BRASIL S.A.</option>
+                                            <option value="707">BCO DAYCOVAL S.A</option>
+                                            <option value="1">BCO DO BRASIL S.A.</option>
+                                            <option value="47">BCO DO EST. DE SE S.A.</option>
+                                            <option value="37">BCO DO EST. DO PA S.A.</option>
+                                            <option value="41">BCO DO ESTADO DO RS S.A.</option>
+                                            <option value="4">BCO DO NORDESTE DO BRASIL S.A.</option>
+                                            <option value="265">BCO FATOR S.A.</option>
+                                            <option value="224">BCO FIBRA S.A.</option>
+                                            <option value="626">BCO FICSA S.A.</option>
+                                            <option value="612">BCO GUANABARA S.A.</option>
+                                            <option value="604">BCO INDUSTRIAL DO BRASIL S.A.</option>
+                                            <option value="653">BCO INDUSVAL S.A.</option>
+                                            <option value="630">BCO INTERCAP S.A.</option>
+                                            <option value="184">BCO ITAÚ BBA S.A.</option>
+                                            <option value="479">BCO ITAUBANK S.A.</option>
+                                            <option value="376">BCO J.P. MORGAN S.A.</option>
+                                            <option value="76">BCO KDB BRASIL S.A.</option>
+                                            <option value="757">BCO KEB HANA DO BRASIL S.A.</option>
+                                            <option value="300">BCO LA NACION ARGENTINA</option>
+                                            <option value="495">BCO LA PROVINCIA B AIRES BCE</option>
+                                            <option value="600">BCO LUSO BRASILEIRO S.A.</option>
+                                            <option value="243">BCO MÁXIMA S.A.</option>
+                                            <option value="389">BCO MERCANTIL DO BRASIL S.A.</option>
+                                            <option value="370">BCO MIZUHO S.A.</option>
+                                            <option value="746">BCO MODAL S.A.</option>
+                                            <option value="66">BCO MORGAN STANLEY S.A.</option>
+                                            <option value="456">BCO MUFG BRASIL S.A.</option>
+                                            <option value="169">BCO OLÉ BONSUCESSO CONSIGNADO S.A.</option>
+                                            <option value="79">BCO ORIGINAL DO AGRO S/A</option>
+                                            <option value="712">BCO OURINVEST S.A.</option>
+                                            <option value="611">BCO PAULISTA S.A.</option>
+                                            <option value="643">BCO PINE S.A.</option>
+                                            <option value="747">BCO RABOBANK INTL BRASIL S.A.</option>
+                                            <option value="633">BCO RENDIMENTO S.A.</option>
+                                            <option value="494">BCO REP ORIENTAL URUGUAY BCE</option>
+                                            <option value="741">BCO RIBEIRAO PRETO S.A.</option>
+                                            <option value="120">BCO RODOBENS S.A.</option>
+                                            <option value="422">BCO SAFRA S.A.</option>
+                                            <option value="33">BCO SANTANDER (BRASIL) S.A.</option>
+                                            <option value="366">BCO SOCIETE GENERALE BRASIL</option>
+                                            <option value="637">BCO SOFISA S.A.</option>
+                                            <option value="464">BCO SUMITOMO MITSUI BRASIL S.A.</option>
+                                            <option value="634">BCO TRIANGULO S.A.</option>
+                                            <option value="18">BCO TRICURY S.A.</option>
+                                            <option value="655">BCO VOTORANTIM S.A.</option>
+                                            <option value="610">BCO VR S.A.</option>
+                                            <option value="119">BCO WESTERN UNION</option>
+                                            <option value="124">BCO WOORI BANK DO BRASIL S.A.</option>
+                                            <option value="74">BCO. J.SAFRA S.A.</option>
+                                            <option value="250">BCV</option>
+                                            <option value="144">BEXS BCO DE CAMBIO S.A.</option>
+                                            <option value="253">BEXS CC S.A.</option>
+                                            <option value="134">BGC LIQUIDEZ DTVM LTDA</option>
+                                            <option value="7">BNDES</option>
+                                            <option value="17">BNY MELLON BCO S.A.</option>
+                                            <option value="755">BOFA MERRILL LYNCH BM S.A.</option>
+                                            <option value="126">BR PARTNERS BI</option>
+                                            <option value="125">BRASIL PLURAL S.A. BCO.</option>
+                                            <option value="70">BRB - BCO DE BRASILIA S.A.</option>
+                                            <option value="92">BRK S.A. CFI</option>
+                                            <option value="173">BRL TRUST DTVM SA</option>
+                                            <option value="142">BROKER BRASIL CC LTDA.</option>
+                                            <option value="11">C.SUISSE HEDGING-GRIFFO CV S/A</option>
+                                            <option value="104">CAIXA ECONOMICA FEDERAL</option>
+                                            <option value="288">CAROL DTVM LTDA.</option>
+                                            <option value="130">CARUANA SCFI</option>
+                                            <option value="159">CASA CREDITO S.A. SCM</option>
+                                            <option value="97">CCC NOROESTE BRASILEIRO LTDA.</option>
+                                            <option value="91">CCCM UNICRED CENTRAL RS</option>
+                                            <option value="16">CCM DESP TRÂNS SC E RS</option>
+                                            <option value="279">CCR DE PRIMAVERA DO LESTE</option>
+                                            <option value="273">CCR DE SÃO MIGUEL DO OESTE</option>
+                                            <option value="89">CCR REG MOGIANA</option>
+                                            <option value="114">CENTRAL COOPERATIVA DE CRÉDITO NO ESTADO DO ESPÍRITO SANTO</option>
+                                            <option value="477">CITIBANK N.A.</option>
+                                            <option value="180">CM CAPITAL MARKETS CCTVM LTDA</option>
+                                            <option value="127">CODEPE CVC S.A.</option>
+                                            <option value="163">COMMERZBANK BRASIL S.A. - BCO MÚLTIPLO</option>
+                                            <option value="136">CONF NAC COOP CENTRAIS UNICRED</option>
+                                            <option value="60">CONFIDENCE CC S.A.</option>
+                                            <option value="85">COOP CENTRAL AILOS</option>
+                                            <option value="98">CREDIALIANÇA CCR</option>
+                                            <option value="10">CREDICOAMO</option>
+                                            <option value="133">CRESOL CONFEDERAÇÃO</option>
+                                            <option value="182">DACASA FINANCEIRA S/A - SCFI</option>
+                                            <option value="487">DEUTSCHE BANK S.A.BCO ALEMAO</option>
+                                            <option value="140">EASYNVEST - TÍTULO CV SA</option>
+                                            <option value="149">FACTA S.A. CFI</option>
+                                            <option value="196">FAIR CC S.A.</option>
+                                            <option value="278">GENIAL INVESTIMENTOS CVM S.A.</option>
+                                            <option value="138">GET MONEY CC LTDA</option>
+                                            <option value="64">GOLDMAN SACHS DO BRASIL BM S.A</option>
+                                            <option value="177">GUIDE</option>
+                                            <option value="146">GUITTA CC LTDA</option>
+                                            <option value="78">HAITONG BI DO BRASIL S.A.</option>
+                                            <option value="62">HIPERCARD BM S.A.</option>
+                                            <option value="189">HS FINANCEIRA</option>
+                                            <option value="269">HSBC BANCO DE INVESTIMENTO</option>
+                                            <option value="271">IB CCTVM LTDA</option>
+                                            <option value="157">ICAP DO BRASIL CTVM LTDA.</option>
+                                            <option value="132">ICBC DO BRASIL BM S.A.</option>
+                                            <option value="492">ING BANK N.V.</option>
+                                            <option value="139">INTESA SANPAOLO BRASIL S.A. BM</option>
+                                            <option value="341">ITAÚ UNIBANCO BM S.A.</option>
+                                            <option value="652">ITAÚ UNIBANCO HOLDING BM S.A.</option>
+                                            <option value="488">JPMORGAN CHASE BANK</option>
+                                            <option value="399">KIRTON BANK</option>
+                                            <option value="105">LECCA CFI S.A.</option>
+                                            <option value="145">LEVYCAM CCV LTDA</option>
+                                            <option value="113">MAGLIANO S.A. CCVM</option>
+                                            <option value="128">MS BANK S.A. BCO DE CÂMBIO</option>
+                                            <option value="137">MULTIMONEY CC LTDA.</option>
+                                            <option value="14">NATIXIS BRASIL S.A. BM</option>
+                                            <option value="191">NOVA FUTURA CTVM LTDA.</option>
+                                            <option value="753">NOVO BCO CONTINENTAL S.A. - BM</option>
+                                            <option value="260">NU PAGAMENTOS S.A.</option>
+                                            <option value="111">OLIVEIRA TRUST DTVM S.A.</option>
+                                            <option value="613">OMNI BANCO S.A.</option>
+                                            <option value="254">PARANA BCO S.A.</option>
+                                            <option value="194">PARMETAL DTVM LTDA</option>
+                                            <option value="174">PERNAMBUCANAS FINANC S.A. CFI</option>
+                                            <option value="100">PLANNER CV S.A.</option>
+                                            <option value="93">PÓLOCRED SCMEPP LTDA.</option>
+                                            <option value="108">PORTOCRED S.A. - CFI</option>
+                                            <option value="283">RB CAPITAL INVESTIMENTOS DTVM LTDA.</option>
+                                            <option value="101">RENASCENCA DTVM LTDA</option>
+                                            <option value="751">SCOTIABANK BRASIL</option>
+                                            <option value="276">SENFF S.A. - CFI</option>
+                                            <option value="545">SENSO CCVM S.A.</option>
+                                            <option value="190">SERVICOOP</option>
+                                            <option value="183">SOCRED S.A. SCM</option>
+                                            <option value="118">STANDARD CHARTERED BI S.A.</option>
+                                            <option value="197">STONE PAGAMENTOS S.A.</option>
+                                            <option value="143">TREVISO CC S.A.</option>
+                                            <option value="131">TULLETT PREBON BRASIL CVC LTDA</option>
+                                            <option value="129">UBS BRASIL BI S.A.</option>
+                                            <option value="15">UBS BRASIL CCTVM S.A.</option>
+                                            <option value="99">UNIPRIME CENTRAL CCC LTDA.</option>
+                                            <option value="84">UNIPRIME NORTE DO PARANÁ - CC</option>
+                                            <option value="102">XP INVESTIMENTOS CCTVM S/A</option>
                                         </select>
                                     </fieldset>
                                     <fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr5">
@@ -530,20 +615,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="cartao">
                                         <input type="file" id="cartao" class="hidden">
-                                        <div class="upl uplgreen c-pointer">
-                                            <div id="check_front_credit_card">
-                                                <?php 
-                                                    if($_SESSION['front_credit_card']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['front_credit_card']){
+                                        ?>
+                                        <div id="check_front_credit_card" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_front_credit_card" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>  
                                             <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
                                             <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
                                         </div>
@@ -552,20 +634,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="selcartao">
                                         <input type="file" id="selcartao" class="hidden">
-                                        <div class="upl uplsilver c-pointer">
-                                            <div id="check_selfie_credit_card">
-                                                <?php 
-                                                    if($_SESSION['selfie_with_credit_card']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['selfie_with_credit_card']){
+                                        ?>
+                                        <div id="check_selfie_credit_card" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_selfie_credit_card" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
                                             <small class="fleft100">Selfie segurando <br>seu cartão</small>
                                         </div>
@@ -576,20 +655,17 @@
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">						
                                     <label for="id">
                                         <input type="file" id="id" class="hidden">
-                                        <div class="upl uplred c-pointer">
-                                            <div id="check_open_identity">
-                                                <?php 
-                                                    if($_SESSION['open_identity']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <?php 
+                                            if($_SESSION['open_identity']){
+                                        ?>
+                                        <div id="check_open_identity" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_open_identity" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
                                             <small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
                                         </div>
@@ -597,21 +673,18 @@
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-6 pd-lr5 m-top10">
                                     <label for="selid">
-                                        <input type="file" id="selid" class="hidden">
-                                        <div class="upl uplsilver c-pointer">
-                                            <div id="check_selfie_with_identity">
-                                                <?php 
-                                                    if($_SESSION['selfie_with_identity']){
-                                                ?>
-                                                        <i class="fa fa-check-square-o"></i>
-                                                <?php 
-                                                    } else {
-                                                ?>
-                                                        <i class="fa fa-square-o"></i>
-                                                <?php 
-                                                    } 
-                                                ?>
-                                            </div>
+                                        <input type="file" id="selid" class="hidden">                                        
+                                        <?php 
+                                            if($_SESSION['selfie_with_identity']){
+                                        ?>
+                                        <div id="check_selfie_with_identity" class="upl uplgreen c-pointer">
+                                        <?php 
+                                            } else {
+                                        ?>
+                                        <div id="check_selfie_with_identity" class="upl uplsilver c-pointer">
+                                        <?php 
+                                            } 
+                                        ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
                                             <small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
                                         </div>
