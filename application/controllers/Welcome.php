@@ -1012,6 +1012,11 @@ class Welcome extends CI_Controller {
         $response['success'] = TRUE; /*eliminar estas*/
         return $response;            /* dos lineas  */
         
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $authenticationtoken = $GLOBALS['sistem_config']->AUTENTICATION_TOKEN_SMS;
+        $username = $GLOBALS['sistem_config']->USER_NAME_SMS;
+        
         $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
         $curl = curl_init();
@@ -1027,8 +1032,8 @@ class Welcome extends CI_Controller {
           //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
           CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Para validar seu telefone na livre.digital use o codigo '.$message.'"}',
           CURLOPT_HTTPHEADER => array(
-            "authenticationtoken: D8UvJQd-bb5sXzA-vnJWr13qmMBTQWomtj1oiysq",
-            "username: seiva",
+            "authenticationtoken: ".$authenticationtoken,
+            "username: ".$username,
             "content-type: application/json"
           ),
         ));
@@ -1197,6 +1202,10 @@ class Welcome extends CI_Controller {
     
     public function get_token_iugu($id){
         
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
+        
         $this->load->model('class/transaction_model');
         $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
         
@@ -1207,7 +1216,7 @@ class Welcome extends CI_Controller {
         $firstname = join(' ', $names);
 
         $postData = array(
-            'account_id' => '80BF7285A577436483EE04E0A80B63F4',
+            'account_id' => $account_id,
             'method' => 'credit_card',
             'test' => 'true',
             'data' => array(
@@ -1243,9 +1252,13 @@ class Welcome extends CI_Controller {
     }
 
     public function do_payment($id){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
+        
         $this->load->model('class/transaction_model');
         
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $token = $this->get_token_iugu($id);
@@ -1292,8 +1305,11 @@ class Welcome extends CI_Controller {
 
     public function refund_bill($id){
         $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
         
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1327,8 +1343,10 @@ class Welcome extends CI_Controller {
     public function get_bill($id){        
             
         $this->load->model('class/transaction_model');
-        
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
+        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1360,13 +1378,17 @@ class Welcome extends CI_Controller {
     
     public function get_topazio_API_token() {
         $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
+        $client_id_and_secret_64 = $GLOBALS['sistem_config']->CLIENT_AND_SECRET_TOPAZIO_64;
         
         //Obteniendo code
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/grant-code");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"9b6103b5-ed33-36b8-9276-76663067c710\",\"redirect_uri\":\"http://localhost/\"}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"".$client_id."\",\"redirect_uri\":\"http://localhost/\"}");
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
@@ -1392,7 +1414,7 @@ class Welcome extends CI_Controller {
 
         $headers = array();
         $headers[] = "Content-Type: application/x-www-form-urlencoded";
-        $headers[] = "Authorization: Basic OWI2MTAzYjUtZWQzMy0zNmI4LTkyNzYtNzY2NjMwNjdjNzEwOjk2NjcyYjVkLWEyMmItM2RjMi04OWVmLTNlNTU0ZWNmYTk0NA==";
+        $headers[] = "Authorization: Basic ".$client_id_and_secret_64;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
@@ -1408,6 +1430,9 @@ class Welcome extends CI_Controller {
     }
 
     public function basicCustomerTopazio(){        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
         $API_token = $this->get_topazio_API_token();
         
@@ -1447,7 +1472,7 @@ class Welcome extends CI_Controller {
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        $headers[] = "client_id: 9b6103b5-ed33-36b8-9276-76663067c710";
+        $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -1459,7 +1484,9 @@ class Welcome extends CI_Controller {
         }
         curl_close ($ch);
         
-        $parsed_response = json_decode($result);        
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;
     }
     
     public function topazio_emprestimo($id) {
