@@ -46,7 +46,7 @@ class Welcome extends CI_Controller {
         $this->load->view('afiliados_home',$params);
     }
     
-    public function painel() {
+    public function painel(){
         if($_SESSION['logged_id']>0){
             if($_SESSION['logged_role'] === 'AFFIL'){
                 header('Location: '.base_url().'index.php/welcome/afiliados');
@@ -59,13 +59,28 @@ class Welcome extends CI_Controller {
     
     public function afiliados() {
         if($_SESSION['logged_role'] === 'AFFIL'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['num_page']=1;
+                $datas['token']='';
+            }
             $this->load->model('class/affiliate_model');
             $this->load->model('class/Crypt');
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
-            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions($_SESSION['affiliate_logged_datas']['code'],0,$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);                
+            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
+                    $_SESSION['affiliate_logged_datas']['code'],
+                    $datas['num_page']-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $datas['token'],
+                    NULL,
+                    NULL,
+                    $has_next_page);
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['num_page']=$datas['num_page'];
+            $params['has_next_page']=$has_next_page;
             $_SESSION['affiliate_logged_datas']['bank_name'] =  $this->Crypt->get_bank_by_code($_SESSION['affiliate_logged_datas']['bank']);
             $_SESSION['affiliate_logged_datas']['amount_transactions']=count($_SESSION['affiliate_logged_transactions']);
             if($_SESSION['affiliate_logged_datas']['amount_transactions']){
@@ -82,6 +97,39 @@ class Welcome extends CI_Controller {
         }
     }
     
+    public function transacoes() {
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['num_page']=1;
+                $datas['token']='';
+                $datas['start_period']='';
+                $datas['end_period']='';
+            }
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/Crypt');
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
+            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
+                    $_SESSION['affiliate_logged_datas']['code'],
+                    $datas['num_page']-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $datas['token'],
+                    $datas['start_period'],
+                    $datas['end_period'],
+                    $has_next_page);
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['num_page']=$datas['num_page'];
+            $params['has_next_page']=$has_next_page;
+            $params['view']='transacoes';
+            $this->load->view('transacoes',$params);            
+        } else{
+            header('Location: '.base_url().'index.php/welcome/afhome');
+        }
+    }
+        
     public function admin() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -105,28 +153,7 @@ class Welcome extends CI_Controller {
         $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
-    
-    public function transacoes() {
-        $datas = $this->input->post();
-        if(!count($datas))$datas=NULL;
-        $this->load->model('class/affiliate_model');
-        $this->load->model('class/Crypt');
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;        
-        $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
-        $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
-                NULL,
-                (isset($datas['num_page'])?$datas['num_page']:0),
-                $GLOBALS['s$istem_config']->TRANSACTIONS_BY_PAGE,
-                $datas['token'],
-                $datas['start_period'],
-                $datas['end_period']
-            );
-        $params['view']='transacoes';
-        $this->load->view('transacoes');
-    }
-    
+        
     public function logout() {
         session_unset();
         session_destroy();

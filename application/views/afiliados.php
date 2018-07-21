@@ -1,4 +1,8 @@
 <?php include_once "inc/header-interno.php";?>
+<script type="text/javascript">
+    var num_page = '<?php echo $num_page;?>';
+    var has_next_page = '<?php echo $has_next_page;?>';
+</script>
 <section class="fleft100 m-top40 m-b100">
 	<div class="container">
                 <?php
@@ -78,10 +82,10 @@
 				<div class="col-md-7 col-sm-7 col-xs-12 pd-0">
                                     <span class="fleft100 cl-black pd-lr15">Digite sua busca aqui:</span>
                                     <div class="col-md-8 col-sm-8 col-xs-12">					
-                                        <input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
+                                        <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
                                     </div>
                                     <div>
-                                        <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
+                                        <input id="num_page" name="num_page" type="text" style="visibility:hidden;display:none" value="1">
                                     </div>
                                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                                         <input id="btn_afiliate_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
@@ -95,8 +99,7 @@
                                     <div class="col-md-5 col-sm-5 col-xs-12">
                                             <a href="" class="cl-fff bk-blue pd-8 fleft100 add">+ Adicionar filtro</a>
                                     </div>
-				</div>-->
-                                
+				</div>-->                                
                             </form>
 			</div>
 			<ul class="zebra fleft100 ft-size12 cl-black">
@@ -135,8 +138,8 @@
                             <?php }?>
 			</ul>
 			<ul class="pg text-right m-top20 fleft100">
-                            <li><a id="prev_page" href=""><<</a></li>				
-                            <li><a id="actual_page" href="">1</a></li>
+                            <li><a id="prev_page" href=""><<</a></li>
+                            <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
                             <li><a id="next_page" href="">>></a></li>
 			</ul>
 		</div>

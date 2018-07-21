@@ -17,7 +17,7 @@
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr25 m-top20-xs pd-lr0-xs center-xs">
 				<div class="col-md-6 col-sm-6 col-xs-12 pd-0">
-					<span class="fw-600 fleft100 cl-black">Taxa de adesão (Cédit Société)</span>
+					<span class="fw-600 fleft100 cl-black">Taxa de adesão (Livre.digital)</span>
 					<a href="" class="cl-silver fw-500"><small><u>Histórico</u></small></a>
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-6 m-top20-xs pd-lr20 pd-lr0-xs">
