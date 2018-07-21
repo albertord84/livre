@@ -51,13 +51,13 @@
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
                     <ul class="menu i-block m-top10-xs">
-                        <li><a href="#contact_me">Suporte </a></li>
-                        <li class="tv cl-black">|</li>
-                        <li><a href="<?php echo base_url()?>index.php/welcome/afhome"> Afiliados</a></li>
-                        <li class="tv cl-black">|</li>
                         <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
                         <li class="tv cl-black">|</li>
                         <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                        <li class="tv cl-black">|</li>
+                        <li><a href="#contact_me">Suporte </a></li>
+                        <li class="tv cl-black">|</li>
+                        <li><a href="<?php echo base_url()?>index.php/welcome/afhome"> Afiliados</a></li>
                     </ul>
                 </div>
             </div>
@@ -145,7 +145,7 @@
                                 <label for="ck" class="dc m-top5">
                                     <input type="checkbox" id="use_term" checked> 
                                     <small>
-                                        <a href="<?php echo base_url()?>assets/others/TERMOS DE USO DUMBU.pdf" target="_blank">
+                                        <a href="<?php echo base_url()?>assets/others/Termos de Uso e Política de Privacidade da Livre Digital.pdf" target="_blank">
                                             Declaro que li e aceito os termos de uso e a política de privacidade
                                         </a>
                                     </small>
@@ -193,7 +193,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros de a partir de 2,99% a.m.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 2,99% a.m.</h4>
                         </div>
                     </div>
                 </div>

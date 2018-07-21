@@ -70,31 +70,34 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
 				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
                                     <p>Mande esse link para seus clientes</p>
-					<a href="https://livre.digital/livre/?afiliado=luizcarlosdacosta">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
+					<a href="https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?>">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
 				</div>
 				<!--<img src="<?php //echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">-->
 			</div>
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
 			<div class="trans cl-fff fleft100 pd-20">
-                            <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
+                            <form action="<?php echo base_url().'index.php/welcome/afiliados';?>" method="post">
 				<div class="col-md-7 col-sm-7 col-xs-12 pd-0">
-					<span class="fleft100 cl-black pd-lr15">Digite sua busca aqui:</span>
-					<div class="col-md-8 col-sm-8 col-xs-12">					
-						<input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
-					</div>
-					<div class="col-md-4 col-sm-4 col-xs-12 text-center">
-						<a href="" class="cl-fff bk-blue pd-5 fleft100 m-top5 ft-size16">Pesquisar</a>
-					</div>
+                                    <span class="fleft100 cl-black pd-lr15">Digite sua busca aqui:</span>
+                                    <div class="col-md-8 col-sm-8 col-xs-12">					
+                                        <input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
+                                    </div>
+                                    <div>
+                                        <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-xs-12 text-center">
+                                        <input id="btn_afiliate_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
+                                    </div>
 				</div>				
                                 <!--<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
-					<span class="fleft100 cl-black">Filtro</span>
-					<div class="col-md-7 col-sm-7 col-xs-12  pd-0">
-						<input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
-					</div>
-					<div class="col-md-5 col-sm-5 col-xs-12">
-						<a href="" class="cl-fff bk-blue pd-8 fleft100 add">+ Adicionar filtro</a>
-					</div>
+                                    <span class="fleft100 cl-black">Filtro</span>
+                                    <div class="col-md-7 col-sm-7 col-xs-12  pd-0">
+                                            <input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
+                                    </div>
+                                    <div class="col-md-5 col-sm-5 col-xs-12">
+                                            <a href="" class="cl-fff bk-blue pd-8 fleft100 add">+ Adicionar filtro</a>
+                                    </div>
 				</div>-->
                                 
                             </form>
@@ -130,21 +133,14 @@
                                             echo $transaction['bank_name'].'<br>';
                                             echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                         ?>
-                                    </div>                                    
+                                    </div>
 				</li>
                             <?php }?>
 			</ul>
 			<ul class="pg text-right m-top20 fleft100">
-				<li><a href="">1</a></li>
-				<li><a href="">2</a></li>
-				<li><a href="">3</a></li>
-				<li><a href="">4</a></li>
-				<li><a href="">5</a></li>
-				<li><a href="">6</a></li>
-				<li><a href="">7</a></li>
-				<li><a href="">8</a></li>
-				<li><a href="">9</a></li>
-				<li><a href="">>></a></li>
+                            <li><a id="prev_page" href=""><<</a></li>				
+                            <li><a id="actual_page" href="">1</a></li>
+                            <li><a id="next_page" href="">>></a></li>
 			</ul>
 		</div>
 	</div>
