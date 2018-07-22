@@ -13,6 +13,7 @@ class transactions_status {
     const REVERSE_MONEY = 9;
     const PENDING = 22;
 
+
     static public function Defines($const) {
         $cls = new ReflectionClass(__CLASS__);
         foreach ($cls->getConstants() as $key => $value) {

@@ -114,7 +114,22 @@
             $this->db->order_by('transactions.id', 'asc');
             return $this->db->get()->result_array();
         }
-                
+         
+        public function get_last_date_status($id){
+            $this->load->model('class/transactions_status');
+            $this->db->select('*');
+            $this->db->from('transactions_dates'); 
+            $this->db->where("transactions_id", $id);
+            $this->db->where('status_id <>', transactions_status::BEGINNER);
+            $this->db->order_by('transactions_dates.id', 'asc');
+            $status_array = $this->db->get()->result_array();
+            $N=count($status_array);
+            if($N > 0)
+                return $status_array[$N-1]['date'];
+            else
+                return 0;
+        }
+        
         public function get_all_client_datas_by_id($client_id){            
             try {    
                 $this->db->select('*');

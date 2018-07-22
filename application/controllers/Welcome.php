@@ -10,12 +10,13 @@ class Welcome extends CI_Controller {
         parent::__construct();              
     } 
     
-    public function test(){
-        $this->request_new_photos();
-    }
 
-        //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
+    //-------VIEWS FUNCTIONS--------------------------------    
+    public function index() {  
+        //$tomorrow = $this->next_available_day();
+        //$result = $this->topazio_emprestimo(1);
+        //$result = $this->topazio_loans();
+        //$result = $this->topazio_conciliations("2017-07-18");
         $this->set_session(); 
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -178,8 +179,7 @@ class Welcome extends CI_Controller {
     $_SESSION
     ['ip']
     ['pk']
-    ['key']
-    ['time_start']
+    ['key']    
     ['front_credit_card']
     ['selfie_with_credit_card']
     ['open_identity']
@@ -208,33 +208,53 @@ class Welcome extends CI_Controller {
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
-            if($clients[$N-1]['status_id'] == transactions_status::DENIED){                
-                $result['message']='Você ja teve um pedido anteriomnete que foi negado. Por favor, contate nosso atendimento';
+            //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo se la transaccion en un estado diferente de beginner        
+            $last_operation_time = $this->transaction_model->get_last_date_status($clients[$N-1]['id']);
+            if(time()- $last_operation_time < 24*60*60){
+                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas. ';
                 $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
-                $result['message']='Você tem um pedido que foi aprovado e no momento está sendo feita a transferência para sua conta';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
-                $result['message']='Você fez um pedido recentemente, aguarde ser analisado. Casso dúvidas, contate nosso atendimento';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::WRONG_TRANSFERRED){                
-                $result['message']='Seu pedido foi aprovado, mas ocorreu um erro na transferência. Contate nosso atendimento';
-                $result['success']=false;
-                return $result;
+                
+                //revisar esto de nuevo
+                if($clients[$N-1]['status_id'] == transactions_status::REVERSE_MONEY){                
+                    $result['message'] .= 'O seu anterior pedido foi negado. Por favor, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e no momento está sendo gestionada a transferência para sua conta.';                    
+                    return $result;
+                }else                
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_PHOTO){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar as fotos fornecidas.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_ACCOUNT){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar os dados bancários fornecidos.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_SING_US){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado novamente.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
+                    $result['message']='O seu anterior pedido está sendo analisado. Casso dúvidas, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_APROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e já foi feita a transferência para sua conta.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_DENIED){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema, mas ocorreu um erro na transferência. Contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema e está sendo gestionada a transferência.';                    
+                    return $result;
+                }
+                
             }
         }        
-        //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo        
-        if(time()- $clients[$N-1]['solicited_date'] < 24*60*60){
-            $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
-            $result['success']=false;
-            return $result;
-        }        
+                
         //4. Analisar coerencia dos dados, exemplo:
             //4.1 mesmo cpf com nome diferentes        
         /*$nomes=array();
@@ -356,6 +376,7 @@ class Welcome extends CI_Controller {
                     
                     if($possible['action']==='insert_beginner'){
                         $datas['status_id']=  transactions_status::BEGINNER;
+                        $datas['folder_in_server']=  $datas["cpf"]."_".time();
                         $id_row = $this->transaction_model->insert_db_steep_1($datas);
                     }
                     else{
@@ -1180,12 +1201,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                
-            $cpf = $client[0]['cpf'];
-            if(!$_SESSION['time_start'])
-                $_SESSION['time_start'] = time();
-            $now = $_SESSION['time_start'];
-            $path_name = "assets/data_users/".$cpf."_".$now;             
+            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                            
+            $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
             
             if(is_dir($path_name) || mkdir($path_name, 0755)){            
                 $result = [];
@@ -1450,7 +1467,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
-        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1480,8 +1497,7 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_topazio_API_token() {
-        $this->load->model('class/transaction_model');
+    public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
@@ -1501,12 +1517,18 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
         $parsed_response = json_decode($result);        
-        $code = substr($parsed_response->redirect_uri, 23);//obtiene code
+        if(is_object($parsed_response) && $parsed_response->redirect_uri){
+            $pos = strpos($parsed_response->redirect_uri, "code=");            
+            $code = substr($parsed_response->redirect_uri, $pos+5);//obtiene code
+        }
+        else{
+            return NULL;
+        }
         
         //Obteniendo access token
         $ch = curl_init();
@@ -1523,34 +1545,38 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
-        $parsed_response = json_decode($result);        
-        $API_token = $parsed_response->access_token; //obtiene token*/
-        
+        $parsed_response = json_decode($result);
+        $API_token = NULL;
+        if(is_object($parsed_response) && $parsed_response->access_token){
+            $API_token = $parsed_response->access_token; //obtiene token*/
+        }
         return $API_token;
     }
 
-    public function basicCustomerTopazio(){        
+    public function basicCustomerTopazio($id, $API_token){        
         $this->load->model('class/system_config');
+        $this->load->model('class/transactions_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
-        $API_token = $this->get_topazio_API_token();
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "12345678901";
-        $name = "Julio Petro";
-        $cep = "24040200";
-        $street = "Miguel 42";
-        $number = "25";
-        $district = "Ponta Celeste";
-        $city = "Mi ciudad";
-        $state = "SP";
-        $phone = "21212121212121";
-        $email = "julio@julio.com.br";
-        $cnpj_livre = "23456789012";
+        $cpf = "12345678901"; //$client["cpf"];
+        $name = "Julio Petro"; //$client["name"];
+        $cep = "24040200"; //$client["cep"];
+        $street = "Miguel 42"; //$client["street_address"]." ".$client["number_address"];
+        $number = "25"; //$client["complement_number_address"];
+        $district = "Ponta Celeste"; //"";
+        $city = "Mi ciudad"; //$client["city_address"];
+        $state = "SP"; //$client["state_address"];
+        $phone = "21212121212121"; //$client["phone_ddd"].$client["phone_number"];
+        $email = "julio@julio.com.br"; //$client["email"];
+        $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $name_livre = "Livre.Digital"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
@@ -1564,13 +1590,13 @@ class Welcome extends CI_Controller {
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
                     ."\",\n    \"email\": \"".$email
                     ."\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"".$cnpj_livre
-                    ."\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
+                    ."\",\n      \"nameOrCompanyName\": \"".$name_livre
+                    ."\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
@@ -1583,20 +1609,151 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
         curl_close ($ch);
         
         $parsed_response = json_decode($result);
         
-        return $parsed_response;
+        $result_query = false;
+        if(is_object($parsed_response))
+            $result_query = true;
+        
+        return $result_query;
     }
     
-    public function topazio_emprestimo($id) {
-        //$API_token = $this->get_topazio_API_token();
+    public function topazio_loans($id, $API_token){
+        $this->load->model('class/system_config');
+        $this->load->model('class/tax_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        $cpf = "12345678901"; //$transaction["cpf"];
+        $name = "Julio Petro"; //$transaction["name"];
+        $document_id = "1000001"; //$transaction["contract_id"];
+        $release_date = "2018-07-23"; //$this->next_available_day();
+        $num_plots = 6; // $transaction["number_plots"];
+        $amount_pay = "1000,00"; // $transaction["amount_solicited"];
+        $iof = "15,00"; // 0.0025 * $num_plots * $amount_pay;
+        $tax = $this->get_tax_row($num_plots)[$this->get_field($amount_pay)];
+        $tac = //0.1 * ($amount_pay + $iof + $tax);
+        $total_value = "1015,00"; //$transaction[""];
+        
+        $fields = "{\n  \"client\":"
+                        ." {\n    \"document\": \"".$cpf
+                        ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  "
+                    ."\"loans\": {\n    "
+                        ."\"partnerId\": ".$document_id
+                        .",\n    \"releaseDate\": \"".$release_date
+                        ."\",\n    \"totalValue\": \"".$total_value
+                        ."\",\n    \"amountPay\": \"".$amount_pay
+                        ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0"
+                        .",\n    \"quotaAmount\": ".$num_plots
+                        .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"cartão de crédito\""
+                        .",\n    \"productCode\": ".$product_code
+                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
+                        ",\n    \"TAC\": \"".$tac."\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    "
+                    ."\"payment\": {\n   "
+                        ."   \"formSettlement\": \"TED\""
+                        .",\n      \"bankCode\": \"".$bank_code
+                        ."\",\n      \"branch\": \"".$agency
+                        ."\",\n      \"accountNumber\": \"".$account
+                        ."\",\n      \"accountType\": \"".$account_type."\"\n    }"
+                    .",\n    \"planQuota\": [\n      "
+                        ."{\n        \"quotaValue\": \"".$plot_value
+                        ."\",\n        \"quotaDueDate\": \"".$plot_date
+                        ."\",\n        \"quotaNumber\": ".$plot_number."\n      }"
+                        .",\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }"
+                    ."\n    ]\n  }\n}";
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/loans");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"12345678901\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-23\",\n    \"totalValue\": \"1150,00\",\n    \"amountPay\": \"1000,00\",\n    \"rate\": \"2,99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150,00\",\n    \"wayPaymentLoan\": \"cartão de crédito\",\n    \"productCode\": 1,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115,00\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"TED\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"conta corrente\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-07-23\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Accept: text/plain";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        
+        curl_close ($ch);
+
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;        
     }
     
+    public function next_available_day(){
+        $hoje = strtotime("now");        
+        $d = getdate($hoje);
+
+        $next_day = "+1 day";    
+        if($d['wday'] == 5){
+            $next_day = "+3 day";
+        }
+        if($d['wday'] == 6){
+            $next_day = "+2 day";
+        }
+        
+        $amanha = strtotime($next_day);
+        $tomorrow = getdate($amanha);
+        
+        if($tomorrow["mon"] < 10)
+            $tomorrow["mon"] = "0".$tomorrow["mon"];
+        
+        if($tomorrow["mday"] < 10)
+            $tomorrow["mday"] = "0".$tomorrow["mday"];
+        
+        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+    }
+
+    public function get_field($money){
+        if($money == 500)
+            return "500";
+        if($money >= 501 && $money <= 1000)
+            return "501_1000";
+        if($money >= 1001 && $money <= 1500)
+            return "1001_1500";
+        if($money >= 1501 && $money <= 2000)
+            return "1501_2000";
+        if($money >= 2001 && $money <= 2500)
+            return "2001_2500";
+        if($money >= 2501 && $money <= 3000)
+            return "2501_3000";
+    }
+
+    public function topazio_emprestimo($id) {// recebe id da transacao        
+        $API_token = $this->get_topazio_API_token();
+        if($API_token){
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            if($result_basic){
+                $ccb = $this->topazio_loans($id, $API_token);
+                if($ccb){
+                    $result['message'] = "Emprestimo aprovado!";
+                    $result['success'] = true;            
+                    $result['ccb'] = $ccb;            
+                }
+                else{
+                    $result['message'] = "Emprestimo não realizado";
+                    $result['success'] = false;            
+                }
+            }
+            else{
+                $result['message'] = "Erro criando usuario com topazio";
+                $result['success'] = false;            
+            }            
+        }
+        else{
+            $result['message'] = "Erro solicitando token de topazio";
+            $result['success'] = false;            
+        }
+    }
+    
+<<<<<<< HEAD
     public function get_transaction_datas_by_id(){
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
@@ -1611,6 +1768,47 @@ class Welcome extends CI_Controller {
                     $result['success']=true;
                     break;
                 }
+=======
+    public function topazio_conciliations($date){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        $API_token = "390ab1b2-49bb-3654-b568-9d01bee3119e";//$this->get_topazio_API_token();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;
+    }
+
+        public function get_transaction_datas_by_id(){
+        $datas = $this->input->post();
+        $result['message'] = 'Transação não encontrada';
+        $result['success']=false;
+        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+            if($transactions['id'] == $datas['id']){
+                $result['message'] = $transactions;
+                $result['success']=true;
+                break;
+>>>>>>> 496db074b4d6d5fa009257243a7e979d3ac112b5
             }
             echo json_encode($result);
         }
