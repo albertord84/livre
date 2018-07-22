@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Livre.digital</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.jpeg">
 
         <!-- Font Awesome -->
 	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">

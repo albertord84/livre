@@ -25,14 +25,13 @@
         }
         
         public function insert_db_steep_2($datas){
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
+            $this->load->model('class/Crypt');
             $datas1['client_id']=$datas['pk'];
-            $datas1['credit_card_name'] = $cr->crypt($datas['credit_card_name']);
-            $datas1['credit_card_number'] = $cr->crypt($datas['credit_card_number']);
-            $datas1['credit_card_exp_month'] = $cr->crypt($datas['credit_card_exp_month']);
-            $datas1['credit_card_exp_year'] = $cr->crypt($datas['credit_card_exp_year']);
-            $datas1['credit_card_cvv'] = $cr->crypt($datas['credit_card_cvv']);
+            $datas1['credit_card_name'] =  $this->Crypt->crypt($datas['credit_card_name']);
+            $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
+            $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
+            $datas1['credit_card_exp_year'] =  $this->Crypt->crypt($datas['credit_card_exp_year']);
+            $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);
             
             $this->db->insert('credit_card',$datas1);
             $id_row=$this->db->insert_id();
@@ -40,13 +39,12 @@
         }
         
         public function update_db_steep_2($datas,$id){
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
-            $datas1['credit_card_name'] =  $cr->crypt($datas['credit_card_name']);
-            $datas1['credit_card_number'] = $cr->crypt($datas['credit_card_number']);
-            $datas1['credit_card_exp_month'] = $cr->crypt($datas['credit_card_exp_month']);
-            $datas1['credit_card_exp_year'] = $cr->crypt($datas['credit_card_exp_year']);
-            $datas1['credit_card_cvv'] = $cr->crypt($datas['credit_card_cvv']);                        
+            $this->load->model('class/Crypt');             
+            $datas1['credit_card_name'] =   $this->Crypt->crypt($datas['credit_card_name']);
+            $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
+            $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
+            $datas1['credit_card_exp_year'] =  $this->Crypt->crypt($datas['credit_card_exp_year']);
+            $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);                        
             $this->db->where('id',$id);
             $this->db->update('credit_card',$datas1);
             return $id;
@@ -79,15 +77,14 @@
         }
         
         public function insert_db_steep_3($datas){
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
+            $this->load->model('class/Crypt');             
             $datas1=array();
             $datas1['client_id']=$datas['pk'];
-            $datas1['bank']=$cr->crypt($datas['bank']);
-            $datas1['agency']=$cr->crypt($datas['agency']);
-            $datas1['account_type']=$cr->crypt($datas['account_type']);
-            $datas1['account']=$cr->crypt($datas['account']);
-            $datas1['dig']=$cr->crypt($datas['dig']);            
+            $datas1['bank']= $this->Crypt->crypt($datas['bank']);
+            $datas1['agency']= $this->Crypt->crypt($datas['agency']);
+            $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
+            $datas1['account']= $this->Crypt->crypt($datas['account']);
+            $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];
             $this->db->insert('account_banks',$datas1);
@@ -96,14 +93,13 @@
         }
         
         public function update_db_steep_3($datas,$id){
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
+            $this->load->model('class/Crypt');             
             $datas1['client_id']=$datas['pk'];
-            $datas1['bank']=$cr->crypt($datas['bank']);
-            $datas1['agency']=$cr->crypt($datas['agency']);
-            $datas1['account_type']=$cr->crypt($datas['account_type']);
-            $datas1['account']=$cr->crypt($datas['account']);
-            $datas1['dig']=$cr->crypt($datas['dig']);            
+            $datas1['bank']= $this->Crypt->crypt($datas['bank']);
+            $datas1['agency']= $this->Crypt->crypt($datas['agency']);
+            $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
+            $datas1['account']= $this->Crypt->crypt($datas['account']);
+            $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];            
             $this->db->where('id',$id);
@@ -144,18 +140,17 @@
         }
         
         public function get__decrypt_credit_card($key, $value){
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
+            $this->load->model('class/Crypt');             
             $this->db->select('*');
             $this->db->from('credit_card'); 
             $this->db->where($key, $value);                        
             $datas =  $this->db->get()->row_array();
             $card['client_id'] = $datas['client_id'];
-            $card['credit_card_name'] = $cr->decrypt($datas['credit_card_name']);
-            $card['credit_card_number'] = $cr->decrypt($datas['credit_card_number']);
-            $card['credit_card_exp_month'] = $cr->decrypt($datas['credit_card_exp_month']);
-            $card['credit_card_exp_year'] = $cr->decrypt($datas['credit_card_exp_year']);
-            $card['credit_card_cvv'] = $cr->decrypt($datas['credit_card_cvv']);
+            $card['credit_card_name'] =  $this->Crypt->decrypt($datas['credit_card_name']);
+            $card['credit_card_number'] =  $this->Crypt->decrypt($datas['credit_card_number']);
+            $card['credit_card_exp_month'] =  $this->Crypt->decrypt($datas['credit_card_exp_month']);
+            $card['credit_card_exp_year'] =  $this->Crypt->decrypt($datas['credit_card_exp_year']);
+            $card['credit_card_cvv'] =  $this->Crypt->decrypt($datas['credit_card_cvv']);
             return $card;
         }        
         

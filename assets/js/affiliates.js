@@ -1,7 +1,6 @@
 $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
-    var actual_page = 1;
     var has_next_page = false;
     
     //---------PRIMARY FUNCTIONS---------------------------------
@@ -178,21 +177,49 @@ $(document).ready(function () {
         
     });
         
+    $('#actual_page').click(function () {
+        return false;
+    });
+    
+    $('#btn_afiliate_search').click(function () {
+        if($('#token').val()=='' ||$('#token').val().match('^[ ]{1,}$')){
+            $('#token').val('');
+            return false;
+        }else{
+            num_page=1;
+            $('#num_page').val(num_page);            
+            return true;            
+        }
+    });
+    
     $('#prev_page').click(function () {
-        if(actual_page>1){
-            actual_page--;
-            $('#prev_page').val(actual_page);
+        if(num_page>1){
+            num_page--;
+            $('#num_page').val(num_page);    
             $('#btn_afiliate_search').click();
         }
+        return false;
     });
     
     $('#next_page').click(function () {
         if(has_next_page){
-            actual_page++;
-            $('#prev_page').val(actual_page);
+            num_page++;
+            $('#num_page').text(num_page);
+            $('#num_page').val(num_page);
             $('#btn_afiliate_search').click();
         }
+        return false;
     });
+    
+    if(num_page==1) 
+        $('#prev_page').css({'color':'silver'});
+    else
+        $('#prev_page').css({'color':'black'});
+    
+    if(!has_next_page)
+        $('#next_page').css({'color':'silver'});
+    else
+        $('#next_page').css({'color':'black'});
     
     //----------------------SECUNDARY FUNCTIONS-------------------------------
        
@@ -326,10 +353,8 @@ $(document).ready(function () {
         $('#titular_cpf').val('07367014196');
     }
     
-    //init_signin();
     
-    /************UPLOADING PHOTO/***********/
-    
+    /************UPLOADING PHOTO/***********/    
     $("#avatar").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
@@ -432,8 +457,7 @@ $(document).ready(function () {
             processData: false,
             timeout: 60000
         });
-    };
-    
+    };    
     /************END UPLOADING PHOTO/***********/
 
 }); 

@@ -20,32 +20,38 @@ class Affiliate_model extends CI_Model{
             }
         }
         
-    public function load_transactions($affiliates_code,$page=0,$amount_by_page=20,$token=NULL,$start_period=NULL,$end_period=NULL){
+    public function load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page){
         try {
-            require_once $_SERVER['DOCUMENT_ROOT']."/livre/application/models/class/Crypt.php";
-            $cr = new Crypt();
+            $this->load->model('class/Crypt');
+            $this->load->model('class/transactions_status');
             $this->db->select('*');
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
-            $this->db->where('account_banks.propietary_type','');
+            $this->db->where('account_banks.propietary_type','1');
+            //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
-            $this->db->limit($page*$amount_by_page, $amount_by_page);
+            $this->db->limit($page*$amount_by_page, $amount_by_page+1);
             $this->db->order_by("transactions.status_id", "desc");
             $this->db->order_by("transactions.id", "asc");
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
-                $result[$i]['credit_card_number'] = $cr->decrypt($transaction['credit_card_number']);
-                $result[$i]['credit_card_name'] = $cr->decrypt($transaction['credit_card_name']);
+                $result[$i]['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
+                $result[$i]['credit_card_name'] = $this->Crypt->decrypt($transaction['credit_card_name']);
                 $N = strlen($result[$i]['credit_card_number']);
                 $result[$i]['credit_card_final'] = substr($result[$i]['credit_card_number'], $N-4, $N);
-                $result[$i]['credit_card_cvv'] = $cr->decrypt($transaction['credit_card_cvv']);
-                $result[$i]['credit_card_exp_month'] = $cr->decrypt($transaction['credit_card_name']);
+                $result[$i]['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
+                $result[$i]['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
                 $result[$i]['dates'] = $this->load_transaction_dates($transaction['id']);
-                $result[$i]['bank_name'] = $cr->get_bank_by_code($result[$i]['bank']);
+                $result[$i]['bank_name'] = $this->Crypt->get_bank_by_code($result[$i]['bank']);
                 $i++;
+            }
+            $has_next_page=false;
+            if(count($result)>$amount_by_page){
+                $has_next_page=true;
+                unset($result[$i-1]);
             }
             return $result;
         } catch (Exception $exc) {

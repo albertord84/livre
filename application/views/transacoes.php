@@ -1,5 +1,8 @@
 <?php include_once "inc/header-interno.php";?>
-
+<script type="text/javascript">
+    var num_page = '<?php echo $num_page;?>';
+    var has_next_page = '<?php echo $has_next_page;?>';
+</script>
 <!--  -->
 <div class="modal fade" id="trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 	<div class="modal-dialog mxw-1100" role="document">
@@ -77,31 +80,35 @@
 		<h4 class="pd-lr15 m-b10 fw-500 fleft100"><em>Transações</em></h4>
                 <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
                     <div class="trans cl-fff fleft100 pd-20">
-                        <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="col-md-5 col-sm-5 col-xs-12">
                             <span class="fleft100">Digite sua busca aqui:</span>
-                            <input name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
+                            <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
 			</div>
-			<div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
+			<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
                             <span class="fleft100">Período de busca</span>
-                            <div class="col-md-5 col-sm-5 col-xs-5 pd-0">
-                                    <select name="start_period" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
-                                            <option value=""></option>
-                                    </select>
-                            </div>
-                            <div class="col-md-2 col-sm-2 col-xs-2 pd-0 text-center m-top10">
-                                    Até
-                            </div>
-                            <div class="col-md-5 col-sm-5 col-xs-5 pd-0">
-                                    <select name="end_period" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
-                                        <option value=""></option>
-                                    </select>
+                            <div class="col-md-5 col-sm-5 col-xs-6 pd-0">
+                                <div class='input-group date m-top5' id='datetimepicker_lead'>
+                                    <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>                           
+                            <div class="col-md-1 col-sm-1 col-xs-6 pd-0" ></div>
+                            <div class="col-md-5 col-sm-5 col-xs-6 pd-0" >
+                                <div class='input-group date m-top5' id='datetimepicker_lead'>
+                                    <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
                             </div>
 			</div>
                         <div>
                             <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
                         </div>
-			<div class="col-md-2 col-sm-2 col-xs-12 text-center m-top10 m-top20-xs">
-                            <input type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
+			<div class="col-md-2 col-sm-2 col-xs-12 text-center m-top20 m-top20-xs">
+                            <input id="btn_afiliate_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
 			</div>
                     </div>
                 </form>
@@ -146,16 +153,11 @@
                     <?php }?> 
 		</ul>
 		<ul class="pg text-right m-top20 fleft100">
-			<li><a href="">1</a></li>
-			<li><a href="">2</a></li>
-			<li><a href="">3</a></li>
-			<li><a href="">4</a></li>
-			<li><a href="">5</a></li>
-			<li><a href="">6</a></li>
-			<li><a href="">7</a></li>
-			<li><a href="">8</a></li>
-			<li><a href="">9</a></li>
-			<li><a href="">>></a></li>
+                    <ul class="pg text-right m-top20 fleft100">
+                        <li><a id="prev_page" href=""><<</a></li>
+                        <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
+                        <li><a id="next_page" href="">>></a></li>
+                    </ul>
 		</ul>
 	</div>
 </section>
