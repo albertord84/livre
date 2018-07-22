@@ -1769,6 +1769,7 @@ class Welcome extends CI_Controller {
                 }
             }
         }
+        echo json_encode($result);
     }
 
     public function topazio_conciliations($date){
