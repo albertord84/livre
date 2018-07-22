@@ -1753,7 +1753,6 @@ class Welcome extends CI_Controller {
         }
     }
     
-<<<<<<< HEAD
     public function get_transaction_datas_by_id(){
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
@@ -1768,7 +1767,10 @@ class Welcome extends CI_Controller {
                     $result['success']=true;
                     break;
                 }
-=======
+            }
+        }
+    }
+
     public function topazio_conciliations($date){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1799,19 +1801,7 @@ class Welcome extends CI_Controller {
         return $parsed_response;
     }
 
-        public function get_transaction_datas_by_id(){
-        $datas = $this->input->post();
-        $result['message'] = 'Transação não encontrada';
-        $result['success']=false;
-        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-            if($transactions['id'] == $datas['id']){
-                $result['message'] = $transactions;
-                $result['success']=true;
-                break;
->>>>>>> 496db074b4d6d5fa009257243a7e979d3ac112b5
-            }
-            echo json_encode($result);
-        }
-    }
+       
+   
    
 }
