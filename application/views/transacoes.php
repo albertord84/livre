@@ -45,29 +45,32 @@
 
 				<div class="fleft100 m-top40">
 					<div class="col-md-4 col-sm-4 col-xs-12">
-						<div class="enviados pd-15">
-							<h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
-							<ul>
-								<li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-								<li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-								<li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-								<li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-								<li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-							</ul>
-						</div>
-						<a href="" class="cl-black fleft100 text-center m-top10"><u>Baixar arquivos</u></a>
+                                            <div class="enviados pd-15">
+                                                <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
+                                                <ul>
+                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                </ul>
+                                            </div>
+                                            <a href="" class="cl-black fleft100 text-center m-top10"><u>Baixar arquivos</u></a>
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-12 m-top10-xs">
-						<select class="form-control multiselect multiselect-icon">          
-			              <option value="0" selected="selected">Aguardando</option>          
-			              <option value="1">Aprovar</option>
-			              <option value="2">Pedir novas fotos</option>
-			              <option value="3">Pedir nova conta</option>
-			              <option value="4">Recusar/Estornar</option>
-			            </select> 
+                                            <select id="sel_admin_actions" class="form-control multiselect multiselect-icon">          
+                                                <option value="0" selected="selected">Aguardando</option>          
+                                                <option value="1">Aprovar</option>
+                                                <option value="2">Pedir novas fotos</option>
+                                                <option value="3">Pedir nova conta</option>
+                                                <option value="4">Pedir assinatura</option>
+                                                <option value="5">Recusar/Estornar</option>
+                                            </select>
 					</div>
 					<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
-						<div class="fleft100 text-right center-xs"><button class="bt-green">Salvar</button></div>
+						<div class="fleft100 text-right center-xs">
+                                                    <button id="save_transaction_status" class="bt-green">Salvar</button>
+                                                </div>
 					</div>
 				</div>
 			</div>	
@@ -96,7 +99,7 @@
                             </div>                           
                             <div class="col-md-1 col-sm-1 col-xs-6 pd-0" ></div>
                             <div class="col-md-5 col-sm-5 col-xs-6 pd-0" >
-                                <div class='input-group date m-top5' id='datetimepicker_lead'>
+                                <div class='input-group date m-top5' id='datetimepicker_lead1'>
                                     <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>

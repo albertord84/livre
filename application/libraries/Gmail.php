@@ -6,6 +6,7 @@
     require_once $_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/PHPMailer-master/PHPMailerAutoload.php';
     class Gmail {
         protected $mail = NULL;
+        
         public function __construct() {
             //Create a new PHPMailer instance
             $this->mail = new \PHPMailer;
@@ -94,4 +95,48 @@
             $this->mail->smtpClose();
             return $result;
         }
+        
+        public function transaction_email_approved($name, $useremail) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Emprestimo aprovado - Livre.digital';
+            $name = urlencode($name);           
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function transaction_request_new_photos($name, $useremail,$link) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Enviar fotos novamente - Livre.digital';
+            $name = urlencode($name);
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+                
     }

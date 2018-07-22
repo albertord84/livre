@@ -5,8 +5,6 @@
         function __construct() {
             parent::__construct();            
         }
-        
-        
 
         public function insert_db_steep_1($datas){
             $datas_tmp=$datas;
@@ -128,8 +126,7 @@
             } catch (Exception $exc) {
                 echo $exc->getTraceAsString();
             }
-        }        
-        
+        }  
         
         public function get_credit_card($key, $value){
             $this->db->select('*');
@@ -171,6 +168,15 @@
             return $this->db->get()->result_array();
         }
         
-               
+        public function save_in_db($table,$key,$key_value,$field,$field_value){
+            try {
+                $this->db->where($key, $key_value);
+                $this->db->update($table, array($field => $field_value));                
+                return true;
+            } catch (Exception $exc) {
+                //echo $exc->getTraceAsString();
+                return false;
+            }
+        }
     }
 ?>

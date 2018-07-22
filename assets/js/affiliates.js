@@ -2,6 +2,54 @@ $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
     var has_next_page = false;
+    var transaction_id;
+    
+    //---------ADMIN FUNCTIONS-----------------------------------
+    $("#save_transaction_status").click(function () {
+        if(confirm("Tem certeza que deseja realizar essa operação na transação")){            
+            var fn;
+            val = parseInt($("#sel_admin_actions").val())
+            alert(val);
+            switch (val){
+                case 0:
+                    fn = '';
+                    break;
+                case 1:
+                    fn = 'approve_transaction';
+                    break;
+                case 2:
+                    fn = 'request_new_photos';
+                    break;
+                case 3:
+                    fn = 'request_new_account';
+                    break;
+                case 4:
+                    fn = 'request_new_sing_us';
+                    break;
+                case 5:
+                    fn = 'reverse_maney';
+                    break;
+            }
+            alert(fn);
+            if(fn!=''){
+                $.ajax({
+                    url: base_url + 'index.php/welcome/'+fn,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {                
+                        modal_alert_message(response['message']);
+                    },
+                    error: function (xhr, status) {
+                        modal_alert_message('Internal error');
+                    }
+                });                
+            }
+        }
+    });
+    
+    
+
+    
     
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_sigin_affiliate_steep1").click(function () {
@@ -124,11 +172,11 @@ $(document).ready(function () {
     });
     
     $('.btn_see_trnsaction').click(function () {
-        var id = this.id;   
+        transaction_id = this.id;
         $.ajax({
             url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
             data:{
-                'id': id
+                'id': transaction_id
             },
             type: 'POST',
             dataType: 'json',
@@ -173,8 +221,7 @@ $(document).ready(function () {
             error: function (xhr, status) {
                 modal_alert_message('Internal error');
             }
-        }); 
-        
+        });         
     });
         
     $('#actual_page').click(function () {

@@ -8,9 +8,13 @@ class Welcome extends CI_Controller {
             
     function __construct() {
         parent::__construct();              
-    }    
+    } 
     
-    //-------VIEWS FUNCTIONS--------------------------------    
+    public function test(){
+        $this->request_new_photos();
+    }
+
+        //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
         $this->set_session(); 
         $this->load->model('class/system_config');
@@ -160,8 +164,15 @@ class Welcome extends CI_Controller {
         header('Location: '.base_url().'index.php/welcome/afhome');
     }
     
-    
-    //-------CLIENTS FUNCTIONS--------------------------------    
+    public function send_new_photos(){
+        $datas = $this->input->get();
+        $datas['trid'];
+        $datas['upc'];
+        var_dump($datas);
+        //load view to new photos
+    }
+
+        //-------TRANSACTION FUNCTIONS--------------------------------    
     /*
     //varaiveis armazenadas na sessao para a solicitação de um empréstimo
     $_SESSION
@@ -638,12 +649,16 @@ class Welcome extends CI_Controller {
     ['affiliate_datas']
     $_SESSION['affiliates_steep_2']
     
-    //varaiveis armazenadas na sessao para cadastro de un afiliado
+    //varaiveis armazenadas na sessao para login de un afiliado
     $_SESSION
     ['logged_id']
     ['logged_role']
     ['affiliate_logged_datas']
     ['affiliate_logged_transactions']
+    
+    //varaiveis armazenadas na sessao para administração    
+    ['transaction_requested_id']
+     * ['transaction_requested_datas']
     */
     
     public function insert_affiliate_steep1(){
@@ -773,9 +788,71 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-   
-
-    //-------AUXILIAR FUNCTIONS----------------------------------
+   //-------TRANSACTION FUNCTIONS----------------------------------
+    public function approve_transaction(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);
+            if($resp['success']){
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'cdb_number',$resp['ccb']);
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'status_id',transactions_status::APPROVED);
+                //email de bem sucedido
+                $GLOBALS['sistem_config'] = $this->system_config->load();
+                require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+                $this->Gmail = new Gmail();      
+                $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+                $useremail = $_SESSION['transaction_requested_datas']['email'];
+                $result = $this->Gmail->transaction_email_approved($name,$useremail);
+                if ($result['success'])
+                    $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+                else             
+                    $result['message'] = 'Falha evinvando email de aprovação. Tente depois.';                
+            } else{
+                //tratamiento de diferentes problemas que me va am amndar Moreno
+            }
+            echo json_encode($result);
+        }
+    }
+    
+    public function request_new_photos(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();      
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];                
+            $unique_new_photos_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);                
+            $link = urlencode(base_url().'index.php/welcome/send_new_photos?trid='.$transaction_encrypted_id.'&upc='.$unique_new_photos_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_photos_code',$unique_new_photos_code);                
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'status_id',transactions_status::WAIT_PHOTO);      
+            $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
+            if ($result['success'])
+                $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+            else             
+                $result['message'] = 'Falha evinvando email de aprovação. Tente depois.';                
+        }
+    }
+    
+    //-------AUXILIAR FUNCTIONS------------------------------------
     
     public function set_session(){
         session_start();
@@ -967,7 +1044,7 @@ class Welcome extends CI_Controller {
         return true;
     }
     
-    public function codify($str){
+    /*public function codify($str){
         $this->load->model('class/crypt');
         return  $this->crypt->codify($str);
     }
@@ -976,7 +1053,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/crypt');
         return  $this->crypt->decodify($str);        
         return $str;
-    }
+    }*/
     
     public function get_cep_datas(){
         $cep = $this->input->post()['cep'];
@@ -1521,17 +1598,22 @@ class Welcome extends CI_Controller {
     }
     
     public function get_transaction_datas_by_id(){
-        $datas = $this->input->post();
-        $result['message'] = 'Transação não encontrada';
-        $result['success']=false;
-        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-            if($transactions['id'] == $datas['id']){
-                $result['message'] = $transactions;
-                $result['success']=true;
-                break;
+        $_SESSION['transaction_requested_id'] = -1;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $datas = $this->input->post();
+            $result['message'] = 'Transação não encontrada';
+            $result['success']=false;
+            foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+                if($transactions['id'] == $datas['id']){
+                    $_SESSION['transaction_requested_id'] = $datas['id'];
+                    $_SESSION['transaction_requested_datas'] = $transactions;
+                    $result['message'] = $transactions;
+                    $result['success']=true;
+                    break;
+                }
             }
+            echo json_encode($result);
         }
-        echo json_encode($result);
     }
    
 }
