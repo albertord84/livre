@@ -11,7 +11,11 @@ class Welcome extends CI_Controller {
     }    
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
+    public function index() {  
+        $tomorrow = $this->next_available_day();
+        //$result = $this->topazio_emprestimo(1);
+        //$result = $this->topazio_loans();
+        //$result = $this->topazio_conciliations("2017-07-18");
         $this->set_session(); 
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1346,7 +1350,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
-        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1376,8 +1380,7 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_topazio_API_token() {
-        $this->load->model('class/transaction_model');
+    public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
@@ -1397,12 +1400,18 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
         $parsed_response = json_decode($result);        
-        $code = substr($parsed_response->redirect_uri, 23);//obtiene code
+        if(is_object($parsed_response) && $parsed_response->redirect_uri){
+            $pos = strpos($parsed_response->redirect_uri, "code=");            
+            $code = substr($parsed_response->redirect_uri, $pos+5);//obtiene code
+        }
+        else{
+            return NULL;
+        }
         
         //Obteniendo access token
         $ch = curl_init();
@@ -1419,34 +1428,38 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
-        $parsed_response = json_decode($result);        
-        $API_token = $parsed_response->access_token; //obtiene token*/
-        
+        $parsed_response = json_decode($result);
+        $API_token = NULL;
+        if(is_object($parsed_response) && $parsed_response->access_token){
+            $API_token = $parsed_response->access_token; //obtiene token*/
+        }
         return $API_token;
     }
 
-    public function basicCustomerTopazio(){        
+    public function basicCustomerTopazio($id, $API_token){        
         $this->load->model('class/system_config');
+        $this->load->model('class/transactions_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
-        $API_token = $this->get_topazio_API_token();
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "12345678901";
-        $name = "Julio Petro";
-        $cep = "24040200";
-        $street = "Miguel 42";
-        $number = "25";
-        $district = "Ponta Celeste";
-        $city = "Mi ciudad";
-        $state = "SP";
-        $phone = "21212121212121";
-        $email = "julio@julio.com.br";
-        $cnpj_livre = "23456789012";
+        $cpf = "12345678901"; //$client["cpf"];
+        $name = "Julio Petro"; //$client["name"];
+        $cep = "24040200"; //$client["cep"];
+        $street = "Miguel 42"; //$client["street_address"]." ".$client["number_address"];
+        $number = "25"; //$client["complement_number_address"];
+        $district = "Ponta Celeste"; //"";
+        $city = "Mi ciudad"; //$client["city_address"];
+        $state = "SP"; //$client["state_address"];
+        $phone = "21212121212121"; //$client["phone_ddd"].$client["phone_number"];
+        $email = "julio@julio.com.br"; //$client["email"];
+        $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $name_livre = "Livre.Digital"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
@@ -1460,13 +1473,13 @@ class Welcome extends CI_Controller {
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
                     ."\",\n    \"email\": \"".$email
                     ."\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"".$cnpj_livre
-                    ."\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
+                    ."\",\n      \"nameOrCompanyName\": \"".$name_livre
+                    ."\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
@@ -1479,21 +1492,161 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        $result_query = false;
+        if(is_object($parsed_response))
+            $result_query = true;
+        
+        return $result_query;
+    }
+    
+    public function topazio_loans($id, $API_token){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        $cpf = "12345678901"; //$transaction["cpf"];
+        $name = "Julio Petro"; //$transaction["name"];
+        $document_id = "1000001"; //$transaction["contract_id"];
+        $release_date = "2018-07-23"; //$this->next_available_day();
+        $total_value = "1150,00"; //$transaction[""];
+        
+        $fields = "{\n  \"client\":"
+                        ." {\n    \"document\": \"".$cpf
+                        ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  "
+                    ."\"loans\": {\n    "
+                        ."\"partnerId\": ".$document_id
+                        .",\n    \"releaseDate\": \"".$release_date
+                        ."\",\n    \"totalValue\": \"".$total_value
+                        ."\",\n    \"amountPay\": \"".$amount_pay
+                        ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0"
+                        .",\n    \"quotaAmount\": ".$num_plots
+                        .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"cartão de crédito\""
+                        .",\n    \"productCode\": ".$product_code
+                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
+                        ",\n    \"TAC\": \"".$tac."\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    "
+                    ."\"payment\": {\n   "
+                        ."   \"formSettlement\": \"TED\""
+                        .",\n      \"bankCode\": \"".$bank_code
+                        ."\",\n      \"branch\": \"".$agency
+                        ."\",\n      \"accountNumber\": \"".$account
+                        ."\",\n      \"accountType\": \"".$account_type."\"\n    }"
+                    .",\n    \"planQuota\": [\n      "
+                        ."{\n        \"quotaValue\": \"".$plot_value
+                        ."\",\n        \"quotaDueDate\": \"".$plot_date
+                        ."\",\n        \"quotaNumber\": ".$plot_number."\n      }"
+                        .",\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }"
+                    ."\n    ]\n  }\n}";
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/loans");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"12345678901\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-23\",\n    \"totalValue\": \"1150,00\",\n    \"amountPay\": \"1000,00\",\n    \"rate\": \"2,99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150,00\",\n    \"wayPaymentLoan\": \"cartão de crédito\",\n    \"productCode\": 1,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115,00\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"TED\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"conta corrente\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-07-23\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Accept: text/plain";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        
+        curl_close ($ch);
+
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;        
+    }
+    
+    public function next_available_day(){
+        $hoje = strtotime("now");        
+        $d = getdate($hoje);
+
+        $next_day = "+1 day";    
+        if($d['wday'] == 5){
+            $next_day = "+3 day";
         }
+        if($d['wday'] == 6){
+            $next_day = "+2 day";
+        }
+        
+        $amanha = strtotime($next_day);
+        $tomorrow = getdate($amanha);
+        
+        if($tomorrow["mon"] < 10)
+            $tomorrow["mon"] = "0".$tomorrow["mon"];
+        
+        if($tomorrow["mday"] < 10)
+            $tomorrow["mday"] = "0".$tomorrow["mday"];
+        
+        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+    }
+
+
+    public function topazio_emprestimo($id) {// recebe id da transacao        
+        $API_token = $this->get_topazio_API_token();
+        if($API_token){
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            if($result_basic){
+                $ccb = $this->topazio_loans($id, $API_token);
+                if($ccb){
+                    $result['message'] = "Emprestimo aprovado!";
+                    $result['success'] = true;            
+                    $result['ccb'] = $ccb;            
+                }
+                else{
+                    $result['message'] = "Emprestimo não realizado";
+                    $result['success'] = false;            
+                }
+            }
+            else{
+                $result['message'] = "Erro criando usuario com topazio";
+                $result['success'] = false;            
+            }            
+        }
+        else{
+            $result['message'] = "Erro solicitando token de topazio";
+            $result['success'] = false;            
+        }
+    }
+    
+    public function topazio_conciliations($date){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        $API_token = "390ab1b2-49bb-3654-b568-9d01bee3119e";//$this->get_topazio_API_token();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
         curl_close ($ch);
         
         $parsed_response = json_decode($result);
         
         return $parsed_response;
     }
-    
-    public function topazio_emprestimo($id) {
-        //$API_token = $this->get_topazio_API_token();
-    }
-    
-    public function get_transaction_datas_by_id(){
+
+        public function get_transaction_datas_by_id(){
         $datas = $this->input->post();
         $result['message'] = 'Transação não encontrada';
         $result['success']=false;
