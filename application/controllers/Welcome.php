@@ -7,10 +7,9 @@ ini_set('xdebug.var_display_max_data', 8024);
 class Welcome extends CI_Controller {
             
     function __construct() {
-        parent::__construct();              
+        parent::__construct();
     } 
     
-
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
         //$tomorrow = $this->next_available_day();
@@ -41,7 +40,6 @@ class Welcome extends CI_Controller {
         $this->load->view('inc/footer');
     }
     
-    //-------AFFILIATES and ADMIN VIEWS FUNCTIONS--------------------------------    
     public function afhome() {
         $this->set_session();
         $this->load->model('class/system_config');
@@ -1065,17 +1063,6 @@ class Welcome extends CI_Controller {
         return true;
     }
     
-    /*public function codify($str){
-        $this->load->model('class/crypt');
-        return  $this->crypt->codify($str);
-    }
-    
-    public function decodify($str){
-        $this->load->model('class/crypt');
-        return  $this->crypt->decodify($str);        
-        return $str;
-    }*/
-    
     public function get_cep_datas(){
         $cep = $this->input->post()['cep'];
         $datas = file_get_contents('https://viacep.com.br/ws/'.$cep.'/json/');
@@ -1801,8 +1788,5 @@ class Welcome extends CI_Controller {
         
         return $parsed_response;
     }
-
-       
-   
-   
+     
 }
