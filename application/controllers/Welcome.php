@@ -12,7 +12,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
-        $tomorrow = $this->next_available_day();
+        //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(1);
         //$result = $this->topazio_loans();
         //$result = $this->topazio_conciliations("2017-07-18");
@@ -171,8 +171,7 @@ class Welcome extends CI_Controller {
     $_SESSION
     ['ip']
     ['pk']
-    ['key']
-    ['time_start']
+    ['key']    
     ['front_credit_card']
     ['selfie_with_credit_card']
     ['open_identity']
@@ -201,33 +200,53 @@ class Welcome extends CI_Controller {
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
-            if($clients[$N-1]['status_id'] == transactions_status::DENIED){                
-                $result['message']='Você ja teve um pedido anteriomnete que foi negado. Por favor, contate nosso atendimento';
+            //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo se la transaccion en un estado diferente de beginner        
+            $last_operation_time = $this->transaction_model->get_last_date_status($clients[$N-1]['id']);
+            if(time()- $last_operation_time < 24*60*60){
+                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas. ';
                 $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
-                $result['message']='Você tem um pedido que foi aprovado e no momento está sendo feita a transferência para sua conta';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
-                $result['message']='Você fez um pedido recentemente, aguarde ser analisado. Casso dúvidas, contate nosso atendimento';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::WRONG_TRANSFERRED){                
-                $result['message']='Seu pedido foi aprovado, mas ocorreu um erro na transferência. Contate nosso atendimento';
-                $result['success']=false;
-                return $result;
+                
+                //revisar esto de nuevo
+                if($clients[$N-1]['status_id'] == transactions_status::REVERSE_MONEY){                
+                    $result['message'] .= 'O seu anterior pedido foi negado. Por favor, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e no momento está sendo gestionada a transferência para sua conta.';                    
+                    return $result;
+                }else                
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_PHOTO){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar as fotos fornecidas.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_ACCOUNT){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar os dados bancários fornecidos.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_SING_US){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado novamente.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
+                    $result['message']='O seu anterior pedido está sendo analisado. Casso dúvidas, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_APROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e já foi feita a transferência para sua conta.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_DENIED){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema, mas ocorreu um erro na transferência. Contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema e está sendo gestionada a transferência.';                    
+                    return $result;
+                }
+                
             }
         }        
-        //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo        
-        if(time()- $clients[$N-1]['solicited_date'] < 24*60*60){
-            $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
-            $result['success']=false;
-            return $result;
-        }        
+                
         //4. Analisar coerencia dos dados, exemplo:
             //4.1 mesmo cpf com nome diferentes        
         /*$nomes=array();
@@ -349,6 +368,7 @@ class Welcome extends CI_Controller {
                     
                     if($possible['action']==='insert_beginner'){
                         $datas['status_id']=  transactions_status::BEGINNER;
+                        $datas['folder_in_server']=  $datas["cpf"]."_".time();
                         $id_row = $this->transaction_model->insert_db_steep_1($datas);
                     }
                     else{
@@ -1107,12 +1127,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                
-            $cpf = $client[0]['cpf'];
-            if(!$_SESSION['time_start'])
-                $_SESSION['time_start'] = time();
-            $now = $_SESSION['time_start'];
-            $path_name = "assets/data_users/".$cpf."_".$now;             
+            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                            
+            $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
             
             if(is_dir($path_name) || mkdir($path_name, 0755)){            
                 $result = [];
@@ -1532,6 +1548,7 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         $this->load->model('class/system_config');
+        $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
         
@@ -1541,7 +1558,12 @@ class Welcome extends CI_Controller {
         $name = "Julio Petro"; //$transaction["name"];
         $document_id = "1000001"; //$transaction["contract_id"];
         $release_date = "2018-07-23"; //$this->next_available_day();
-        $total_value = "1150,00"; //$transaction[""];
+        $num_plots = 6; // $transaction["number_plots"];
+        $amount_pay = "1000,00"; // $transaction["amount_solicited"];
+        $iof = "15,00"; // 0.0025 * $num_plots * $amount_pay;
+        $tax = $this->get_tax_row($num_plots)[$this->get_field($amount_pay)];
+        $tac = //0.1 * ($amount_pay + $iof + $tax);
+        $total_value = "1015,00"; //$transaction[""];
         
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
@@ -1615,6 +1637,20 @@ class Welcome extends CI_Controller {
         return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
     }
 
+    public function get_field($money){
+        if($money == 500)
+            return "500";
+        if($money >= 501 && $money <= 1000)
+            return "501_1000";
+        if($money >= 1001 && $money <= 1500)
+            return "1001_1500";
+        if($money >= 1501 && $money <= 2000)
+            return "1501_2000";
+        if($money >= 2001 && $money <= 2500)
+            return "2001_2500";
+        if($money >= 2501 && $money <= 3000)
+            return "2501_3000";
+    }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
         $API_token = $this->get_topazio_API_token();
