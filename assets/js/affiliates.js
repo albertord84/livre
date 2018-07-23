@@ -431,13 +431,12 @@ $(document).ready(function () {
         // add assoc key values, this will be posts values
         formData.append("file", this.file, this.getName());
         formData.append("upload_file", true);        
-        formData.append("id", id);        
-        formData.append("key", key);        
+        formData.append("id", id);                
 
         $.ajax({
             type: "POST",
             dataType: 'json',
-            url: base_url+'index.php/welcome/upload_file',
+            url: base_url+'index.php/welcome/upload_file_affiliate',
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
@@ -445,53 +444,12 @@ $(document).ready(function () {
                 }
                 return myXhr;
             },
-            success: function (response) {
-                // your callback here
-                if(response['success']){
-                    modal_alert_message('Arquivo subido com sucesso!');
-                    switch (id) {
-                        case 0:
-                            $('#check_front_credit_card').removeClass('uplred');
-                            $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
-                            break;
-                        case 1:
-                            $('#check_selfie_credit_card').removeClass('uplred');
-                            $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
-                            break;
-                        case 2:
-                            $('#check_open_identity').removeClass('uplred');
-                            $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
-                            break;
-                        case 3:
-                            $('#check_selfie_with_identity').removeClass('uplred');
-                            $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
-                            break;
-                        default:
-                            ;                        
-                    }
+            success: function (response) {                
+                if(response['success']){                    
+                    $("#avatar_img").attr("src",response['message']);                                        
                 }
                 else{
-                    modal_alert_message(response['message']);
-                    switch (id) {
-                        case 0:
-                            $('#check_front_credit_card').removeClass('uplsilver');
-                            $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
-                            break;
-                        case 1:
-                            $('#check_selfie_credit_card').removeClass('uplsilver');
-                            $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
-                            break;
-                        case 2:
-                            $('#check_open_identity').removeClass('uplsilver');
-                            $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
-                            break;
-                        case 3:
-                            $('#check_selfie_with_identity').removeClass('uplsilver');
-                            $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
-                            break;
-                        default:
-                            ;                        
-                    }
+                    alert(response['message']);                    
                 }
             },
             error: function (error) {
