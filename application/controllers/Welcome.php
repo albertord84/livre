@@ -164,10 +164,19 @@ class Welcome extends CI_Controller {
     }
     
     public function send_new_photos(){
-        $datas = $this->input->get();
-        $datas['trid'];
-        $datas['upc'];
-        var_dump($datas);
+        $this->load->model('class/Crypt');
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $datas = $this->input->get();        
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
+        if($transaction && $datas['upc'] == $transaction['new_photos_code']){
+            $this->transaction_model->save_in_db(
+                'transactions',
+                'id',$transaction['id'],
+                'new_photos_code',$transaction['new_photos_code'].'--used');
+        }
+        
+        
         //load view to new photos
     }
 
@@ -1756,7 +1765,7 @@ class Welcome extends CI_Controller {
                 }
             }
         }
-        echo json_encode($result);
+        echo json_encode($result);        
     }
 
     public function topazio_conciliations($date){
