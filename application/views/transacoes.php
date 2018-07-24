@@ -90,20 +90,26 @@
 			<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
                             <span class="fleft100">Período de busca</span>
                             <div class="col-md-5 col-sm-5 col-xs-6 pd-0">
-                                <div class='input-group date m-top5' id='datetimepicker_lead'>
+<!--                                <div class='input-group date m-top5' id='datetimepicker_init'>
                                     <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
+                                </div>-->
+                                <div class="input-group date m-top5">
+                                    <input type="date" id="init_date" placeholder="mm/dd/yyyy" class="form-control">
                                 </div>
                             </div>                           
                             <div class="col-md-1 col-sm-1 col-xs-6 pd-0" ></div>
                             <div class="col-md-5 col-sm-5 col-xs-6 pd-0" >
-                                <div class='input-group date m-top5' id='datetimepicker_lead1'>
-                                    <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
+<!--                                <div class='input-group date m-top5' id='datetimepicker_end'>
+                                    <input type='text' class="form-control" id="end_date" value="31/05/2018"/>
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
+                                </div>-->
+                                <div class="input-group date m-top5">
+                                    <input type="date" id="end_date" placeholder="mm/dd/yyyy" class="form-control">
                                 </div>
                             </div>
 			</div>
