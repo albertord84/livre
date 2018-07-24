@@ -1285,6 +1285,99 @@ class Welcome extends CI_Controller {
         }    
         echo json_encode($result);
     }
+    
+    public function upload_file_affiliate(){    
+        $datas = $this->input->post();
+        if($_SESSION['logged_id'] && $_SESSION['logged_role'] = "AFFIL"){
+           
+            $path_name = "assets/data_affiliates/affiliate_".$_SESSION['logged_id'];             
+            
+            if(is_dir($path_name) || mkdir($path_name, 0755)){            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 5000000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $file_names = ["photo_profile"];
+                            $id_file = 0;
+                            /*$id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 4)
+                                $id_file = 0;*/
+                            
+                            $filename = $file_names[$id_file].".png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
+                            if (file_exists($path_name."/". $filename)) {
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.png?'.time();
+                            $result['success'] = true;
+                            $_SESSION[$file_names[$id_file]] = true;
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel criar pasta dos arquivos";
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }    
+        echo json_encode($result);
+    }
         
     public function sign_contract() {
         $this->load->model('class/transaction_model');
@@ -1303,7 +1396,7 @@ class Welcome extends CI_Controller {
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //hacer mas cosas
+                //hacer mas cosas **************** //
             }
             else{                
                 $result['success'] = false;
@@ -1572,7 +1665,7 @@ class Welcome extends CI_Controller {
         $phone = "21212121212121"; //$client["phone_ddd"].$client["phone_number"];
         $email = "julio@julio.com.br"; //$client["email"];
         $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
-        $name_livre = "Livre.Digital"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $name_livre = "Livre.Digital"; //$GLOBALS['sistem_config']->NAME_LIVRE;
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
@@ -1618,6 +1711,7 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         $this->load->model('class/system_config');
+        $this->load->model('class/transactions_model');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
@@ -1630,10 +1724,22 @@ class Welcome extends CI_Controller {
         $release_date = "2018-07-23"; //$this->next_available_day();
         $num_plots = 6; // $transaction["number_plots"];
         $amount_pay = "1000,00"; // $transaction["amount_solicited"];
+        //***** revisar estas
         $iof = "15,00"; // 0.0025 * $num_plots * $amount_pay;
         $tax = $this->get_tax_row($num_plots)[$this->get_field($amount_pay)];
-        $tac = //0.1 * ($amount_pay + $iof + $tax);
+        $tac = "0.00"; //0.1 * ($amount_pay + $iof + $tax);
         $total_value = "1015,00"; //$transaction[""];
+        $plot_value = "290,00";
+        //*********
+        $product_code = 1; //ver esto
+        $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
+        
+        $account_type_string = ["CC" => "conta corrente", "PP" => "conta poupança"];
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id);
+        $bank_code = "001"; // $account_bank["bank"];
+        $agency = "4459"; // $account_bank["agency"];
+        $account = "12570-9"; // $account_bank["account"];
+        $account_type = "conta corrente"; // $account_type_string[ $account_bank["account"] ];
         
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf

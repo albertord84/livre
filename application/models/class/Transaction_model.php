@@ -173,14 +173,28 @@
             $this->db->where('agency', $agency);
             $this->db->where('account', $account);
             $this->db->order_by('account_banks.id', 'asc');
-            return $this->db->get()->result_array();
+            return $this->db->get()->result_array();            
         }
         
+
         public function get_account_bank_by_client_id($client_id){
+            $this->load->model('class/Crypt'); 
             $this->db->select('*');
             $this->db->from('account_banks');
             $this->db->where('client_id', $client_id);
-            return $this->db->get()->result_array();
+            $account_banks = $this->db->get()->result_array();
+            
+            foreach ($account_banks as $account_bank) {
+                $dec_account_bank = $account_bank;
+                $dec_account_bank['bank'] = $this->Crypt->decrypt($account_bank['bank']);
+                $dec_account_bank['agency'] = $this->Crypt->decrypt($account_bank['agency']);
+                $dec_account_bank['account_type'] = $this->Crypt->decrypt($account_bank['account_type']);
+                $dec_account_bank['account'] = $this->Crypt->decrypt($account_bank['account']);
+                $dec_account_bank['dig'] = $this->Crypt->decrypt($account_bank['dig']);
+                
+                $dec_account_banks [] = $dec_account_bank;
+            }
+            return $dec_account_banks;
         }
         
         public function save_in_db($table,$key,$key_value,$field,$field_value){

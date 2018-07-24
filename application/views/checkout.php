@@ -54,14 +54,16 @@
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
-                        <ul class="menu i-block m-top10-xs">				
-                            <li><a href="#contact_me">Suporte</a></li>
-                            <li class="tv cl-fff">|</li>
-                        </ul>
                         <ul class=" sociais i-block">
                             <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                            <li class="tv cl-fff">|</li>
                             <li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                            <li class="tv cl-fff">|</li>
                         </ul>
+                        <ul class="menu i-block m-top10-xs">				
+                            <li><a href="#contact_me">Suporte</a></li>
+                            
+                        </ul>                        
                     </div>
                 </div>
             </div>
