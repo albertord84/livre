@@ -47,10 +47,6 @@ $(document).ready(function () {
         }
     });
     
-    
-
-    
-    
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_sigin_affiliate_steep1").click(function () {
         if($('#affiliate_pass').val()!==$('#affiliate_pass_confirmation').val()){

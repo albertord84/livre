@@ -176,8 +176,9 @@
             return $this->db->get()->result_array();            
         }
         
-         public function get_account_bank_by_client_id($client_id){
-            $this->load->model('class/Crypt');  
+
+        public function get_account_bank_by_client_id($client_id){
+            $this->load->model('class/Crypt'); 
             $this->db->select('*');
             $this->db->from('account_banks');
             $this->db->where('client_id', $client_id);
@@ -206,5 +207,18 @@
                 return false;
             }
         }
+        
+        public function insert_transaction_status_date(){
+            try {
+                $this->db->insert('transactions_dates',$data_user);
+                return $this->db->insert_id();
+            } catch (Exception $exc) {
+                //echo $exc->getTraceAsString();
+                return false;
+            }
+        }
+        
+        
+        
     }
 ?>

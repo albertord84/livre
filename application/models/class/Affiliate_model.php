@@ -29,7 +29,7 @@ class Affiliate_model extends CI_Model{
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
             $this->db->where('account_banks.propietary_type','1');
-            //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
+//            $this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
             $this->db->limit($page*$amount_by_page, $amount_by_page+1);
@@ -57,6 +57,32 @@ class Affiliate_model extends CI_Model{
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
         }
+    }
+    
+    public function load_transaction_datas_by_id($transaction_id){
+        try {
+            $this->load->model('class/Crypt');
+            $this->db->select('*');
+            $this->db->from('transactions');
+            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
+            $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
+            $this->db->where('transactions.id',$transaction_id);                
+            $result = $this->db->get()->row_array();
+            if(count($result)){
+                $result['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
+                $result['credit_card_name'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+                $N = strlen($result['credit_card_number']);
+                $result['credit_card_final'] = substr($result['credit_card_number'], $N-4, $N);
+                $result['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
+                $result['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+                $result['dates'] = $this->load_transaction_dates($transaction['id']);
+                $result['bank_name'] = $this->Crypt->get_bank_by_code($result['bank']);
+            }
+            return $result;
+        } catch (Exception $exc) {
+            //echo $exc->getTraceAsString();                
+        }
+        return NULL;
     }
     
     public function load_transaction_dates($transaction_id){
