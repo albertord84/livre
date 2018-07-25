@@ -463,7 +463,6 @@ $(document).ready(function () {
     /************END UPLOADING PHOTO/***********/
     
     $('.foto_usr').click(function () {
-        //alert($('#folder_in_server').val());
         var id = this.id;
         var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png'];
         var left  = ($(window).width()/2)-(640/2),
