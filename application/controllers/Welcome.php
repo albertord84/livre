@@ -13,8 +13,7 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
         //$tomorrow = $this->next_available_day();
-        //$result = $this->topazio_emprestimo(1);
-        //$result = $this->topazio_loans();
+        //$result = $this->topazio_emprestimo(1);        
         //$result = $this->topazio_conciliations("2017-07-18");
         $this->set_session(); 
         $this->load->model('class/system_config');
@@ -1651,7 +1650,7 @@ class Welcome extends CI_Controller {
 
     public function basicCustomerTopazio($id, $API_token){        
         $this->load->model('class/system_config');
-        $this->load->model('class/transactions_model');
+        $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
@@ -1714,7 +1713,7 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         $this->load->model('class/system_config');
-        $this->load->model('class/transactions_model');
+        $this->load->model('class/transaction_model');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
@@ -1729,7 +1728,7 @@ class Welcome extends CI_Controller {
         $amount_pay = "1000,00"; // $transaction["amount_solicited"];
         //***** revisar estas
         $iof = "15,00"; // 0.0025 * $num_plots * $amount_pay;
-        $tax = $this->get_tax_row($num_plots)[$this->get_field($amount_pay)];
+        $tax = $this->tax_model->get_tax_row($num_plots)[$this->get_field($amount_pay)];
         $tac = "0.00"; //0.1 * ($amount_pay + $iof + $tax);
         $total_value = "1015,00"; //$transaction[""];
         $plot_value = "290,00";
@@ -1780,6 +1779,8 @@ class Welcome extends CI_Controller {
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -1832,7 +1833,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = $this->get_topazio_API_token();
+        $API_token = "d332d3ef-1c66-3f17-941f-11a7d24be287"; //$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -1881,7 +1882,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "390ab1b2-49bb-3654-b568-9d01bee3119e";//$this->get_topazio_API_token();
+        $API_token = "d332d3ef-1c66-3f17-941f-11a7d24be287"; //$this->get_topazio_API_token();
         
         $ch = curl_init();
 
