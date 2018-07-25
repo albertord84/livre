@@ -4,6 +4,7 @@
     var has_next_page = '<?php echo $has_next_page;?>';
 </script>
 <!--  -->
+
 <div class="modal fade" id="trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 	<div class="modal-dialog mxw-1100" role="document">
 		<div class="modal-content b-none">
@@ -48,10 +49,12 @@
                                             <div class="enviados pd-15">
                                                 <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
                                                 <ul>
-                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
-                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <input type="hidden" id="folder_in_server">
+                                                    
+                                                    <li><img class="foto_usr" id = "0" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img class="foto_usr" id = "1" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img class="foto_usr" id = "2" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img class="foto_usr" id = "3" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>                                                    
                                                     <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                 </ul>
                                             </div>
