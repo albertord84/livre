@@ -54,7 +54,7 @@ class Welcome extends CI_Controller {
             if($_SESSION['logged_role'] === 'AFFIL'){
                 header('Location: '.base_url().'index.php/welcome/afiliados');
             } elseif($_SESSION['logged_role'] === 'ADMIN'){
-                header('Location: '.base_url().'index.php/welcome/admin');
+                header('Location: '.base_url().'index.php/welcome/transacoes');
             }
         }else
             header('Location: '.base_url().'index.php/welcome/afhome');
@@ -131,14 +131,6 @@ class Welcome extends CI_Controller {
         } else{
             header('Location: '.base_url().'index.php/welcome/afhome');
         }
-    }
-        
-    public function admin() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='resumo';
-        $this->load->view('resumo');
     }
     
     public function resumo() {

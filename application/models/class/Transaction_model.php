@@ -173,7 +173,7 @@
             $this->db->where('agency', $agency);
             $this->db->where('account', $account);
             $this->db->order_by('account_banks.id', 'asc');
-            return $this->db->get()->result_array();            
+            return $this->db->get()->result_array();
         }
         
 
