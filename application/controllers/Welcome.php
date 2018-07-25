@@ -160,16 +160,25 @@ class Welcome extends CI_Controller {
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
-        if($transaction && $datas['upc'] == $transaction['new_photos_code']){
-            $this->transaction_model->save_in_db(
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+        if($transaction){
+           if($datas['upc'] == $transaction['new_photos_code']){
+            /*$this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');
+                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
+            //load view to new photos
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $this->load->view('reenvio-documento');            
+            $this->load->view('inc/footer');            
+            } else{
+                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+            }
+        }else{
+            print_r('Access violation. Wrong prameters!!');
         }
-        
-        
-        //load view to new photos
     }
 
         //-------TRANSACTION FUNCTIONS--------------------------------    
@@ -847,6 +856,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
         $this->load->model('class/Crypt');
+        $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
             $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -866,10 +876,11 @@ class Welcome extends CI_Controller {
                     'status_id',transactions_status::WAIT_PHOTO);      
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
             if ($result['success'])
-                $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+                $result['message'] = 'Fotos novas solicitadas com sucesso!!';
             else             
                 $result['message'] = 'Falha evinvando email de aprovação. Tente depois.';                
         }
+        echo json_encode($result);
     }
     
     //-------AUXILIAR FUNCTIONS------------------------------------

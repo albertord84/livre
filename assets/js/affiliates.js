@@ -9,7 +9,6 @@ $(document).ready(function () {
         if(confirm("Tem certeza que deseja realizar essa operação na transação")){            
             var fn;
             val = parseInt($("#sel_admin_actions").val())
-            alert(val);
             switch (val){
                 case 0:
                     fn = '';
@@ -30,7 +29,6 @@ $(document).ready(function () {
                     fn = 'reverse_maney';
                     break;
             }
-            alert(fn);
             if(fn!=''){
                 $.ajax({
                     url: base_url + 'index.php/welcome/'+fn,
