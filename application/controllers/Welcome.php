@@ -13,7 +13,7 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
         //$tomorrow = $this->next_available_day();
-        $result = $this->topazio_emprestimo(3);        
+        //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_conciliations("2017-07-18");
         $this->set_session(); 
         $this->load->model('class/system_config');
