@@ -13,7 +13,7 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
         //$tomorrow = $this->next_available_day();
-        //$result = $this->topazio_emprestimo(1);        
+        $result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_conciliations("2017-07-18");
         $this->set_session(); 
         $this->load->model('class/system_config');
@@ -1871,7 +1871,7 @@ class Welcome extends CI_Controller {
         $total_value = "1015,00"; //$transaction[""];
         $plot_value = "290,00";
         //*********
-        $product_code = 1; //ver esto
+        $product_code = "211"; //ver esto
         $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
         
         $account_type_string = ["CC" => "conta corrente", "PP" => "conta poupança"];
@@ -1971,7 +1971,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "d332d3ef-1c66-3f17-941f-11a7d24be287"; //$this->get_topazio_API_token();
+        $API_token = "07d00bb3-8f11-328a-81c7-3a44aa174e4d"; //$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2020,7 +2020,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "d332d3ef-1c66-3f17-941f-11a7d24be287"; //$this->get_topazio_API_token();
+        $API_token = "07d00bb3-8f11-328a-81c7-3a44aa174e4d";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
