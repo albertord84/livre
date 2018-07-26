@@ -95,6 +95,4 @@
     <script src="<?php echo base_url().'assets/js/talkme_painel.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'assets/js/new_send.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
     
-    
-    
 </html>

@@ -153,35 +153,8 @@ class Welcome extends CI_Controller {
         session_destroy();
         header('Location: '.base_url().'index.php/welcome/afhome');
     }
-    
-    public function send_new_photos(){
-        $this->load->model('class/Crypt');
-        $this->load->model('class/affiliate_model');
-        $this->load->model('class/transaction_model');
-        $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
-        if($transaction){
-           if($datas['upc'] == $transaction['new_photos_code']){
-            /*$this->transaction_model->save_in_db(
-                'transactions',
-                'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
-            //load view to new photos
-            $_SESSION['session_new_foto'] = true;
-            $this->load->model('class/system_config');
-            $GLOBALS['sistem_config'] = $this->system_config->load();
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;            
-            $this->load->view('reenvio-documento');            
-            $this->load->view('inc/footer');            
-            } else{
-                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
-            }
-        }else{
-            print_r('Access violation. Wrong prameters!!');
-        }
-    }
-
-        //-------TRANSACTION FUNCTIONS--------------------------------    
+        
+    //-------TRANSACTION FUNCTIONS--------------------------------    
     /*
     //varaiveis armazenadas na sessao para a solicitação de um empréstimo
     $_SESSION
@@ -825,8 +798,8 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-    
-   //-------TRANSACTION FUNCTIONS----------------------------------
+        
+    //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
     public function approve_transaction(){
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -882,15 +855,115 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_PHOTO);      
+                    'status_id',transactions_status::PENDING);      
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
             else             
-                $result['message'] = 'Falha evinvando email de aprovação. Tente depois.';                
+                $result['message'] = 'Falha evinvando email de solicitação de novas fotos. Tente depois.';                
         }
         echo json_encode($result);
     }
+    
+    public function send_new_photos(){
+        $this->load->model('class/Crypt');
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $datas = $this->input->get();        
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+        if($transaction){
+           if($datas['upc'] == $transaction['new_photos_code']){
+               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
+            /*$this->transaction_model->save_in_db(
+                'transactions',
+                'id',$transaction['id'],
+                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
+            //load view to new photos
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['transaction']=$transaction;
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $this->load->view('reenvio-documento',$params);
+            $this->load->view('inc/footer',$params);
+            } else{
+                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+            }
+        }else{
+            print_r('Access violation. Wrong prameters!!');
+        }
+    }
+    
+    public function request_new_account(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];
+            $unique_new_account_bank_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
+            $link = urlencode(base_url().'index.php/welcome/send_new_account?trid='.$transaction_encrypted_id.'&uabc='.$unique_new_account_bank_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_account_bank_code',$unique_new_account_bank_code);                
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'status_id',transactions_status::PENDING);
+            $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
+            if ($result['success'])
+                $result['message'] = 'Nova conta solicitada com sucesso!!';
+            else             
+                $result['message'] = 'Falha evinvando email de solicitação de nova conta. Tente depois.';                
+        }
+        echo json_encode($result);
+    }
+    
+    public function send_new_account(){
+        $this->load->model('class/Crypt');
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $datas = $this->input->get();        
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+        if($transaction){
+           if($datas['uabc'] == $transaction['new_account_bank_code']){
+               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
+            /*$this->transaction_model->save_in_db(
+                'transactions',
+                'id',$transaction['id'],
+                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
+            //load view to new photos
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['transaction']=$transaction;
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $this->load->view('reenvio-conta',$params);
+            $this->load->view('inc/footer',$params);
+            } else{
+                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+            }
+        }else{
+            print_r('Access violation. Wrong prameters!!');
+        }
+    }
+    
+    public function recibe_new_account(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        $datas = $this->input->post();
+        var_dump($datas);
+    }
+
+    
     
     //-------AUXILIAR FUNCTIONS------------------------------------
     

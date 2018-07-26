@@ -9,15 +9,15 @@
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
 	        	<br><br>
-	          	<img src="img/icones/atualize.jpg" alt="">   
+	          	<img src="../../assets/img/icones/atualize.jpg" alt="">   
           		<br><br>
 	          	<div style="text-align: left;">
-	          		<h2 style="color: #20a7d3;">Oi Marcio!</h2>
+	          		<h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
 					<p>
 						Verificamos que sua conta bancária não é a mesma do titular do cartão de crédito. Para que o empréstimo seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária. <br><br>
 						<b style="background-color:#00ff66;">Você só precisa informar uma nova conta bancária.</b> <br><br>
 					</p> 
-					<a href="" style="background-color: #00ff66;padding: 10px 50px !important;font-weight: 600;color: black;text-align: center;border: none;border-radius: 30px !important;text-decoration: none;display: block;">Clique para informar conta bancária</a>
+					<a href="<?php echo urldecode($_GET["link"]);?>" style="background-color: #00ff66;padding: 10px 50px !important;font-weight: 600;color: black;text-align: center;border: none;border-radius: 30px !important;text-decoration: none;display: block;">Clique para informar conta bancária</a>
 					<p>
 						Se estiver tudo certo seu empréstimo será liberado. <br><br> <b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
 					</p>
@@ -34,7 +34,7 @@
 	    </tr>
 	    <tr>
 	      	<td colspan="3" width="650" valign="middle" align="center" height="120">
-	        	<img src="img/icones/logo-mkt.png">
+	        	<img src="../../assets/img/icones/logo-mkt.png">
 	  		</td>
 	    </tr>
 	</tbody>

@@ -138,5 +138,26 @@
             return $result;
         }
         
+        public function transaction_request_new_account_bank($name, $useremail,$link) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Enviar conta bancaria novamente - Livre.digital';
+            $name = urlencode($name);
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-dados-bancarios.php?name=$name&link=$link"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
                 
     }

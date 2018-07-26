@@ -12,7 +12,7 @@
                 <img src="../../assets/img/icones/aprovado.jpg" alt="">   
                 <br><br>
                 <div style="text-align: left;">
-                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>, pode comemorar!</h2>
+                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!, pode comemorar!</h2>
                     <p>
                         O valor solicitado acaba de ser enviado para sua conta. <br><br> Ficamos felizes por poder ajudar você e agradecemos por utilizar a Livre.digital como sistema de empréstimo. <br>
                         <br>Se você gostou, divulgue para seus amigos sua experiência!
