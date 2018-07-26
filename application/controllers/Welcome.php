@@ -204,6 +204,15 @@ class Welcome extends CI_Controller {
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
     */     
+    
+    /* Variaveis para subir novamente as fotos
+    ['new_front_credit_card']
+    ['new_selfie_with_credit_card']
+    ['new_open_identity']
+    ['new_selfie_with_identity']
+    ['new_cpf_card']
+    ['session_new_foto']
+     */
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
