@@ -465,7 +465,7 @@ $(document).ready(function () {
         var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png'];
         var left  = ($(window).width()/2)-(640/2),
             top   = ($(window).height()/2)-(480/2);
-        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id], '','width=640,height=480, top='+top+', left='+left);
+        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
     });
     
 }); 

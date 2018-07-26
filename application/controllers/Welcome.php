@@ -177,6 +177,15 @@ class Welcome extends CI_Controller {
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
     */     
+    
+    /* Variaveis para subir novamente as fotos
+    ['new_front_credit_card']
+    ['new_selfie_with_credit_card']
+    ['new_open_identity']
+    ['new_selfie_with_identity']
+    ['new_cpf_card']
+    ['session_new_foto']
+     */
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -1454,7 +1463,135 @@ class Welcome extends CI_Controller {
         }    
         echo json_encode($result);
     }
+    
+    public function new_upload_file(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
         
+        $datas = $this->input->post();
+        if($_SESSION['session_new_foto']){                        
+            $client = $this->transaction_model->get_client('id', $this->Crypt->decrypt($datas['trid']));                            
+            $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
+            
+            if(is_dir($path_name) && count($client) == 1){            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 5000000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
+                            $id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 4)
+                                $id_file = 0;
+                            
+                            $filename = $file_names[$id_file].".png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
+                            if (file_exists($path_name."/". $filename)) {
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = "Guardado " . $filename;
+                            $result['success'] = true;
+                            $_SESSION["new_".$file_names[$id_file]] = true;
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel subir os arquivos neste momento! Consulte aos nossos atendentes.";
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }    
+        echo json_encode($result);
+    }
+    
+    public function new_finished_upload() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $datas = $this->input->post();
+        
+        $cpf_upload = true;
+        if($datas['new_ucpf'] == 'true' && !$_SESSION['new_cpf_card']){            
+            $cpf_upload = false;
+        }
+            
+        if($_SESSION['session_new_foto']){
+            
+            if($_SESSION['new_front_credit_card'] && $_SESSION['new_selfie_with_credit_card'] && $_SESSION['new_open_identity'] && $_SESSION['new_selfie_with_identity'] && $cpf_upload){           
+                $result['success'] = TRUE;
+                $result['message'] = "Fotos subidas corretamente. Sua transferencia está sendo analisada.";                
+                $value_ucpf = 0;
+                if($datas['new_ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
+                session_destroy();
+            }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
+        }
+        echo json_encode($result);
+    }
+    
     public function sign_contract() {
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
