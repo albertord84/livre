@@ -67,25 +67,25 @@
 					<ul class="pap fleft100 pd-lr80 text-center">
 						<li class="pgreen">
 							<span class="fleft100">1. Dados enviados <br>com sucesso!</span>
-							<img src="<?php echo base_url().'assets/img/icones/passo1-yellow.png'?>" class="passo-yellow">
-							<img src="<?php echo base_url().'assets/img/icones/passo1-green.png'?>" class="passo-green">
-							<img src="<?php echo base_url().'assets/img/icones/passo1-red.png'?>" class="passo-red">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-yellow.png" class="passo-yellow">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-green.png" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-red.png" class="passo-red">
 						</li>
 						<li class="pyellow">
 							<span class="fleft100">2. Análise <br>das fotos</span>
-							<img src="<?php echo base_url().'assets/img/icones/passo2-silver.png'?>" class="passo-silver">
-							<img src="<?php echo base_url().'assets/img/icones/passo2-yellow.png'?>" class="passo-yellow">
-							<img src="<?php echo base_url().'assets/img/icones/passo2-green.png'?>" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-silver.png" class="passo-silver">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-yellow.png" class="passo-yellow">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-green.png" class="passo-green">
 						</li>
 						<li class="psilver">
 							<span class="fleft100">3. Dinheiro na <br>conta (24h)</span>
-							<img src="<?php echo base_url().'assets/img/icones/passo3-silver.png'?>" class="passo-silver">
-							<img src="<?php echo base_url().'assets/img/icones/passo3-green.png'?>" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-silver.png" class="passo-silver">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-green.png" class="passo-green">
 						</li>
 					</ul>
 
 					<div class="fleft100 pd-lr30 m-top30 ft-size16 fmr-check">
-                                            <h4 class="cl-blue m-b15">Oi, <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
+						<h4 class="cl-blue m-b15">Oi Marcio!</h4>
 						<p>
 							Infelizmente suas fotos não estão legíveis ou os dados não batem com a conta informada. <b>Você só precisa reenviar novas fotos. </b>
 							<br><br>
@@ -197,7 +197,7 @@
 			</div>
 
 			<div class="fleft100 final d-none">
-				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="<?php echo base_url().'assets/img/icones/iselid.png'?>" alt=""> Pronto!</h2>
+				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Pronto!</h2>
 				<div class="fleft100 pd-30 bk-fff ">
 					<div class="fleft100 pd-lr60 m-top40 m-b40">
 						<h4 class="cl-blue m-b10">Dados enviados com sucesso!</h4>
