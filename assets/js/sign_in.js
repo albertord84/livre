@@ -221,6 +221,59 @@ $(document).ready(function () {
         }
     });
     
+    $("#send_new_account_datas").click(function () {
+        var cpf_value=$('#titular_cpf').val();        
+        cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
+        var bank = validate_element('#bank', "^[0-9]{3,3}$");        
+        var agency = validate_element('#agency', "^[0-9]{4,12}$");
+        var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
+        var account = validate_element('#account', "^[0-9]{4,12}$");
+        var dig = validate_element('#dig', "^[0-9]{1}$");            
+        var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
+        var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
+        if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
+            datas={
+                'bank': $('#bank').val(),
+                'agency': $('#agency').val(),
+                'account_type': $('#account_type').val(),
+                'account': $('#account').val(),
+                'dig': $('#dig').val(),
+                'titular_name': $('#titular_name').val(),
+                'titular_cpf': cpf_value,
+                'solicited_value':solicited_value,
+                'amount_months':amount_months,
+                'pk': pk,
+                'key':key
+            };
+            $.ajax({
+                url: base_url + 'index.php/welcome/recibe_new_account',
+                data: datas,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response['success']) {
+                        $('li[id=li_bank_name]').text($('#bank').val());
+                        $('li[id=li_bank_angency]').text($('#agency').val());
+                        $('li[id=li_bank_account_type]').text($('#account_type').val());
+                        $('li[id=li_bank_account]').text($('#account').val()+'-'+$('#dig').val());
+                        //$('li[id=li_bank_dig]').text();
+                        $('li[id=li_bank_account_name]').text($('#titular_name').val());
+                        $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());   
+                        $('.check3').toggle("hide");
+                        $('.check4').toggle("slow");
+                    } else {
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error in Steep 3');
+                }
+            });
+        } else{
+            modal_alert_message('Verifique os dados fornecidos');            
+        }
+    });
+    
     $("#btn_steep_4_prev").click(function () {  
         $('.check4').toggle("hide");
         $('.check3').toggle("slow");
