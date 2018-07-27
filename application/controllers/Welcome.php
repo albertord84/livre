@@ -12,9 +12,11 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
+        //$safes = $this->get_safes_D4Sign();
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_conciliations("2017-07-18");
+        //$result = $this->upload_document_D4Sign();
         $this->set_session(); 
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2044,7 +2046,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "07d00bb3-8f11-328a-81c7-3a44aa174e4d"; //$this->get_topazio_API_token();
+        $API_token = "b9a3cbee-6739-3895-8c5d-341810a12ae0"; //$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2093,13 +2095,13 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "07d00bb3-8f11-328a-81c7-3a44aa174e4d";//$this->get_topazio_API_token();
+        $API_token = "b9a3cbee-6739-3895-8c5d-341810a12ae0";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
 
         $headers = array();
@@ -2118,5 +2120,106 @@ class Welcome extends CI_Controller {
         
         return $parsed_response;
     }
+    
+    /*********API D4Sign*******/
+    public function get_safes_D4Sign() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/safes?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;
+    }
+    
+    public function get_document_D4Sign() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/documents/711c595d-2a48-4f5d-a29a-604c5e50b3bf?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;
+    }
+    
+    public function upload_document_D4Sign() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $tokenAPI = "live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661";
+        $ch = curl_init();
+        $folder = "07367014196_1532235923";        
+        //$file_path = 'http://'.$_SERVER['SERVER_NAME'] . '/livre/assets/data_users/'.$folder.'/front_credit_card.png';
+        //$file_path = base_url('/assets/data_users/'.$folder.'/front_credit_card.png');
+        //$file_path = "/opt/lampp/htdocs/livre/assets/data_users/".$folder."/selfie_with_identity.png";
+        $file_path = "/home/dumbu/Downloads/contrato.pdf";
+        //$file_path = '/assets/data_users/'.$folder.'/front_credit_card.png';
+        //$file_path = realpath(APPPATH . '/assets/data_users/'.$folder.'/front_credit_card.png');
+        
+        $postData = array(
+            'file' => $file_path,
+            'uuid_folder' => "278f53d6-6043-4b35-bb6b-e493639d226e"
+        );        
+        
+        $postFields = http_build_query($postData);
+        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/documents/278f53d6-6043-4b35-bb6b-e493639d226e/upload?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n    \"file\": \"".$file_path."\",\n    \"uuid_folder\": \"278f53d6-6043-4b35-bb6b-e493639d226e\"\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        
+        $headers = array();
+        $headers[] = "Content-Type: multipart/form-data;";
+        $headers[] = "tokenAPI: ".$tokenAPI;
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (is_readable($file_path)) {
+            echo 'es accesible para lectura';
+        } else {
+            echo 'no es accesible para lectura!';
+        }
+        
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        return $parsed_response;
+    }
+    
+    
+    /*********API D4Sign*******/
      
 }
