@@ -881,6 +881,7 @@ class Welcome extends CI_Controller {
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');*/            
             //load view to new photos
+            $_SESSION['session_new_foto'] = true;   
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params['transaction']=$transaction;
