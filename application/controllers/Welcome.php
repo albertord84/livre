@@ -11,9 +11,10 @@ class Welcome extends CI_Controller {
     } 
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {  
-        //$a = __DIR__;
-        //$safes = $this->upload_document_D4Sign(3);
+    public function index() {                  
+        //$safes = $this->signer_for_doc_D4Sign(3);
+        //$safes = $this->send_for_sign_document_D4Sign(3);
+        //$safes = $this->resend_for_sign_document_D4Sign(3);
         //$safes = $this->get_document_D4Sign(3);
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
@@ -2315,6 +2316,109 @@ class Welcome extends CI_Controller {
                 return null;
         } 
     }
+    
+    public function signer_for_doc_D4Sign(  $id, $act = '1', $foreign = 0,
+                                            $certificadoicpbr = 0,
+                                            $assinatura_presencial = 0,
+                                            $embed_methodauth = 'email'){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $signers = array(
+                    array(  "email" => $transaction['email'],
+                            "act" => $act,
+                            "foreign" => $foreign,
+                            "certificadoicpbr" => $certificadoicpbr,
+                            "assinatura_presencial" => $assinatura_presencial,
+                            "embed_methodauth" => $embed_methodauth,
+                            "embed_smsnumber" => '',
+                            "docauth" => '0'
+                        )
+                );
+                $result = $client->documents->createList($transaction['doc_d4sign'], $signers);
+                
+                if(is_object($result) && $result->message[0]->success)                    
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'key_signer',$result->message[0]->key_signer);
+                
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $result;
+    }
+    
+    public function send_for_sign_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $message = 'Prezado, segue o contrato eletrônico para assinatura.';
+                $workflow = 0 ; //Todos podem assinar ao mesmo tempo
+                $skip_email = 0; //Não disparar email com link de assinatura (usando EMBED)
+                
+                $docs = $client->documents->sendToSigner($transaction['doc_d4sign'], $message, $workflow, $skip_email);
+
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function resend_for_sign_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $email = $transaction['email'];
+                $key_signer = $transaction['key_signer'];
+                
+                $docs = $client->documents->resend($transaction['doc_d4sign'], $email, $key_signer);
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
     /*********API D4Sign*******/
    
      
