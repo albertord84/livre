@@ -12,10 +12,12 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
-        //$safes = $this->get_safes_D4Sign();
+        //$a = __DIR__;
+        $safes = $this->get_documents_D4Sign();
+        //$safes = $this->upload_documento();
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
-        //$result = $this->topazio_conciliations("2017-07-18");
+        //$result = $this->topazio_conciliations("2018-07-18");
         //$result = $this->upload_document_D4Sign();
         $this->set_session(); 
         $this->load->model('class/system_config');
@@ -500,7 +502,7 @@ class Welcome extends CI_Controller {
                         $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
                         /*verificar cartao de credito haciendo la cobrança*/
-                        //$response = $this->do_payment($id_row);
+                        //$response = $this->do_payment_iugu($id_row);
                         $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
                         $result['message'] = $response['message'];
@@ -627,16 +629,37 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function insert_datas_steep_4() {
-        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] || $datas['key']!==$_SESSION['key'])){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-        }else{
-            $result['success'] = true;
-            $_SESSION['is_possible_steep_4'] =true;
+    public function sign_contract() {
+        $this->load->model('class/transaction_model');
+        $datas = $this->input->post();
+        
+        $cpf_upload = true;
+        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+            $cpf_upload = false;
+        }
+            
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
+                $result['success'] = TRUE;
+                $value_ucpf = 0;
+                if($datas['ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                //hacer mas cosas **************** //
+            }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
+            }
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = "Sessão expirou";
         }
         echo json_encode($result);
     }
+    
     
     public function message() {
         $this->load->model('class/system_config');
@@ -1216,6 +1239,8 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    
+    /*********SMS KAIO API*******/
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
         $response['success'] = TRUE; /*eliminar estas*/
@@ -1262,7 +1287,9 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-        
+    /*********END SMS KAIO API*******/
+
+    
     public function iugu_simples_sale(){
         require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
         Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
@@ -1281,6 +1308,7 @@ class Welcome extends CI_Controller {
         );
     }
         
+    /*********UPLOADING PHOTO*******/
     public function upload_file(){
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
@@ -1595,36 +1623,9 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function sign_contract() {
-        $this->load->model('class/transaction_model');
-        $datas = $this->input->post();
-        
-        $cpf_upload = true;
-        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
-            $cpf_upload = false;
-        }
-            
-        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            
-            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
-                $result['success'] = TRUE;
-                $value_ucpf = 0;
-                if($datas['ucpf'] == 'true')
-                    $value_ucpf = 1;
-                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //hacer mas cosas **************** //
-            }
-            else{                
-                $result['success'] = false;
-                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
-            }
-        }
-        else{
-            $result['success'] = false;
-            $result['message'] = "Sessão expirou";
-        }
-        echo json_encode($result);
-    }
+    /*********END UPLOADING PHOTO*******/
+    
+    /*********IUGU API*******/
     
     public function get_token_iugu($id){
         
@@ -1677,7 +1678,7 @@ class Welcome extends CI_Controller {
         }
     }
 
-    public function do_payment($id){
+    public function do_payment_iugu($id){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
@@ -1729,13 +1730,12 @@ class Welcome extends CI_Controller {
         return $response;
     }
 
-    public function refund_bill($id){
+    public function refund_bill_iugu($id){
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
         
-        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1766,7 +1766,7 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_bill($id){        
+    public function get_bill_iugu($id){        
             
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
@@ -1802,6 +1802,9 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
+    /*********END IUGU API*******/
+    
+    /*********TOPAZIO API*******/
     public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1870,7 +1873,7 @@ class Welcome extends CI_Controller {
         
         $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "12345678901"; //$client["cpf"];
+        $cpf = "06335968762"; //$client["cpf"];
         $name = "Julio Petro"; //$client["name"];
         $cep = "24040200"; //$client["cep"];
         $street = "Miguel 42"; //$client["street_address"]." ".$client["number_address"];
@@ -1885,7 +1888,7 @@ class Welcome extends CI_Controller {
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
-                    ."\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n "
+                    ."\",\n  \"billing\": \"2\",\n  \"score\": \"2\",\n  \"rating\": \"2\",\n  \"address\": {\n "
                     ."  \"postalCode\": ".$cep
                     .",\n    \"street\": \"".$street
                     ."\",\n    \"number\": \"".$number
@@ -1919,7 +1922,7 @@ class Welcome extends CI_Controller {
         $parsed_response = json_decode($result);
         
         $result_query = false;
-        if(is_object($parsed_response))
+        if(is_object($parsed_response) && $parsed_response->success == TRUE)
             $result_query = true;
         
         return $result_query;
@@ -1934,7 +1937,7 @@ class Welcome extends CI_Controller {
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "12345678901"; //$transaction["cpf"];
+        $cpf = "06335968762"; //$transaction["cpf"];
         $name = "Julio Petro"; //$transaction["name"];
         $document_id = "1000001"; //$transaction["contract_id"];
         $release_date = "2018-07-23"; //$this->next_available_day();
@@ -1986,9 +1989,9 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/loans");
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"12345678901\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-23\",\n    \"totalValue\": \"1150,00\",\n    \"amountPay\": \"1000,00\",\n    \"rate\": \"2,99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150,00\",\n    \"wayPaymentLoan\": \"cartão de crédito\",\n    \"productCode\": 1,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115,00\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"TED\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"conta corrente\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-07-23\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"12345678901\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-23\",\n    \"totalValue\": \"1150,00\",\n    \"amountPay\": \"1000,00\",\n    \"rate\": \"2,99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150,00\",\n    \"wayPaymentLoan\": \"cartão de crédito\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115,00\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"TED\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"conta corrente\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-07-23\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
@@ -2047,10 +2050,10 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "b9a3cbee-6739-3895-8c5d-341810a12ae0"; //$this->get_topazio_API_token();
+        $API_token = "cb56daff-4271-3438-834e-481f20ed0d9f"; //$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
-            if($result_basic){
+            if(!$result_basic){
                 $ccb = $this->topazio_loans($id, $API_token);
                 if($ccb){
                     $result['message'] = "Emprestimo aprovado!";
@@ -2096,11 +2099,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "b9a3cbee-6739-3895-8c5d-341810a12ae0";//$this->get_topazio_API_token();
+        $API_token = "cb56daff-4271-3438-834e-481f20ed0d9f";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/mp/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
@@ -2121,106 +2124,103 @@ class Welcome extends CI_Controller {
         
         return $parsed_response;
     }
+    /*********END TOPAZIO API*******/
     
     /*********API D4Sign*******/
-    public function get_safes_D4Sign() {
+    
+    public function get_safes_D4Sign(){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
-        $ch = curl_init();
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        $safes = null;
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
 
-        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/safes?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
-        $headers = array();
-        $headers[] = "Content-Type: application/json";
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($ch);
-        /*if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }*/
-        curl_close ($ch);
-        
-        $parsed_response = json_decode($result);
-        
-        return $parsed_response;
+                $safes = $client->safes->find();
+                
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return $null;
+        } 
+        return $safes;
     }
     
-    public function get_document_D4Sign() {
+    public function get_documents_D4Sign(){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;                
         
-        $ch = curl_init();
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        $docs = null;
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
 
-        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/documents/711c595d-2a48-4f5d-a29a-604c5e50b3bf?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
-        $headers = array();
-        $headers[] = "Content-Type: application/json";
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                $docs = $client->documents->find();
 
-        $result = curl_exec($ch);
-        /*if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }*/
-        curl_close ($ch);
-        
-        $parsed_response = json_decode($result);
-        
-        return $parsed_response;
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
     }
     
-    public function upload_document_D4Sign() {
+    public function get_document_D4Sign($id){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $tokenAPI = "live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661";
-        $ch = curl_init();
-        $folder = "07367014196_1532235923";        
-        //$file_path = 'http://'.$_SERVER['SERVER_NAME'] . '/livre/assets/data_users/'.$folder.'/front_credit_card.png';
-        //$file_path = base_url('/assets/data_users/'.$folder.'/front_credit_card.png');
-        //$file_path = "/opt/lampp/htdocs/livre/assets/data_users/".$folder."/selfie_with_identity.png";
-        $file_path = "/home/dumbu/Downloads/contrato.pdf";
-        //$file_path = '/assets/data_users/'.$folder.'/front_credit_card.png';
-        //$file_path = realpath(APPPATH . '/assets/data_users/'.$folder.'/front_credit_card.png');
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
-        $postData = array(
-            'file' => $file_path,
-            'uuid_folder' => "278f53d6-6043-4b35-bb6b-e493639d226e"
-        );        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
         
-        $postFields = http_build_query($postData);
-        curl_setopt($ch, CURLOPT_URL, "https://secure.d4sign.com.br/api/v1/documents/278f53d6-6043-4b35-bb6b-e493639d226e/upload?tokenAPI=live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661&cryptKey=live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n    \"file\": \"".$file_path."\",\n    \"uuid_folder\": \"278f53d6-6043-4b35-bb6b-e493639d226e\"\n}");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
-        curl_setopt($ch, CURLOPT_POST, 1);
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken("live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661");
+                $client->setCryptKey("live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
 
-        
-        $headers = array();
-        $headers[] = "Content-Type: multipart/form-data;";
-        $headers[] = "tokenAPI: ".$tokenAPI;
-        
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                $docs = $client->documents->find("16645c3e-0663-4aa2-8be0-735fb91413af");
 
-        $result = curl_exec($ch);
-        if (is_readable($file_path)) {
-            echo 'es accesible para lectura';
-        } else {
-            echo 'no es accesible para lectura!';
-        }
-        
-        /*if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }*/
-        curl_close ($ch);
-        
-        $parsed_response = json_decode($result);
-        
-        return $parsed_response;
+        } catch (Exception $e) {
+                echo $e->getMessage();
+        } 
+
     }
     
-    
+    public function upload_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $safe_livre_4sign = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        $folder = "07367014196_1532235923";
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken("live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661");
+                $client->setCryptKey("live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+
+                $path_file = $_SERVER['DOCUMENT_ROOT'].'/livre/assets/data_users/'.$folder.'/selfie_with_credit_card.png';
+                $id_doc = $client->documents->upload($safe_livre_4sign, $path_file);
+
+        } catch (Exception $e) {
+                echo $e->getMessage();
+        } 
+    }
     /*********API D4Sign*******/
+   
      
 }
