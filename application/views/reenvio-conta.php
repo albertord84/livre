@@ -26,6 +26,11 @@
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
+    
+    <script type="text/javascript">
+        var base_url = '<?php echo base_url();?>';
+    </script>
+    
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
@@ -86,11 +91,10 @@
                         <b>Por favor, informe uma nova conta para prosseguir com o seu empréstimo:</b>
 
                         <div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2">
-                            <div class="bk-fff fleft100 pd-30">
+                            <div class="cad_new_account1 bk-fff fleft100 pd-30">
                                 <span class="ft-size14 fw-600 fleft100">DADOS BANCÁRIOS</span>
                                 <fieldset class="col-md-8 col-sm-8 col-xs-12 pd-lr5">
-                                    <!--<input type="text" placeholder="Banco">-->
-                                    <select id="bank" required style="max-height: 70px">
+                                    <select id="bank" style="max-height: 70px">
                                         <option value="default" selected="true">BANCO...</option>
                                         <option value="117">ADVANCED CC LTDA</option>
                                         <option value="172">ALBATROSS CCV S.A</option>
@@ -317,7 +321,21 @@
                                 <div class="fleft100 m-top30 text-right">
                                     <button id="send_new_account_datas" class="bt-green w100">Enviar</button>
                                 </div>
-                            </div>						
+                            </div>
+                            
+                            <div class="cad_new_account2 d-none bk-fff fleft100 pd-30">
+                                <div class="fleft100 pd-30 bk-fff m-top20 text-justify">
+                                    <h1 class="ft-size45 text-center cl-green m-b20">Pronto!</h1>
+                                    <h3>Obrigado, <li id="affiliate_first_name"></li>!</h3>
+                                    <h4 class="m-top20">Opa, seus dados bancários foram atualizados corretamente, agora para continuar, deve assinar novamente o contrato.</h4>
+                                </div>
+                                <div class="fleft100 m-top10 text-right">
+                                    <button id="send_new_account_datas" class="bt-green w100">Assinar novamente</button>
+                                </div>
+                            </div>
+                            
+                            
+                            
                         </div>
                     </div>
                 </div>

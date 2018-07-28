@@ -626,7 +626,7 @@
                                         ?>
                                         <div id="check_front_credit_card" class="upl uplsilver c-pointer">
                                         <?php 
-                                            } 
+                                            }
                                         ?>  
                                             <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
                                             <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
@@ -645,7 +645,7 @@
                                         ?>
                                         <div id="check_selfie_credit_card" class="upl uplsilver c-pointer">
                                         <?php 
-                                            } 
+                                            }
                                         ?>                                         
                                             <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
                                             <small class="fleft100">Selfie segurando <br>seu cartão</small>

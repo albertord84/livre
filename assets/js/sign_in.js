@@ -6,10 +6,10 @@ $(document).ready(function () {
     init_values();
     eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('8 H(4){4=x(4);4=y(4);4=B(4);4=t(4);4=D(4);a 4}8 J(4){4=C(4);4=u(4);4=v(4);4=z(4);4=w(4);a 4}8 x(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%2===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 w(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%3===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 y(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)+A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 z(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)-A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 B(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%5===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 v(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%6===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 t(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)*2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 u(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)/2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 D(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 C(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 r(s,E){a G(F.I()*(E-s)+s)}',46,46,'||||str|||new_str|function||return|length|new|for|var|Array||toString||replace||tmp|else|fromCharCode|if|String|charCodeAt|getRandomArbitrary|min|cs4|anti_cs4|anti_cs3|anti_cs1|cs1|cs2|anti_cs2|13|cs3|anti_cs5|cs5|max|Math|parseInt|codify|random|decodify'.split('|'),0,{}))
     
-    init();
+    
     
     //---------PRIMARY FUNCTIONS---------------------------------
-    $("#btn_steep_1").click(function () {        
+    $("#btn_steep_1").click(function () {
         var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
@@ -231,7 +231,7 @@ $(document).ready(function () {
         var dig = validate_element('#dig', "^[0-9]{1}$");            
         var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
-        if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
+        if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {            
             datas={
                 'bank': $('#bank').val(),
                 'agency': $('#agency').val(),
@@ -239,11 +239,8 @@ $(document).ready(function () {
                 'account': $('#account').val(),
                 'dig': $('#dig').val(),
                 'titular_name': $('#titular_name').val(),
-                'titular_cpf': cpf_value,
-                'solicited_value':solicited_value,
-                'amount_months':amount_months,
-                'pk': pk,
-                'key':key
+                'titular_cpf': cpf_value,                
+                'trid': typeof getUrlVars()["trid"] !== 'undefined' ? getUrlVars()["trid"] : 'NULL',
             };
             $.ajax({
                 url: base_url + 'index.php/welcome/recibe_new_account',
@@ -252,15 +249,8 @@ $(document).ready(function () {
                 dataType: 'json',
                 success: function (response) {
                     if (response['success']) {
-                        $('li[id=li_bank_name]').text($('#bank').val());
-                        $('li[id=li_bank_angency]').text($('#agency').val());
-                        $('li[id=li_bank_account_type]').text($('#account_type').val());
-                        $('li[id=li_bank_account]').text($('#account').val()+'-'+$('#dig').val());
-                        //$('li[id=li_bank_dig]').text();
-                        $('li[id=li_bank_account_name]').text($('#titular_name').val());
-                        $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());   
-                        $('.check3').toggle("hide");
-                        $('.check4').toggle("slow");
+                        $('.cad_new_account1').toggle("hide");
+                        $('.cad_new_account2').toggle("slow");
                     } else {
                         modal_alert_message(response['message']);
                     }
@@ -647,7 +637,7 @@ $(document).ready(function () {
         $('#credit_card_exp_month').val('08');
         $('#credit_card_exp_year').val('2026');
         
-        $('#bank').val('001');
+        $('#bank').val('117');
         $('#agency').val('44598');
         $('#account_type').val('CC');
         $('#account').val('125490');
@@ -828,4 +818,7 @@ $(document).ready(function () {
             e.preventDefault();            
         }        
     });
+    
+    init();
+    
 }); 

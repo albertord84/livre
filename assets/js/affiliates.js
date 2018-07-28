@@ -26,7 +26,7 @@ $(document).ready(function () {
                     fn = 'request_new_sing_us';
                     break;
                 case 5:
-                    fn = 'reverse_maney';
+                    fn = 'request_recuse_and_reverse_money';
                     break;
             }
             if(fn!=''){

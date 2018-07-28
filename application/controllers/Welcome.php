@@ -126,7 +126,7 @@ class Welcome extends CI_Controller {
             $params['num_page']=$datas['num_page'];
             $params['has_next_page']=$has_next_page;
             $params['view']='transacoes';
-            $this->load->view('transacoes',$params);            
+            $this->load->view('transacoes',$params);
         } else{
             header('Location: '.base_url().'index.php/welcome/afhome');
         }
@@ -176,9 +176,8 @@ class Welcome extends CI_Controller {
     ['client_datas']['phone_ddd']
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
-    */     
-    
-    /* Variaveis para subir novamente as fotos
+
+    //Variaveis para subir novamente as fotos
     ['new_front_credit_card']
     ['new_selfie_with_credit_card']
     ['new_open_identity']
@@ -646,7 +645,7 @@ class Welcome extends CI_Controller {
         if ($result['success'])
             $result['message'] = 'Mensagem enviada. Agradecemos seu contato!!';
         else             
-            $result['message'] = 'Falha evinvando mensagem. Tente depois.';
+            $result['message'] = 'Falha enviando mensagem. Tente depois.';
         echo json_encode($result);
     }
     
@@ -815,6 +814,10 @@ class Welcome extends CI_Controller {
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
                         'status_id',transactions_status::APPROVED);
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'status_id',transactions_status::TOPAZIO_IN_ANALISYS);
                 //email de bem sucedido
                 $GLOBALS['sistem_config'] = $this->system_config->load();
                 require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
@@ -825,7 +828,7 @@ class Welcome extends CI_Controller {
                 if ($result['success'])
                     $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
                 else             
-                    $result['message'] = 'Falha evinvando email de aprovação. Tente depois.';                
+                    $result['message'] = 'Falha enviando email de aprovação. Tente depois.';                
             } else{
                 //tratamiento de diferentes problemas que me va am amndar Moreno
             }
@@ -855,12 +858,12 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::PENDING);      
+                    'status_id',transactions_status::WAIT_PHOTO);      
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
             else             
-                $result['message'] = 'Falha evinvando email de solicitação de novas fotos. Tente depois.';                
+                $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
         }
         echo json_encode($result);
     }
@@ -915,12 +918,12 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::PENDING);
+                    'status_id',transactions_status::WAIT_ACCOUNT);
             $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Nova conta solicitada com sucesso!!';
             else             
-                $result['message'] = 'Falha evinvando email de solicitação de nova conta. Tente depois.';                
+                $result['message'] = 'Falha enviando email de solicitação de nova conta. Tente depois.';                
         }
         echo json_encode($result);
     }
@@ -929,8 +932,10 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
         if($transaction){
            if($datas['uabc'] == $transaction['new_account_bank_code']){
                //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
@@ -939,8 +944,7 @@ class Welcome extends CI_Controller {
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');*/            
             //load view to new photos
-            $this->load->model('class/system_config');
-            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
             $params['transaction']=$transaction;
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $this->load->view('reenvio-conta',$params);
@@ -960,10 +964,96 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $result['success'] = false;
         $datas = $this->input->post();
-        var_dump($datas);
+        if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
+            $datas['pk'] = $_SESSION['pk'];
+            if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){
+                $result['success']=true;
+            }else{
+                $result['success']=false;
+                $result['success']='Erro de atualização no banco de dados';
+            }
+        }else{
+            $result['success']=false;
+            $result['success']='Access violation';
+        }
+        echo json_encode($result);
     }
-
     
+    public function request_new_sing_us(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];
+            $unique_new_sing_us_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
+            $link = urlencode(base_url().'index.php/welcome/send_new_sing_us?trid='.$transaction_encrypted_id.'&uasu='.$unique_new_sing_us_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_sing_us_code',$unique_new_sing_us_code);                
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'status_id',transactions_status::WAIT_SING_US);
+            $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
+            if ($result['success'])
+                $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+            else             
+                $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+        }
+        echo json_encode($result);
+    }
+    
+    public function request_recuse_and_reverse_money(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        $result['success'] = false;
+        var_dump($_SESSION);
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            //1. estornar dinero
+            $_SESSION['affiliate_logged_transactions'];
+            //2. enviar email de estorno
+            
+            //3. mudar status de la transaccion
+            
+            //4. salvar fecha del status de la transaccion            
+            
+            
+            
+//            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+//            $useremail = $_SESSION['transaction_requested_datas']['email'];
+//            $unique_new_sing_us_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
+//            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
+//            $link = urlencode(base_url().'index.php/welcome/send_new_sing_us?trid='.$transaction_encrypted_id.'&uasu='.$unique_new_sing_us_code);
+//            $this->transaction_model->save_in_db(
+//                    'transactions',
+//                    'id',$_SESSION['transaction_requested_id'],
+//                    'new_sing_us_code',$unique_new_sing_us_code);                
+//            $this->transaction_model->save_in_db(
+//                    'transactions',
+//                    'id',$_SESSION['transaction_requested_id'],
+//                    'status_id',transactions_status::WAIT_SING_US);
+//            $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
+//            if ($result['success'])
+//                $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+//            else             
+//                $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+        }
+        echo json_encode($result);
+    }
     
     //-------AUXILIAR FUNCTIONS------------------------------------
     

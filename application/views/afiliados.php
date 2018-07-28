@@ -74,9 +74,13 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
 				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
                                     <p>Mande esse link para seus clientes</p>
-					<a href="https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?>">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
+                                    <?php
+                                        $tlf = $_SESSION['affiliate_logged_datas']['phone_ddd'];
+                                        $tlf .= $_SESSION['affiliate_logged_datas']['phone_number'];
+					echo '<a href="https://livre.digital/livre/?afiliado='.$tlf.'">'.
+                                            'https://livre.digital/livre/?afiliado='.$tlf.'</a>';
+                                    ?>
 				</div>
-				<!--<img src="<?php //echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">-->
 			</div>
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
@@ -121,7 +125,7 @@
                                         <?php echo date("d-m-y / H:i", $transaction['dates'][0]['date']); ?>
                                     </div>
                                     <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
-                                        <?php echo $transaction['amount_solicited']; ?>
+                                        <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
                                     </div>
                                     <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                         <small class="fleft100">Dados do cartão</small>
