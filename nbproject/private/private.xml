@@ -6,9 +6,11 @@
             <file>file:/opt/lampp/htdocs/livre/assets/js/new_send.js</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/reenvio-documento.php</file>
             <file>file:/opt/lampp/htdocs/livre/assets/js/affiliates.js</file>
+            <file>file:/opt/lampp/htdocs/livre/application/libraries/Gmail.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/checkout.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/inc/footer.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/controllers/Welcome.php</file>
+            <file>file:/opt/lampp/htdocs/livre/assets/js/sign_in.js</file>
         </group>
     </open-files>
 </project-private>
