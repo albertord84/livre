@@ -658,8 +658,7 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-    
-    
+        
     public function message() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -834,11 +833,7 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->save_in_db(
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
-                        'cdb_number',$resp['ccb']);
-                $this->transaction_model->save_in_db(
-                        'transactions',
-                        'id',$_SESSION['transaction_requested_id'],
-                        'status_id',transactions_status::APPROVED);
+                        'cdb_number',$resp['ccb']);                
                 $this->transaction_model->save_in_db(
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
@@ -883,7 +878,7 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_PHOTO);      
+                    'status_id',transactions_status::WAIT_PHOTO);
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
@@ -902,10 +897,10 @@ class Welcome extends CI_Controller {
         if($transaction){
            if($datas['upc'] == $transaction['new_photos_code']){
                //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
-            /*$this->transaction_model->save_in_db(
+            $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
+                'new_photos_code',$transaction['new_photos_code'].'--used');          
             //load view to new photos
             $_SESSION['session_new_foto'] = true;   
             $this->load->model('class/system_config');
@@ -965,10 +960,10 @@ class Welcome extends CI_Controller {
         if($transaction){
            if($datas['uabc'] == $transaction['new_account_bank_code']){
                //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
-            /*$this->transaction_model->save_in_db(
+            $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');*/            
+                'new_photos_code',$transaction['new_photos_code'].'--used');
             //load view to new photos
             $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
             $params['transaction']=$transaction;
@@ -993,6 +988,10 @@ class Welcome extends CI_Controller {
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
             if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'status_id',transactions_status::WAIT_SIGNATURE);
                 $result['success']=true;
             }else{
                 $result['success']=false;
@@ -1495,7 +1494,6 @@ class Welcome extends CI_Controller {
     public function upload_file_affiliate(){    
         $datas = $this->input->post();
         if($_SESSION['logged_id'] && $_SESSION['logged_role'] = "AFFIL"){
-           
             $path_name = "assets/data_affiliates/affiliate_".$_SESSION['logged_id'];             
             
             if(is_dir($path_name) || mkdir($path_name, 0755)){            
@@ -1684,14 +1682,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $this->load->model('class/Crypt');
         $datas = $this->input->post();
-        
         $cpf_upload = true;
         if($datas['new_ucpf'] == 'true' && !$_SESSION['new_cpf_card']){            
             $cpf_upload = false;
         }
-            
         if($_SESSION['session_new_foto']){
-            
             if($_SESSION['new_front_credit_card'] && $_SESSION['new_selfie_with_credit_card'] && $_SESSION['new_open_identity'] && $_SESSION['new_selfie_with_identity'] && $cpf_upload){           
                 $result['success'] = TRUE;
                 $result['message'] = "Fotos subidas corretamente. Sua transferencia está sendo analisada.";                

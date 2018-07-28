@@ -189,7 +189,11 @@
                                                                         </small>
                                                                     </label>
                                                                 </div>
-								<div class="fleft100 m-top30 text-center"><button id ="send_new_photos" class="bt-green mxw-300">Enviar novas fotos</button></div>
+								<div class="fleft100 m-top30 text-center">
+                                                                    <button id ="send_new_photos" class="bt-green mxw-300">
+                                                                        Enviar novas fotos
+                                                                    </button>
+                                                                </div>
 							</div>						
 						</div>
 					</div>

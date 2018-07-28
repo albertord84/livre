@@ -3,10 +3,10 @@
 class transactions_status {
 
     const BEGINNER= 1;
-    const APPROVED = 2;
-    const WAIT_PHOTO = 3;
-    const WAIT_ACCOUNT = 4;
-    const WAIT_SING_US = 5;
+    const WAIT_SIGNATURE = 2;
+    const APPROVED = 3;
+    const WAIT_PHOTO = 4;
+    const WAIT_ACCOUNT = 5;
     const TOPAZIO_APROVED = 6;
     const TOPAZIO_IN_ANALISYS = 7;
     const TOPAZIO_DENIED = 8;
