@@ -13,8 +13,8 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {  
         //$a = __DIR__;
-        $safes = $this->get_documents_D4Sign();
-        //$safes = $this->upload_documento();
+        //$safes = $this->upload_document_D4Sign(3);
+        //$safes = $this->get_document_D4Sign(3);
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_conciliations("2018-07-18");
@@ -225,8 +225,8 @@ class Welcome extends CI_Controller {
                     $result['message'] .= 'O seu anterior pedido está precisando de atualizar os dados bancários fornecidos.';                    
                     return $result;
                 }else
-                if($clients[$N-1]['status_id'] == transactions_status::WAIT_SING_US){                
-                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado novamente.';                    
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_SIGNATURE){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado. Casso dúvidas, contate nosso atendimento.';                    
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
@@ -1609,6 +1609,10 @@ class Welcome extends CI_Controller {
                 if($datas['new_ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id', $this->Crypt->decrypt($datas['trid']),
+                    'status_id',transactions_status::PENDING);
                 session_destroy();
             }
             else{                
@@ -2136,7 +2140,6 @@ class Welcome extends CI_Controller {
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
-        $safes = null;
         try{
                 $client = new D4sign\Client();
                 $client->setAccessToken($token_4sign);
@@ -2159,7 +2162,6 @@ class Welcome extends CI_Controller {
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
-        $docs = null;
         try{
                 $client = new D4sign\Client();
                 $client->setAccessToken($token_4sign);
@@ -2176,6 +2178,7 @@ class Welcome extends CI_Controller {
     
     public function get_document_D4Sign($id){
         $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
         $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
@@ -2186,19 +2189,21 @@ class Welcome extends CI_Controller {
         
         try{
                 $client = new D4sign\Client();
-                $client->setAccessToken("live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661");
-                $client->setCryptKey("live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
 
-                $docs = $client->documents->find("16645c3e-0663-4aa2-8be0-735fb91413af");
+                $docs = $client->documents->find($transaction['doc_d4sign']);
 
         } catch (Exception $e) {
-                echo $e->getMessage();
+                //echo $e->getMessage();
+                return null;
         } 
-
+        return $docs;
     }
     
     public function upload_document_D4Sign($id){
         $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
         $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
@@ -2206,18 +2211,23 @@ class Welcome extends CI_Controller {
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
-        $folder = "07367014196_1532235923";
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
         
         try{
                 $client = new D4sign\Client();
-                $client->setAccessToken("live_e3c2b3f8247c211861c85f1f771b62c94a40b1ce012e963d2ee3cc2db000f661");
-                $client->setCryptKey("live_crypt_6osvrYu1GIr43psA8i7o1icKBWKxcRlM");
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
 
-                $path_file = $_SERVER['DOCUMENT_ROOT'].'/livre/assets/data_users/'.$folder.'/selfie_with_credit_card.png';
+                $path_file = $_SERVER['DOCUMENT_ROOT'].'/livre/assets/data_users/'.$transaction['folder_in_server'].'/cpf_card.png';//contract.pdf
                 $id_doc = $client->documents->upload($safe_livre_4sign, $path_file);
-
+                if(is_object($id_doc) && $id_doc->message == "success")                    
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'doc_d4sign',$id_doc->uuid);
         } catch (Exception $e) {
-                echo $e->getMessage();
+                //echo $e->getMessage();
+                return null;
         } 
     }
     /*********API D4Sign*******/
