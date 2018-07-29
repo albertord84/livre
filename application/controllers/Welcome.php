@@ -1689,10 +1689,8 @@ class Welcome extends CI_Controller {
                 if($datas['new_ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
-                $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id', $this->Crypt->decrypt($datas['trid']),
-                    'status_id',transactions_status::PENDING);
+                $this->transaction_model->update_transaction_status($this->Crypt->decrypt($datas['trid']), transactions_status::PENDING);
+                
                 session_destroy();
             }
             else{                
