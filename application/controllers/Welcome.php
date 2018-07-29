@@ -834,10 +834,9 @@ class Welcome extends CI_Controller {
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
                         'cdb_number',$resp['ccb']);                
-                $this->transaction_model->save_in_db(
-                        'transactions',
-                        'id',$_SESSION['transaction_requested_id'],
-                        'status_id',transactions_status::TOPAZIO_IN_ANALISYS);
+                $this->transaction_model->insert_transaction_status_date(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::TOPAZIO_IN_ANALISYS);
                 //email de bem sucedido
                 $GLOBALS['sistem_config'] = $this->system_config->load();
                 require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
@@ -874,11 +873,10 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'new_photos_code',$unique_new_photos_code);                
-            $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_PHOTO);
+                    'new_photos_code',$unique_new_photos_code);
+            $this->transaction_model->insert_transaction_status_date(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_PHOTO);
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
@@ -935,11 +933,10 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'new_account_bank_code',$unique_new_account_bank_code);                
-            $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_ACCOUNT);
+                    'new_account_bank_code',$unique_new_account_bank_code);
+            $this->transaction_model->insert_transaction_status_date(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_ACCOUNT);
             $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Nova conta solicitada com sucesso!!';
@@ -987,12 +984,19 @@ class Welcome extends CI_Controller {
         $datas = $this->input->post();
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
-            if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){
-                $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_SIGNATURE);
-                $result['success']=true;
+            if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){                
+                //TODO Moreno API
+                //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
+                
+                //2. subir PDF y salvar id del documento
+                
+                //3. pedir signatura nuevamente con API de Moreno
+                
+                //4. cambiar el status de la transaccion
+                $this->transaction_model->insert_transaction_status_date(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_SIGNATURE);
+                $result['success']=true; //para mostrar el toggle2
             }else{
                 $result['success']=false;
                 $result['success']='Erro de atualização no banco de dados';
@@ -1022,11 +1026,16 @@ class Welcome extends CI_Controller {
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
-                    'new_sing_us_code',$unique_new_sing_us_code);                
-            $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id',$_SESSION['transaction_requested_id'],
-                    'status_id',transactions_status::WAIT_SING_US);
+                    'new_sing_us_code',$unique_new_sing_us_code);
+            //TODO Moreno API
+            //1. subir el mismo contrato
+            
+            //2. hacer que d4sign le envie el email al cliente
+            
+            
+            $this->transaction_model->insert_transaction_status_date(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_SING_US);
             $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
             if ($result['success'])
                 $result['message'] = 'Nova assinatura solicitada com sucesso!!';
@@ -1080,8 +1089,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    //-------AUXILIAR FUNCTIONS------------------------------------
-    
+    //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
@@ -1329,7 +1337,8 @@ class Welcome extends CI_Controller {
     }
     
     
-    /*********SMS KAIO API*******/
+    
+    //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
         $response['success'] = TRUE; /*eliminar estas*/
@@ -1376,28 +1385,10 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-    /*********END SMS KAIO API*******/
-
+    //-------END SMS KAIO API---------------------------------------
     
-    public function iugu_simples_sale(){
-        require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
-        Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
-        Iugu_Charge::create(
-            [
-                "token"=> "TOKEN QUE VEIO DO IUGU.JS OU CRIADO VIA BIBLIOTECA",
-                "email"=>"your@email.test",
-                "items" => [
-                    [
-                        "description"=>"Item Teste",
-                        "quantity"=>"1",
-                        "price_cents"=>"1000"
-                    ]
-                ]
-            ]
-        );
-    }
         
-    /*********UPLOADING PHOTO*******/
+    //-------UPLOADING PHOTO---------------------------------------
     public function upload_file(){
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
@@ -1708,9 +1699,24 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    /*********END UPLOADING PHOTO*******/
-    
-    /*********IUGU API*******/
+    //-------IUGU API-----------------------------------------------
+    public function iugu_simples_sale(){
+        require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
+        Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
+        Iugu_Charge::create(
+            [
+                "token"=> "TOKEN QUE VEIO DO IUGU.JS OU CRIADO VIA BIBLIOTECA",
+                "email"=>"your@email.test",
+                "items" => [
+                    [
+                        "description"=>"Item Teste",
+                        "quantity"=>"1",
+                        "price_cents"=>"1000"
+                    ]
+                ]
+            ]
+        );
+    }
     
     public function get_token_iugu($id){
         
@@ -1887,9 +1893,7 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    /*********END IUGU API*******/
-    
-    /*********TOPAZIO API*******/
+    //-------TOPAZIO API-----------------------------------------------
     public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2209,10 +2213,8 @@ class Welcome extends CI_Controller {
         
         return $parsed_response;
     }
-    /*********END TOPAZIO API*******/
     
-    /*********API D4Sign*******/
-    
+    //-------API D4Sign-----------------------------------------------
     public function get_safes_D4Sign(){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2305,7 +2307,5 @@ class Welcome extends CI_Controller {
                 echo $e->getMessage();
         } 
     }
-    /*********API D4Sign*******/
-   
      
 }
