@@ -32,6 +32,7 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
+        die('This functionalities is under development :-)');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
