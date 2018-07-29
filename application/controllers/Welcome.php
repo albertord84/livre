@@ -12,6 +12,8 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {                  
+        //$safes = $this->upload_document_template_D4Sign(3);
+        //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
         //$safes = $this->resend_for_sign_document_D4Sign(3);
@@ -2140,10 +2142,10 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "cb56daff-4271-3438-834e-481f20ed0d9f"; //$this->get_topazio_API_token();
+        $API_token = "5dc59bda-b230-399f-97bb-be67003a0fa1";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
-            if(!$result_basic){
+            if($result_basic){
                 $ccb = $this->topazio_loans($id, $API_token);
                 if($ccb){
                     $result['message'] = "Emprestimo aprovado!";
@@ -2350,11 +2352,19 @@ class Welcome extends CI_Controller {
                 $result = $client->documents->createList($transaction['doc_d4sign'], $signers);
                 
                 if(is_object($result) && $result->message[0]->success)                    
-                    $this->transaction_model->save_in_db(
+                {    $this->transaction_model->save_in_db(
                             'transactions',
                             'id',$id,
                             'key_signer',$result->message[0]->key_signer);
-                
+                    /*$email = $transaction['email'];
+                    $display_name = $transaction['name'];
+                    $documentation = $transaction['cpf'];
+                    $birthday = '01/01/1970';
+                    $key_signer = $result->message[0]->key_signer;
+
+                    $add = $client->documents->addinfo($transaction['doc_d4sign'], $email, $display_name, $documentation, $birthday, $key_signer);                
+                     */                    
+                }
         } catch (Exception $e) {
                 //echo $e->getMessage();
                 return null;
@@ -2417,6 +2427,67 @@ class Welcome extends CI_Controller {
                 return null;
         } 
         return $docs;
+    }
+    
+    public function cancel_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $docs = $client->documents->cancel($transaction['doc_d4sign']);
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function upload_document_template_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $templates = array(
+			"MjA1Nw==" => array(
+					'name' => $transaction['name'],
+					'amount_solicited' => $transaction['amount_solicited'],
+					'num_plots' => $transaction['number_plots']
+					)
+			);							
+	
+                $name_document = "Contrato_".$transaction['cpf'];
+                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';
+
+                $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $return;
     }
     
     /*********API D4Sign*******/
