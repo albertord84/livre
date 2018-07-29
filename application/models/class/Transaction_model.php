@@ -207,10 +207,13 @@
             }
         }
         
-        public function insert_transaction_status_date($transaction_id, $status_id){
+        public function update_transaction_status($transaction_id, $status_id){
             try {
                 $this->db->insert('transactions_dates',array('transaction_id'=>$transaction_id, 'status_id'=>$status_id, 'date'=>time()));
-                return $this->db->insert_id();
+                $a = $this->db->insert_id();
+                $this->db->where('id',$transaction_id);
+                $b = $this->db->update('transactions',array('status_id'=>$status_id));
+                return ($a && $b);                
             } catch (Exception $exc) {
                 //echo $exc->getTraceAsString();
                 return false;
@@ -219,12 +222,9 @@
         
         public function get_transaction_status($transaction_id){
             try {
-                $this->db->select('*');
-                $this->db->from('transactions_dates');
-                $this->db->join('transactions_status', 'transactions_status.id = transactions_dates.status_id');
-                $this->db->where('transactions_dates.transactions_id',$transaction_id);
-                $this->db->order_by('date','DESC');
-                $this->db->limit(1);
+                $this->db->select('status_id');
+                $this->db->from('transactions');
+                $this->db->where('transactions.id',$transaction_id);
                 $result = $this->db->get()->row_array();                       
                 return $result;
             } catch (Exception $exc) {

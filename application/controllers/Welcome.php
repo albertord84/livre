@@ -372,9 +372,8 @@ class Welcome extends CI_Controller {
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
                     
                     if($possible['action']==='insert_beginner'){
-                        $datas['status_id']=  transactions_status::BEGINNER;
                         $datas['folder_in_server']=  $datas["cpf"]."_".time();
-                        $id_row = $this->transaction_model->insert_db_steep_1($datas);
+                        $id_row = $this->transaction_model->insert_db_steep_1($datas);                        
                     }
                     else{
                         $id_row = $this->transaction_model->update_db_steep_1($datas,$possible['id']);
@@ -382,6 +381,9 @@ class Welcome extends CI_Controller {
                             $id_row=$possible['id'];
                     }
                     if($id_row){
+                        $this->transaction_model->update_transaction_status(
+                            $id_row, 
+                            transactions_status::BEGINNER);
                         $result['success'] = true;
                         $result['pk'] = $id_row;
                         $_SESSION['pk'] = $id_row;                        
@@ -838,7 +840,7 @@ class Welcome extends CI_Controller {
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
                         'cdb_number',$resp['ccb']);                
-                $this->transaction_model->insert_transaction_status_date(
+                $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::TOPAZIO_IN_ANALISYS);
                 //email de bem sucedido
@@ -878,7 +880,7 @@ class Welcome extends CI_Controller {
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
                     'new_photos_code',$unique_new_photos_code);
-            $this->transaction_model->insert_transaction_status_date(
+            $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_PHOTO);
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
@@ -938,7 +940,7 @@ class Welcome extends CI_Controller {
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
                     'new_account_bank_code',$unique_new_account_bank_code);
-            $this->transaction_model->insert_transaction_status_date(
+            $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_ACCOUNT);
             $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
@@ -997,7 +999,7 @@ class Welcome extends CI_Controller {
                 //3. pedir signatura nuevamente con API de Moreno
                 
                 //4. cambiar el status de la transaccion
-                $this->transaction_model->insert_transaction_status_date(
+                $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_SIGNATURE);
                 $result['success']=true; //para mostrar el toggle2
@@ -1037,7 +1039,7 @@ class Welcome extends CI_Controller {
             //2. hacer que d4sign le envie el email al cliente
             
             
-            $this->transaction_model->insert_transaction_status_date(
+            $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_SING_US);
             $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
@@ -1339,8 +1341,6 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-    
-    
     
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
