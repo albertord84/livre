@@ -500,7 +500,7 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {        
+    $("#btn_verify_phone_number").click(function () {  
         $.ajax({
             url: base_url+'index.php/welcome/request_sms_code',                
             data: {

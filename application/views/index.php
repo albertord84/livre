@@ -29,6 +29,7 @@
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
+            var key = '<?php echo $key;?>';
         </script>
         
         <?php include_once "pixel_facebook.php";?>

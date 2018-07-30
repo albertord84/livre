@@ -65,7 +65,8 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">
                                         <span class="fleft100">Valor total</span>
-                                            <span class="emp">R$ <?php echo $_SESSION['affiliate_logged_datas']['total_value']; ?>
+                                        <span class="emp">
+                                            R$ <?php echo str_replace('.', ',', $_SESSION['affiliate_logged_datas']['total_value']/100); ?>
                                         </span>
                                     </div>
                                     <!--<div class="col-md-2 col-sm-2 col-xs-12 pd-lr5 porc text-center">▲ <span class="fleft100">20%</span></div>-->
@@ -125,7 +126,7 @@
                                         <?php echo date("d-m-y / H:i", $transaction['dates'][0]['date']); ?>
                                     </div>
                                     <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
-                                        <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
+                                        R$ <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
                                     </div>
                                     <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                         <small class="fleft100">Dados do cartão</small>

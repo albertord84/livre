@@ -118,7 +118,7 @@
             $this->load->model('class/transactions_status');
             $this->db->select('*');
             $this->db->from('transactions_dates'); 
-            $this->db->where("transactions_id", $id);
+            $this->db->where("transaction_id", $id);
             $this->db->where('status_id <>', transactions_status::BEGINNER);
             $this->db->order_by('transactions_dates.id', 'asc');
             $status_array = $this->db->get()->result_array();
@@ -207,10 +207,17 @@
             }
         }
         
-        public function update_transaction_status($transaction_id, $status_id){
+        public function update_transaction_status($transaction_id, $status_id,$new_beginner_date=true){
             try {
-                $this->db->insert('transactions_dates',array('transaction_id'=>$transaction_id, 'status_id'=>$status_id, 'date'=>time()));
-                $a = $this->db->insert_id();
+                $this->load->model('class/transactions_status');
+                if($new_beginner_date){
+                    $this->db->insert('transactions_dates',array('transaction_id'=>$transaction_id, 'status_id'=>$status_id, 'date'=>time()));
+                    $a = $this->db->insert_id();                    
+                } else{
+                    $this->db->where('id',$transaction_id);
+                    $this->db->where('status_id',$status_id);
+                    $a = $this->db->update('transactions_dates',array('date'=>time()));
+                }
                 $this->db->where('id',$transaction_id);
                 $b = $this->db->update('transactions',array('status_id'=>$status_id));
                 return ($a && $b);                
@@ -222,10 +229,11 @@
         
         public function get_transaction_status($transaction_id){
             try {
-                $this->db->select('status_id');
+                $this->db->select('status_id,date');
                 $this->db->from('transactions');
                 $this->db->where('transactions.id',$transaction_id);
-                $result = $this->db->get()->row_array();                       
+                $this->db->order_by('date','DESC');
+                $result = $this->db->get()->result_array()[0];
                 return $result;
             } catch (Exception $exc) {
                 //echo $exc->getTraceAsString();

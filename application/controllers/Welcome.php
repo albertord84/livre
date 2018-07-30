@@ -9,9 +9,7 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     } 
-    
-    //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {                  
+    public function test() {       
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -21,7 +19,11 @@ class Welcome extends CI_Controller {
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_conciliations("2018-07-18");
-        //$result = $this->upload_document_D4Sign();
+        //$result = $this->upload_document_D4Sign();        
+    }
+    
+    //-------VIEWS FUNCTIONS--------------------------------    
+    public function index() {       
         $this->set_session(); 
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -32,7 +34,7 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
-        die('This functionalities is under development :-)');
+        //die('This functionalities is under development :-)');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -263,7 +265,7 @@ class Welcome extends CI_Controller {
                 $nomes[$client['name']]=1;
         }
         if(count($nomes)>1){*/
-        if($clients[0]['name'] != $datas['name']){
+        if($N > 0 && $clients[0]['name'] != $datas['name']){
             $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
@@ -349,6 +351,10 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_1(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->post();
         if($datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -370,20 +376,23 @@ class Welcome extends CI_Controller {
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
-                    
+                    $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
                         $datas['folder_in_server']=  $datas["cpf"]."_".time();
-                        $id_row = $this->transaction_model->insert_db_steep_1($datas);                        
+                        $id_row = $this->transaction_model->insert_db_steep_1($datas); 
+                        $new_beginner_date = true;
                     }
                     else{
                         $id_row = $this->transaction_model->update_db_steep_1($datas,$possible['id']);
-                        if($id_row)
-                            $id_row=$possible['id'];
+                        if($id_row){
+                            $id_row=$possible['id'];}
                     }
                     if($id_row){
                         $this->transaction_model->update_transaction_status(
                             $id_row, 
-                            transactions_status::BEGINNER);
+                            transactions_status::BEGINNER,
+                            $new_beginner_date    
+                                );
                         $result['success'] = true;
                         $result['pk'] = $id_row;
                         $_SESSION['pk'] = $id_row;                        
@@ -641,8 +650,7 @@ class Welcome extends CI_Controller {
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
             $cpf_upload = false;
-        }
-            
+        }            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             
             if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
@@ -651,7 +659,19 @@ class Welcome extends CI_Controller {
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //hacer mas cosas **************** //
+                
+                //1. crear docuemnto a partir de plantilla y guardar token del documento en la BD
+                                
+                //2. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                
+                //3.  mandar a assinar
+                
+                //4. slavar el status para WAIT_SIGNATURE
+                
+                //5. pagina de sucesso de compra con los tags de adwords y analitics
+                
+                //6. matar session para evitar retroceder
+                
             }
             else{                
                 $result['success'] = false;
@@ -1060,7 +1080,6 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $result['success'] = false;
-        var_dump($_SESSION);
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
             //1. estornar dinero
@@ -1097,6 +1116,8 @@ class Welcome extends CI_Controller {
     
     //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
+//        session_unset();
+//        session_destroy();
         session_start();
         $_SESSION = array();
         $ip=$_SERVER['REMOTE_ADDR'];
@@ -1389,9 +1410,7 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-    //-------END SMS KAIO API---------------------------------------
-    
-        
+            
     //-------UPLOADING PHOTO---------------------------------------
     public function upload_file(){
         $this->load->model('class/transaction_model');
@@ -2322,10 +2341,7 @@ class Welcome extends CI_Controller {
         } 
     }
     
-    public function signer_for_doc_D4Sign(  $id, $act = '1', $foreign = 0,
-                                            $certificadoicpbr = 0,
-                                            $assinatura_presencial = 0,
-                                            $embed_methodauth = 'email'){
+    public function signer_for_doc_D4Sign($id, $act = '1', $foreign = 0, $certificadoicpbr = 0, $assinatura_presencial = 0, $embed_methodauth = 'email'){
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2492,7 +2508,6 @@ class Welcome extends CI_Controller {
         } 
         return $return;
     }
-
     
     
 }

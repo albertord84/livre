@@ -208,7 +208,7 @@
                             </div>
                         </div>
                         <div class="fleft100 m-top10 text-right center-sm">
-                            <button id="btn_steep_1" class="bt-green px1" disabled>Próximo</button>
+                            <button id="btn_steep_1" class="bt-green px1" disabled >Próximo</button>
                         </div>
                     </div>                    
                     
