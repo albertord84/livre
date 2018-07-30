@@ -32,7 +32,7 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
-        die('This functionalities is under development :-)');
+        //die('This functionalities is under development :-)');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -1096,7 +1096,7 @@ class Welcome extends CI_Controller {
     }
     
     //-------AUXILIAR FUNCTIONS------------------------------------    
-    public function set_session(){
+    public function set_session(){                
         session_start();
         $_SESSION = array();
         $ip=$_SERVER['REMOTE_ADDR'];
@@ -2145,7 +2145,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "5dc59bda-b230-399f-97bb-be67003a0fa1";//$this->get_topazio_API_token();
+        $API_token = "cb97546f-10b0-3eeb-8ea1-fac15ba61a31";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2480,7 +2480,7 @@ class Welcome extends CI_Controller {
 			);							
 	
                 $name_document = "Contrato_".$transaction['cpf'];
-                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';
+                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
 	
