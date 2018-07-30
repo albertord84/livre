@@ -666,7 +666,7 @@ class Welcome extends CI_Controller {
                 
                 //3.  mandar a assinar
                 
-                //4. slavar el status para WAIT_SIGNATURE
+                //4. salvar el status para WAIT_SIGNATURE
                 
                 //5. pagina de sucesso de compra con los tags de adwords y analitics
                 
@@ -2497,6 +2497,12 @@ class Welcome extends CI_Controller {
                 $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
+                
+                if(is_object($return) && $return->uuid != "")                    
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'doc_d4sign',$return->uuid);
 	
         } catch (Exception $e) {
                 //echo $e->getMessage();
@@ -2505,5 +2511,40 @@ class Welcome extends CI_Controller {
         return $return;
     }
     
-    
+    public function download_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+                
+                $file = file_get_contents($url_doc->url);
+	
+                //Para ZIP
+                //header("Content-type: application/octet-stream");
+                //header("Content-Disposition: attachment; filename=\"".$url_doc->name.".zip"."\"");
+
+                //Para PDF
+                header("Content-type: application/pdf");
+                header("Content-Disposition: attachment; filename=\"".$url_doc->name.".pdf"."\"");
+
+                echo $file;
+                
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
 }
