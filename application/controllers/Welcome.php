@@ -1116,8 +1116,6 @@ class Welcome extends CI_Controller {
     
     //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
-//        session_unset();
-//        session_destroy();
         session_start();
         $_SESSION = array();
         $ip=$_SERVER['REMOTE_ADDR'];
@@ -1708,10 +1706,8 @@ class Welcome extends CI_Controller {
                 if($datas['new_ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
-                $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id', $this->Crypt->decrypt($datas['trid']),
-                    'status_id',transactions_status::PENDING);
+                $this->transaction_model->update_transaction_status($this->Crypt->decrypt($datas['trid']), transactions_status::PENDING);
+                
                 session_destroy();
             }
             else{                
@@ -2166,7 +2162,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "5dc59bda-b230-399f-97bb-be67003a0fa1";//$this->get_topazio_API_token();
+        $API_token = "cb97546f-10b0-3eeb-8ea1-fac15ba61a31";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2498,7 +2494,7 @@ class Welcome extends CI_Controller {
 			);							
 	
                 $name_document = "Contrato_".$transaction['cpf'];
-                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';
+                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
 	
