@@ -2527,9 +2527,22 @@ class Welcome extends CI_Controller {
                 $client->setAccessToken($token_4sign);
                 $client->setCryptKey($crypt_4sign);
                 
-                $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+                $doc_name = "Contrato_".$transaction['cpf'];
                 
-                $file = file_get_contents($url_doc->url);
+                if($transaction['url_d4sign'])
+                    $url = $transaction['url_d4sign'];
+                else {
+                    $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+                    $url = $url_doc->url;
+                    $doc_name = $url_doc->name;
+                }
+                
+                $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'url_d4sign',$url);
+                
+                $file = file_get_contents($url);
 	
                 //Para ZIP
                 //header("Content-type: application/octet-stream");
@@ -2537,7 +2550,7 @@ class Welcome extends CI_Controller {
 
                 //Para PDF
                 header("Content-type: application/pdf");
-                header("Content-Disposition: attachment; filename=\"".$url_doc->name.".pdf"."\"");
+                header("Content-Disposition: attachment; filename=\"".$doc_name.".pdf"."\"");
 
                 echo $file;
                 
