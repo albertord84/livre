@@ -33,7 +33,7 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
-            $this->db->where('account_banks.propietary_type','1');
+            $this->db->where('account_banks.propietary_type','0');
             //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
@@ -49,8 +49,8 @@ class Affiliate_model extends CI_Model{
                 $result[$i]['credit_card_final'] = substr($result[$i]['credit_card_number'], $N-4, $N);
                 $result[$i]['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
                 $result[$i]['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
-                $result[$i]['bank_name'] = $this->Crypt->get_bank_by_code($result[$i]['bank']);
                 $result[$i]['bank'] = $this->Crypt->decrypt($transaction['bank']);
+                $result[$i]['bank_name'] = $this->Crypt->get_bank_by_code($result[$i]['bank']);
                 $result[$i]['agency'] = $this->Crypt->decrypt($transaction['agency']);
                 $result[$i]['account_type'] = $this->Crypt->decrypt($transaction['account_type']);
                 $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
@@ -109,18 +109,6 @@ class Affiliate_model extends CI_Model{
         }
     }
     
-    public function update_afiliate($id,$datas){
-        try {
-            $datas_tmp=$datas;
-            unset($datas_tmp['key']);
-            $this->db->where('id',$id);
-            $result = $this->db->update('affiliates',$datas_tmp);            
-            return $result;
-        } catch (Exception $exc) {
-            echo $exc->getTraceAsString();
-        }
-    }
-    
     public function insert_afiliate($datas){
         try {
             $datas_tmp=$datas;
@@ -129,6 +117,18 @@ class Affiliate_model extends CI_Model{
             $id_row=$this->db->insert_id();
             return $id_row;            
         } catch (Exception $ex) {
+            echo $exc->getTraceAsString();
+        }
+    }
+    
+    public function update_afiliate($id,$datas){
+        try {
+            $datas_tmp=$datas;
+            unset($datas_tmp['key']);
+            $this->db->where('id',$id);
+            $result = $this->db->update('affiliates',$datas_tmp);            
+            return $result;
+        } catch (Exception $exc) {
             echo $exc->getTraceAsString();
         }
     }

@@ -25,6 +25,15 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {       
         $this->set_session(); 
+        $datas = $this->input->get();
+        if(isset($datas['afiliado']))
+            $_SESSION['affiliate_code'] = $datas['afiliado'];
+        else
+            $_SESSION['affiliate_code'] = '';
+        if(isset($datas['utm_source']))
+            $_SESSION['utm_source'] = $datas['utm_source'];
+        else
+            $_SESSION['utm_source'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -362,6 +371,8 @@ class Welcome extends CI_Controller {
         }else{
             $this->load->model('class/transaction_model');            
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
+            $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
+            $datas['utm_source'] = $_SESSION['utm_source'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -733,7 +744,7 @@ class Welcome extends CI_Controller {
             $this->load->model('class/affiliate_status');
             $this->load->model('class/affiliate_model');
             $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
-            $N = count($afiliate);            
+            $N = count($afiliate);
             if($N>0){
                 if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
                     $action = 'not_action';
@@ -754,7 +765,7 @@ class Welcome extends CI_Controller {
                 $t = time();
                 $datas['init_date'] = $t;
                 $datas['status_date'] = $t;
-                $cad = explode('-', str_replace('@', '-', $datas['email']));
+                $cad = $datas['affiliate_phone_ddd']+$datas['affiliate_phone_number'];
                 $datas['code'] = $cad[0];
                 if($action =='update_afiliate'){
                     if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
