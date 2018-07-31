@@ -677,7 +677,7 @@ class Welcome extends CI_Controller {
                 
                 //3.  mandar a assinar
                 
-                //4. slavar el status para WAIT_SIGNATURE
+                //4. salvar el status para WAIT_SIGNATURE
                 
                 //5. pagina de sucesso de compra con los tags de adwords y analitics
                 

@@ -52,7 +52,7 @@
 			</div>
 			<div class="col-md-3 col-sm-3 col-xs-12 text-right center-xs">
 				<ul class="menu i-block m-top10-xs">
-					<li><a href=""><?php echo $_SESSION['affiliate_logged_datas']['email'];?></a></li>
+                                    <li><a href=""><?php echo $_SESSION['affiliate_logged_datas']['email'];?></a></li>
 					<li class="tv">|</li>
                                         <li><a href="<?php echo base_url().'index.php/welcome/logout';?>">Sair</a></li>
 				</ul>
