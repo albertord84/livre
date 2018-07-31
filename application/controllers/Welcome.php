@@ -9,7 +9,13 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     } 
-    public function test() {       
+    public function test() { 
+        session_start();        
+        $_SESSION['a']=1;
+        session_destroy();
+        var_dump(session_id());
+    }
+    public function test2() {       
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -44,6 +50,7 @@ class Welcome extends CI_Controller {
     
     public function checkout() {
         //die('This functionalities is under development :-)');
+        if(session_id()=='')header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -655,9 +662,12 @@ class Welcome extends CI_Controller {
     }
     
     public function sign_contract() {
+        $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $datas = $this->input->post();
-        
+        $this->load->model('class/transactions_status');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $datas = $this->input->post();        
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
             $cpf_upload = false;
@@ -678,10 +688,13 @@ class Welcome extends CI_Controller {
                 //3.  mandar a assinar
                 
                 //4. salvar el status para WAIT_SIGNATURE
-                
-                //5. pagina de sucesso de compra con los tags de adwords y analitics
-                
-                //6. matar session para evitar retroceder
+                $this->transaction_model->update_transaction_status(
+                    $_SESSION['pk'], 
+                    transactions_status::WAIT_SIGNATURE);
+                //5. matar session para evitar retroceder
+                session_destroy();
+                //6. pagina de sucesso de compra con los tags de adwords y analitics
+                $this->load->view('sucesso-compra',$params);
                 
             }
             else{                
