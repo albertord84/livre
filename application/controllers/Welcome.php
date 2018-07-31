@@ -10,13 +10,7 @@ class Welcome extends CI_Controller {
         parent::__construct();
     } 
 
-    public function test() { 
-        session_start();        
-        $_SESSION['a']=1;
-        session_destroy();
-        var_dump(session_id());
-    }
-    public function test2() {       
+    public function test() {
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -697,9 +691,14 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $_SESSION['pk'], 
                         transactions_status::WAIT_SIGNATURE);
-                    //7. matar session para evitar retroceder
+                    //6. matar session para evitar retroceder
                     session_destroy();
                     //7. pagina de sucesso de compra con los tags de adwords y analitics
+                    $params['transactionId']=$_SESSION['pk'];
+                    $params['transactionAffiliation']='site';
+                    $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                    $params['solicited_value']=['transaction_values']['solicited_value'];
+                    $params['amount_months']=['transaction_values']['amount_months'] ;
                     $this->load->view('sucesso-compra',$params);
                 }else{
                     $name = 1;
@@ -1121,7 +1120,7 @@ class Welcome extends CI_Controller {
                 //3. enviar email de estorno
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
-                $result = $this->Gmail->transaction_recused($name,$useremail);
+                $result = $this->Gmail->transaction_request_recused($name,$useremail);
             }else{
                 $result['message'] = $resp['message'];
             }
@@ -1756,7 +1755,7 @@ class Welcome extends CI_Controller {
         );
     }
     
-    public function get_token_iugu($id){        
+    public function get_token_iugu($id){
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
@@ -1822,7 +1821,7 @@ class Welcome extends CI_Controller {
                     'description' => 'money',
                     'quantity' => 1,
                     'price_cents' => 1000//$client['total_effective_cost']
-                )            
+                )
         );        
         $postFields = http_build_query($postData);
         $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
