@@ -26,6 +26,12 @@
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
+    
+    <?php include_once "pixel_facebook.php";?>
+    <?php include_once "pixel_gtags.php";?>        
+    <?php include_once "pixel_ecomerce_analytics.php";?>
+    <?php include_once "pixel_adwords.php";?>
+    
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">

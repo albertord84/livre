@@ -180,7 +180,7 @@
             return $result;
         }
         
-        public function transaction_recused($name,$useremail) {
+        public function transaction_request_recused($name,$useremail) {
             $this->mail->clearAddresses();
             $this->mail->addAddress($useremail, $name);
             $this->mail->clearCCs();

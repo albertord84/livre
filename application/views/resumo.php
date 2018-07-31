@@ -1,4 +1,9 @@
 <?php include_once "inc/header-interno.php";?>
+<?php include_once "pixel_facebook.php";?>
+<?php include_once "pixel_gtags.php";?>        
+<?php //include_once "pixel_ecomerce_analytics.php";?>
+<?php //include_once "pixel_adwords.php";?>
+
 <section class="fleft100 m-top40 m-b100 center-xs">
 	<div class="container">
 		<div class="col-md-6 col-sm-6 col-xs-12">

@@ -1,4 +1,9 @@
 <?php include_once "inc/header-interno.php";?>
+<?php include_once "pixel_facebook.php";?>
+<?php include_once "pixel_gtags.php";?>        
+<?php //include_once "pixel_ecomerce_analytics.php";?>
+<?php //include_once "pixel_adwords.php";?>
+
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';

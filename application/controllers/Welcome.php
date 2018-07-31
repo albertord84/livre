@@ -34,7 +34,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test2();
+        $this->test();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -700,9 +700,14 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $_SESSION['pk'], 
                         transactions_status::WAIT_SIGNATURE);
-                    //7. matar session para evitar retroceder
+                    //6. matar session para evitar retroceder
                     session_destroy();
                     //7. pagina de sucesso de compra con los tags de adwords y analitics
+                    $params['transactionId']=$_SESSION['pk'];
+                    $params['transactionAffiliation']='site';
+                    $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                    $params['solicited_value']=['transaction_values']['solicited_value'];
+                    $params['amount_months']=['transaction_values']['amount_months'] ;
                     $this->load->view('sucesso-compra',$params);
                 }else{
                     $name = 1;
@@ -1128,7 +1133,7 @@ class Welcome extends CI_Controller {
                 //3. enviar email de estorno
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
-                $result = $this->Gmail->transaction_recused($name,$useremail);
+                $result = $this->Gmail->transaction_request_recused($name,$useremail);
             }else{
                 $result['message'] = $resp['message'];
             }
@@ -1763,6 +1768,7 @@ class Welcome extends CI_Controller {
         );
     }
     
+
     public function get_client_token_iugu($id){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
