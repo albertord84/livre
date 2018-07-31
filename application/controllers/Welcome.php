@@ -9,8 +9,14 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     } 
-    public function test() {       
-        //$safes = $this->download_document_D4Sign(3);
+
+    public function test() { 
+        session_start();        
+        $_SESSION['a']=1;
+        session_destroy();
+        var_dump(session_id());
+    }
+    public function test2() {       
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -27,6 +33,15 @@ class Welcome extends CI_Controller {
     public function index() {
         $this->test();
         $this->set_session(); 
+        $datas = $this->input->get();
+        if(isset($datas['afiliado']))
+            $_SESSION['affiliate_code'] = $datas['afiliado'];
+        else
+            $_SESSION['affiliate_code'] = '';
+        if(isset($datas['utm_source']))
+            $_SESSION['utm_source'] = $datas['utm_source'];
+        else
+            $_SESSION['utm_source'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -37,6 +52,7 @@ class Welcome extends CI_Controller {
     
     public function checkout() {
         //die('This functionalities is under development :-)');
+        if(session_id()=='')header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -188,6 +204,7 @@ class Welcome extends CI_Controller {
     ['client_datas']['phone_ddd']
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
+    ['client_datas']['credit_card_datas']
 
     //Variaveis para subir novamente as fotos
     ['new_front_credit_card']
@@ -364,6 +381,8 @@ class Welcome extends CI_Controller {
         }else{
             $this->load->model('class/transaction_model');            
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
+            $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
+            $datas['utm_source'] = $_SESSION['utm_source'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -517,9 +536,9 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        /*verificar cartao de credito haciendo la cobrança*/
-                        //$response = $this->do_payment_iugu($id_row);
-                        $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
+                        $_SESSION['client_datas']['credit_card_datas']=$datas;
+                        $response['success'] = TRUE; 
+                        $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
                         $result['message'] = $response['message'];
                     }
@@ -646,9 +665,14 @@ class Welcome extends CI_Controller {
     }
     
     public function sign_contract() {
+        $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $datas = $this->input->post();
-        
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $datas = $this->input->post();        
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
             $cpf_upload = false;
@@ -662,18 +686,30 @@ class Welcome extends CI_Controller {
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 
-                //1. crear docuemnto a partir de plantilla y guardar token del documento en la BD
-                                
-                //2. cadastrar un signatario para ese docuemnto y guardar token del signatario
-                
-                //3.  mandar a assinar
-                
-                //4. salvar el status para WAIT_SIGNATURE
-                
-                //5. pagina de sucesso de compra con los tags de adwords y analitics
-                
-                //6. matar session para evitar retroceder
-                
+                //1. pasar cartão de crédito na IUGU (TODO MORENO)
+                //$_SESSION['client_datas']['credit_card_datas'];
+                $response = $this->do_payment_iugu($_SESSION['pk']);
+                if($response['success']){
+                    //2. crear documento a partir de plantilla y guardar token del documento en la BD
+
+                    //3. cadastrar un signatario para ese docuemnto y guardar token del signatario
+
+                    //4.  mandar a assinar
+
+                    //5. salvar el status para WAIT_SIGNATURE
+                    $this->transaction_model->update_transaction_status(
+                        $_SESSION['pk'], 
+                        transactions_status::WAIT_SIGNATURE);
+                    //7. matar session para evitar retroceder
+                    session_destroy();
+                    //7. pagina de sucesso de compra con los tags de adwords y analitics
+                    $this->load->view('sucesso-compra',$params);
+                }else{
+                    $name = 1;
+                    $this->Gmail->credit_card_recused($name,$useremail);
+                    $result['success'] = false;
+                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";  
+                }
             }
             else{                
                 $result['success'] = false;
@@ -735,7 +771,7 @@ class Welcome extends CI_Controller {
             $this->load->model('class/affiliate_status');
             $this->load->model('class/affiliate_model');
             $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
-            $N = count($afiliate);            
+            $N = count($afiliate);
             if($N>0){
                 if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
                     $action = 'not_action';
@@ -756,7 +792,7 @@ class Welcome extends CI_Controller {
                 $t = time();
                 $datas['init_date'] = $t;
                 $datas['status_date'] = $t;
-                $cad = explode('-', str_replace('@', '-', $datas['email']));
+                $cad = $datas['affiliate_phone_ddd']+$datas['affiliate_phone_number'];
                 $datas['code'] = $cad[0];
                 if($action =='update_afiliate'){
                     if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
@@ -922,12 +958,10 @@ class Welcome extends CI_Controller {
         $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
         if($transaction){
            if($datas['upc'] == $transaction['new_photos_code']){
-               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
             $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');          
-            //load view to new photos
             $_SESSION['session_new_foto'] = true;   
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -950,9 +984,9 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
         if($_SESSION['logged_role'] === 'ADMIN'){
             $GLOBALS['sistem_config'] = $this->system_config->load();
-            $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
             $useremail = $_SESSION['transaction_requested_datas']['email'];
             $unique_new_account_bank_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
@@ -984,12 +1018,10 @@ class Welcome extends CI_Controller {
         $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
         if($transaction){
            if($datas['uabc'] == $transaction['new_account_bank_code']){
-               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
             $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');
-            //load view to new photos
             $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
             $params['transaction']=$transaction;
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -1022,7 +1054,7 @@ class Welcome extends CI_Controller {
                 
                 //4. cambiar el status de la transaccion
                 $this->transaction_model->update_transaction_status(
-                        $_SESSION['transaction_requested_id'], 
+                        $_SESSION['transaction_requested_id'],
                         transactions_status::WAIT_SIGNATURE);
                 $result['success']=true; //para mostrar el toggle2
             }else{
@@ -1060,7 +1092,6 @@ class Welcome extends CI_Controller {
             
             //2. hacer que d4sign le envie el email al cliente
             
-            
             $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_SING_US);
@@ -1082,36 +1113,21 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $result['success'] = false;
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
             //1. estornar dinero
-            $_SESSION['affiliate_logged_transactions'];
-            //2. enviar email de estorno
-            
-            //3. mudar status de la transaccion
-            
-            //4. salvar fecha del status de la transaccion            
-            
-            
-            
-//            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
-//            $useremail = $_SESSION['transaction_requested_datas']['email'];
-//            $unique_new_sing_us_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
-//            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
-//            $link = urlencode(base_url().'index.php/welcome/send_new_sing_us?trid='.$transaction_encrypted_id.'&uasu='.$unique_new_sing_us_code);
-//            $this->transaction_model->save_in_db(
-//                    'transactions',
-//                    'id',$_SESSION['transaction_requested_id'],
-//                    'new_sing_us_code',$unique_new_sing_us_code);                
-//            $this->transaction_model->save_in_db(
-//                    'transactions',
-//                    'id',$_SESSION['transaction_requested_id'],
-//                    'status_id',transactions_status::WAIT_SING_US);
-//            $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
-//            if ($result['success'])
-//                $result['message'] = 'Nova assinatura solicitada com sucesso!!';
-//            else             
-//                $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+            $resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
+            if($resp['success']){
+                //2. mudar status de la transaccion
+                $this->transaction_model->update_transaction_status(
+                    $_SESSION['transaction_requested_id'], 
+                    transactions_status::REVERSE_MONEY);
+                //3. enviar email de estorno
+                $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+                $useremail = $_SESSION['transaction_requested_datas']['email'];
+                $result = $this->Gmail->transaction_recused($name,$useremail);
+            }else{
+                $result['message'] = $resp['message'];
+            }
         }
         echo json_encode($result);
     }
@@ -1743,8 +1759,7 @@ class Welcome extends CI_Controller {
         );
     }
     
-    public function get_token_iugu($id){
-        
+    public function get_token_iugu($id){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
@@ -1798,27 +1813,21 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
-        
         $this->load->model('class/transaction_model');
-        
         //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
-        
         $token = $this->get_token_iugu($id);
-        
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
             'months' => 1,//$client['number_plots'],
             'items' => array(
-                            'description' => 'money',
-                            'quantity' => 1,
-                            'price_cents' => 1000//$client['total_effective_cost']
-                        )            
+                    'description' => 'money',
+                    'quantity' => 1,
+                    'price_cents' => 1000//$client['total_effective_cost']
+                )            
         );        
-        
         $postFields = http_build_query($postData);
-        
         $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
         $handler = curl_init();
         curl_setopt($handler, CURLOPT_URL, $url);  
@@ -1830,9 +1839,7 @@ class Welcome extends CI_Controller {
         $info = curl_getinfo($handler);
         $string = curl_error($handler);
         curl_close($handler);
-        
         $response = [];
-                
         if(is_object($parsed_response) && $parsed_response->success){
             $this->transaction_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
@@ -1842,7 +1849,6 @@ class Welcome extends CI_Controller {
             $response['success'] = false;
             $response['message'] = $parsed_response->message;
         }
-        
         return $response;
     }
 
