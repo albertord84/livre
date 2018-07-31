@@ -202,7 +202,6 @@ class Welcome extends CI_Controller {
     ['client_datas']['phone_ddd']
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
-    ['client_datas']['credit_card_datas']
 
     //Variaveis para subir novamente as fotos
     ['new_front_credit_card']
@@ -534,7 +533,6 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        $_SESSION['client_datas']['credit_card_datas']=$datas;
                         $response['success'] = TRUE; 
                         $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
@@ -684,8 +682,7 @@ class Welcome extends CI_Controller {
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 
-                //1. pasar cartão de crédito na IUGU (TODO MORENO)
-                //$_SESSION['client_datas']['credit_card_datas'];
+                //1. pasar cartão de crédito na IUGU
                 $response = $this->do_payment_iugu($_SESSION['pk']);
                 if($response['success']){
                     //2. crear documento a partir de plantilla y guardar token del documento en la BD
