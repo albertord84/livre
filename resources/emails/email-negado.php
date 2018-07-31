@@ -9,10 +9,10 @@
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
 	        	<br><br>
-	          	<img src="img/icones/negado.jpg" alt="">   
+	          	<img src="../../assets/img/icones/negado.jpg" alt="">   
           		<br><br>
 	          	<div style="text-align: left;">
-	          		<h2 style="color: #20a7d3;">Oi Marcio!</h2>
+	          		<h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
 					<p>
 						Parece que houve um erro durante o processamento dos dados do seu cartão. 
 						<br><br>
@@ -31,7 +31,7 @@
 	    </tr>
 	    <tr>
 	      	<td colspan="3" width="650" valign="middle" align="center" height="120">
-	        	<img src="img/icones/logo-mkt.png">
+	        	<img src="../../assets/img/icones/logo-mkt.png">
 	  		</td>
 	    </tr>
 	</tbody>
