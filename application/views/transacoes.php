@@ -1,4 +1,9 @@
 <?php include_once "inc/header-interno.php";?>
+<?php include_once "pixel_facebook.php";?>
+<?php include_once "pixel_gtags.php";?>        
+<?php //include_once "pixel_ecomerce_analytics.php";?>
+<?php //include_once "pixel_adwords.php";?>
+
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';
@@ -19,7 +24,7 @@
                                     </p>
 				</div>
 				<div class="w15 fw-500 m-top15 m-top10-xs center-xs"><span id="trans_date"></span></div>
-				<div class="w10 cl-blue m-top15 m-top10-xs center-xs fw-500"><span id="trans_solicited_value"></span></div>
+				<div class="w10 cl-blue m-top15 m-top10-xs center-xs fw-500">R$ <span id="trans_solicited_value"></span></div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
 					<span id="trans_credit_card_name"></span> - Final <span id="trans_credit_card_final"></span> <br>
@@ -141,7 +146,7 @@
                                 <?php echo date("d-m-y / H:i", $transaction['dates'][0]['date']); ?>
                             </div>
                             <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
-                                <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
+                               R$ <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
                             </div>
                             <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                 <?php 

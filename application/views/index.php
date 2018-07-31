@@ -29,10 +29,12 @@
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
+            var key = '<?php echo $key;?>';
         </script>
         
         <?php include_once "pixel_facebook.php";?>
-        <?php include_once "pixel_gtags.php";?>
+        <?php include_once "pixel_gtags.php";?>        
+        <?php //include_once "pixel_ecomerce_analytics.php";?>
         <?php //include_once "pixel_adwords.php";?>
 </head>
 <body>

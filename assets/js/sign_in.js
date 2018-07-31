@@ -5,9 +5,7 @@ $(document).ready(function () {
     var amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
     init_values();
     eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('8 H(4){4=x(4);4=y(4);4=B(4);4=t(4);4=D(4);a 4}8 J(4){4=C(4);4=u(4);4=v(4);4=z(4);4=w(4);a 4}8 x(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%2===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 w(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%3===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 y(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)+A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 z(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)-A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 B(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%5===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 v(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%6===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 t(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)*2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 u(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)/2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 D(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 C(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 r(s,E){a G(F.I()*(E-s)+s)}',46,46,'||||str|||new_str|function||return|length|new|for|var|Array||toString||replace||tmp|else|fromCharCode|if|String|charCodeAt|getRandomArbitrary|min|cs4|anti_cs4|anti_cs3|anti_cs1|cs1|cs2|anti_cs2|13|cs3|anti_cs5|cs5|max|Math|parseInt|codify|random|decodify'.split('|'),0,{}))
-    
-    
-    
+
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_steep_1").click(function () {
         var cpf_value=$('#cpf').val();
@@ -22,7 +20,8 @@ $(document).ready(function () {
         number_address = validate_element('#number_address', '^[0-9]{1,7}$');
         complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
-        state = validate_element('#state_address', '^[a-zA-Z]{2}$');        
+        state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
+        
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && complement && city && state){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
@@ -38,8 +37,8 @@ $(document).ready(function () {
                     'complement_number_address': $('#complement_number_address').val(),
                     'city_address': $('#city_address').val(),
                     'state_address': $('#state_address').val(),
-                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',
-                    'key':key
+                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',                   
+                    'key':key,
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -500,7 +499,7 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {        
+    $("#btn_verify_phone_number").click(function () {  
         $.ajax({
             url: base_url+'index.php/welcome/request_sms_code',                
             data: {

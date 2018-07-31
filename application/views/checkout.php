@@ -36,11 +36,9 @@
         </script>
         
         <?php include_once "pixel_facebook.php";?>
-        <?php include_once "pixel_gtags.php";?>
+        <?php include_once "pixel_gtags.php";?>        
+        <?php //include_once "pixel_ecomerce_analytics.php";?>
         <?php //include_once "pixel_adwords.php";?>
-        
-        <!--<script type="text/javascript" src="<?php // echo base_url().'assets/js/iugu_api.js'?>"></script>--> 
-        
     </head>
     <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
@@ -208,7 +206,7 @@
                             </div>
                         </div>
                         <div class="fleft100 m-top10 text-right center-sm">
-                            <button id="btn_steep_1" class="bt-green px1" disabled>Próximo</button>
+                            <button id="btn_steep_1" class="bt-green px1" disabled >Próximo</button>
                         </div>
                     </div>                    
                     

@@ -9,9 +9,8 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     } 
-    
-    //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {                  
+
+    public function test() {
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -20,9 +19,23 @@ class Welcome extends CI_Controller {
         //$safes = $this->get_document_D4Sign(3);
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
-        //$result = $this->topazio_conciliations("2018-07-18");
-        //$result = $this->upload_document_D4Sign();
+        $result = $this->topazio_conciliations("2018-07-18");
+        //$result = $this->upload_document_D4Sign();        
+    }
+    
+    //-------VIEWS FUNCTIONS--------------------------------    
+    public function index() {
+        $this->test();
         $this->set_session(); 
+        $datas = $this->input->get();
+        if(isset($datas['afiliado']))
+            $_SESSION['affiliate_code'] = $datas['afiliado'];
+        else
+            $_SESSION['affiliate_code'] = '';
+        if(isset($datas['utm_source']))
+            $_SESSION['utm_source'] = $datas['utm_source'];
+        else
+            $_SESSION['utm_source'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -32,7 +45,8 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
-        die('This functionalities is under development :-)');
+        //die('This functionalities is under development :-)');
+        if(session_id()=='')header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -263,7 +277,7 @@ class Welcome extends CI_Controller {
                 $nomes[$client['name']]=1;
         }
         if(count($nomes)>1){*/
-        if($clients[0]['name'] != $datas['name']){
+        if($N > 0 && $clients[0]['name'] != $datas['name']){
             $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
@@ -349,6 +363,10 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_1(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->post();
         if($datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -356,6 +374,8 @@ class Welcome extends CI_Controller {
         }else{
             $this->load->model('class/transaction_model');            
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
+            $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
+            $datas['utm_source'] = $_SESSION['utm_source'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -370,20 +390,23 @@ class Welcome extends CI_Controller {
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
-                    
+                    $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
                         $datas['folder_in_server']=  $datas["cpf"]."_".time();
-                        $id_row = $this->transaction_model->insert_db_steep_1($datas);                        
+                        $id_row = $this->transaction_model->insert_db_steep_1($datas); 
+                        $new_beginner_date = true;
                     }
                     else{
                         $id_row = $this->transaction_model->update_db_steep_1($datas,$possible['id']);
-                        if($id_row)
-                            $id_row=$possible['id'];
+                        if($id_row){
+                            $id_row=$possible['id'];}
                     }
                     if($id_row){
                         $this->transaction_model->update_transaction_status(
                             $id_row, 
-                            transactions_status::BEGINNER);
+                            transactions_status::BEGINNER,
+                            $new_beginner_date    
+                                );
                         $result['success'] = true;
                         $result['pk'] = $id_row;
                         $_SESSION['pk'] = $id_row;                        
@@ -506,9 +529,8 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        /*verificar cartao de credito haciendo la cobrança*/
-                        //$response = $this->do_payment_iugu($id_row);
-                        $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
+                        $response['success'] = TRUE; 
+                        $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
                         $result['message'] = $response['message'];
                     }
@@ -635,14 +657,18 @@ class Welcome extends CI_Controller {
     }
     
     public function sign_contract() {
+        $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $datas = $this->input->post();
-        
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $datas = $this->input->post();        
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
             $cpf_upload = false;
-        }
-            
+        }            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             
             if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
@@ -651,7 +677,35 @@ class Welcome extends CI_Controller {
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //hacer mas cosas **************** //
+                
+                //1. pasar cartão de crédito na IUGU
+                $response = $this->do_payment_iugu($_SESSION['pk']);
+                if($response['success']){
+                    //2. crear documento a partir de plantilla y guardar token del documento en la BD
+
+                    //3. cadastrar un signatario para ese docuemnto y guardar token del signatario
+
+                    //4.  mandar a assinar
+
+                    //5. salvar el status para WAIT_SIGNATURE
+                    $this->transaction_model->update_transaction_status(
+                        $_SESSION['pk'], 
+                        transactions_status::WAIT_SIGNATURE);
+                    //6. matar session para evitar retroceder
+                    session_destroy();
+                    //7. pagina de sucesso de compra con los tags de adwords y analitics
+                    $params['transactionId']=$_SESSION['pk'];
+                    $params['transactionAffiliation']='site';
+                    $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                    $params['solicited_value']=['transaction_values']['solicited_value'];
+                    $params['amount_months']=['transaction_values']['amount_months'] ;
+                    $this->load->view('sucesso-compra',$params);
+                }else{
+                    $name = 1;
+                    $this->Gmail->credit_card_recused($name,$useremail);
+                    $result['success'] = false;
+                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";  
+                }
             }
             else{                
                 $result['success'] = false;
@@ -713,7 +767,7 @@ class Welcome extends CI_Controller {
             $this->load->model('class/affiliate_status');
             $this->load->model('class/affiliate_model');
             $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
-            $N = count($afiliate);            
+            $N = count($afiliate);
             if($N>0){
                 if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
                     $action = 'not_action';
@@ -734,7 +788,7 @@ class Welcome extends CI_Controller {
                 $t = time();
                 $datas['init_date'] = $t;
                 $datas['status_date'] = $t;
-                $cad = explode('-', str_replace('@', '-', $datas['email']));
+                $cad = $datas['affiliate_phone_ddd']+$datas['affiliate_phone_number'];
                 $datas['code'] = $cad[0];
                 if($action =='update_afiliate'){
                     if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
@@ -900,12 +954,10 @@ class Welcome extends CI_Controller {
         $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
         if($transaction){
            if($datas['upc'] == $transaction['new_photos_code']){
-               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
             $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');          
-            //load view to new photos
             $_SESSION['session_new_foto'] = true;   
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -928,9 +980,9 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
         if($_SESSION['logged_role'] === 'ADMIN'){
             $GLOBALS['sistem_config'] = $this->system_config->load();
-            $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
             $useremail = $_SESSION['transaction_requested_datas']['email'];
             $unique_new_account_bank_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
@@ -962,12 +1014,10 @@ class Welcome extends CI_Controller {
         $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
         if($transaction){
            if($datas['uabc'] == $transaction['new_account_bank_code']){
-               //1. descomentar y usar para que el link enviado en el email sea utilizado solo una vez
             $this->transaction_model->save_in_db(
                 'transactions',
                 'id',$transaction['id'],
                 'new_photos_code',$transaction['new_photos_code'].'--used');
-            //load view to new photos
             $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
             $params['transaction']=$transaction;
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -1000,7 +1050,7 @@ class Welcome extends CI_Controller {
                 
                 //4. cambiar el status de la transaccion
                 $this->transaction_model->update_transaction_status(
-                        $_SESSION['transaction_requested_id'], 
+                        $_SESSION['transaction_requested_id'],
                         transactions_status::WAIT_SIGNATURE);
                 $result['success']=true; //para mostrar el toggle2
             }else{
@@ -1038,7 +1088,6 @@ class Welcome extends CI_Controller {
             
             //2. hacer que d4sign le envie el email al cliente
             
-            
             $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_SING_US);
@@ -1060,37 +1109,21 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $result['success'] = false;
-        var_dump($_SESSION);
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
             //1. estornar dinero
-            $_SESSION['affiliate_logged_transactions'];
-            //2. enviar email de estorno
-            
-            //3. mudar status de la transaccion
-            
-            //4. salvar fecha del status de la transaccion            
-            
-            
-            
-//            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
-//            $useremail = $_SESSION['transaction_requested_datas']['email'];
-//            $unique_new_sing_us_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
-//            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
-//            $link = urlencode(base_url().'index.php/welcome/send_new_sing_us?trid='.$transaction_encrypted_id.'&uasu='.$unique_new_sing_us_code);
-//            $this->transaction_model->save_in_db(
-//                    'transactions',
-//                    'id',$_SESSION['transaction_requested_id'],
-//                    'new_sing_us_code',$unique_new_sing_us_code);                
-//            $this->transaction_model->save_in_db(
-//                    'transactions',
-//                    'id',$_SESSION['transaction_requested_id'],
-//                    'status_id',transactions_status::WAIT_SING_US);
-//            $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
-//            if ($result['success'])
-//                $result['message'] = 'Nova assinatura solicitada com sucesso!!';
-//            else             
-//                $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+            $resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
+            if($resp['success']){
+                //2. mudar status de la transaccion
+                $this->transaction_model->update_transaction_status(
+                    $_SESSION['transaction_requested_id'], 
+                    transactions_status::REVERSE_MONEY);
+                //3. enviar email de estorno
+                $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+                $useremail = $_SESSION['transaction_requested_datas']['email'];
+                $result = $this->Gmail->transaction_request_recused($name,$useremail);
+            }else{
+                $result['message'] = $resp['message'];
+            }
         }
         echo json_encode($result);
     }
@@ -1389,9 +1422,7 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-    //-------END SMS KAIO API---------------------------------------
-    
-        
+            
     //-------UPLOADING PHOTO---------------------------------------
     public function upload_file(){
         $this->load->model('class/transaction_model');
@@ -1689,10 +1720,8 @@ class Welcome extends CI_Controller {
                 if($datas['new_ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
-                $this->transaction_model->save_in_db(
-                    'transactions',
-                    'id', $this->Crypt->decrypt($datas['trid']),
-                    'status_id',transactions_status::PENDING);
+                $this->transaction_model->update_transaction_status($this->Crypt->decrypt($datas['trid']), transactions_status::PENDING);
+                
                 session_destroy();
             }
             else{                
@@ -1727,7 +1756,6 @@ class Welcome extends CI_Controller {
     }
     
     public function get_token_iugu($id){
-        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
@@ -1781,27 +1809,21 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
-        
         $this->load->model('class/transaction_model');
-        
         //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
-        
         $token = $this->get_token_iugu($id);
-        
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
             'months' => 1,//$client['number_plots'],
             'items' => array(
-                            'description' => 'money',
-                            'quantity' => 1,
-                            'price_cents' => 1000//$client['total_effective_cost']
-                        )            
+                    'description' => 'money',
+                    'quantity' => 1,
+                    'price_cents' => 1000//$client['total_effective_cost']
+                )
         );        
-        
         $postFields = http_build_query($postData);
-        
         $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
         $handler = curl_init();
         curl_setopt($handler, CURLOPT_URL, $url);  
@@ -1813,9 +1835,7 @@ class Welcome extends CI_Controller {
         $info = curl_getinfo($handler);
         $string = curl_error($handler);
         curl_close($handler);
-        
         $response = [];
-                
         if(is_object($parsed_response) && $parsed_response->success){
             $this->transaction_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
@@ -1825,7 +1845,6 @@ class Welcome extends CI_Controller {
             $response['success'] = false;
             $response['message'] = $parsed_response->message;
         }
-        
         return $response;
     }
 
@@ -2037,20 +2056,20 @@ class Welcome extends CI_Controller {
         $cpf = "06335968762"; //$transaction["cpf"];
         $name = "Julio Petro"; //$transaction["name"];
         $document_id = "1000001"; //$transaction["contract_id"];
-        $release_date = "2018-07-23"; //$this->next_available_day();
+        $release_date = "2018-07-31"; //$this->next_available_day();
         $num_plots = 6; // $transaction["number_plots"];
-        $amount_pay = "1000,00"; // $transaction["amount_solicited"];
+        $amount_pay = "1000.00"; // $transaction["amount_solicited"];
         //***** revisar estas
-        $iof = "15,00"; // 0.0025 * $num_plots * $amount_pay;
+        $iof = "15.00"; // 0.0025 * $num_plots * $amount_pay;
         $tax = $this->tax_model->get_tax_row($num_plots)[$this->get_field($amount_pay)];
         $tac = "0.00"; //0.1 * ($amount_pay + $iof + $tax);
-        $total_value = "1015,00"; //$transaction[""];
-        $plot_value = "290,00";
+        $total_value = "1015.00"; //$transaction[""];
+        $plot_value = "290.00";
         //*********
         $product_code = "211"; //ver esto
         $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
         
-        $account_type_string = ["CC" => "conta corrente", "PP" => "conta poupança"];
+        $account_type_string = ["CC" => "CC", "PP" => "CP"];
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id);
         $bank_code = "001"; // $account_bank["bank"];
         $agency = "4459"; // $account_bank["agency"];
@@ -2067,12 +2086,12 @@ class Welcome extends CI_Controller {
                         ."\",\n    \"amountPay\": \"".$amount_pay
                         ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0"
                         .",\n    \"quotaAmount\": ".$num_plots
-                        .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"cartão de crédito\""
+                        .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"DBC\""
                         .",\n    \"productCode\": ".$product_code
                         .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
-                        ",\n    \"TAC\": \"".$tac."\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    "
+                        ",\n    \"TAC\": \"".$tac."\",\n    \"guarantees\": [\n      {\n        \"document\": \"23456789012\",\n        \"nameOrCompanyName\": \"Livre.Digital\",\n        \"type\": \"\"\n      }\n    ],\n    "
                     ."\"payment\": {\n   "
-                        ."   \"formSettlement\": \"TED\""
+                        ."   \"formSettlement\": \"ONL\""
                         .",\n      \"bankCode\": \"".$bank_code
                         ."\",\n      \"branch\": \"".$agency
                         ."\",\n      \"accountNumber\": \"".$account
@@ -2081,14 +2100,14 @@ class Welcome extends CI_Controller {
                         ."{\n        \"quotaValue\": \"".$plot_value
                         ."\",\n        \"quotaDueDate\": \"".$plot_date
                         ."\",\n        \"quotaNumber\": ".$plot_number."\n      }"
-                        .",\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }"
+                        .",\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-08-01\",\n        \"quotaNumber\": 2\n      }"
                     ."\n    ]\n  }\n}";
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"12345678901\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-23\",\n    \"totalValue\": \"1150,00\",\n    \"amountPay\": \"1000,00\",\n    \"rate\": \"2,99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150,00\",\n    \"wayPaymentLoan\": \"cartão de crédito\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115,00\",\n    \"guarantees\": [\n      {\n        \"document\": \"\",\n        \"nameOrCompanyName\": \"\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"TED\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"conta corrente\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-07-23\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575,00\",\n        \"quotaDueDate\": \"2018-08-23\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-31\",\n    \"totalValue\": \"1150.00\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"2.99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150.00\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115.00\",\n    \"guarantees\": [\n      {\n        \"document\": \"23456789012\",\n        \"nameOrCompanyName\": \"Livre.Digital\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-08-01\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-09-01\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
@@ -2147,9 +2166,9 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "5dc59bda-b230-399f-97bb-be67003a0fa1";//$this->get_topazio_API_token();
+        $API_token = "9697487f-ffb9-3b5a-a921-e3d77483d860";//$this->get_topazio_API_token();
         if($API_token){
-            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            $result_basic = true;//$this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
                 $ccb = $this->topazio_loans($id, $API_token);
                 if($ccb){
@@ -2196,7 +2215,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "cb56daff-4271-3438-834e-481f20ed0d9f";//$this->get_topazio_API_token();
+        $API_token = "9697487f-ffb9-3b5a-a921-e3d77483d860";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
@@ -2322,10 +2341,7 @@ class Welcome extends CI_Controller {
         } 
     }
     
-    public function signer_for_doc_D4Sign(  $id, $act = '1', $foreign = 0,
-                                            $certificadoicpbr = 0,
-                                            $assinatura_presencial = 0,
-                                            $embed_methodauth = 'email'){
+    public function signer_for_doc_D4Sign($id, $act = '1', $foreign = 0, $certificadoicpbr = 0, $assinatura_presencial = 0, $embed_methodauth = 'email'){
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2482,9 +2498,15 @@ class Welcome extends CI_Controller {
 			);							
 	
                 $name_document = "Contrato_".$transaction['cpf'];
-                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';
+                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
+                
+                if(is_object($return) && $return->uuid != "")                    
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'doc_d4sign',$return->uuid);
 	
         } catch (Exception $e) {
                 //echo $e->getMessage();
@@ -2492,7 +2514,41 @@ class Welcome extends CI_Controller {
         } 
         return $return;
     }
+    
+    public function download_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+                    
+                $file = file_get_contents($url_doc->url);
+	
+                //Para ZIP
+                //header("Content-type: application/octet-stream");
+                //header("Content-Disposition: attachment; filename=\"".$url_doc->name.".zip"."\"");
 
-    
-    
+                //Para PDF
+                header("Content-type: application/pdf");
+                header("Content-Disposition: attachment; filename=\"".$url_doc->name.".pdf"."\"");
+
+                echo $file;
+                
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
 }

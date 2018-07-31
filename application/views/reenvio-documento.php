@@ -32,6 +32,10 @@
         var base_url = '<?php echo base_url();?>';            
     </script>
     
+    <?php include_once "pixel_facebook.php";?>
+    <?php include_once "pixel_gtags.php";?>        
+    <?php //include_once "pixel_ecomerce_analytics.php";?>
+    <?php //include_once "pixel_adwords.php";?>
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">

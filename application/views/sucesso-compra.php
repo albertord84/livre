@@ -26,6 +26,12 @@
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
+    
+    <?php include_once "pixel_facebook.php";?>
+    <?php include_once "pixel_gtags.php";?>        
+    <?php include_once "pixel_ecomerce_analytics.php";?>
+    <?php include_once "pixel_adwords.php";?>
+    
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
@@ -55,70 +61,6 @@
 <section class="fleft100 pd-tb40 m-top40">
 	<div class="container">	
 		<div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2  m-top150">
-			<div class="fleft100 selct d-none">
-				<h2 class="bk-green5 text-center pd-tb15">Cadastre uma nova conta</h2>
-				<div class="fleft100 pd-30 bk-fff">
-					<ul class="pap fleft100 pd-lr80 text-center">
-						<li class="pred">
-							<span class="fleft100">1. Dados enviados <br>com sucesso!</span>
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-yellow.png" class="passo-yellow">
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-green.png" class="passo-green">
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-red.png" class="passo-red">
-						</li>
-						<li class="psilver">
-							<span class="fleft100">2. Análise <br>das fotos</span>
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-silver.png" class="passo-silver">
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-yellow.png" class="passo-yellow">
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-green.png" class="passo-green">
-						</li>
-						<li class="psilver">
-							<span class="fleft100">3. Dinheiro na <br>conta (24h)</span>
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-silver.png" class="passo-silver">
-							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-green.png" class="passo-green">
-						</li>
-					</ul>
-
-					<div class="fleft100 pd-lr30 m-top30 ft-size16 fmr-check">
-						<h4 class="cl-blue m-b15">Oi, <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
-						<p>
-                                                    Verificamos que sua conta bancária não é a mesma do títular do cartão de crédito. Para que o empréstimo seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária.
-						</p>
-						<b>Por favor, informe uma nova conta para prosseguir com o seu empréstimo:</b>
-
-						<div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2">
-							<div class="bk-fff fleft100 pd-30">
-								<span class="ft-size14 fw-600 fleft100">DADOS BANCÁRIOS</span>
-								<fieldset class="col-md-8 col-sm-8 col-xs-12 pd-lr5">
-									<input type="text" placeholder="Banco">
-								</fieldset>
-								<fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr5">
-									<input type="text" placeholder="Agência">
-								</fieldset>
-								<fieldset class="col-md-5 col-sm-5 col-xs-12 pd-lr5">
-									<select name="" id="">
-										<option value="">Tipo de conta</option>
-									</select>
-								</fieldset>
-								<fieldset class="col-md-4 col-sm-4 col-xs-12 pd-lr5">
-									<input type="text" placeholder="Conta">
-								</fieldset>
-								<fieldset class="col-md-3 col-sm-3 col-xs-12 pd-lr5">
-									<input type="text" placeholder="Dig.">
-								</fieldset>
-								<fieldset class="fleft100 col-md-12 pd-lr5">
-									<input type="text" placeholder="Marcio Araujo Paiva">
-								</fieldset>
-								<fieldset class="col-md-8 col-sm-8 col-xs-12 pd-lr5 m-top20">
-									<small class="cl-black fw-600">CPF DO TITULAR</small>
-									<input type="text" placeholder="000.000.000.00">
-								</fieldset>
-								<div class="fleft100 m-top30 text-right"><button class="bt-green w100">Enviar</button></div>
-							</div>						
-						</div>
-					</div>
-				</div>
-			</div>
-
 			<div class="fleft100 final">
 				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Pronto!</h2>
 				<div class="fleft100 pd-30 bk-fff ">

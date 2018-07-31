@@ -6,9 +6,9 @@ $(document).ready(function () {
     
     //---------ADMIN FUNCTIONS-----------------------------------
     $("#save_transaction_status").click(function () {
-        if(confirm("Tem certeza que deseja realizar essa operação na transação")){            
+        val = parseInt($("#sel_admin_actions").val());        
+        if(val && confirm("Tem certeza que deseja realizar essa operação na transação")){            
             var fn;
-            val = parseInt($("#sel_admin_actions").val())
             switch (val){
                 case 0:
                     fn = '';
@@ -181,8 +181,7 @@ $(document).ready(function () {
                     hour=date.getHours();
                     minutes=date.getMinutes();
                     seconds=date.getSeconds();
-                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/
-                    
+                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/                    
                     $("#trans_id").text(response['message']['id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
@@ -190,7 +189,7 @@ $(document).ready(function () {
                     $("#trans_phone_ddd").text(response['message']['phone_ddd']);
                     $("#trans_phone_number").text(response['message']['phone_number']);
                     $("#trans_date").text('DD-MM-YY / HH:MM');
-                    $("#trans_solicited_value").text(response['message']['amount_solicited']);
+                    $("#trans_solicited_value").text((response['message']['amount_solicited']/100).toString().replace('.',','));
                     $("#trans_credit_card_name").text(response['message']['credit_card_name']);
                     $("#trans_credit_card_final").text(response['message']['credit_card_final']);
                     $("#trans_bank_name").text(response['message']['bank_name']);
