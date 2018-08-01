@@ -204,9 +204,28 @@ $(document).ready(function () {
                     $("#trans_cep").text(response['message']['cep']);                    
                     $('#folder_in_server').val(response['message']['folder_in_server']);
 //                    $("#trans_").text(response['message']['']);
-
-
                     $('#trans').modal('show');
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (xhr, status) {
+                modal_alert_message('Internal error');
+            }
+        });         
+    });
+        
+    $('#get_url_contract').click(function () {
+        $.ajax({
+            url: base_url+'index.php/welcome/get_url_contract',            
+            data:{},
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']) {
+                    window.open(response['url_contract'], 'Contrato - Livre.digital');
+                    return false;
                 }
                 else{
                     modal_alert_message(response['message']);

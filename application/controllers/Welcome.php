@@ -8,14 +8,9 @@ class Welcome extends CI_Controller {
             
     function __construct() {
         parent::__construct();
-    } 
-
-    public function test() { 
-        session_start();        
-        $_SESSION['a']=1;
-        session_destroy();
-        var_dump(session_id());
     }
+
+    
     public function test2() {               
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -216,6 +211,7 @@ class Welcome extends CI_Controller {
     ['new_cpf_card']
     ['session_new_foto']
      */
+    
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -1206,7 +1202,15 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    //-------AUXILIAR FUNCTIONS------------------------------------    
+    public function get_url_contract(){
+        $result['success']=true;
+        //TODO Moreno: funcion que devuelve la url del contrato
+        $result['url_contract']= base_url().'assets/img/icones/pdf.jpeg';
+        //$result['url_contract']= $this->get_d4siggn_url_contract($_SESSION['transaction_requested_id']);
+        echo json_encode($result);
+    }
+
+        //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
@@ -2366,7 +2370,6 @@ class Welcome extends CI_Controller {
         curl_close ($ch);
         
         $parsed_response = json_decode($result);
-        var_dump($parsed_response);
         return $parsed_response;
     }
     
