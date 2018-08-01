@@ -55,7 +55,6 @@
                                                 <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
                                                 <ul>
                                                     <input type="hidden" id="folder_in_server">
-                                                    
                                                     <li><img class="foto_usr" id = "0" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "1" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "2" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
@@ -65,7 +64,12 @@
                                             </div>
                                             <a href="" class="cl-black fleft100 text-center m-top10"><u>Baixar arquivos</u></a>
 					</div>
-					<div class="col-md-3 col-sm-3 col-xs-12 m-top10-xs">
+					<div class="col-md-2 col-sm-2 col-xs-12">
+                                            <div class="enviados pd-15 text-center">
+                                                <img id="get_url_contract" style="width:63%" src="<?php echo base_url().'assets/img/icones/pdf.jpeg'?>">
+                                            </div>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
                                             <select id="sel_admin_actions" class="form-control multiselect multiselect-icon">          
                                                 <option value="0" selected="selected">Aguardando</option>          
                                                 <option value="1">Aprovar</option>
@@ -75,7 +79,7 @@
                                                 <option value="5">Recusar/Estornar</option>
                                             </select>
 					</div>
-					<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
+					<div class="col-md-2 col-sm-2 col-xs-12 m-top10-xs">
 						<div class="fleft100 text-right center-xs">
                                                     <button id="save_transaction_status" class="bt-green">Salvar</button>
                                                 </div>

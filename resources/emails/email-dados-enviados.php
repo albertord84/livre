@@ -2,7 +2,8 @@
 	<tbody>
 	    <tr>
 	        <td colspan="3" height="180" bgcolor="#00ff58" align="center">
-	    		<h1 style="font-weight: 600;font-size: 30px;line-height:25px;">Dados enviados <br>com sucesso!</h1>
+	    		<h1 style="font-weight: 600;font-size: 30px;line-height:25px;">
+                            Dados enviados <br>com sucesso!</h1>
 	  		</td>
 	    </tr>
 	    <tr>
@@ -12,10 +13,10 @@
 	          	<img src="img/icones/denviados.jpg" alt="">   
           		<br><br>
 	          	<div style="text-align: left;">
-	          		<h2 style="color: #20a7d3;">Oi Marcio!</h2>
-					<p>
-						Agora só precisamos analisar suas fotos e liberar seu dinheiro. <br><b>Enviaremos e-mails de atualizações sobre o seu pedido.</b> Caso as fotos não estajam legíveis, solicitaremos novas por e-mail.
-					</p> 
+                            <h2 style="color: #20a7d3;">Oi Marcio!</h2>
+                            <p>
+                                Agora só precisamos analisar suas fotos e liberar seu dinheiro. <br><b>Enviaremos e-mails de atualizações sobre o seu pedido.</b> Caso as fotos não estajam legíveis, solicitaremos novas por e-mail.
+                            </p> 
 	          	</div> 
 	          	<div>
 	          		<br><br>

@@ -8,7 +8,7 @@ class Welcome extends CI_Controller {
             
     function __construct() {
         parent::__construct();
-    } 
+    }
 
     
     public function test2() {               
@@ -29,7 +29,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test();
+        //$this->test();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -1137,7 +1137,15 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    //-------AUXILIAR FUNCTIONS------------------------------------    
+    public function get_url_contract(){
+        $result['success']=true;
+        //TODO Moreno: funcion que devuelve la url del contrato
+        $result['url_contract']= base_url().'assets/img/icones/pdf.jpeg';
+        //$result['url_contract']= $this->get_d4siggn_url_contract($_SESSION['transaction_requested_id']);
+        echo json_encode($result);
+    }
+
+        //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
