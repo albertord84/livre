@@ -10,12 +10,7 @@ class Welcome extends CI_Controller {
         parent::__construct();
     } 
 
-    public function test() { 
-        session_start();        
-        $_SESSION['a']=1;
-        session_destroy();
-        var_dump(session_id());
-    }
+    
     public function test2() {               
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
@@ -216,6 +211,7 @@ class Welcome extends CI_Controller {
     ['new_cpf_card']
     ['session_new_foto']
      */
+    
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -2301,7 +2297,6 @@ class Welcome extends CI_Controller {
         curl_close ($ch);
         
         $parsed_response = json_decode($result);
-        var_dump($parsed_response);
         return $parsed_response;
     }
     
