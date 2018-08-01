@@ -1,50 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<meta charset="UTF-8">
-	<title>Livre.com</title>
-	<meta name="viewport" content="width=device-width">
-	<link rel="icon" type="image/png" href="img/favicon.png">
+    <meta charset="UTF-8">
+    <title>Livre.digital</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.jpeg">
 
-	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
-	<!-- GALERIA -->	
-	<link rel="stylesheet" type="text/css" href="galeria/css/fresco/fresco.css" />
+    <!-- GALERIA -->	
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION;?>" />
 
-	<!-- Bootstrap -->
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/bootstrap-multiselect.css">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION;?>">
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION;?>">
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-datepicker.min.css?'.$SCRIPT_VERSION;?>">
 
-	<!-- Owl Carousel Assets -->
-	<link href="css/carousel/owl.carousel.css" rel="stylesheet">
-	<link href="css/carousel/owl.theme.css" rel="stylesheet">
-	<link href="css/carousel/owl.transitions.css" rel="stylesheet">
+    <!-- Owl Carousel Assets -->
+    <link href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+    <link href="<?php echo base_url().'assets/css/carousel/owl.theme.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
+    <link href="<?php echo base_url().'assets/css/carousel/owl.transitions.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
 
-	<!-- CSS -->
-	<link rel="stylesheet" href="css/estilo.css" />
-	<link rel="stylesheet" href="css/definicoes.css" />
-	<link rel="stylesheet" href="css/media.css" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/estilo.css?'.$SCRIPT_VERSION;?>" />
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/definicoes.css?'.$SCRIPT_VERSION;?>" />
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
+    
+    <!-- JS -->
+    <script type="text/javascript">
+        var base_url = '<?php echo base_url();?>';            
+    </script>
+    
+    <?php include_once "pixel_facebook.php";?>
+    <?php include_once "pixel_gtags.php";?>        
+    <?php //include_once "pixel_ecomerce_analytics.php";?>
+    <?php //include_once "pixel_adwords.php";?>
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
 		<div class="container">
 			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
-				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href=""><img src="img/icones/logo.png" alt=""></a></div>
+				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 				<div class="col-md-6 col-sm-6 col-xs-12 text-left">
-					<div class="fleft100">
-						<h1 class="fw-600 ft-size45 ft-Rajdhani cl-green"><i>Falta pouco!</i></h1>
-						<h3 class="cl-fff ft-Rajdhani">Só precisamos de mais alguns dados:</h3>
-					</div>
+                                    <div class="fleft100">
+                                        <h1 class="fw-600 ft-size45 ft-Rajdhani cl-green"><i>Falta pouco!</i></h1>
+                                        <h3 class="cl-fff ft-Rajdhani">Só precisamos de mais alguns dados:</h3>
+                                    </div>
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
-					<ul class="menu i-block m-top10-xs">				
-						<li><a href="">Suporte</a></li>
-						<li class="tv cl-fff">|</li>
-					</ul>
-					<ul class=" sociais i-block">
-						<li><a href="" target="_blank"><img src="img/icones/ig.png"></a></li>
-						<li><a href="" target="_blank"><img src="img/icones/fb.png"></a></li>
+                                    <ul class=" sociais i-block">
+                                        <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                                        <li><a href="https://facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                                    </ul>
+                                    <ul class="menu i-block m-top10-xs">				
+                                        <li class="tv cl-fff">|</li>
+                                        <li><a href="#contact_me">Suporte</a></li>
 					</ul>
 				</div>
 			</div>
@@ -60,20 +71,20 @@
 					<ul class="pap fleft100 pd-lr80 text-center">
 						<li class="pgreen">
 							<span class="fleft100">1. Dados enviados <br>com sucesso!</span>
-							<img src="img/icones/passo1-yellow.png" class="passo-yellow">
-							<img src="img/icones/passo1-green.png" class="passo-green">
-							<img src="img/icones/passo1-red.png" class="passo-red">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-yellow.png" class="passo-yellow">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-green.png" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo1-red.png" class="passo-red">
 						</li>
 						<li class="pyellow">
 							<span class="fleft100">2. Análise <br>das fotos</span>
-							<img src="img/icones/passo2-silver.png" class="passo-silver">
-							<img src="img/icones/passo2-yellow.png" class="passo-yellow">
-							<img src="img/icones/passo2-green.png" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-silver.png" class="passo-silver">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-yellow.png" class="passo-yellow">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo2-green.png" class="passo-green">
 						</li>
 						<li class="psilver">
 							<span class="fleft100">3. Dinheiro na <br>conta (24h)</span>
-							<img src="img/icones/passo3-silver.png" class="passo-silver">
-							<img src="img/icones/passo3-green.png" class="passo-green">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-silver.png" class="passo-silver">
+							<img src="<?php echo base_url().'assets/'?>img/icones/passo3-green.png" class="passo-green">
 						</li>
 					</ul>
 
@@ -92,52 +103,101 @@
 								<div class="col-md-6 col-sm-6 col-xs-6 pd-0">
 									<h5 class="fleft100 text-left fw-600 pd-lr5">Cartão</h5>
 									<div class="fleft100 pd-lr5 m-top10">
-										<label for="cartao">
-											<input type="file" id="cartao" class="hidden">
-											<div class="upl uplgreen c-pointer">
-												<i class="far fa-check-circle"></i>
-												<img src="img/icones/icartao.png" alt="">
-												<small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
-											</div>
-										</label>
+										<label for="new_cartao">
+                                                                                    <input type="file" id="new_cartao" class="hidden">
+                                                                                    <?php 
+                                                                                        if($_SESSION['new_front_credit_card']){
+                                                                                    ?>
+                                                                                    <div id="new_check_front_credit_card" class="upl uplgreen c-pointer">
+                                                                                    <?php 
+                                                                                        } else {
+                                                                                    ?>
+                                                                                    <div id="new_check_front_credit_card" class="upl uplsilver c-pointer">
+                                                                                    <?php 
+                                                                                        } 
+                                                                                    ?>  
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
+                                                                                        <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
+                                                                                    </div>
+                                                                                </label>
 									</div>
 
 									<div class="fleft100 pd-lr5 m-top10">
-										<label for="selcartao">
-											<input type="file" id="selcartao" class="hidden">
-											<div class="upl uplsilver c-pointer">
-												<i class="fas fa-arrow-up"></i>
-												<img src="img/icones/iselcart.png" alt="">
-												<small class="fleft100">Selfie segurando <br>seu cartão</small>
-											</div>
-										</label>
+										<label for="new_selcartao">
+                                                                                    <input type="file" id="new_selcartao" class="hidden">
+                                                                                    <?php 
+                                                                                        if($_SESSION['new_selfie_with_credit_card']){
+                                                                                    ?>
+                                                                                    <div id="new_check_selfie_credit_card" class="upl uplgreen c-pointer">
+                                                                                    <?php 
+                                                                                        } else {
+                                                                                    ?>
+                                                                                    <div id="new_check_selfie_credit_card" class="upl uplsilver c-pointer">
+                                                                                    <?php 
+                                                                                        } 
+                                                                                    ?>                                         
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
+                                                                                        <small class="fleft100">Selfie segurando <br>seu cartão</small>
+                                                                                    </div>
+                                                                                </label>
 									</div>	
 								</div>
 								
 								<div class="col-md-6 col-sm-6 col-xs-6 pd-0">
 									<h5 class="fleft100 text-left fw-600 pd-lr5">Identidade</h5>
 									<div class="fleft100 pd-lr5 m-top10">						
-										<label for="id">
-											<input type="file" id="id" class="hidden">
-											<div class="upl uplgreen c-pointer">
-												<i class="far fa-times-circle"></i>
-												<img src="img/icones/iid.png" alt="">
-												<small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
-											</div>
-										</label>
+										<label for="new_id">
+                                                                                    <input type="file" id="new_id" class="hidden">
+                                                                                    <?php 
+                                                                                        if($_SESSION['open_identity']){
+                                                                                    ?>
+                                                                                    <div id="new_check_open_identity" class="upl uplgreen c-pointer">
+                                                                                    <?php 
+                                                                                        } else {
+                                                                                    ?>
+                                                                                    <div id="new_check_open_identity" class="upl uplsilver c-pointer">
+                                                                                    <?php 
+                                                                                        } 
+                                                                                    ?>                                         
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
+                                                                                        <small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
+                                                                                    </div>
+                                                                                </label>
 									</div>
 									<div class="fleft100 pd-lr5 m-top10">
-										<label for="selid">
-											<input type="file" id="selid" class="hidden">
-											<div class="upl uplsilver c-pointer">
-												<i class="fas fa-arrow-up"></i>
-												<img src="img/icones/iselid.png" alt="">
-												<small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
-											</div>
-										</label>
+										<label for="new_selid">
+                                                                                    <input type="file" id="new_selid" class="hidden">                                        
+                                                                                    <?php 
+                                                                                        if($_SESSION['new_selfie_with_identity']){
+                                                                                    ?>
+                                                                                    <div id="new_check_selfie_with_identity" class="upl uplgreen c-pointer">
+                                                                                    <?php 
+                                                                                        } else {
+                                                                                    ?>
+                                                                                    <div id="new_check_selfie_with_identity" class="upl uplsilver c-pointer">
+                                                                                    <?php 
+                                                                                        } 
+                                                                                    ?>                                         
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
+                                                                                        <small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
+                                                                                    </div>
+                                                                                </label>
 									</div>
 								</div>
-								<div class="fleft100 m-top30 text-center"><button class="bt-green mxw-300">Enviar novas fotos</button></div>
+                                                                <div class="fleft100 pd-lr5 m-top10">
+                                                                    <label for="new_ucpf_img" class="dc m-top5">
+                                                                        <input type="file" id="new_ucpf_img" class="hidden">
+                                                                        <input type="checkbox" id="new_ucpf" style="margin-top: 2px;"> 
+                                                                        <small style="text-decoration: none;">
+                                                                            <b class="fleft100">Minha identidade não possui CPF</b> Marque para fazer upload do seu CPF
+                                                                        </small>
+                                                                    </label>
+                                                                </div>
+								<div class="fleft100 m-top30 text-center">
+                                                                    <button id ="send_new_photos" class="bt-green mxw-300">
+                                                                        Enviar novas fotos
+                                                                    </button>
+                                                                </div>
 							</div>						
 						</div>
 					</div>
@@ -145,7 +205,7 @@
 			</div>
 
 			<div class="fleft100 final d-none">
-				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="img/icones/iselid.png" alt=""> Pronto!</h2>
+				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Pronto!</h2>
 				<div class="fleft100 pd-30 bk-fff ">
 					<div class="fleft100 pd-lr60 m-top40 m-b40">
 						<h4 class="cl-blue m-b10">Dados enviados com sucesso!</h4>
@@ -164,4 +224,4 @@
 		</div>
 	</div>
 </section>
-<?php include_once "inc/footer-interno.php";?>
+<?php //include_once "inc/footer-interno.php";?>

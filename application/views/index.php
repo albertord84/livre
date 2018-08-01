@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Livre.digital</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
+	<link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.jpeg">
 
         <!-- Font Awesome -->
 	<link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">
@@ -29,10 +29,12 @@
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
+            var key = '<?php echo $key;?>';
         </script>
         
         <?php include_once "pixel_facebook.php";?>
-        <?php include_once "pixel_gtags.php";?>
+        <?php include_once "pixel_gtags.php";?>        
+        <?php //include_once "pixel_ecomerce_analytics.php";?>
         <?php //include_once "pixel_adwords.php";?>
 </head>
 <body>
@@ -102,7 +104,7 @@
                                             <b class="fleft100"><i id="result-value1">12</i>X <small class="fw-300">DE:</small></b>
                                         </div>
                                         <div class="col-md-9 col-sm-9 col-xs-12 pd-0">
-                                            <h2 class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
+                                            <h2 id="month_value" class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
                                         </div>
                                         <input value="12" min="6" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
                                     </div>
@@ -122,7 +124,7 @@
                             <div class="col-md-3 col-sm-3 col-xs-12 text-left center-xs">
                                 <div class="fleft100">
                                     <small>CUSTO TOTAL (CET)</small>
-                                    <h3 class="fleft100"><i><strong id="total_cust_value1">R$ 6.225,00</strong></i></h3>
+                                    <h3 class="fleft100" id="total_cust_value1"><i><strong >R$ 6.225,00</strong></i></h3>
                                 </div>
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">

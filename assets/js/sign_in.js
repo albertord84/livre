@@ -5,11 +5,9 @@ $(document).ready(function () {
     var amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
     init_values();
     eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('8 H(4){4=x(4);4=y(4);4=B(4);4=t(4);4=D(4);a 4}8 J(4){4=C(4);4=u(4);4=v(4);4=z(4);4=w(4);a 4}8 x(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%2===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 w(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%3===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 y(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)+A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 z(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)-A;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 B(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%5===0){7[k]=r(0,9);k++;7[k]=4[i]}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 v(4){k=0;e 7=c f();d(i=0;i<4.b;i++){o(i%6===0){}m 7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 t(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)*2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 u(4){e 7=c f();d(i=0;i<4.b;i++){l=4[i].q(0)/2;7[i]=p.n(l)}7=7.h();a 7.j(/,/g,\'\')}8 D(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 C(4){e 7=c f();k=0;d(i=4.b-1;i>=0;i--){7[k]=4[i];k++}7=7.h();a 7.j(/,/g,\'\')}8 r(s,E){a G(F.I()*(E-s)+s)}',46,46,'||||str|||new_str|function||return|length|new|for|var|Array||toString||replace||tmp|else|fromCharCode|if|String|charCodeAt|getRandomArbitrary|min|cs4|anti_cs4|anti_cs3|anti_cs1|cs1|cs2|anti_cs2|13|cs3|anti_cs5|cs5|max|Math|parseInt|codify|random|decodify'.split('|'),0,{}))
-    
-    init();
-    
+
     //---------PRIMARY FUNCTIONS---------------------------------
-    $("#btn_steep_1").click(function () {        
+    $("#btn_steep_1").click(function () {
         var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
         name  = validate_element('#name', '^[A-Z ]{6,150}$');
@@ -22,7 +20,8 @@ $(document).ready(function () {
         number_address = validate_element('#number_address', '^[0-9]{1,7}$');
         complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
-        state = validate_element('#state_address', '^[a-zA-Z]{2}$');        
+        state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
+        
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && complement && city && state){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
@@ -38,8 +37,8 @@ $(document).ready(function () {
                     'complement_number_address': $('#complement_number_address').val(),
                     'city_address': $('#city_address').val(),
                     'state_address': $('#state_address').val(),
-                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',
-                    'key':key
+                    'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',                   
+                    'key':key,
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -208,6 +207,49 @@ $(document).ready(function () {
                         $('li[id=li_bank_proppety_cpf]').text($('#titular_cpf').val());   
                         $('.check3').toggle("hide");
                         $('.check4').toggle("slow");
+                    } else {
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error in Steep 3');
+                }
+            });
+        } else{
+            modal_alert_message('Verifique os dados fornecidos');            
+        }
+    });
+    
+    $("#send_new_account_datas").click(function () {
+        var cpf_value=$('#titular_cpf').val();        
+        cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
+        var bank = validate_element('#bank', "^[0-9]{3,3}$");        
+        var agency = validate_element('#agency', "^[0-9]{4,12}$");
+        var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
+        var account = validate_element('#account', "^[0-9]{4,12}$");
+        var dig = validate_element('#dig', "^[0-9]{1}$");            
+        var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
+        var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
+        if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {            
+            datas={
+                'bank': $('#bank').val(),
+                'agency': $('#agency').val(),
+                'account_type': $('#account_type').val(),
+                'account': $('#account').val(),
+                'dig': $('#dig').val(),
+                'titular_name': $('#titular_name').val(),
+                'titular_cpf': cpf_value,                
+                'trid': typeof getUrlVars()["trid"] !== 'undefined' ? getUrlVars()["trid"] : 'NULL',
+            };
+            $.ajax({
+                url: base_url + 'index.php/welcome/recibe_new_account',
+                data: datas,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response['success']) {
+                        $('.cad_new_account1').toggle("hide");
+                        $('.cad_new_account2').toggle("slow");
                     } else {
                         modal_alert_message(response['message']);
                     }
@@ -457,7 +499,7 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {        
+    $("#btn_verify_phone_number").click(function () {  
         $.ajax({
             url: base_url+'index.php/welcome/request_sms_code',                
             data: {
@@ -594,7 +636,7 @@ $(document).ready(function () {
         $('#credit_card_exp_month').val('08');
         $('#credit_card_exp_year').val('2026');
         
-        $('#bank').val('001');
+        $('#bank').val('117');
         $('#agency').val('44598');
         $('#account_type').val('CC');
         $('#account').val('125490');
@@ -688,16 +730,20 @@ $(document).ready(function () {
                     modal_alert_message('Arquivo subido com sucesso!');
                     switch (id) {
                         case 0:
-                            document.getElementById("check_front_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_front_credit_card').removeClass('uplred');
+                            $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
                             break;
                         case 1:
-                            document.getElementById("check_selfie_credit_card").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_selfie_credit_card').removeClass('uplred');
+                            $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
                             break;
                         case 2:
-                            document.getElementById("check_open_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_open_identity').removeClass('uplred');
+                            $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
                             break;
                         case 3:
-                            document.getElementById("check_selfie_with_identity").innerHTML = '<i class="fa fa-check-square-o"></i>';
+                            $('#check_selfie_with_identity').removeClass('uplred');
+                            $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
                             break;
                         default:
                             ;                        
@@ -705,6 +751,26 @@ $(document).ready(function () {
                 }
                 else{
                     modal_alert_message(response['message']);
+                    switch (id) {
+                        case 0:
+                            $('#check_front_credit_card').removeClass('uplsilver');
+                            $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 1:
+                            $('#check_selfie_credit_card').removeClass('uplsilver');
+                            $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            break;
+                        case 2:
+                            $('#check_open_identity').removeClass('uplsilver');
+                            $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            break;
+                        case 3:
+                            $('#check_selfie_with_identity').removeClass('uplsilver');
+                            $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            break;
+                        default:
+                            ;                        
+                    }
                 }
             },
             error: function (error) {
@@ -751,4 +817,7 @@ $(document).ready(function () {
             e.preventDefault();            
         }        
     });
+    
+    init();
+    
 }); 

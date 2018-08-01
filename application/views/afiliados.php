@@ -1,4 +1,12 @@
 <?php include_once "inc/header-interno.php";?>
+<?php include_once "pixel_facebook.php";?>
+<?php include_once "pixel_gtags.php";?>        
+<?php //include_once "pixel_ecomerce_analytics.php";?>
+<?php //include_once "pixel_adwords.php";?>
+<script type="text/javascript">
+    var num_page = '<?php echo $num_page;?>';
+    var has_next_page = '<?php echo $has_next_page;?>';
+</script>
 <section class="fleft100 m-top40 m-b100">
 	<div class="container">
                 <?php
@@ -30,8 +38,11 @@
                 <?php }?>
 		<div class="fleft100 pd-20">
 			<div class="col-md-5 col-sm-5 col-xs-12 pd-0 center-xs">
-				<div class="col-md-2 col-sm-2 col-xs-12 pd-0">
-                                        <img src="<?php echo base_url().'assets/'?>img/icones/avatar.jpg" class="mxw-50">
+                            <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
+                                    <label for="avatar" style="cursor: pointer">
+                                        <input type="file" id="avatar" class="hidden">
+                                        <img id ="avatar_img" style="border-radius: 50px" src="<?php echo base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id']."/photo_profile.png"?>" class="mxw-50">                                        
+                                    </label>    
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">
                                     <h3><?php echo $_SESSION['affiliate_logged_datas']['complete_name'];?></h3>
@@ -58,7 +69,8 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">
                                         <span class="fleft100">Valor total</span>
-                                            <span class="emp">R$ <?php echo $_SESSION['affiliate_logged_datas']['total_value']; ?>
+                                        <span class="emp">
+                                            R$ <?php echo str_replace('.', ',', $_SESSION['affiliate_logged_datas']['total_value']/100); ?>
                                         </span>
                                     </div>
                                     <!--<div class="col-md-2 col-sm-2 col-xs-12 pd-lr5 porc text-center">▲ <span class="fleft100">20%</span></div>-->
@@ -67,9 +79,13 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 text-center">
 				<div class="fleft100 bk-fff pd-15 text-center fw-600 m-top25">
                                     <p>Mande esse link para seus clientes</p>
-					<a href="https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?>">https://livre.digital/livre/?afiliado=<?php echo $_SESSION['affiliate_logged_datas']['code'];?> </a>
+                                    <?php
+                                        $tlf = $_SESSION['affiliate_logged_datas']['phone_ddd'];
+                                        $tlf .= $_SESSION['affiliate_logged_datas']['phone_number'];
+					echo '<a href="https://livre.digital/livre/?afiliado='.$tlf.'">'.
+                                            'https://livre.digital/livre/?afiliado='.$tlf.'</a>';
+                                    ?>
 				</div>
-				<!--<img src="<?php //echo base_url().'assets/'?>img/icones/grafico.jpg" class="mxw-280">-->
 			</div>
 		</div>
 		<div class="fleft100 pd-20 bk-fff">
@@ -78,10 +94,10 @@
 				<div class="col-md-7 col-sm-7 col-xs-12 pd-0">
                                     <span class="fleft100 cl-black pd-lr15">Digite sua busca aqui:</span>
                                     <div class="col-md-8 col-sm-8 col-xs-12">					
-                                        <input type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
+                                        <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black">
                                     </div>
                                     <div>
-                                        <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
+                                        <input id="num_page" name="num_page" type="text" style="visibility:hidden;display:none" value="1">
                                     </div>
                                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                                         <input id="btn_afiliate_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
@@ -95,8 +111,7 @@
                                     <div class="col-md-5 col-sm-5 col-xs-12">
                                             <a href="" class="cl-fff bk-blue pd-8 fleft100 add">+ Adicionar filtro</a>
                                     </div>
-				</div>-->
-                                
+				</div>-->                                
                             </form>
 			</div>
 			<ul class="zebra fleft100 ft-size12 cl-black">
@@ -115,7 +130,7 @@
                                         <?php echo date("d-m-y / H:i", $transaction['dates'][0]['date']); ?>
                                     </div>
                                     <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
-                                        <?php echo $transaction['amount_solicited']; ?>
+                                        R$ <?php echo str_replace('.', ',', $transaction['amount_solicited']/100); ?>
                                     </div>
                                     <div class="w20 fw-500 text-left center-xs m-top10-xs">
                                         <small class="fleft100">Dados do cartão</small>
@@ -135,8 +150,8 @@
                             <?php }?>
 			</ul>
 			<ul class="pg text-right m-top20 fleft100">
-                            <li><a id="prev_page" href=""><<</a></li>				
-                            <li><a id="actual_page" href="">1</a></li>
+                            <li><a id="prev_page" href=""><<</a></li>
+                            <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
                             <li><a id="next_page" href="">>></a></li>
 			</ul>
 		</div>

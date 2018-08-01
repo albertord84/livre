@@ -1,8 +1,49 @@
 $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
-    var actual_page = 1;
     var has_next_page = false;
+    var transaction_id;
+    
+    //---------ADMIN FUNCTIONS-----------------------------------
+    $("#save_transaction_status").click(function () {
+        val = parseInt($("#sel_admin_actions").val());        
+        if(val && confirm("Tem certeza que deseja realizar essa operação na transação")){            
+            var fn;
+            switch (val){
+                case 0:
+                    fn = '';
+                    break;
+                case 1:
+                    fn = 'approve_transaction';
+                    break;
+                case 2:
+                    fn = 'request_new_photos';
+                    break;
+                case 3:
+                    fn = 'request_new_account';
+                    break;
+                case 4:
+                    fn = 'request_new_sing_us';
+                    break;
+                case 5:
+                    fn = 'request_recuse_and_reverse_money';
+                    break;
+            }
+            if(fn!=''){
+                $.ajax({
+                    url: base_url + 'index.php/welcome/'+fn,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {                
+                        modal_alert_message(response['message']);
+                    },
+                    error: function (xhr, status) {
+                        modal_alert_message('Internal error');
+                    }
+                });                
+            }
+        }
+    });
     
     //---------PRIMARY FUNCTIONS---------------------------------
     $("#btn_sigin_affiliate_steep1").click(function () {
@@ -125,11 +166,11 @@ $(document).ready(function () {
     });
     
     $('.btn_see_trnsaction').click(function () {
-        var id = this.id;   
+        transaction_id = this.id;
         $.ajax({
             url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
             data:{
-                'id': id
+                'id': transaction_id
             },
             type: 'POST',
             dataType: 'json',
@@ -140,8 +181,7 @@ $(document).ready(function () {
                     hour=date.getHours();
                     minutes=date.getMinutes();
                     seconds=date.getSeconds();
-                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/
-                    
+                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/                    
                     $("#trans_id").text(response['message']['id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
@@ -149,7 +189,7 @@ $(document).ready(function () {
                     $("#trans_phone_ddd").text(response['message']['phone_ddd']);
                     $("#trans_phone_number").text(response['message']['phone_number']);
                     $("#trans_date").text('DD-MM-YY / HH:MM');
-                    $("#trans_solicited_value").text(response['message']['amount_solicited']);
+                    $("#trans_solicited_value").text((response['message']['amount_solicited']/100).toString().replace('.',','));
                     $("#trans_credit_card_name").text(response['message']['credit_card_name']);
                     $("#trans_credit_card_final").text(response['message']['credit_card_final']);
                     $("#trans_bank_name").text(response['message']['bank_name']);
@@ -161,10 +201,9 @@ $(document).ready(function () {
                     $("#trans_number_address").text(response['message']['number_address']);
                     $("#trans_city_address").text(response['message']['city_address']);
                     $("#trans_state_address").text(response['message']['state_address']);
-                    $("#trans_cep").text(response['message']['cep']);
+                    $("#trans_cep").text(response['message']['cep']);                    
+                    $('#folder_in_server').val(response['message']['folder_in_server']);
 //                    $("#trans_").text(response['message']['']);
-
-
                     $('#trans').modal('show');
                 }
                 else{
@@ -174,25 +213,73 @@ $(document).ready(function () {
             error: function (xhr, status) {
                 modal_alert_message('Internal error');
             }
-        }); 
-        
+        });         
     });
         
+    $('#get_url_contract').click(function () {
+        $.ajax({
+            url: base_url+'index.php/welcome/get_url_contract',            
+            data:{},
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']) {
+                    window.open(response['url_contract'], 'Contrato - Livre.digital');
+                    return false;
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (xhr, status) {
+                modal_alert_message('Internal error');
+            }
+        });         
+    });
+        
+    $('#actual_page').click(function () {
+        return false;
+    });
+    
+    $('#btn_afiliate_search').click(function () {
+        if($('#token').val()=='' ||$('#token').val().match('^[ ]{1,}$')){
+            $('#token').val('');
+            return false;
+        }else{
+            num_page=1;
+            $('#num_page').val(num_page);            
+            return true;            
+        }
+    });
+    
     $('#prev_page').click(function () {
-        if(actual_page>1){
-            actual_page--;
-            $('#prev_page').val(actual_page);
+        if(num_page>1){
+            num_page--;
+            $('#num_page').val(num_page);    
             $('#btn_afiliate_search').click();
         }
+        return false;
     });
     
     $('#next_page').click(function () {
         if(has_next_page){
-            actual_page++;
-            $('#prev_page').val(actual_page);
+            num_page++;
+            $('#num_page').text(num_page);
+            $('#num_page').val(num_page);
             $('#btn_afiliate_search').click();
         }
+        return false;
     });
+    
+    if(num_page==1) 
+        $('#prev_page').css({'color':'silver'});
+    else
+        $('#prev_page').css({'color':'black'});
+    
+    if(!has_next_page)
+        $('#next_page').css({'color':'silver'});
+    else
+        $('#next_page').css({'color':'black'});
     
     //----------------------SECUNDARY FUNCTIONS-------------------------------
        
@@ -326,6 +413,82 @@ $(document).ready(function () {
         $('#titular_cpf').val('07367014196');
     }
     
-    //init_signin();
+    
+    /************UPLOADING PHOTO/***********/    
+    $("#avatar").on("change", function (e) {
+        var file = $(this)[0].files[0];        
+        var upload = new Upload(file);
+        // execute upload
+        upload.doUpload(0);
+        //alert("file upload");
+    });
+    
+    var Upload = function (file) {
+    this.file = file;
+    };
 
+    Upload.prototype.getType = function() {
+        return this.file.type;
+    };
+    Upload.prototype.getSize = function() {
+        return this.file.size;
+    };
+    Upload.prototype.getName = function() {
+        return this.file.name;
+    };
+    
+    Upload.prototype.doUpload = function (id) {
+        var that = this;
+        var formData = new FormData();
+
+        // add assoc key values, this will be posts values
+        formData.append("file", this.file, this.getName());
+        formData.append("upload_file", true);        
+        formData.append("id", id);                
+
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: base_url+'index.php/welcome/upload_file_affiliate',
+            xhr: function () {
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    //myXhr.upload.addEventListener('progress', that.progressHandling, false);
+                }
+                return myXhr;
+            },
+            success: function (response) {                
+                if(response['success']){                    
+                    $("#avatar_img").attr("src",response['message']);                                        
+                }
+                else{
+                    alert(response['message']);                    
+                }
+            },
+            error: function (error) {
+                // handle error
+            },
+            async: true,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 60000
+        });
+    };    
+    /************END UPLOADING PHOTO/***********/
+    
+    $('.foto_usr').click(function () {
+        var id = this.id;
+        var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png', 'cpf_card.png'];
+        var left  = ($(window).width()/2)-(640/2),
+            top   = ($(window).height()/2)-(480/2);
+        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
+    });
+    
+//    $("#get_url_contract").click(function () {
+//        var id = $("#trans_id").text();
+//        $(location).attr('href',base_url+'index.php/welcome/download_document/?id='+id);        
+//    });
+    
 }); 

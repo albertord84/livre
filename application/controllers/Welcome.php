@@ -7,12 +7,38 @@ ini_set('xdebug.var_display_max_data', 8024);
 class Welcome extends CI_Controller {
             
     function __construct() {
-        parent::__construct();              
-    }    
+        parent::__construct();
+    }
+    
+    public function test2() {               
+        //$safes = $this->upload_document_template_D4Sign(3);
+        //$safes = $this->signer_for_doc_D4Sign(3);
+        //$safes = $this->send_for_sign_document_D4Sign(3);
+        //$safes = $this->cancel_document_D4Sign(3);        
+        //$safes = $this->resend_for_sign_document_D4Sign(3);
+        //$safes = $this->get_document_D4Sign(3);
+        //$tomorrow = $this->next_available_day();
+        //$result = $this->topazio_emprestimo(3);        
+        //$result = $this->topazio_loans(3);        
+        //$result = $this->do_payment_iugu(3);                
+        //$result = $this->topazio_conciliations("2018-07-31");
+        //$result = $this->calculating_enconomical_values(1000,6);        
+        //$result = $this->upload_document_D4Sign();        
+    }
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
+        //$this->test2();
         $this->set_session(); 
+        $datas = $this->input->get();
+        if(isset($datas['afiliado']))
+            $_SESSION['affiliate_code'] = $datas['afiliado'];
+        else
+            $_SESSION['affiliate_code'] = '';
+        if(isset($datas['utm_source']))
+            $_SESSION['utm_source'] = $datas['utm_source'];
+        else
+            $_SESSION['utm_source'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -22,21 +48,27 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
+        //die('This functionalities is under development :-)');
+        if(session_id()=='')header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
-        $params['total_cust_value']  = str_replace('.', ',', $_SESSION['transaction_values']['total_cust_value']); 
+        
+        $params['month_value']  = str_replace('.', ',',$_SESSION['transaction_values']['month_value']); 
         $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
         $params['amount_months']  = $_SESSION['transaction_values']['amount_months']; 
-        $params['month_value']  = $_SESSION['transaction_values']['month_value']; 
+        $params['tax']  = str_replace('.', ',', $_SESSION['transaction_values']['tax']); 
+        $params['total_cust_value']  = str_replace('.', ',', $_SESSION['transaction_values']['total_cust_value']); 
+        $params['IOF']  = str_replace('.', ',', $_SESSION['transaction_values']['IOF']); 
+        $params['CET_PERC']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_PERC']); 
+        $params['CET_YEAR']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_YEAR']); 
         $this->load->view('checkout',$params);
         $this->load->view('inc/footer');
     }
     
-    //-------AFFILIATES and ADMIN VIEWS FUNCTIONS--------------------------------    
     public function afhome() {
         $this->set_session();
         $this->load->model('class/system_config');
@@ -46,12 +78,12 @@ class Welcome extends CI_Controller {
         $this->load->view('afiliados_home',$params);
     }
     
-    public function painel() {
+    public function painel(){
         if($_SESSION['logged_id']>0){
             if($_SESSION['logged_role'] === 'AFFIL'){
                 header('Location: '.base_url().'index.php/welcome/afiliados');
             } elseif($_SESSION['logged_role'] === 'ADMIN'){
-                header('Location: '.base_url().'index.php/welcome/admin');
+                header('Location: '.base_url().'index.php/welcome/transacoes');
             }
         }else
             header('Location: '.base_url().'index.php/welcome/afhome');
@@ -59,13 +91,28 @@ class Welcome extends CI_Controller {
     
     public function afiliados() {
         if($_SESSION['logged_role'] === 'AFFIL'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['num_page']=1;
+                $datas['token']='';
+            }
             $this->load->model('class/affiliate_model');
             $this->load->model('class/Crypt');
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
-            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions($_SESSION['affiliate_logged_datas']['code'],0,$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);                
+            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
+                    $_SESSION['affiliate_logged_datas']['code'],
+                    $datas['num_page']-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $datas['token'],
+                    NULL,
+                    NULL,
+                    $has_next_page);
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['num_page']=$datas['num_page'];
+            $params['has_next_page']=$has_next_page;
             $_SESSION['affiliate_logged_datas']['bank_name'] =  $this->Crypt->get_bank_by_code($_SESSION['affiliate_logged_datas']['bank']);
             $_SESSION['affiliate_logged_datas']['amount_transactions']=count($_SESSION['affiliate_logged_transactions']);
             if($_SESSION['affiliate_logged_datas']['amount_transactions']){
@@ -82,12 +129,37 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function admin() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='resumo';
-        $this->load->view('resumo');
+    public function transacoes() {
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['num_page']=1;
+                $datas['token']='';
+                $datas['start_period']='';
+                $datas['end_period']='';
+            }
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/Crypt');
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
+            $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
+                    $_SESSION['affiliate_logged_datas']['code'],
+                    $datas['num_page']-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $datas['token'],
+                    $datas['start_period'],
+                    $datas['end_period'],
+                    $has_next_page);
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['num_page']=$datas['num_page'];
+            $params['has_next_page']=$has_next_page;
+            $params['view']='transacoes';
+            $this->load->view('transacoes',$params);
+        } else{
+            header('Location: '.base_url().'index.php/welcome/afhome');
+        }
     }
     
     public function resumo() {
@@ -105,43 +177,20 @@ class Welcome extends CI_Controller {
         $params['view']='configuracoes';
         $this->load->view('configuracoes');
     }
-    
-    public function transacoes() {
-        $datas = $this->input->post();
-        if(!count($datas))$datas=NULL;
-        $this->load->model('class/affiliate_model');
-        $this->load->model('class/Crypt');
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;        
-        $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
-        $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
-                NULL,
-                (isset($datas['num_page'])?$datas['num_page']:0),
-                $GLOBALS['s$istem_config']->TRANSACTIONS_BY_PAGE,
-                $datas['token'],
-                $datas['start_period'],
-                $datas['end_period']
-            );
-        $params['view']='transacoes';
-        $this->load->view('transacoes');
-    }
-    
+        
     public function logout() {
         session_unset();
         session_destroy();
         header('Location: '.base_url().'index.php/welcome/afhome');
     }
-    
-    
-    //-------CLIENTS FUNCTIONS--------------------------------    
+        
+    //-------TRANSACTION FUNCTIONS--------------------------------    
     /*
     //varaiveis armazenadas na sessao para a solicitação de um empréstimo
     $_SESSION
     ['ip']
     ['pk']
-    ['key']
-    ['time_start']
+    ['key']    
     ['front_credit_card']
     ['selfie_with_credit_card']
     ['open_identity']
@@ -157,7 +206,18 @@ class Welcome extends CI_Controller {
     ['client_datas']['phone_ddd']
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
-    */     
+    ['client_datas']['name']    
+    ['client_datas']['email']
+
+    //Variaveis para subir novamente as fotos
+    ['new_front_credit_card']
+    ['new_selfie_with_credit_card']
+    ['new_open_identity']
+    ['new_selfie_with_identity']
+    ['new_cpf_card']
+    ['session_new_foto']
+     */
+    
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -170,33 +230,53 @@ class Welcome extends CI_Controller {
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
-            if($clients[$N-1]['status_id'] == transactions_status::DENIED){                
-                $result['message']='Você ja teve um pedido anteriomnete que foi negado. Por favor, contate nosso atendimento';
+            //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo se la transaccion en un estado diferente de beginner        
+            $last_operation_time = $this->transaction_model->get_last_date_status($clients[$N-1]['id']);
+            if(time()- $last_operation_time < 24*60*60){
+                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas. ';
                 $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
-                $result['message']='Você tem um pedido que foi aprovado e no momento está sendo feita a transferência para sua conta';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
-                $result['message']='Você fez um pedido recentemente, aguarde ser analisado. Casso dúvidas, contate nosso atendimento';
-                $result['success']=false;
-                return $result;
-            }else
-            if($clients[$N-1]['status_id'] == transactions_status::WRONG_TRANSFERRED){                
-                $result['message']='Seu pedido foi aprovado, mas ocorreu um erro na transferência. Contate nosso atendimento';
-                $result['success']=false;
-                return $result;
+                
+                //revisar esto de nuevo
+                if($clients[$N-1]['status_id'] == transactions_status::REVERSE_MONEY){                
+                    $result['message'] .= 'O seu anterior pedido foi negado. Por favor, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e no momento está sendo gestionada a transferência para sua conta.';                    
+                    return $result;
+                }else                
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_PHOTO){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar as fotos fornecidas.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_ACCOUNT){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de atualizar os dados bancários fornecidos.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::WAIT_SIGNATURE){                
+                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado. Casso dúvidas, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
+                    $result['message']='O seu anterior pedido está sendo analisado. Casso dúvidas, contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_APROVED){                
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e já foi feita a transferência para sua conta.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_DENIED){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema, mas ocorreu um erro na transferência. Contate nosso atendimento.';                    
+                    return $result;
+                }else
+                if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){                
+                    $result['message']='O seu anterior pedido foi aprovado por nosso sistema e está sendo gestionada a transferência.';                    
+                    return $result;
+                }
+                
             }
         }        
-        //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo        
-        if(time()- $clients[$N-1]['solicited_date'] < 24*60*60){
-            $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas';
-            $result['success']=false;
-            return $result;
-        }        
+                
         //4. Analisar coerencia dos dados, exemplo:
             //4.1 mesmo cpf com nome diferentes        
         /*$nomes=array();
@@ -208,7 +288,7 @@ class Welcome extends CI_Controller {
                 $nomes[$client['name']]=1;
         }
         if(count($nomes)>1){*/
-        if($clients[0]['name'] != $datas['name']){
+        if($N > 0 && $clients[0]['name'] != $datas['name']){
             $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
@@ -294,6 +374,10 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_1(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->post();
         if($datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -301,6 +385,8 @@ class Welcome extends CI_Controller {
         }else{
             $this->load->model('class/transaction_model');            
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
+            $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
+            $datas['utm_source'] = $_SESSION['utm_source'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -315,17 +401,25 @@ class Welcome extends CI_Controller {
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
-                    
+                    $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
-                        $datas['status_id']=  transactions_status::BEGINNER;
-                        $id_row = $this->transaction_model->insert_db_steep_1($datas);
+                        $datas['folder_in_server']=  $datas["cpf"]."_".time();
+                        $id_row = $this->transaction_model->insert_db_steep_1($datas); 
+                        $new_beginner_date = true;
                     }
                     else{
                         $id_row = $this->transaction_model->update_db_steep_1($datas,$possible['id']);
-                        if($id_row)
-                            $id_row=$possible['id'];
+                        if($id_row){
+                            $id_row=$possible['id'];}
                     }
                     if($id_row){
+                        $this->transaction_model->update_transaction_status(
+                            $id_row, 
+                            transactions_status::BEGINNER,
+                            $new_beginner_date    
+                                );
+                        $_SESSION['client_datas']['name'] = $datas['name'];
+                        $_SESSION['client_datas']['email'] = $datas['email'];
                         $result['success'] = true;
                         $result['pk'] = $id_row;
                         $_SESSION['pk'] = $id_row;                        
@@ -448,9 +542,8 @@ class Welcome extends CI_Controller {
                     else
                         $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
                     if($id_row){
-                        /*verificar cartao de credito haciendo la cobrança*/
-                        //$response = $this->do_payment($id_row);
-                        $response['success'] = TRUE; $response['message'] = "Cartão adicionado";
+                        $response['success'] = TRUE; 
+                        $response['message'] = "Cartão adicionado";
                         $result['success'] = $response['success'];
                         $result['message'] = $response['message'];
                     }
@@ -517,8 +610,8 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        //4. Analisar se é para atualizar ou inserir nova linha
-        $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk']);
+        //4. Analisar se é para atualizar ou inserir nova conta bancária
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
             $result['id']=$account_bank[0]['id'];
@@ -576,17 +669,90 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function insert_datas_steep_4() {
-        if(!($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] || $datas['key']!==$_SESSION['key'])){
-            $result['message']='Autorização negada. Violação de acesso';
-            $result['success']=false;
-        }else{
-            $result['success'] = true;
-            $_SESSION['is_possible_steep_4'] =true;
+    public function sign_contract() {
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $datas = $this->input->post();
+        $cpf_upload = true;
+        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+            $cpf_upload = false;
+        }            
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
+                $result['success'] = TRUE;
+                $value_ucpf = 0;
+                if($datas['ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                //1. pasar cartão de crédito na IUGU
+                $response = $this->do_payment_iugu($_SESSION['pk']);
+                if($response['success']){
+                    //2. salvar el status para WAIT_SIGNATURE
+                    $this->transaction_model->update_transaction_status(
+                        $_SESSION['pk'], 
+                        transactions_status::WAIT_SIGNATURE);
+                    //3. crear documento a partir de plantilla y guardar token del documento en la BD
+                    $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                    if($uudid_doc){
+                        //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                        $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                        if($token_signer){
+                            //5.  mandar a assinar
+                            $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                            if($result_send){                                
+                                //6. matar session para evitar retroceder
+                                session_destroy();
+                                //7. pagina de sucesso de compra con los tags de adwords y analitics
+                                $params['transactionId']=$_SESSION['pk'];
+                                $params['transactionAffiliation']='site';
+                                $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                                $params['solicited_value']=['transaction_values']['solicited_value'];
+                                $params['amount_months']=['transaction_values']['amount_months'] ;
+                                $this->load->view('sucesso-compra',$params);
+                                $this->load->view('inc/footer');
+                            }
+                            else{
+                                session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                        }
+                        else{
+                            session_destroy();
+                            $result['success'] = false;
+                            $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                        }
+                    }else{
+                        session_destroy();
+                        $result['success'] = false;
+                        $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                    }
+                }else{
+                    $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                    $useremail = $_SESSION['client_datas']['email'];
+                    $this->Gmail->credit_card_recused($name,$useremail);
+                    $result['success'] = false;
+                    $result['message'] = $response['message'];  
+                }
+            }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
+            }
+        }
+        else{
+            $result['success'] = false;
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }
         echo json_encode($result);
     }
-    
+        
     public function message() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -597,7 +763,7 @@ class Welcome extends CI_Controller {
         if ($result['success'])
             $result['message'] = 'Mensagem enviada. Agradecemos seu contato!!';
         else             
-            $result['message'] = 'Falha evinvando mensagem. Tente depois.';
+            $result['message'] = 'Falha enviando mensagem. Tente depois.';
         echo json_encode($result);
     }
     
@@ -611,12 +777,16 @@ class Welcome extends CI_Controller {
     ['affiliate_datas']
     $_SESSION['affiliates_steep_2']
     
-    //varaiveis armazenadas na sessao para cadastro de un afiliado
+    //varaiveis armazenadas na sessao para login de un afiliado
     $_SESSION
     ['logged_id']
     ['logged_role']
     ['affiliate_logged_datas']
     ['affiliate_logged_transactions']
+    
+    //varaiveis armazenadas na sessao para administração    
+    ['transaction_requested_id']
+     * ['transaction_requested_datas']
     */
     
     public function insert_affiliate_steep1(){
@@ -631,7 +801,7 @@ class Welcome extends CI_Controller {
             $this->load->model('class/affiliate_status');
             $this->load->model('class/affiliate_model');
             $afiliate = $this->affiliate_model->get_affiliates_by_email($datas['email']);
-            $N = count($afiliate);            
+            $N = count($afiliate);
             if($N>0){
                 if($afiliate[$N-1]['status_id'] == affiliate_status::ACTIVE){
                     $action = 'not_action';
@@ -652,7 +822,7 @@ class Welcome extends CI_Controller {
                 $t = time();
                 $datas['init_date'] = $t;
                 $datas['status_date'] = $t;
-                $cad = explode('-', str_replace('@', '-', $datas['email']));
+                $cad = $datas['affiliate_phone_ddd']+$datas['affiliate_phone_number'];
                 $datas['code'] = $cad[0];
                 if($action =='update_afiliate'){
                     if($this->affiliate_model->update_afiliate($afiliate[$N-1]['id'],$datas))
@@ -690,7 +860,7 @@ class Welcome extends CI_Controller {
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados bancários fornecidos';
             } else {
-                $account_bank = $this->transaction_model->get_account_bank_by_client_id($_SESSION['pk']);
+                $account_bank = $this->transaction_model->get_account_bank_by_client_id($_SESSION['pk'],1);
                 if($N = count($account_bank)){
                    $id_row = 0;
                    if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
@@ -745,11 +915,317 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
+        
+    //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
+    public function approve_transaction(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);
+            if($resp['success']){
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'ccb_number',$resp['ccb']);                
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'contract_id',$resp['contract_id']);                
+                $this->transaction_model->update_transaction_status(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::TOPAZIO_IN_ANALISYS);
+                //email de bem sucedido
+                $GLOBALS['sistem_config'] = $this->system_config->load();
+                require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+                $this->Gmail = new Gmail();      
+                $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+                $useremail = $_SESSION['transaction_requested_datas']['email'];
+                $result = $this->Gmail->transaction_email_approved($name,$useremail);
+                if ($result['success'])
+                    $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+                else             
+                    $result['message'] = 'Falha enviando email de aprovação. Tente depois.';                
+            } else{
+                //tratamiento de diferentes problemas que me va am amndar Moreno
+            }
+            echo json_encode($result);
+        }
+    }
     
-   
+    public function request_new_photos(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();      
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];                
+            $unique_new_photos_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);                
+            $link = urlencode(base_url().'index.php/welcome/send_new_photos?trid='.$transaction_encrypted_id.'&upc='.$unique_new_photos_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_photos_code',$unique_new_photos_code);
+            $this->transaction_model->update_transaction_status(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_PHOTO);
+            $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
+            if ($result['success'])
+                $result['message'] = 'Fotos novas solicitadas com sucesso!!';
+            else             
+                $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
+        }
+        echo json_encode($result);
+    }
+    
+    public function send_new_photos(){
+        $this->load->model('class/Crypt');
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $datas = $this->input->get();        
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+        if($transaction){
+           if($datas['upc'] == $transaction['new_photos_code']){
+            $this->transaction_model->save_in_db(
+                'transactions',
+                'id',$transaction['id'],
+                'new_photos_code',$transaction['new_photos_code'].'--used');          
+            $_SESSION['session_new_foto'] = true;   
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['transaction']=$transaction;
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $this->load->view('reenvio-documento',$params);
+            $this->load->view('inc/footer',$params);
+            } else{
+                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+            }
+        }else{
+            print_r('Access violation. Wrong prameters!!');
+        }
+    }
+    
+    public function request_new_account(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];
+            $unique_new_account_bank_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
+            $link = urlencode(base_url().'index.php/welcome/send_new_account?trid='.$transaction_encrypted_id.'&uabc='.$unique_new_account_bank_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_account_bank_code',$unique_new_account_bank_code);
+            $this->transaction_model->update_transaction_status(
+                        $_SESSION['transaction_requested_id'], 
+                        transactions_status::WAIT_ACCOUNT);
+            $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
+            if ($result['success'])
+                $result['message'] = 'Nova conta solicitada com sucesso!!';
+            else             
+                $result['message'] = 'Falha enviando email de solicitação de nova conta. Tente depois.';                
+        }
+        echo json_encode($result);
+    }
+    
+    public function send_new_account(){
+        $this->load->model('class/Crypt');
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $datas = $this->input->get();        
+        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
+        if($transaction){
+           if($datas['uabc'] == $transaction['new_account_bank_code']){
+            $this->transaction_model->save_in_db(
+                'transactions',
+                'id',$transaction['id'],
+                'new_photos_code',$transaction['new_photos_code'].'--used');
+            $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
+            $params['transaction']=$transaction;
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $this->load->view('reenvio-conta',$params);
+            $this->load->view('inc/footer',$params);
+            } else{
+                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+            }
+        }else{
+            print_r('Access violation. Wrong prameters!!');
+        }
+    }
+    
+    public function recibe_new_account(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        $datas = $this->input->post();
+        if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
+            $datas['pk'] = $_SESSION['pk'];
+            if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){                
+                //TODO Moreno API
+                //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
+                $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                if($uudid_doc){
+                    //2. asignar signatario a documento                    
+                    $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                    if($token_signer){
+                        //3.  mandar a assinar
+                        $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                        if($result_send){
+                            //4. cambiar el status de la transaccion
+                            $this->transaction_model->update_transaction_status(
+                                    $_SESSION['transaction_requested_id'],
+                                    transactions_status::WAIT_SIGNATURE);
+                            $result['success']=true; //para mostrar el toggle2
+                        }                    
+                        else{
+                                //session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                    }
+                    else{
+                        //session_destroy();
+                        $result['success'] = false;
+                        $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                    }
+                }
+                else{
+                    //session_destroy();
+                    $result['success'] = false;
+                    $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                }
+            }else{
+                $result['success']=false;
+                $result['success']='Erro de atualização no banco de dados';
+            }
+        }else{
+            $result['success']=false;
+            $result['success']='Access violation';
+        }
+        echo json_encode($result);
+    }
+    
+    public function request_new_sing_us(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $result['success'] = false;
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();
+            $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+            $useremail = $_SESSION['transaction_requested_datas']['email'];
+            $unique_new_sing_us_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
+            $transaction_encrypted_id = $this->Crypt->crypt($_SESSION['transaction_requested_id']);
+            $link = urlencode(base_url().'index.php/welcome/send_new_sing_us?trid='.$transaction_encrypted_id.'&uasu='.$unique_new_sing_us_code);
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['transaction_requested_id'],
+                    'new_sing_us_code',$unique_new_sing_us_code);
+            //TODO Moreno API
+            //1. subir el mismo contrato            
+            $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+            if($uudid_doc){
+                //2. asignar signatario a documento                    
+                $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                if($token_signer){
+                    //3.  mandar a assinar
+                    $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                    if($result_send){
+                        //4. cambiar el status de la transaccion
+                        $this->transaction_model->update_transaction_status(
+                                    $_SESSION['transaction_requested_id'], 
+                                    transactions_status::WAIT_SING_US);
+                        $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
+                        if ($result['success'])
+                            $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+                        else             
+                            $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+                    }
+                    else{
+                                //session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                }
+                else{
+                    //session_destroy();
+                    $result['success'] = false;
+                    $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                }
+            }
+            else{
+                //session_destroy();
+                $result['success'] = false;
+                $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function request_recuse_and_reverse_money(){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        $result['success'] = false;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            //1. estornar dinero
+            $resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
+            if($resp['success']){
+                //2. mudar status de la transaccion
+                $this->transaction_model->update_transaction_status(
+                    $_SESSION['transaction_requested_id'], 
+                    transactions_status::REVERSE_MONEY);
+                //3. enviar email de estorno
+                $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
+                $useremail = $_SESSION['transaction_requested_datas']['email'];
+                $result = $this->Gmail->transaction_request_recused($name,$useremail);
+            }else{
+                $result['message'] = $resp['message'];
+            }
+        }
+        echo json_encode($result);
+    }
+    
+    public function get_url_contract(){
+        $result['success']=false ;
+        $result['message']='Access violation';
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $url = $this->download_document_D4Sign($_SESSION['transaction_requested_id']);            
+            if($url['success']){
+                $result['url_contract']= $url['message'];
+                $result['success']=true;
+            }else
+                $result['message']=$url['message'];
+        }
+        echo json_encode($result);
+    }
 
-    //-------AUXILIAR FUNCTIONS----------------------------------
-    
+        //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
@@ -783,16 +1259,18 @@ class Welcome extends CI_Controller {
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
         if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){
-                $taxas=array(6=>40.63, 7=>47.65, 8=>55.01, 9=>62.75, 10=>70.87, 11=>79.40, 12=>88.35);
-                $result['total_cust_value'] = $datas['solicited_value'] + 
-                        ($datas['solicited_value']* $taxas[$datas['amount_months']]/100);
-                $result['month_value'] = $result['total_cust_value']/$datas['amount_months'];                
-                $result['total_cust_value']=sprintf("%.2f", $result['total_cust_value']);
-                $result['month_value']=sprintf("%.2f", $result['month_value']);                
-                $result['solicited_value']=$datas['solicited_value'];  
-                $result['amount_months']=$datas['amount_months'];                  
-                $result['success'] = true;
+            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){                
+                $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
+                $result['solicited_value']=$financials['solicited_value'];  
+                $result['amount_months']=$financials['amount_months'];
+                $result['total_cust_value'] = $financials['total_cust_value'];                        
+                $result['month_value'] =$financials['month_value'];
+                $result['tax'] =$financials['tax'];
+                $result['IOF'] =$financials['IOF']; //valor a cobrar por IOF
+                $result['TAC'] =$financials['TAC'];
+                $result['CET_PERC'] =$financials['CET_PERC'];
+                $result['CET_YEAR'] =$financials['CET_YEAR'];
+                $result['success'] = true;                
                 $_SESSION['transaction_values']=$result;
             } else{
                 $result['success'] = false;
@@ -940,17 +1418,6 @@ class Welcome extends CI_Controller {
         return true;
     }
     
-    public function codify($str){
-        $this->load->model('class/crypt');
-        return  $this->crypt->codify($str);
-    }
-    
-    public function decodify($str){
-        $this->load->model('class/crypt');
-        return  $this->crypt->decodify($str);        
-        return $str;
-    }
-    
     public function get_cep_datas(){
         $cep = $this->input->post()['cep'];
         $datas = file_get_contents('https://viacep.com.br/ws/'.$cep.'/json/');
@@ -1007,10 +1474,16 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
         $response['success'] = TRUE; /*eliminar estas*/
         return $response;            /* dos lineas  */
+        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $authenticationtoken = $GLOBALS['sistem_config']->AUTENTICATION_TOKEN_SMS;
+        $username = $GLOBALS['sistem_config']->USER_NAME_SMS;
         
         $full_number = $phone_country_code.$phone_ddd.$phone_number;
         
@@ -1027,8 +1500,8 @@ class Welcome extends CI_Controller {
           //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
           CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "Para validar seu telefone na livre.digital use o codigo '.$message.'"}',
           CURLOPT_HTTPHEADER => array(
-            "authenticationtoken: D8UvJQd-bb5sXzA-vnJWr13qmMBTQWomtj1oiysq",
-            "username: seiva",
+            "authenticationtoken: ".$authenticationtoken,
+            "username: ".$username,
             "content-type: application/json"
           ),
         ));
@@ -1048,35 +1521,14 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-        
-    public function iugu_simples_sale(){
-        require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
-        Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
-        Iugu_Charge::create(
-            [
-                "token"=> "TOKEN QUE VEIO DO IUGU.JS OU CRIADO VIA BIBLIOTECA",
-                "email"=>"your@email.test",
-                "items" => [
-                    [
-                        "description"=>"Item Teste",
-                        "quantity"=>"1",
-                        "price_cents"=>"1000"
-                    ]
-                ]
-            ]
-        );
-    }
-        
+            
+    //-------UPLOADING PHOTO---------------------------------------
     public function upload_file(){
         $this->load->model('class/transaction_model');
         $datas = $this->input->post();
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                
-            $cpf = $client[0]['cpf'];
-            if(!$_SESSION['time_start'])
-                $_SESSION['time_start'] = time();
-            $now = $_SESSION['time_start'];
-            $path_name = "assets/data_users/".$cpf."_".$now;             
+            $client = $this->transaction_model->get_client('id', $_SESSION['pk']);                            
+            $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
             
             if(is_dir($path_name) || mkdir($path_name, 0755)){            
                 $result = [];
@@ -1159,29 +1611,216 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }    
         echo json_encode($result);
     }
-        
-    public function sign_contract() {
-        $this->load->model('class/transaction_model');
+    
+    public function upload_file_affiliate(){    
         $datas = $this->input->post();
-        
+        if($_SESSION['logged_id'] && $_SESSION['logged_role'] = "AFFIL"){
+            $path_name = "assets/data_affiliates/affiliate_".$_SESSION['logged_id'];             
+            
+            if(is_dir($path_name) || mkdir($path_name, 0755)){            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 5000000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $file_names = ["photo_profile"];
+                            $id_file = 0;
+                            /*$id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 4)
+                                $id_file = 0;*/
+                            
+                            $filename = $file_names[$id_file].".png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
+                            if (file_exists($path_name."/". $filename)) {
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.png?'.time();
+                            $result['success'] = true;
+                            $_SESSION[$file_names[$id_file]] = true;
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel criar pasta dos arquivos";
+            }
+        }
+        else{
+            $result['success'] = false;
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
+        }    
+        echo json_encode($result);
+    }
+    
+    public function new_upload_file(){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $datas = $this->input->post();
+        if($_SESSION['session_new_foto']){                        
+            $client = $this->transaction_model->get_client('id', $this->Crypt->decrypt($datas['trid']));                            
+            $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
+            if(is_dir($path_name) && count($client) == 1){            
+                $result = [];
+                $result['success'] = false;
+                $result['message'] = "";
+                if($fileError == UPLOAD_ERR_OK){
+                   //Processes your file here
+                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $temp = explode(".", $_FILES["file"]["name"]);
+                    $extension = end($temp);
+                    if ((($_FILES["file"]["type"] == "image/gif")
+                    || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "image/jpg")
+                    || ($_FILES["file"]["type"] == "image/pjpeg")
+                    || ($_FILES["file"]["type"] == "image/x-png")
+                    || ($_FILES["file"]["type"] == "image/png"))
+                    && ($_FILES["file"]["size"] < 5000000)
+                    && in_array($extension, $allowedExts)) {
+                        if ($_FILES["file"]["error"] > 0) {
+                            $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
+                        } else {
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
+                            $id_file = $datas['id'];
+                            if(!is_numeric($id_file))
+                                $id_file = 0;
+                            if($id_file < 0 || $id_file > 4)
+                                $id_file = 0;
+                            
+                            $filename = $file_names[$id_file].".png";
+                            
+                            //$filename = $label.$_FILES["file"]["name"];                   
+                            if (file_exists($path_name."/". $filename)) {
+                                unlink($path_name."/". $filename);
+                                //$result['message'] .= $filename . " já foi carregado. ";
+                            } 
+                            move_uploaded_file($_FILES["file"]["tmp_name"],
+                            $path_name."/". $filename);
+                            $result['message'] = "Guardado " . $filename;
+                            $result['success'] = true;
+                            $_SESSION["new_".$file_names[$id_file]] = true;
+                        }
+                    } else {
+                        $result['message'] .= "Arquivo inválido";
+                    }            
+                }else{
+                   switch($fileError){
+                     case UPLOAD_ERR_INI_SIZE:   
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_FORM_SIZE:  
+                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          break;
+                     case UPLOAD_ERR_PARTIAL:    
+                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          break;
+                     case UPLOAD_ERR_NO_FILE:    
+                          $message = 'Error: nenhum arquivo foi subido.';
+                          break;
+                     case UPLOAD_ERR_NO_TMP_DIR: 
+                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          break;
+                     case UPLOAD_ERR_CANT_WRITE: 
+                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          break;
+                     case  UPLOAD_ERR_EXTENSION: 
+                          $message = 'Error: carga de arquivo não completada.';
+                          break;
+                     default: $message = 'Error: carga de arquivo não completada.';
+                              break;
+                    }
+                    $result['success'] = false;
+                    $result['message'] .= $message;
+                }
+            }
+            else{
+                $result['success'] = false;
+                $result['message'] = "Impossivel subir os arquivos neste momento! Consulte aos nossos atendentes.";
+            }
+        }
+        else{
+            $result['success'] = false;
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
+        }    
+        echo json_encode($result);
+    }
+    
+    public function new_finished_upload() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
+        $datas = $this->input->post();
         $cpf_upload = true;
-        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+        if($datas['new_ucpf'] == 'true' && !$_SESSION['new_cpf_card']){            
             $cpf_upload = false;
         }
-            
-        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            
-            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
+        if($_SESSION['session_new_foto']){
+            if($_SESSION['new_front_credit_card'] && $_SESSION['new_selfie_with_credit_card'] && $_SESSION['new_open_identity'] && $_SESSION['new_selfie_with_identity'] && $cpf_upload){           
                 $result['success'] = TRUE;
+                $result['message'] = "Fotos subidas corretamente. Sua transferencia está sendo analisada.";                
                 $value_ucpf = 0;
-                if($datas['ucpf'] == 'true')
+                if($datas['new_ucpf'] == 'true')
                     $value_ucpf = 1;
-                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //hacer mas cosas
+                $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
+                $this->transaction_model->update_transaction_status($this->Crypt->decrypt($datas['trid']), transactions_status::PENDING);
+                session_destroy();
             }
             else{                
                 $result['success'] = false;
@@ -1190,12 +1829,35 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }
         echo json_encode($result);
     }
     
-    public function get_token_iugu($id){
+    //-------IUGU API-----------------------------------------------
+    public function iugu_simples_sale(){
+        require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
+        Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
+        Iugu_Charge::create(
+            [
+                "token"=> "TOKEN QUE VEIO DO IUGU.JS OU CRIADO VIA BIBLIOTECA",
+                "email"=>"your@email.test",
+                "items" => [
+                    [
+                        "description"=>"Item Teste",
+                        "quantity"=>"1",
+                        "price_cents"=>"1000"
+                    ]
+                ]
+            ]
+        );
+    }
+    
+    public function get_client_token_iugu($id){        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
         
         $this->load->model('class/transaction_model');
         $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
@@ -1207,7 +1869,7 @@ class Welcome extends CI_Controller {
         $firstname = join(' ', $names);
 
         $postData = array(
-            'account_id' => '80BF7285A577436483EE04E0A80B63F4',
+            'account_id' => $account_id,
             'method' => 'credit_card',
             'test' => 'true',
             'data' => array(
@@ -1235,34 +1897,42 @@ class Welcome extends CI_Controller {
         curl_close($handler);
         
         if(is_object($parsed_response) && $parsed_response->id){
-            return $parsed_response->id;
+            return array('success' => true, 'token' => $parsed_response->id);
         }
         else {
-            return 0;
+            return array('success' => false, 'message' => $parsed_response->errors->number[0]);
         }
     }
 
-    public function do_payment($id){
+    public function do_payment_iugu($id){
+        //Solicita na Iugu a cobrança no cartão do cliente
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
         $this->load->model('class/transaction_model');
-        
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
+        $response_client = $this->get_client_token_iugu($id);
+        if(!$response_client['success']){
+            $response['success'] = false;
+            $response['message'] = $response_client['message'];
+            return $response;
+        }
         
-        $token = $this->get_token_iugu($id);
+        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"]);
         
+        $token = $response_client['token'];
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
-            'months' => 1,//$client['number_plots'],
+            'months' => $client['number_plots'],
             'items' => array(
-                            'description' => 'money',
-                            'quantity' => 1,
-                            'price_cents' => 1000//$client['total_effective_cost']
-                        )            
+                    'description' => 'money',
+                    'quantity' => 1,
+                    'price_cents' => $financials['month_value']*100
+                )            
         );        
-        
         $postFields = http_build_query($postData);
-        
         $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
         $handler = curl_init();
         curl_setopt($handler, CURLOPT_URL, $url);  
@@ -1274,9 +1944,7 @@ class Welcome extends CI_Controller {
         $info = curl_getinfo($handler);
         $string = curl_error($handler);
         curl_close($handler);
-        
         $response = [];
-                
         if(is_object($parsed_response) && $parsed_response->success){
             $this->transaction_model->save_generated_bill($id, $parsed_response->invoice_id);
             $response['success'] = true;
@@ -1286,14 +1954,15 @@ class Welcome extends CI_Controller {
             $response['success'] = false;
             $response['message'] = $parsed_response->message;
         }
-        
         return $response;
     }
 
-    public function refund_bill($id){
+    public function refund_bill_iugu($id){
         $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
         
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1324,11 +1993,13 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_bill($id){        
+    public function get_bill_iugu($id){        
             
         $this->load->model('class/transaction_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;
         
-        $API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
         
         $id_bill = $client['invoice_id'];
@@ -1358,15 +2029,19 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    public function get_topazio_API_token() {
-        $this->load->model('class/transaction_model');
+    //-------TOPAZIO API-----------------------------------------------
+    public function get_topazio_API_token() {        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
+        $client_id_and_secret_64 = $GLOBALS['sistem_config']->CLIENT_AND_SECRET_TOPAZIO_64;
         
         //Obteniendo code
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/oauth/grant-code");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"9b6103b5-ed33-36b8-9276-76663067c710\",\"redirect_uri\":\"http://localhost/\"}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"client_id\":\"".$client_id."\",\"redirect_uri\":\"http://localhost/\"}");
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
@@ -1375,12 +2050,18 @@ class Welcome extends CI_Controller {
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
         $parsed_response = json_decode($result);        
-        $code = substr($parsed_response->redirect_uri, 23);//obtiene code
+        if(is_object($parsed_response) && $parsed_response->redirect_uri){
+            $pos = strpos($parsed_response->redirect_uri, "code=");            
+            $code = substr($parsed_response->redirect_uri, $pos+5);//obtiene code
+        }
+        else{
+            return NULL;
+        }
         
         //Obteniendo access token
         $ch = curl_init();
@@ -1392,40 +2073,47 @@ class Welcome extends CI_Controller {
 
         $headers = array();
         $headers[] = "Content-Type: application/x-www-form-urlencoded";
-        $headers[] = "Authorization: Basic OWI2MTAzYjUtZWQzMy0zNmI4LTkyNzYtNzY2NjMwNjdjNzEwOjk2NjcyYjVkLWEyMmItM2RjMi04OWVmLTNlNTU0ZWNmYTk0NA==";
+        $headers[] = "Authorization: Basic ".$client_id_and_secret_64;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            return 0;
+            return NULL;
         }
         curl_close ($ch);
         
-        $parsed_response = json_decode($result);        
-        $API_token = $parsed_response->access_token; //obtiene token*/
-        
+        $parsed_response = json_decode($result);
+        $API_token = NULL;
+        if(is_object($parsed_response) && $parsed_response->access_token){
+            $API_token = $parsed_response->access_token; //obtiene token*/
+        }
         return $API_token;
     }
 
-    public function basicCustomerTopazio(){        
+    public function basicCustomerTopazio($id, $API_token){        
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
-        $API_token = $this->get_topazio_API_token();
+        $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "12345678901";
-        $name = "Julio Petro";
-        $cep = "24040200";
-        $street = "Miguel 42";
-        $number = "25";
-        $district = "Ponta Celeste";
-        $city = "Mi ciudad";
-        $state = "SP";
-        $phone = "21212121212121";
-        $email = "julio@julio.com.br";
-        $cnpj_livre = "23456789012";
+        $cpf = $client["cpf"];
+        $name = $client["name"];
+        $cep = $client["cep"];
+        $street = $client["street_address"]." ".$client["number_address"];
+        $number = $client["complement_number_address"];
+        $district = "_"; //"";
+        $city = $client["city_address"];
+        $state = $client["state_address"];
+        $phone = $client["phone_ddd"].$client["phone_number"];
+        $email = $client["email"];
+        $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $name_livre = $GLOBALS['sistem_config']->NAME_LIVRE;
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
-                    ."\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n "
+                    ."\",\n  \"billing\": \"2\",\n  \"score\": \"2\",\n  \"rating\": \"2\",\n  \"address\": {\n "
                     ."  \"postalCode\": ".$cep
                     .",\n    \"street\": \"".$street
                     ."\",\n    \"number\": \"".$number
@@ -1435,49 +2123,605 @@ class Welcome extends CI_Controller {
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
                     ."\",\n    \"email\": \"".$email
                     ."\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"".$cnpj_livre
-                    ."\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
+                    ."\",\n      \"nameOrCompanyName\": \"".$name_livre
+                    ."\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}";
         
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"document\": \"12345678901\",\n  \"nameOrCompanyName\": \"Julio Petro\",\n  \"billing\": 0,\n  \"score\": \"string\",\n  \"rating\": \"string\",\n  \"address\": {\n    \"postalCode\": 24040200,\n    \"street\": \"Miguel 42\",\n    \"number\": \"25\",\n    \"complement\": \"\",\n    \"district\": \"Ponta Celeste\",\n    \"city\": \"Mi ciudad\",\n    \"state\": \"SP\"\n  },\n  \"contact\": {\n    \"phone\": \"21212121212121\",\n    \"email\": \"julio@julio.com.br\"\n  },\n  \"partners\": [\n    {\n      \"document\": \"23456789012\",\n      \"nameOrCompanyName\": \"Livre\",\n      \"typeLink\": \"string\",\n      \"ownershipPercentage\": 0\n    }\n  ]\n}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        $headers[] = "client_id: 9b6103b5-ed33-36b8-9276-76663067c710";
+        $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
         
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
         curl_close ($ch);
         
-        $parsed_response = json_decode($result);        
+        $parsed_response = json_decode($result);
+        
+        $result_query = false;
+        if(is_object($parsed_response) && $parsed_response->success == TRUE)
+            $result_query = true;
+        
+        return $result_query;
     }
     
-    public function topazio_emprestimo($id) {
-        //$API_token = $this->get_topazio_API_token();
+    public function topazio_loans($id, $API_token){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/tax_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        //********************************
+        $num_plots = $financials["amount_months"];
+        $amount_pay = $financials["solicited_value"];        
+        $iof = $financials['IOF'];
+        $tax = $financials['tax'];
+        $tac = $financials['TAC'];
+        $total_value = $financials['funded_value'];
+        $plot_value = $financials['month_value'];        
+        //*********
+        $cpf = $transaction["cpf"];
+        $name = $transaction["name"];
+        $document_id = 10000000000 + time();
+        $release_date = $this->next_available_day();
+        $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
+        $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $account_type_string = ["CC" => "CC", "PP" => "CP"];
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
+        $bank_code = "001";//$account_bank["bank"];
+        $agency = substr($account_bank["agency"], 0, 4);
+        $account = "12570-9";//$account_bank["account"];
+        $account_type = $account_type_string[ $account_bank["account_type"] ];
+        $fields = "{\n  \"client\":"
+                        ." {\n    \"document\": \"".$cpf
+                        ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  "
+                    ."\"loans\": {\n    "
+                        ."\"partnerId\": ".$document_id
+                        .",\n    \"releaseDate\": \"".$release_date
+                        ."\",\n    \"totalValue\": \"".$total_value
+                        ."\",\n    \"amountPay\": \"".$amount_pay
+                        ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02"
+                        .",\n    \"quotaAmount\": ".$num_plots
+                        .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"DBC\""
+                        .",\n    \"productCode\": ".$product_code
+                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
+                        ",\n    \"TAC\": \"".$tac."\",\n    "
+                    ."\"payment\": {\n   "
+                        ."   \"formSettlement\": \"ONL\""
+                        .",\n      \"bankCode\": \"".$bank_code
+                        ."\",\n      \"branch\": \"".$agency
+                        ."\",\n      \"accountNumber\": \"".$account
+                        ."\",\n      \"accountType\": \"".$account_type."\"\n    }"
+                    .",\n    \"planQuota\": [\n      ";
+                    
+                    $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+                    $plot_number = 1;
+                    
+                    while ($plot_number <= $num_plots){                    
+                        $fields .= "{\n        \"quotaValue\": \"".$plot_value."\",\n        \"quotaDueDate\": \"".$plot_date."\",\n        \"quotaNumber\": ".$plot_number."\n      }";
+                        if($plot_number < $num_plots)
+                            $fields .= ",\n      ";
+                        else
+                            $fields .= "\n    ";
+                        $plot_number ++;
+                        $plot_date = $this->next_month_to_pay($plot_date);
+                    }
+                    $fields .= "]\n  }\n}";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        $headers[] = "Accept: text/plain";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        curl_close ($ch);
+        $parsed_response = json_decode($result);
+        $response_loans['success'] = false;
+        if(is_object($parsed_response) && $parsed_response->success == TRUE){
+            $response_loans['success'] = true;
+            $response_loans['ccb'] = $parsed_response->data->CCB;
+            $response_loans['contract_id'] = $document_id;
+        }
+        else{
+            $response_loans['message'] = $parsed_response->errors->values[0]->error[0];
+        }
+        return $response_loans;
+    }
+    
+    public function next_available_day(){
+        $hoje = strtotime("now");        
+        $d = getdate($hoje);
+
+        $next_day = "+1 day";    
+        if($d['wday'] == 5){
+            $next_day = "+3 day";
+        }
+        if($d['wday'] == 6){
+            $next_day = "+2 day";
+        }
+        $amanha = strtotime($next_day);
+        $tomorrow = getdate($amanha);
+        if($tomorrow["mon"] < 10)
+            $tomorrow["mon"] = "0".$tomorrow["mon"];
+        if($tomorrow["mday"] < 10)
+            $tomorrow["mday"] = "0".$tomorrow["mday"];
+        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+    }
+    
+    public function next_month_to_pay($date){
+        $next_date = new DateTime($date); // Y-m-d
+        $next_date->add(new DateInterval('P30D'));
+        return $next_date->format('Y-m-d');
+    }
+    
+    public function init_date_to_pay($date){
+        $next_date = new DateTime($date); // Y-m-d
+        $next_date->add(new DateInterval('P10D'));
+        return $next_date->format('Y-m-d');
+    }
+
+    public function get_field($money){
+        if($money == 500)
+            return "500";
+        if($money >= 501 && $money <= 1000)
+            return "501_1000";
+        if($money >= 1001 && $money <= 1500)
+            return "1001_1500";
+        if($money >= 1501 && $money <= 2000)
+            return "1501_2000";
+        if($money >= 2001 && $money <= 2500)
+            return "2001_2500";
+        if($money >= 2501 && $money <= 3000)
+            return "2501_3000";
+    }
+
+    public function topazio_emprestimo($id) {// recebe id da transacao        
+        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        if($API_token){
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            if($result_basic){
+                $response = $this->topazio_loans($id, $API_token);
+                if($response['success']){
+                    $result['message'] = "Emprestimo aprovado!";
+                    $result['success'] = true;            
+                    $result['ccb'] = $response['ccb'];            
+                    $result['contract_id'] = $response['contract_id'];            
+                }
+                else{
+                    $result['message'] = $response['message'];
+                    $result['success'] = false;            
+                }
+            }
+            else{
+                $result['message'] = "Erro criando usuario com topazio";
+                $result['success'] = false;            
+            }            
+        }
+        else{
+            $result['message'] = "Erro solicitando token de topazio";
+            $result['success'] = false;            
+        }
+        
+        return $result;
     }
     
     public function get_transaction_datas_by_id(){
-        $datas = $this->input->post();
-        $result['message'] = 'Transação não encontrada';
-        $result['success']=false;
-        foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-            if($transactions['id'] == $datas['id']){
-                $result['message'] = $transactions;
-                $result['success']=true;
-                break;
+        $_SESSION['transaction_requested_id'] = -1;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $datas = $this->input->post();
+            $result['message'] = 'Transação não encontrada';
+            $result['success']=false;
+            foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+                if($transactions['id'] == $datas['id']){
+                    $_SESSION['transaction_requested_id'] = $datas['id'];
+                    $_SESSION['transaction_requested_datas'] = $transactions;
+                    $result['message'] = $transactions;
+                    $result['success']=true;
+                    break;
+                }
             }
         }
-        echo json_encode($result);
+        echo json_encode($result);        
     }
-   
+
+    public function topazio_conciliations($date){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+
+
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        return $parsed_response;
+    }
+    
+    //-------API D4Sign-----------------------------------------------
+    public function get_safes_D4Sign(){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $safes = $client->safes->find();
+                
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return $null;
+        } 
+        return $safes;
+    }
+    
+    public function get_documents_D4Sign(){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;                
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $docs = $client->documents->find();
+
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function get_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $docs = $client->documents->find($transaction['doc_d4sign']);
+
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function upload_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $safe_livre_4sign = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $path_file = $_SERVER['DOCUMENT_ROOT'].'/livre/assets/data_users/'.$transaction['folder_in_server'].'/cpf_card.png';//contract.pdf
+                $id_doc = $client->documents->upload($safe_livre_4sign, $path_file);
+                if(is_object($id_doc) && $id_doc->message == "success")                    
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'doc_d4sign',$id_doc->uuid);
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+    }
+    
+    public function signer_for_doc_D4Sign($id, $act = '1', $foreign = 0, $certificadoicpbr = 0, $assinatura_presencial = 0, $embed_methodauth = 'email'){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+
+                $signers = array(
+                    array(  "email" => $transaction['email'],
+                            "act" => $act,
+                            "foreign" => $foreign,
+                            "certificadoicpbr" => $certificadoicpbr,
+                            "assinatura_presencial" => $assinatura_presencial,
+                            "embed_methodauth" => $embed_methodauth,
+                            "embed_smsnumber" => '',
+                            "docauth" => '0'
+                        )
+                );
+                $result = $client->documents->createList($transaction['doc_d4sign'], $signers);
+                
+                $id_signer = 0;
+                if(is_object($result) && $result->message[0]->success)                    
+                {   $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'key_signer',$result->message[0]->key_signer);
+                    $id_signer = $result->message[0]->key_signer;
+                    /*$email = $transaction['email'];
+                    $display_name = $transaction['name'];
+                    $documentation = $transaction['cpf'];
+                    $birthday = '01/01/1970';
+                    $key_signer = $result->message[0]->key_signer;
+
+                    $add = $client->documents->addinfo($transaction['doc_d4sign'], $email, $display_name, $documentation, $birthday, $key_signer);                
+                     */                    
+                }
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $id_signer;
+    }
+    
+    public function send_for_sign_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $message = 'Prezado '.$transaction['name'].', segue o contrato eletrônico para assinatura.';
+                $workflow = 0 ; //Todos podem assinar ao mesmo tempo
+                $skip_email = 0; //Não disparar email com link de assinatura (usando EMBED)
+                
+                $docs = $client->documents->sendToSigner($transaction['doc_d4sign'], $message, $workflow, $skip_email);
+
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function resend_for_sign_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $email = $transaction['email'];
+                $key_signer = $transaction['key_signer'];
+                
+                $docs = $client->documents->resend($transaction['doc_d4sign'], $email, $key_signer);
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function cancel_document_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $docs = $client->documents->cancel($transaction['doc_d4sign']);
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $docs;
+    }
+    
+    public function upload_document_template_D4Sign($id){
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        
+        try{
+                $client = new D4sign\Client();
+                $client->setAccessToken($token_4sign);
+                $client->setCryptKey($crypt_4sign);
+                
+                $id_template = "MjA1Nw=="; //$GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
+                $templates = array(
+			$id_template => array(
+					'name' => $transaction['name'],
+					'amount_solicited' => $transaction['amount_solicited'],
+					'num_plots' => $transaction['number_plots']
+					)
+			);							
+	
+                $name_document = "Contrato_".time();
+                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
+
+                $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
+                
+                $uuid_doc = 0;
+                if(is_object($return) && $return->uuid != ""){
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$id,
+                            'doc_d4sign',$return->uuid);
+                
+                    $uuid_doc = $return->uuid;
+                }
+	
+        } catch (Exception $e) {
+                //echo $e->getMessage();
+                return null;
+        } 
+        return $uuid_doc;
+    }
+    
+    public function download_document_D4Sign($id){
+        if($_SESSION['logged_role'] !== 'ADMIN')
+            return NULL;
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
+        $result['success'] = false;
+        try{
+            $client = new D4sign\Client();
+            $client->setAccessToken($token_4sign);
+            $client->setCryptKey($crypt_4sign);
+            $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+            if($url_doc){
+                $result['message'] = $url_doc->url;
+                $result['success'] = true;
+            } else {
+                $result['message'] = "Documento não existe";
+            }
+        } catch (Exception $e) {
+            $result['message'] = $e->getMessage();            
+        } 
+        return $result;
+    }
+    //-------End API D4Sign-----------------------------------------------
+    
+    /*-------Calculating economical values-----------------------------------------------
+     * Usando excel proporcionado por Pedro 
+     * B1: valor solicitado por cliente
+     * B2: numero de parcelas
+     * B3: taxa de juros
+     * B7: valor financiado pelo cliente
+     * C1: IOF
+     * C5: TAC
+     * F13: CET
+     * F14: valor da parcela  
+     * J10: CET%  
+     * J11: CET anual
+    */
+    
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
+        $this->load->model('class/tax_model');
+        $B1 = number_format($valor_solicitado, 2, '.', '');
+        $B2 = $num_parcelas;
+        $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
+        $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
+        $F9 = number_format($B1 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
+        $F10 = number_format($F9*$B2, 2, '.', '');
+        $C5 = number_format(0.1 * $F10, 2, '.', '');
+        $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
+        $F14 = number_format($F13/$B2, 2, '.', '');
+        $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
+        $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
+        $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
+        $B3 = number_format( $B3*100, 2, '.', ''); 
+        $result = array(
+            'solicited_value' => $B1,                                
+            'amount_months' => $B2,
+            'tax' => $B3, //juros
+            'month_value' => $F14,
+            'total_cust_value' => $F13,
+            'funded_value' => $B7,
+            'IOF' => $C4,
+            'TAC' => $C5,
+            'CET_PERC' => $J10,
+            'CET_YEAR' => $J11                
+            );
+        return $result;
+    }
+    
+    
 }

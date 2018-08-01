@@ -10,7 +10,7 @@
 	        <td width="440" valign="top" align="center" height="40">
           		<br><br>
 	          	<div style="text-align: left;">
-	          		<h2 style="color: #20a7d3;">Oi Marcio!</h2>
+	          		<h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
 					<p>
 						As informações fornecidas ou os documentos enviados não estão de acordo com nossa política de compliance.
 						<br><br>
@@ -24,7 +24,7 @@
 	    </tr>
 	    <tr>
 	      	<td colspan="3" width="650" valign="middle" align="center" height="120">
-	        	<img src="img/icones/logo-mkt.png">
+	        	<img src="../../assets/img/icones/logo-mkt.png">
 	  		</td>
 	    </tr>
 	</tbody>

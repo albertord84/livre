@@ -3,12 +3,16 @@
 class transactions_status {
 
     const BEGINNER= 1;
-    const PENDING = 22;
+    const WAIT_SIGNATURE = 2;
     const APPROVED = 3;
-    const TRANSFERRED = 4;
-    const WRONG_TRANSFERRED = 5;
-    const DENIED = 6;
-    
+    const WAIT_PHOTO = 4;
+    const WAIT_ACCOUNT = 5;
+    const TOPAZIO_APROVED = 6;
+    const TOPAZIO_IN_ANALISYS = 7;
+    const TOPAZIO_DENIED = 8;
+    const REVERSE_MONEY = 9;
+    const PENDING = 22;
+
 
     static public function Defines($const) {
         $cls = new ReflectionClass(__CLASS__);

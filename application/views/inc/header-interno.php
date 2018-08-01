@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Livre.digital</title>
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.jpeg">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
@@ -15,6 +15,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap.min.css?'.$SCRIPT_VERSION;?>">
     <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-multiselect.css?'.$SCRIPT_VERSION;?>">
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/bootstrap-datepicker.min.css?'.$SCRIPT_VERSION;?>">
 
     <!-- Owl Carousel Assets -->
     <link href="<?php echo base_url().'assets/css/carousel/owl.carousel.css?'.$SCRIPT_VERSION;?>" rel="stylesheet">
@@ -51,7 +52,7 @@
 			</div>
 			<div class="col-md-3 col-sm-3 col-xs-12 text-right center-xs">
 				<ul class="menu i-block m-top10-xs">
-					<li><a href=""><?php echo $_SESSION['affiliate_logged_datas']['email'];?></a></li>
+                                    <li><a href=""><?php echo $_SESSION['affiliate_logged_datas']['email'];?></a></li>
 					<li class="tv">|</li>
                                         <li><a href="<?php echo base_url().'index.php/welcome/logout';?>">Sair</a></li>
 				</ul>

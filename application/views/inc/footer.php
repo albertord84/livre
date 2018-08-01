@@ -38,7 +38,8 @@
                 </ul>
                 <p class="flef100 cl-fff text-justify m-top80">
                     Alameda Santos, 1767, CXPST 1069 EDIF 1767-1773, Cerqueira Cesar, São Paulo - SP, CEP: 01419-100.
-                    <small class="fleft100"><br>"informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 24,08% a 42,08% ao ano, já incluindo a taxa de juros mensal de 4,99% e a taxa de adesão de 5% sobre o valor total. Exemplo: Valor do empréstimo de R$ 1.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 118,39. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 1.420,79. CET: 42,08% a.a.</small>
+                    <small class="fleft100"><br>A Livre.digital é uma plataforma de crédito on-line, atuando como correspondente bancário do Banco Topázio, sob o CNPJ 30.472.737/0001-78. Como correspondente bancário, seguimos as diretrizes do Banco Central do Brasil, nos termos da Resolução nº. 3.954, de 24 de fevereiro de 2011. 
+                        <br><br>*informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 32,83% a 133,09% ao ano, já incluindo a taxa de juros mensal que varia de 2,99% a 13,99% e a taxa de abertura de cadastro (TAC) de 10% sobre o valor total da operação. Exemplo: Valor do empréstimo de R$ 500,00 para pagar em 6 (seis) meses. Total de 6 (seis) parcelas de R$ 101,96. Detalhes referentes às taxas do empréstimo: Valor total a pagar: R$ 611,74. CET: 22,35% na operação e 32,83% ao ano.</small>
                 </p>
             </div>
         </div>
@@ -92,7 +93,6 @@
     <script src="<?php echo base_url().'assets/js/sign_in.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'assets/js/affiliates.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
     <script src="<?php echo base_url().'assets/js/talkme_painel.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
-    
-    
+    <script src="<?php echo base_url().'assets/js/new_send.js?'.$SCRIPT_VERSION;?>" type="text/javascript"></script>
     
 </html>

@@ -70,12 +70,9 @@ $(document).ready(function () {
                     dataType: 'json',
                     success: function (response) {
                         $('#month_value').text('R$ '+response['month_value']);
-                        //$('#permited_value').text('R$ '+response['permited_value']);
                         $('#total_cust_value').text('R$ '+response['total_cust_value']);
-                        $('#total_cust_value1').text('R$ '+response['total_cust_value']);
+                        $('#total_cust_value1').text('R$ '+response['total_cust_value']);                        
                         if (response['success']) {
-                            //response['permited_value']=response['permited_value'].replace('.',',');
-                            //$('#permited_value').css('color','white');
                             if(flag==1 && slideToggle==1){
                                 set_global_var('slideToggle', 0);
                                 $('.result').slideToggle(150); 
