@@ -79,9 +79,6 @@
                                                 <option value="5">Recusar/Estornar</option>
                                             </select>
                                             
-                                            <br>
-                                            <button id="get_contract" class="bt-green">Ver contrato</button>
-                                            
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-12 m-top10-xs">
 						<div class="fleft100 text-right center-xs">
