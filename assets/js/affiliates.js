@@ -216,7 +216,7 @@ $(document).ready(function () {
         });         
     });
         
-    $('#get_url_contract').click(function () {
+    /*$('#get_url_contract').click(function () {
         $.ajax({
             url: base_url+'index.php/welcome/get_url_contract',            
             data:{},
@@ -235,7 +235,7 @@ $(document).ready(function () {
                 modal_alert_message('Internal error');
             }
         });         
-    });
+    });*/
         
     $('#actual_page').click(function () {
         return false;
@@ -480,10 +480,15 @@ $(document).ready(function () {
     
     $('.foto_usr').click(function () {
         var id = this.id;
-        var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png'];
+        var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png', 'cpf_card.png'];
         var left  = ($(window).width()/2)-(640/2),
             top   = ($(window).height()/2)-(480/2);
         window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
+    });
+    
+    $("#get_url_contract").click(function () {
+        var id = $("#trans_id").text();
+        $(location).attr('href',base_url+'index.php/welcome/download_document/?id='+id);        
     });
     
 }); 

@@ -59,7 +59,7 @@
                                                     <li><img class="foto_usr" id = "1" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "2" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "3" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>                                                    
-                                                    <li><img src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
+                                                    <li><img class="foto_usr" id = "4" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>                                                                                                        
                                                 </ul>
                                             </div>
                                             <a href="" class="cl-black fleft100 text-center m-top10"><u>Baixar arquivos</u></a>
@@ -78,6 +78,7 @@
                                                 <option value="4">Pedir assinatura</option>
                                                 <option value="5">Recusar/Estornar</option>
                                             </select>
+                                            
 					</div>
 					<div class="col-md-2 col-sm-2 col-xs-12 m-top10-xs">
 						<div class="fleft100 text-right center-xs">

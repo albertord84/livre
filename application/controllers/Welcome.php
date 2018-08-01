@@ -13,9 +13,9 @@ class Welcome extends CI_Controller {
     
     public function test2() {               
         //$safes = $this->upload_document_template_D4Sign(3);
-        //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
+        //$safes = $this->cancel_document_D4Sign(3);        
         //$safes = $this->resend_for_sign_document_D4Sign(3);
         //$safes = $this->get_document_D4Sign(3);
         //$tomorrow = $this->next_available_day();
@@ -29,7 +29,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test();
+        $this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -685,31 +685,51 @@ class Welcome extends CI_Controller {
                 
                 //1. pasar cartão de crédito na IUGU
                 $response = $this->do_payment_iugu($_SESSION['pk']);
-                if($response['success']){
+                if($response['success']){                    
                     //2. crear documento a partir de plantilla y guardar token del documento en la BD
-
-                    //3. cadastrar un signatario para ese docuemnto y guardar token del signatario
-
-                    //4.  mandar a assinar
-
-                    //5. salvar el status para WAIT_SIGNATURE
-                    $this->transaction_model->update_transaction_status(
-                        $_SESSION['pk'], 
-                        transactions_status::WAIT_SIGNATURE);
-                    //6. matar session para evitar retroceder
-                    session_destroy();
-                    //7. pagina de sucesso de compra con los tags de adwords y analitics
-                    $params['transactionId']=$_SESSION['pk'];
-                    $params['transactionAffiliation']='site';
-                    $params['transactionTotal']=['transaction_values']['total_cust_value'];
-                    $params['solicited_value']=['transaction_values']['solicited_value'];
-                    $params['amount_months']=['transaction_values']['amount_months'] ;
-                    $this->load->view('sucesso-compra',$params);
+                    $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                    if($uudid_doc){
+                        //3. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                        $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                        if($token_signer){
+                            //4.  mandar a assinar
+                            $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                            if($result_send){
+                                //5. salvar el status para WAIT_SIGNATURE
+                                $this->transaction_model->update_transaction_status(
+                                    $_SESSION['pk'], 
+                                    transactions_status::WAIT_SIGNATURE);
+                                //6. matar session para evitar retroceder
+                                session_destroy();
+                                //7. pagina de sucesso de compra con los tags de adwords y analitics
+                                $params['transactionId']=$_SESSION['pk'];
+                                $params['transactionAffiliation']='site';
+                                $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                                $params['solicited_value']=['transaction_values']['solicited_value'];
+                                $params['amount_months']=['transaction_values']['amount_months'] ;
+                                $this->load->view('sucesso-compra',$params);
+                            }
+                            else{
+                                session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                        }
+                        else{
+                            session_destroy();
+                            $result['success'] = false;
+                            $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                        }
+                    }else{
+                        session_destroy();
+                        $result['success'] = false;
+                        $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                    }
                 }else{
                     $name = 1;
                     $this->Gmail->credit_card_recused($name,$useremail);
                     $result['success'] = false;
-                    $result['message'] = "Deve subir todas as imagens solicitadas corretamente";  
+                    $result['message'] = $response['message'];  
                 }
             }
             else{                
@@ -1052,16 +1072,37 @@ class Welcome extends CI_Controller {
             if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){                
                 //TODO Moreno API
                 //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
-                
-                //2. subir PDF y salvar id del documento
-                
-                //3. pedir signatura nuevamente con API de Moreno
-                
-                //4. cambiar el status de la transaccion
-                $this->transaction_model->update_transaction_status(
-                        $_SESSION['transaction_requested_id'],
-                        transactions_status::WAIT_SIGNATURE);
-                $result['success']=true; //para mostrar el toggle2
+                $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                if($uudid_doc){
+                    //2. asignar signatario a documento                    
+                    $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                    if($token_signer){
+                        //3.  mandar a assinar
+                        $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                        if($result_send){
+                            //4. cambiar el status de la transaccion
+                            $this->transaction_model->update_transaction_status(
+                                    $_SESSION['transaction_requested_id'],
+                                    transactions_status::WAIT_SIGNATURE);
+                            $result['success']=true; //para mostrar el toggle2
+                        }                    
+                        else{
+                                //session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                    }
+                    else{
+                        //session_destroy();
+                        $result['success'] = false;
+                        $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                    }
+                }
+                else{
+                    //session_destroy();
+                    $result['success'] = false;
+                    $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                }
             }else{
                 $result['success']=false;
                 $result['success']='Erro de atualização no banco de dados';
@@ -1093,18 +1134,42 @@ class Welcome extends CI_Controller {
                     'id',$_SESSION['transaction_requested_id'],
                     'new_sing_us_code',$unique_new_sing_us_code);
             //TODO Moreno API
-            //1. subir el mismo contrato
-            
-            //2. hacer que d4sign le envie el email al cliente
-            
-            $this->transaction_model->update_transaction_status(
-                        $_SESSION['transaction_requested_id'], 
-                        transactions_status::WAIT_SING_US);
-            $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
-            if ($result['success'])
-                $result['message'] = 'Nova assinatura solicitada com sucesso!!';
-            else             
-                $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+            //1. subir el mismo contrato            
+            $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+            if($uudid_doc){
+                //2. asignar signatario a documento                    
+                $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                if($token_signer){
+                    //3.  mandar a assinar
+                    $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                    if($result_send){
+                        //4. cambiar el status de la transaccion
+                        $this->transaction_model->update_transaction_status(
+                                    $_SESSION['transaction_requested_id'], 
+                                    transactions_status::WAIT_SING_US);
+                        $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
+                        if ($result['success'])
+                            $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+                        else             
+                            $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+                    }
+                    else{
+                                //session_destroy();
+                                $result['success'] = false;
+                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                            }
+                }
+                else{
+                    //session_destroy();
+                    $result['success'] = false;
+                    $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                }
+            }
+            else{
+                //session_destroy();
+                $result['success'] = false;
+                $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+            }
         }
         echo json_encode($result);
     }
@@ -2437,11 +2502,13 @@ class Welcome extends CI_Controller {
                 );
                 $result = $client->documents->createList($transaction['doc_d4sign'], $signers);
                 
+                $id_signer = 0;
                 if(is_object($result) && $result->message[0]->success)                    
-                {    $this->transaction_model->save_in_db(
+                {   $this->transaction_model->save_in_db(
                             'transactions',
                             'id',$id,
                             'key_signer',$result->message[0]->key_signer);
+                    $id_signer = $result->message[0]->key_signer;
                     /*$email = $transaction['email'];
                     $display_name = $transaction['name'];
                     $documentation = $transaction['cpf'];
@@ -2455,7 +2522,7 @@ class Welcome extends CI_Controller {
                 //echo $e->getMessage();
                 return null;
         } 
-        return $result;
+        return $id_signer;
     }
     
     public function send_for_sign_document_D4Sign($id){
@@ -2474,7 +2541,7 @@ class Welcome extends CI_Controller {
                 $client->setAccessToken($token_4sign);
                 $client->setCryptKey($crypt_4sign);
                 
-                $message = 'Prezado, segue o contrato eletrônico para assinatura.';
+                $message = 'Prezado '.$transaction['name'].', segue o contrato eletrônico para assinatura.';
                 $workflow = 0 ; //Todos podem assinar ao mesmo tempo
                 $skip_email = 0; //Não disparar email com link de assinatura (usando EMBED)
                 
@@ -2556,33 +2623,42 @@ class Welcome extends CI_Controller {
                 $client->setAccessToken($token_4sign);
                 $client->setCryptKey($crypt_4sign);
                 
+                $id_template = "MjA1Nw=="; //$GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
-			"MjA1Nw==" => array(
+			$id_template => array(
 					'name' => $transaction['name'],
 					'amount_solicited' => $transaction['amount_solicited'],
 					'num_plots' => $transaction['number_plots']
 					)
 			);							
 	
-                $name_document = "Contrato_".$transaction['cpf'];
+                $name_document = "Contrato_".time();
                 $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
                 
-                if(is_object($return) && $return->uuid != "")                    
+                $uuid_doc = 0;
+                if(is_object($return) && $return->uuid != ""){
                     $this->transaction_model->save_in_db(
                             'transactions',
                             'id',$id,
                             'doc_d4sign',$return->uuid);
+                
+                    $uuid_doc = $return->uuid;
+                }
 	
         } catch (Exception $e) {
                 //echo $e->getMessage();
                 return null;
         } 
-        return $return;
+        return $uuid_doc;
     }
     
     public function download_document_D4Sign($id){
+        
+        if($_SESSION['logged_role'] !== 'ADMIN')
+            return ;
+        
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2666,5 +2742,11 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
-    
+    public function download_document() {
+        $datas = $this->input->get();
+        if($_SESSION['logged_role'] !== 'ADMIN')
+            return ;
+        $params['id']=$datas['id'];
+        $this->load->view('download_document_user',$params);
+    }
 }
