@@ -10,7 +10,8 @@ class Welcome extends CI_Controller {
         parent::__construct();
     } 
 
-    public function test() {
+    
+    public function test2() {               
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->cancel_document_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
@@ -19,7 +20,10 @@ class Welcome extends CI_Controller {
         //$safes = $this->get_document_D4Sign(3);
         //$tomorrow = $this->next_available_day();
         //$result = $this->topazio_emprestimo(3);        
-        $result = $this->topazio_conciliations("2018-07-18");
+        //$result = $this->topazio_loans(3);        
+        //$result = $this->do_payment_iugu(3);                
+        //$result = $this->topazio_conciliations("2018-07-31");
+        //$result = $this->calculating_enconomical_values(1000,6);        
         //$result = $this->upload_document_D4Sign();        
     }
     
@@ -207,6 +211,7 @@ class Welcome extends CI_Controller {
     ['new_cpf_card']
     ['session_new_foto']
      */
+    
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -893,7 +898,11 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->save_in_db(
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
-                        'cdb_number',$resp['ccb']);                
+                        'ccb_number',$resp['ccb']);                
+                $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['transaction_requested_id'],
+                        'contract_id',$resp['contract_id']);                
                 $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::TOPAZIO_IN_ANALISYS);
@@ -1755,7 +1764,8 @@ class Welcome extends CI_Controller {
         );
     }
     
-    public function get_token_iugu($id){
+
+    public function get_client_token_iugu($id){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
@@ -1798,30 +1808,40 @@ class Welcome extends CI_Controller {
         curl_close($handler);
         
         if(is_object($parsed_response) && $parsed_response->id){
-            return $parsed_response->id;
+            return array('success' => true, 'token' => $parsed_response->id);
         }
         else {
-            return 0;
+            return array('success' => false, 'message' => $parsed_response->errors->number[0]);
         }
     }
 
     public function do_payment_iugu($id){
+        //Solicita na Iugu a cobrança no cartão do cliente
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
         $this->load->model('class/transaction_model');
         //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
         $client = $this->transaction_model->get_client('id', $id)[0];
-        $token = $this->get_token_iugu($id);
+        $response_client = $this->get_client_token_iugu($id);
+        if(!$response_client['success']){
+            $response['success'] = false;
+            $response['message'] = $response_client['message'];
+            return $response;
+        }
+        
+        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"]);
+        
+        $token = $response_client['token'];
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
-            'months' => 1,//$client['number_plots'],
+            'months' => $client['number_plots'],
             'items' => array(
                     'description' => 'money',
                     'quantity' => 1,
-                    'price_cents' => 1000//$client['total_effective_cost']
-                )
+                    'price_cents' => $financials['month_value']*100
+                )            
         );        
         $postFields = http_build_query($postData);
         $url = "https://api.iugu.com/v1/charge?api_token=".$API_TOKEN;
@@ -1920,6 +1940,8 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
+    //-------END IUGU API-----------------------------------------------
+    
     //-------TOPAZIO API-----------------------------------------------
     public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
@@ -1989,18 +2011,18 @@ class Welcome extends CI_Controller {
         
         $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "06335968762"; //$client["cpf"];
-        $name = "Julio Petro"; //$client["name"];
-        $cep = "24040200"; //$client["cep"];
-        $street = "Miguel 42"; //$client["street_address"]." ".$client["number_address"];
-        $number = "25"; //$client["complement_number_address"];
-        $district = "Ponta Celeste"; //"";
-        $city = "Mi ciudad"; //$client["city_address"];
-        $state = "SP"; //$client["state_address"];
-        $phone = "21212121212121"; //$client["phone_ddd"].$client["phone_number"];
-        $email = "julio@julio.com.br"; //$client["email"];
-        $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
-        $name_livre = "Livre.Digital"; //$GLOBALS['sistem_config']->NAME_LIVRE;
+        $cpf = $client["cpf"];
+        $name = $client["name"];
+        $cep = $client["cep"];
+        $street = $client["street_address"]." ".$client["number_address"];
+        $number = $client["complement_number_address"];
+        $district = "_"; //"";
+        $city = $client["city_address"];
+        $state = $client["state_address"];
+        $phone = $client["phone_ddd"].$client["phone_number"];
+        $email = $client["email"];
+        $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
+        $name_livre = $GLOBALS['sistem_config']->NAME_LIVRE;
         
         $fields =   "{\n  \"document\": \"".$cpf
                     ."\",\n  \"nameOrCompanyName\": \"".$name
@@ -2053,61 +2075,75 @@ class Welcome extends CI_Controller {
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "06335968762"; //$transaction["cpf"];
-        $name = "Julio Petro"; //$transaction["name"];
-        $document_id = "1000001"; //$transaction["contract_id"];
-        $release_date = "2018-07-31"; //$this->next_available_day();
-        $num_plots = 6; // $transaction["number_plots"];
-        $amount_pay = "1000.00"; // $transaction["amount_solicited"];
-        //***** revisar estas
-        $iof = "15.00"; // 0.0025 * $num_plots * $amount_pay;
-        $tax = $this->tax_model->get_tax_row($num_plots)[$this->get_field($amount_pay)];
-        $tac = "0.00"; //0.1 * ($amount_pay + $iof + $tax);
-        $total_value = "1015.00"; //$transaction[""];
-        $plot_value = "290.00";
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        
+        //********************************
+        $num_plots = $financials["amount_months"];
+        $amount_pay = $financials["solicited_value"];        
+        $iof = $financials['IOF'];
+        $tax = $financials['tax'];
+        $tac = $financials['TAC'];
+        $total_value = $financials['funded_value'];
+        $plot_value = $financials['month_value'];        
         //*********
-        $product_code = "211"; //ver esto
-        $cnpj_livre = "23456789012"; //$GLOBALS['sistem_config']->CNPJ_LIVRE;
+        
+        $cpf = $transaction["cpf"];
+        $name = $transaction["name"];
+        $document_id = 10000000000 + time();
+        $release_date = $this->next_available_day();
+        $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
+        $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
-        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id);
-        $bank_code = "001"; // $account_bank["bank"];
-        $agency = "4459"; // $account_bank["agency"];
-        $account = "12570-9"; // $account_bank["account"];
-        $account_type = "conta corrente"; // $account_type_string[ $account_bank["account"] ];
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id)[0];
+        $bank_code = "001";//$account_bank["bank"];
+        $agency = substr($account_bank["agency"], 0, 4);
+        $account = "12570-9";//$account_bank["account"];
+        $account_type = $account_type_string[ $account_bank["account_type"] ];
         
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
-                        ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 0,\n    \"rating\": \"\",\n    \"billing\": 0\n  },\n  "
+                        ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  "
                     ."\"loans\": {\n    "
                         ."\"partnerId\": ".$document_id
                         .",\n    \"releaseDate\": \"".$release_date
                         ."\",\n    \"totalValue\": \"".$total_value
                         ."\",\n    \"amountPay\": \"".$amount_pay
-                        ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0"
+                        ."\",\n    \"rate\": \"".$tax."\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02"
                         .",\n    \"quotaAmount\": ".$num_plots
                         .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"DBC\""
                         .",\n    \"productCode\": ".$product_code
                         .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
-                        ",\n    \"TAC\": \"".$tac."\",\n    \"guarantees\": [\n      {\n        \"document\": \"23456789012\",\n        \"nameOrCompanyName\": \"Livre.Digital\",\n        \"type\": \"\"\n      }\n    ],\n    "
+                        ",\n    \"TAC\": \"".$tac."\",\n    "
                     ."\"payment\": {\n   "
                         ."   \"formSettlement\": \"ONL\""
                         .",\n      \"bankCode\": \"".$bank_code
                         ."\",\n      \"branch\": \"".$agency
                         ."\",\n      \"accountNumber\": \"".$account
                         ."\",\n      \"accountType\": \"".$account_type."\"\n    }"
-                    .",\n    \"planQuota\": [\n      "
-                        ."{\n        \"quotaValue\": \"".$plot_value
-                        ."\",\n        \"quotaDueDate\": \"".$plot_date
-                        ."\",\n        \"quotaNumber\": ".$plot_number."\n      }"
-                        .",\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-08-01\",\n        \"quotaNumber\": 2\n      }"
-                    ."\n    ]\n  }\n}";
+                    .",\n    \"planQuota\": [\n      ";
+                    
+                    $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+                    $plot_number = 1;
+                    
+                    while ($plot_number <= $num_plots){                    
+                        $fields .= "{\n        \"quotaValue\": \"".$plot_value."\",\n        \"quotaDueDate\": \"".$plot_date."\",\n        \"quotaNumber\": ".$plot_number."\n      }";
+                        if($plot_number < $num_plots)
+                            $fields .= ",\n      ";
+                        else
+                            $fields .= "\n    ";
+                        $plot_number ++;
+                        $plot_date = $this->next_month_to_pay($plot_date);
+                    }
+        
+                    $fields .= "]\n  }\n}";
         
         $ch = curl_init();
-
+        
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-07-31\",\n    \"totalValue\": \"1150.00\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"2.99\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"150.00\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"115.00\",\n    \"guarantees\": [\n      {\n        \"document\": \"23456789012\",\n        \"nameOrCompanyName\": \"Livre.Digital\",\n        \"type\": \"\"\n      }\n    ],\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-08-01\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"575.00\",\n        \"quotaDueDate\": \"2018-09-01\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
@@ -2123,7 +2159,16 @@ class Welcome extends CI_Controller {
 
         $parsed_response = json_decode($result);
         
-        return $parsed_response;        
+        $response_loans['success'] = false;
+        if(is_object($parsed_response) && $parsed_response->success == TRUE){
+            $response_loans['success'] = true;
+            $response_loans['ccb'] = $parsed_response->data->CCB;
+            $response_loans['contract_id'] = $document_id;
+        }
+        else{
+            $response_loans['message'] = $parsed_response->errors->values[0]->error[0];
+        }
+        return $response_loans;
     }
     
     public function next_available_day(){
@@ -2149,6 +2194,18 @@ class Welcome extends CI_Controller {
         
         return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
     }
+    
+    public function next_month_to_pay($date){
+        $next_date = new DateTime($date); // Y-m-d
+        $next_date->add(new DateInterval('P30D'));
+        return $next_date->format('Y-m-d');
+    }
+    
+    public function init_date_to_pay($date){
+        $next_date = new DateTime($date); // Y-m-d
+        $next_date->add(new DateInterval('P10D'));
+        return $next_date->format('Y-m-d');
+    }
 
     public function get_field($money){
         if($money == 500)
@@ -2166,18 +2223,19 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "9697487f-ffb9-3b5a-a921-e3d77483d860";//$this->get_topazio_API_token();
+        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
         if($API_token){
-            $result_basic = true;//$this->basicCustomerTopazio($id, $API_token);
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
-                $ccb = $this->topazio_loans($id, $API_token);
-                if($ccb){
+                $response = $this->topazio_loans($id, $API_token);
+                if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            
-                    $result['ccb'] = $ccb;            
+                    $result['ccb'] = $response['ccb'];            
+                    $result['contract_id'] = $response['contract_id'];            
                 }
                 else{
-                    $result['message'] = "Emprestimo não realizado";
+                    $result['message'] = $response['message'];
                     $result['success'] = false;            
                 }
             }
@@ -2190,6 +2248,8 @@ class Welcome extends CI_Controller {
             $result['message'] = "Erro solicitando token de topazio";
             $result['success'] = false;            
         }
+        
+        return $result;
     }
     
     public function get_transaction_datas_by_id(){
@@ -2215,7 +2275,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "9697487f-ffb9-3b5a-a921-e3d77483d860";//$this->get_topazio_API_token();
+        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
@@ -2237,7 +2297,6 @@ class Welcome extends CI_Controller {
         curl_close ($ch);
         
         $parsed_response = json_decode($result);
-        
         return $parsed_response;
     }
     
@@ -2551,4 +2610,53 @@ class Welcome extends CI_Controller {
         } 
         return $docs;
     }
+    //-------End API D4Sign-----------------------------------------------
+    
+    /*-------Calculating economical values-----------------------------------------------
+     * Usando excel proporcionado por Pedro 
+     * B1: valor solicitado por cliente
+     * B2: numero de parcelas
+     * B3: taxa de juros
+     * B7: valor financiado pelo cliente
+     * C1: IOF
+     * C5: TAC
+     * F13: CET
+     * F14: valor da parcela  
+     * J10: CET%  
+     * J11: CET anual
+    */
+    
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
+        $this->load->model('class/tax_model');
+        
+        $B1 = number_format($valor_solicitado, 2, '.', '');
+        $B2 = $num_parcelas;
+        $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
+        $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
+        $F9 = number_format($B1 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
+        $F10 = number_format($F9*$B2, 2, '.', '');
+        $C5 = number_format(0.1 * $F10, 2, '.', '');
+        $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
+        $F14 = number_format($F13/$B2, 2, '.', '');
+        $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
+        $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
+        $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
+        
+        $result = array(
+                'solicited_value' => $B1,                                
+                'amount_months' => $B2,
+                'tax' => $B3,
+                'month_value' => $F14,
+                'total_cust_value' => $F13,
+                'funded_value' => $B7,
+                'IOF' => $C4,
+                'TAC' => $C5,
+                'CET_PERC' => $J10,
+                'CET_YEAR' => $J11                
+                );
+        
+        return $result;
+    }
+    
+    
 }
