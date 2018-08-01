@@ -176,21 +176,20 @@
         }
         
 
-        public function get_account_bank_by_client_id($client_id){
-            $this->load->model('class/Crypt'); 
+        public function get_account_bank_by_client_id($client_id, $propietary_type=0){
+            $this->load->model('class/Crypt');
             $this->db->select('*');
             $this->db->from('account_banks');
             $this->db->where('client_id', $client_id);
+            $this->db->where('propietary_type', $propietary_type);
             $account_banks = $this->db->get()->result_array();
-            
             foreach ($account_banks as $account_bank) {
                 $dec_account_bank = $account_bank;
                 $dec_account_bank['bank'] = $this->Crypt->decrypt($account_bank['bank']);
                 $dec_account_bank['agency'] = $this->Crypt->decrypt($account_bank['agency']);
                 $dec_account_bank['account_type'] = $this->Crypt->decrypt($account_bank['account_type']);
                 $dec_account_bank['account'] = $this->Crypt->decrypt($account_bank['account']);
-                $dec_account_bank['dig'] = $this->Crypt->decrypt($account_bank['dig']);
-                
+                $dec_account_bank['dig'] = $this->Crypt->decrypt($account_bank['dig']);                
                 $dec_account_banks [] = $dec_account_bank;
             }
             return $dec_account_banks;

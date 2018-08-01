@@ -39,10 +39,10 @@
 			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
 				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 				<div class="col-md-6 col-sm-6 col-xs-12 text-left">
-					<div class="fleft100">
-						<h1 class="fw-600 ft-size45 ft-Rajdhani cl-green"><i>Falta pouco!</i></h1>
+<!--					<div class="fleft100">
+						<h1 class="fw-600 ft-size45 ft-Rajdhani cl-green"><i>Falta pouco00000!</i></h1>
 						<h3 class="cl-fff ft-Rajdhani">Só precisamos de mais alguns dados:</h3>
-					</div>
+					</div>-->
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
 					<ul class=" sociais i-block">
@@ -62,12 +62,24 @@
 	<div class="container">	
 		<div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2  m-top150">
 			<div class="fleft100 final">
-				<h2 class="bk-green5 text-center pd-tb15 fw-800"><img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Pronto!</h2>
+				<h2 class="bk-green5 text-center pd-tb15 fw-800">
+                                    <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Falta pouco!</h2>
 				<div class="fleft100 pd-30 bk-fff ">
 					<div class="fleft100 pd-lr60 m-top40 m-b40">
-						<h4 class="cl-blue m-b10">Dados enviados com sucesso!</h4>
+						<h4 class="cl-blue m-b10">Parabéns <?php echo explode(' ',$_SESSION['client_datas']['name'])[0];?>!</h4>
 						<p>
-							Se estiver tudo certo seu empréstimo será liberado. <br><b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
+							Agora falta muito pouco para seu empréstimo ser liberado.
+                                                        <b>Você só precisa fornecer sua assinatura pelo link enviado para seu e-mail.</b>
+                                                        Após analisar suas fotos vamos liberar seu dinheiro. Se tudo estiver certo, em 
+                                                        24 horas você receberá o valor solicitado.
+                                                        
+						</p>
+						<p>
+							Enviaremos e-mails de atualizações sobre o seu pedido. Caso as fotos não estejam legíveis, 
+                                                        solicitaremos novas fotos por email. 
+						</p>
+						<p>
+                                                        <img src="<?php echo base_url().'assets/'?>img/icones/PASSOS pagina final PNG.png" alt="">
 						</p>
 						<div class="fleft100 text-center m-top30">
 							<h4 class="cl-blue m-b10">Está com dúvidas?</h4>

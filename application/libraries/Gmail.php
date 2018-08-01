@@ -207,7 +207,7 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Assinar contrato novamente - Livre.digital';
+            $this->mail->Subject = 'Cartao de credito nao aceito - Livre.digital';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name"), dirname(__FILE__));
@@ -221,6 +221,5 @@
             $this->mail->smtpClose();
             return $result;
         }
-        
                 
     }
