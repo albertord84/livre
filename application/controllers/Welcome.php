@@ -163,16 +163,26 @@ class Welcome extends CI_Controller {
     }
     
     public function resumo() {
-        $this->load->model('class/system_config');
-        $this->load->model('class/affiliate_model');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view'] = 'resumo';
-        $params['total_CET'] = $this->affiliate_model->total_CET();
-        $params['loan_value'] = $this->affiliate_model->loan_value();
-        $params['average_ticket'] = $this->affiliate_model->average_ticket();
-        $params['average_amount_months'] = $this->affiliate_model->average_amount_months();
-        $this->load->view('resumo');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['abstract_init_date']='';
+                $datas['abstract_end_date']='';
+            }            
+            $this->load->model('class/system_config');
+            $this->load->model('class/affiliate_model');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['view'] = 'resumo';
+            
+            $params['total_CET'] = $this->affiliate_model->total_CET($datas);
+            $params['loan_value'] = $this->affiliate_model->loan_value($datas);
+            $params['average_ticket'] = $this->affiliate_model->average_ticket($datas);
+            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);
+            
+            $this->load->view('resumo');
+        }
     }
     
     public function configuracoes() {

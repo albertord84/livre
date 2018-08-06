@@ -223,12 +223,38 @@ class Affiliate_model extends CI_Model{
         }
     }
     
-    public function total_CET(){
-        
+    public function total_CET($datas){
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(total_effective_cost) as total_effective_cost');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            return $this->db->get()->row_array()['total_effective_cost'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }   
     }
     
     public function loan_value(){
-        
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(amount_solicited) as amount_solicited');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            return $this->db->get()->row_array()['amount_solicited'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }  
     }
     
     public function average_ticket(){
@@ -236,7 +262,21 @@ class Affiliate_model extends CI_Model{
     }
     
     public function average_amount_months(){
-        
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(number_plots) as sum,COUNT(number_plots) as cnt');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            $resp = $this->db->get()->row_array();
+            return $resp['sum']/$resp['cnt'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        } 
     }
     
 
