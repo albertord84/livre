@@ -118,7 +118,7 @@
                             <?php foreach($_SESSION['affiliate_logged_transactions'] as $transaction) { ?>
 				<li>
                                     <div class="w5 m-top15 m-top10-xs">
-                                        <img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt="">
+                                        <img style="width:20px; height:20px" title="<?php echo $transaction['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$transaction['icon_by_status'];?>" alt="">
                                     </div>
                                     <div class="w10 fw-500 m-top15 m-top10-xs">
                                         <?php echo $transaction['id']; ?>

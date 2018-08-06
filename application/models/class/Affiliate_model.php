@@ -56,6 +56,9 @@ class Affiliate_model extends CI_Model{
                 $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
                 $result[$i]['dig'] = $this->Crypt->decrypt($transaction['dig']);                
                 $result[$i]['dates'] = $this->load_transaction_dates($transaction['id']);
+                $img = $this->get_icon_by_status($transaction['status_id']);
+                $result[$i]['icon_by_status'] = $img['icon_by_status'];
+                $result[$i]['hint_by_status'] = $img['hint_by_status'];
                 $i++;
                 
             }
@@ -192,6 +195,48 @@ class Affiliate_model extends CI_Model{
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
         }        
+    }
+    
+    public function get_icon_by_status($status_id) {
+        $this->load->model('class/transactions_status');
+        switch ($status_id) {
+            case transactions_status::BEGINNER:
+                return array('hint_by_status'=>'BEGGINER','icon_by_status'=>'8 BEGGINER.png');
+            case transactions_status::WAIT_SIGNATURE:
+                return array('hint_by_status'=>'WAIT_SIGNATURE','icon_by_status'=>'6 AGUARD.png'); 
+            case transactions_status::APPROVED:
+                return array('hint_by_status'=>'APPROVED','icon_by_status'=>'3 APROV.png');
+            case transactions_status::WAIT_PHOTO:
+                return array('hint_by_status'=>'WAIT_PHOTO','icon_by_status'=>'6 AGUARD.png');
+            case transactions_status::WAIT_ACCOUNT:
+                return array('hint_by_status'=>'WAIT_ACCOUNT','icon_by_status'=>'6 AGUARD.png');
+            case transactions_status::TOPAZIO_APROVED:
+                return array('hint_by_status'=>'TOPAZIO_APROVED','icon_by_status'=>'1 APROV  TOP.png');
+            case transactions_status::TOPAZIO_IN_ANALISYS:
+                return array('hint_by_status'=>'TOPAZIO_IN_ANALISYS','icon_by_status'=>'2 AGUARD TOP.png');
+            case transactions_status::TOPAZIO_DENIED:
+                return array('hint_by_status'=>'TOPAZIO_DENIED','icon_by_status'=>'4 REPROV TOP.png');
+            case transactions_status::REVERSE_MONEY:
+                return array('hint_by_status'=>'REVERSE_MONEY','icon_by_status'=>'5 REPROV DEVOLVIDO.png');
+            case transactions_status::PENDING:
+                return array('hint_by_status'=>'PENDING FOR ANALYSIS','icon_by_status'=>'7 PENDENTE.png');
+        }
+    }
+    
+    public function total_CET(){
+        
+    }
+    
+    public function loan_value(){
+        
+    }
+    
+    public function average_ticket(){
+        
+    }
+    
+    public function average_amount_months(){
+        
     }
     
 
