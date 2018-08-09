@@ -251,6 +251,7 @@ $(document).ready(function () {
             return true;            
         }
     });
+        
     
     $('#prev_page').click(function () {
         if(num_page>1){
