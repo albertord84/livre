@@ -2488,8 +2488,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2540,8 +2540,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2569,8 +2569,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2597,8 +2597,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2622,10 +2622,21 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        //********************************
+        $num_plots = $financials["amount_months"];
+        $amount_pay = $financials["solicited_value"];        
+        $iof = $financials['IOF'];
+        $tax = $financials['tax'];
+        $tac = $financials['TAC'];
+        $total_value = $financials['funded_value'];
+        $plot_value = $financials['month_value'];        
+        //*****************************************
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
@@ -2634,17 +2645,18 @@ class Welcome extends CI_Controller {
                 $client->setAccessToken($token_4sign);
                 $client->setCryptKey($crypt_4sign);
                 
-                $id_template = "MjA1Nw=="; //$GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
+                $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
 					'name' => $transaction['name'],
-					'amount_solicited' => $transaction['amount_solicited'],
-					'num_plots' => $transaction['number_plots']
+					'amount_solicited' => $amount_pay,
+					'num_plots' => $num_plots,
+					'plot_value' => $plot_value
 					)
 			);							
 	
                 $name_document = "Contrato_".time();
-                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
+                $uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
                 
@@ -2671,8 +2683,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         $result['success'] = false;
