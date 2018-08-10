@@ -1560,7 +1560,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1572,16 +1572,22 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/".$file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
                             $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
@@ -1652,7 +1658,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1665,17 +1671,23 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;*/
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/". $file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.png?'.time();
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.'.$extension.'?'.time();
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
@@ -1747,7 +1759,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1759,15 +1771,21 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/". $file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
                             $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION["new_".$file_names[$id_file]] = true;
