@@ -216,7 +216,7 @@ $(document).ready(function () {
         });         
     });
         
-    /*$('#get_url_contract').click(function () {
+    $('#get_url_contract').click(function () {
         $.ajax({
             url: base_url+'index.php/welcome/get_url_contract',            
             data:{},
@@ -235,7 +235,7 @@ $(document).ready(function () {
                 modal_alert_message('Internal error');
             }
         });         
-    });*/
+    });
         
     $('#actual_page').click(function () {
         return false;
@@ -251,6 +251,7 @@ $(document).ready(function () {
             return true;            
         }
     });
+        
     
     $('#prev_page').click(function () {
         if(num_page>1){
@@ -486,9 +487,9 @@ $(document).ready(function () {
         window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
     });
     
-    $("#get_url_contract").click(function () {
-        var id = $("#trans_id").text();
-        $(location).attr('href',base_url+'index.php/welcome/download_document/?id='+id);        
-    });
+//    $("#get_url_contract").click(function () {
+//        var id = $("#trans_id").text();
+//        $(location).attr('href',base_url+'index.php/welcome/download_document/?id='+id);        
+//    });
     
 }); 

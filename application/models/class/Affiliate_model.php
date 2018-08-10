@@ -56,6 +56,9 @@ class Affiliate_model extends CI_Model{
                 $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
                 $result[$i]['dig'] = $this->Crypt->decrypt($transaction['dig']);                
                 $result[$i]['dates'] = $this->load_transaction_dates($transaction['id']);
+                $img = $this->get_icon_by_status($transaction['status_id']);
+                $result[$i]['icon_by_status'] = $img['icon_by_status'];
+                $result[$i]['hint_by_status'] = $img['hint_by_status'];
                 $i++;
                 
             }
@@ -192,6 +195,88 @@ class Affiliate_model extends CI_Model{
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
         }        
+    }
+    
+    public function get_icon_by_status($status_id) {
+        $this->load->model('class/transactions_status');
+        switch ($status_id) {
+            case transactions_status::BEGINNER:
+                return array('hint_by_status'=>'BEGGINER','icon_by_status'=>'8 BEGGINER.png');
+            case transactions_status::WAIT_SIGNATURE:
+                return array('hint_by_status'=>'WAIT_SIGNATURE','icon_by_status'=>'6 AGUARD.png'); 
+            case transactions_status::APPROVED:
+                return array('hint_by_status'=>'APPROVED','icon_by_status'=>'3 APROV.png');
+            case transactions_status::WAIT_PHOTO:
+                return array('hint_by_status'=>'WAIT_PHOTO','icon_by_status'=>'6 AGUARD.png');
+            case transactions_status::WAIT_ACCOUNT:
+                return array('hint_by_status'=>'WAIT_ACCOUNT','icon_by_status'=>'6 AGUARD.png');
+            case transactions_status::TOPAZIO_APROVED:
+                return array('hint_by_status'=>'TOPAZIO_APROVED','icon_by_status'=>'1 APROV  TOP.png');
+            case transactions_status::TOPAZIO_IN_ANALISYS:
+                return array('hint_by_status'=>'TOPAZIO_IN_ANALISYS','icon_by_status'=>'2 AGUARD TOP.png');
+            case transactions_status::TOPAZIO_DENIED:
+                return array('hint_by_status'=>'TOPAZIO_DENIED','icon_by_status'=>'4 REPROV TOP.png');
+            case transactions_status::REVERSE_MONEY:
+                return array('hint_by_status'=>'REVERSE_MONEY','icon_by_status'=>'5 REPROV DEVOLVIDO.png');
+            case transactions_status::PENDING:
+                return array('hint_by_status'=>'PENDING FOR ANALYSIS','icon_by_status'=>'7 PENDENTE.png');
+        }
+    }
+    
+    public function total_CET($datas){
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(total_effective_cost) as total_effective_cost');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            return $this->db->get()->row_array()['total_effective_cost'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }   
+    }
+    
+    public function loan_value(){
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(amount_solicited) as amount_solicited');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            return $this->db->get()->row_array()['amount_solicited'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }  
+    }
+    
+    public function average_ticket(){
+        
+    }
+    
+    public function average_amount_months(){
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(number_plots) as sum,COUNT(number_plots) as cnt');
+            $this->db->from('transactions');
+            $this->db->join('transactions_dates','transactions_dates.transaction_id = transactions.id');
+            $this->db->where('transactions.status_id',transactions_status::TOPAZIO_APROVED);
+            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+                $this->db->where('transactions_dates.date >=', $datas['abstract_init_date']);                
+                $this->db->where('transactions_dates.date <=', $datas['abstract_end_date']);                
+            }
+            $resp = $this->db->get()->row_array();
+            return $resp['sum']/$resp['cnt'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        } 
     }
     
 

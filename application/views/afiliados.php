@@ -41,7 +41,7 @@
                             <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
                                     <label for="avatar" style="cursor: pointer">
                                         <input type="file" id="avatar" class="hidden">
-                                        <img id ="avatar_img" style="border-radius: 50px" src="<?php echo base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id']."/photo_profile.png"?>" class="mxw-50">                                        
+                                        <img id ="avatar_img" style="border-radius: 50px" src="<?php echo base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id']."/photo_profile.png?a=".time();?>" class="mxw-50">                                        
                                     </label>    
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">
@@ -118,7 +118,7 @@
                             <?php foreach($_SESSION['affiliate_logged_transactions'] as $transaction) { ?>
 				<li>
                                     <div class="w5 m-top15 m-top10-xs">
-                                        <img src="<?php echo base_url().'assets/'?>img/icones/ck.png" alt="">
+                                        <img style="width:20px; height:20px" title="<?php echo $transaction['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$transaction['icon_by_status'];?>" alt="">
                                     </div>
                                     <div class="w10 fw-500 m-top15 m-top10-xs">
                                         <?php echo $transaction['id']; ?>

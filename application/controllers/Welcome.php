@@ -9,9 +9,8 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     }
-
     
-    public function test2() {               
+    public function test2() {
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
@@ -29,7 +28,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test2();
+        //$this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -57,10 +56,15 @@ class Welcome extends CI_Controller {
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
-        $params['total_cust_value']  = str_replace('.', ',', $_SESSION['transaction_values']['total_cust_value']); 
+        
+        $params['month_value']  = str_replace('.', ',',$_SESSION['transaction_values']['month_value']); 
         $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
         $params['amount_months']  = $_SESSION['transaction_values']['amount_months']; 
-        $params['month_value']  = $_SESSION['transaction_values']['month_value']; 
+        $params['tax']  = str_replace('.', ',', $_SESSION['transaction_values']['tax']); 
+        $params['total_cust_value']  = str_replace('.', ',', $_SESSION['transaction_values']['total_cust_value']); 
+        $params['IOF']  = str_replace('.', ',', $_SESSION['transaction_values']['IOF']); 
+        $params['CET_PERC']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_PERC']); 
+        $params['CET_YEAR']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_YEAR']); 
         $this->load->view('checkout',$params);
         $this->load->view('inc/footer');
     }
@@ -159,11 +163,26 @@ class Welcome extends CI_Controller {
     }
     
     public function resumo() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='resumo';
-        $this->load->view('resumo');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST))
+                $datas=$_POST;
+            else{
+                $datas['abstract_init_date']='';
+                $datas['abstract_end_date']='';
+            }            
+            $this->load->model('class/system_config');
+            $this->load->model('class/affiliate_model');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['view'] = 'resumo';
+            
+            $params['total_CET'] = $this->affiliate_model->total_CET($datas);
+            $params['loan_value'] = $this->affiliate_model->loan_value($datas);
+            $params['average_ticket'] = $this->affiliate_model->average_ticket($datas);
+            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);
+            
+            $this->load->view('resumo');
+        }
     }
     
     public function configuracoes() {
@@ -202,6 +221,8 @@ class Welcome extends CI_Controller {
     ['client_datas']['phone_ddd']
     ['client_datas']['sms_verificated']
     ['client_datas']['verified_phone']
+    ['client_datas']['name']    
+    ['client_datas']['email']
 
     //Variaveis para subir novamente as fotos
     ['new_front_credit_card']
@@ -412,6 +433,8 @@ class Welcome extends CI_Controller {
                             transactions_status::BEGINNER,
                             $new_beginner_date    
                                 );
+                        $_SESSION['client_datas']['name'] = $datas['name'];
+                        $_SESSION['client_datas']['email'] = $datas['email'];
                         $result['success'] = true;
                         $result['pk'] = $id_row;
                         $_SESSION['pk'] = $id_row;                        
@@ -602,8 +625,8 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        //4. Analisar se é para atualizar ou inserir nova linha
-        $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk']);
+        //4. Analisar se é para atualizar ou inserir nova conta bancária
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
             $result['id']=$account_bank[0]['id'];
@@ -666,39 +689,37 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();
         $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $datas = $this->input->post();        
+        $datas = $this->input->post();
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
             $cpf_upload = false;
         }            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
-            
             if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
                 $result['success'] = TRUE;
                 $value_ucpf = 0;
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                
                 //1. pasar cartão de crédito na IUGU
                 $response = $this->do_payment_iugu($_SESSION['pk']);
-                if($response['success']){                    
-                    //2. crear documento a partir de plantilla y guardar token del documento en la BD
+                if($response['success']){
+                    //2. salvar el status para WAIT_SIGNATURE
+                    $this->transaction_model->update_transaction_status(
+                        $_SESSION['pk'], 
+                        transactions_status::WAIT_SIGNATURE);
+                    //3. crear documento a partir de plantilla y guardar token del documento en la BD
                     $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                     if($uudid_doc){
-                        //3. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                        //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
                         $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                         if($token_signer){
-                            //4.  mandar a assinar
+                            //5.  mandar a assinar
                             $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
-                            if($result_send){
-                                //5. salvar el status para WAIT_SIGNATURE
-                                $this->transaction_model->update_transaction_status(
-                                    $_SESSION['pk'], 
-                                    transactions_status::WAIT_SIGNATURE);
+                            if($result_send){                                
                                 //6. matar session para evitar retroceder
                                 session_destroy();
                                 //7. pagina de sucesso de compra con los tags de adwords y analitics
@@ -708,6 +729,7 @@ class Welcome extends CI_Controller {
                                 $params['solicited_value']=['transaction_values']['solicited_value'];
                                 $params['amount_months']=['transaction_values']['amount_months'] ;
                                 $this->load->view('sucesso-compra',$params);
+                                $this->load->view('inc/footer');
                             }
                             else{
                                 session_destroy();
@@ -726,7 +748,8 @@ class Welcome extends CI_Controller {
                         $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
                     }
                 }else{
-                    $name = 1;
+                    $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                    $useremail = $_SESSION['client_datas']['email'];
                     $this->Gmail->credit_card_recused($name,$useremail);
                     $result['success'] = false;
                     $result['message'] = $response['message'];  
@@ -739,7 +762,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }
         echo json_encode($result);
     }
@@ -851,7 +875,7 @@ class Welcome extends CI_Controller {
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados bancários fornecidos';
             } else {
-                $account_bank = $this->transaction_model->get_account_bank_by_client_id($_SESSION['pk']);
+                $account_bank = $this->transaction_model->get_account_bank_by_client_id($_SESSION['pk'],1);
                 if($N = count($account_bank)){
                    $id_row = 0;
                    if($this->affiliate_model->update_affiliate_data_bank($datas,$account_bank[$N-1]['client_id']))
@@ -1203,10 +1227,16 @@ class Welcome extends CI_Controller {
     }
     
     public function get_url_contract(){
-        $result['success']=true;
-        //TODO Moreno: funcion que devuelve la url del contrato
-        $result['url_contract']= base_url().'assets/img/icones/pdf.jpeg';
-        //$result['url_contract']= $this->get_d4siggn_url_contract($_SESSION['transaction_requested_id']);
+        $result['success']=false ;
+        $result['message']='Access violation';
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $url = $this->download_document_D4Sign($_SESSION['transaction_requested_id']);            
+            if($url['success']){
+                $result['url_contract']= $url['message'];
+                $result['success']=true;
+            }else
+                $result['message']=$url['message'];
+        }
         echo json_encode($result);
     }
 
@@ -1244,16 +1274,18 @@ class Welcome extends CI_Controller {
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
         if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){
-                $taxas=array(6=>40.63, 7=>47.65, 8=>55.01, 9=>62.75, 10=>70.87, 11=>79.40, 12=>88.35);
-                $result['total_cust_value'] = $datas['solicited_value'] + 
-                        ($datas['solicited_value']* $taxas[$datas['amount_months']]/100);
-                $result['month_value'] = $result['total_cust_value']/$datas['amount_months'];                
-                $result['total_cust_value']=sprintf("%.2f", $result['total_cust_value']);
-                $result['month_value']=sprintf("%.2f", $result['month_value']);                
-                $result['solicited_value']=$datas['solicited_value'];  
-                $result['amount_months']=$datas['amount_months'];                  
-                $result['success'] = true;
+            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){                
+                $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
+                $result['solicited_value']=$financials['solicited_value'];  
+                $result['amount_months']=$financials['amount_months'];
+                $result['total_cust_value'] = $financials['total_cust_value'];                        
+                $result['month_value'] =$financials['month_value'];
+                $result['tax'] =$financials['tax'];
+                $result['IOF'] =$financials['IOF']; //valor a cobrar por IOF
+                $result['TAC'] =$financials['TAC'];
+                $result['CET_PERC'] =$financials['CET_PERC'];
+                $result['CET_YEAR'] =$financials['CET_YEAR'];
+                $result['success'] = true;                
                 $_SESSION['transaction_values']=$result;
             } else{
                 $result['success'] = false;
@@ -1528,7 +1560,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1540,17 +1572,23 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/".$file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = "Guardado " . $filename;
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
+                            $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
@@ -1560,27 +1598,27 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
-                     default: $message = 'Error: carga de arquivo não completada.';
+                     default: $message = 'Erro: carga de arquivo não completada.';
                               break;
                     }
                     $result['success'] = false;
@@ -1594,7 +1632,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }    
         echo json_encode($result);
     }
@@ -1619,7 +1658,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1632,17 +1671,23 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;*/
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/". $file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.png?'.time();
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.'.$extension.'?'.time();
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
@@ -1652,25 +1697,25 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
                      default: $message = 'Error: carga de arquivo não completada.';
                               break;
@@ -1686,7 +1731,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }    
         echo json_encode($result);
     }
@@ -1694,12 +1740,10 @@ class Welcome extends CI_Controller {
     public function new_upload_file(){
         $this->load->model('class/transaction_model');
         $this->load->model('class/Crypt');
-        
         $datas = $this->input->post();
         if($_SESSION['session_new_foto']){                        
             $client = $this->transaction_model->get_client('id', $this->Crypt->decrypt($datas['trid']));                            
             $path_name = "assets/data_users/".$client[0]['folder_in_server'];             
-            
             if(is_dir($path_name) && count($client) == 1){            
                 $result = [];
                 $result['success'] = false;
@@ -1715,7 +1759,7 @@ class Welcome extends CI_Controller {
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
                     || ($_FILES["file"]["type"] == "image/png"))
-                    && ($_FILES["file"]["size"] < 5000000)
+                    && ($_FILES["file"]["size"] < 10485761)
                     && in_array($extension, $allowedExts)) {
                         if ($_FILES["file"]["error"] > 0) {
                             $result['message'] .= "Return Code: " . $_FILES["file"]["error"];
@@ -1727,17 +1771,22 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".png";
+                            $filename = $file_names[$id_file].".".$extension;
                             
                             //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $filename)) {
-                                unlink($path_name."/". $filename);
+                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
+                                unlink($path_name."/". $file_names[$id_file].".png");
                                 //$result['message'] .= $filename . " já foi carregado. ";
                             } 
-                            
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = "Guardado " . $filename;
+                            if($extension != "png"){
+                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
+                                unlink($path_name."/". $filename);
+                                $extension = "png";
+                            }
+                            
+                            $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION["new_".$file_names[$id_file]] = true;
                         }
@@ -1747,27 +1796,27 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
-                     default: $message = 'Error: carga de arquivo não completada.';
+                     default: $message = 'Erro: carga de arquivo não completada.';
                               break;
                     }
                     $result['success'] = false;
@@ -1781,7 +1830,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }    
         echo json_encode($result);
     }
@@ -1803,7 +1853,6 @@ class Welcome extends CI_Controller {
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($this->Crypt->decrypt($datas['trid']), $value_ucpf);
                 $this->transaction_model->update_transaction_status($this->Crypt->decrypt($datas['trid']), transactions_status::PENDING);
-                
                 session_destroy();
             }
             else{                
@@ -1813,7 +1862,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            $result['message'] = "Sessão expirou";
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
         }
         echo json_encode($result);
     }
@@ -1837,7 +1887,6 @@ class Welcome extends CI_Controller {
         );
     }
     
-
     public function get_client_token_iugu($id){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2013,8 +2062,6 @@ class Welcome extends CI_Controller {
         return $response;
     }
     
-    //-------END IUGU API-----------------------------------------------
-    
     //-------TOPAZIO API-----------------------------------------------
     public function get_topazio_API_token() {        
         $this->load->model('class/system_config');
@@ -2145,11 +2192,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
-        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
-        
         //********************************
         $num_plots = $financials["amount_months"];
         $amount_pay = $financials["solicited_value"];        
@@ -2159,21 +2203,18 @@ class Welcome extends CI_Controller {
         $total_value = $financials['funded_value'];
         $plot_value = $financials['month_value'];        
         //*********
-        
         $cpf = $transaction["cpf"];
         $name = $transaction["name"];
         $document_id = 10000000000 + time();
         $release_date = $this->next_available_day();
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
-        
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
-        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id)[0];
+        $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
         $bank_code = "001";//$account_bank["bank"];
         $agency = substr($account_bank["agency"], 0, 4);
         $account = "12570-9";//$account_bank["account"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
-        
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
                         ."\",\n    \"nameOrCompanyName\": \"".$name."\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  "
@@ -2208,30 +2249,22 @@ class Welcome extends CI_Controller {
                         $plot_number ++;
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
-        
                     $fields .= "]\n  }\n}";
-        
         $ch = curl_init();
-        
         curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
         curl_setopt($ch, CURLOPT_POST, 1);
-
         $headers = array();
         $headers[] = "Content-Type: application/json";
         $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
         $result = curl_exec($ch);
-        
         curl_close ($ch);
-
         $parsed_response = json_decode($result);
-        
         $response_loans['success'] = false;
         if(is_object($parsed_response) && $parsed_response->success == TRUE){
             $response_loans['success'] = true;
@@ -2255,16 +2288,12 @@ class Welcome extends CI_Controller {
         if($d['wday'] == 6){
             $next_day = "+2 day";
         }
-        
         $amanha = strtotime($next_day);
         $tomorrow = getdate($amanha);
-        
         if($tomorrow["mon"] < 10)
             $tomorrow["mon"] = "0".$tomorrow["mon"];
-        
         if($tomorrow["mday"] < 10)
             $tomorrow["mday"] = "0".$tomorrow["mday"];
-        
         return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
     }
     
@@ -2477,8 +2506,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2529,8 +2558,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2558,8 +2587,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2586,8 +2615,8 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
@@ -2611,10 +2640,21 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        //********************************
+        $num_plots = $financials["amount_months"];
+        $amount_pay = $financials["solicited_value"];        
+        $iof = $financials['IOF'];
+        $tax = $financials['tax'];
+        $tac = $financials['TAC'];
+        $total_value = $financials['funded_value'];
+        $plot_value = $financials['month_value'];        
+        //*****************************************
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
@@ -2623,17 +2663,18 @@ class Welcome extends CI_Controller {
                 $client->setAccessToken($token_4sign);
                 $client->setCryptKey($crypt_4sign);
                 
-                $id_template = "MjA1Nw=="; //$GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
+                $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
 					'name' => $transaction['name'],
-					'amount_solicited' => $transaction['amount_solicited'],
-					'num_plots' => $transaction['number_plots']
+					'amount_solicited' => $amount_pay,
+					'num_plots' => $num_plots,
+					'plot_value' => $plot_value
 					)
 			);							
 	
                 $name_document = "Contrato_".time();
-                $uuid_cofre = '3f1ae2fc-cf8d-4df2-9060-63cba43d2498';//$uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
+                $uuid_cofre = $GLOBALS['sistem_config']->SAFE_LIVRE_D4SIGN;                
 
                 $return = $client->documents->makedocumentbytemplate($uuid_cofre, $name_document, $templates);
                 
@@ -2655,44 +2696,31 @@ class Welcome extends CI_Controller {
     }
     
     public function download_document_D4Sign($id){
-        
         if($_SESSION['logged_role'] !== 'ADMIN')
-            return ;
-        
+            return NULL;
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $token_4sign = "live_f98664b8eeb3fddd195da65c5bab0fdebc1a9b46882f104299ce698853ce6fb0";//$GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
-        $crypt_4sign = "live_crypt_NfhmhzB9Sg86SkZR5ySGhpcHFnf1tnIt";// $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
-        
+        $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
+        $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
-        
+        $result['success'] = false;
         try{
-                $client = new D4sign\Client();
-                $client->setAccessToken($token_4sign);
-                $client->setCryptKey($crypt_4sign);
-                
-                $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
-                    
-                $file = file_get_contents($url_doc->url);
-	
-                //Para ZIP
-                //header("Content-type: application/octet-stream");
-                //header("Content-Disposition: attachment; filename=\"".$url_doc->name.".zip"."\"");
-
-                //Para PDF
-                header("Content-type: application/pdf");
-                header("Content-Disposition: attachment; filename=\"".$url_doc->name.".pdf"."\"");
-
-                echo $file;
-                
+            $client = new D4sign\Client();
+            $client->setAccessToken($token_4sign);
+            $client->setCryptKey($crypt_4sign);
+            $url_doc = $client->documents->getfileurl($transaction['doc_d4sign'],'pdf');
+            if($url_doc){
+                $result['message'] = $url_doc->url;
+                $result['success'] = true;
+            } else {
+                $result['message'] = "Documento não existe";
+            }
         } catch (Exception $e) {
-                //echo $e->getMessage();
-                return null;
+            $result['message'] = $e->getMessage();            
         } 
-        return $docs;
+        return $result;
     }
     //-------End API D4Sign-----------------------------------------------
     
@@ -2712,7 +2740,6 @@ class Welcome extends CI_Controller {
     
     public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
         $this->load->model('class/tax_model');
-        
         $B1 = number_format($valor_solicitado, 2, '.', '');
         $B2 = $num_parcelas;
         $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
@@ -2725,28 +2752,21 @@ class Welcome extends CI_Controller {
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
         $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
-        
+        $B3 = number_format( $B3*100, 2, '.', ''); 
         $result = array(
-                'solicited_value' => $B1,                                
-                'amount_months' => $B2,
-                'tax' => $B3,
-                'month_value' => $F14,
-                'total_cust_value' => $F13,
-                'funded_value' => $B7,
-                'IOF' => $C4,
-                'TAC' => $C5,
-                'CET_PERC' => $J10,
-                'CET_YEAR' => $J11                
-                );
-        
+            'solicited_value' => $B1,                                
+            'amount_months' => $B2,
+            'tax' => $B3, //juros
+            'month_value' => $F14,
+            'total_cust_value' => $F13,
+            'funded_value' => $B7,
+            'IOF' => $C4,
+            'TAC' => $C5,
+            'CET_PERC' => $J10,
+            'CET_YEAR' => $J11                
+            );
         return $result;
     }
     
-    public function download_document() {
-        $datas = $this->input->get();
-        if($_SESSION['logged_role'] !== 'ADMIN')
-            return ;
-        $params['id']=$datas['id'];
-        $this->load->view('download_document_user',$params);
-    }
+    
 }
