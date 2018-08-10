@@ -10,7 +10,7 @@ class Welcome extends CI_Controller {
         parent::__construct();
     }
     
-    public function test2() {               
+    public function test2() {
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
