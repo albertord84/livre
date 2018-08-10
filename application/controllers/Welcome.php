@@ -1582,7 +1582,7 @@ class Welcome extends CI_Controller {
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = "Guardado " . $filename;
+                            $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
@@ -1592,27 +1592,27 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
-                     default: $message = 'Error: carga de arquivo não completada.';
+                     default: $message = 'Erro: carga de arquivo não completada.';
                               break;
                     }
                     $result['success'] = false;
@@ -1685,25 +1685,25 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
                      default: $message = 'Error: carga de arquivo não completada.';
                               break;
@@ -1768,7 +1768,7 @@ class Welcome extends CI_Controller {
                             } 
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            $result['message'] = "Guardado " . $filename;
+                            $result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION["new_".$file_names[$id_file]] = true;
                         }
@@ -1778,27 +1778,27 @@ class Welcome extends CI_Controller {
                 }else{
                    switch($fileError){
                      case UPLOAD_ERR_INI_SIZE:   
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_FORM_SIZE:  
-                          $message = 'Error ao tentar subir um arquivo que excede o tamanho permitido.';
+                          $message = 'Erro ao tentar subir um arquivo que excede o tamanho permitido.';
                           break;
                      case UPLOAD_ERR_PARTIAL:    
-                          $message = 'Error: não terminou a ação de subir o arquivo.';
+                          $message = 'Erro: não terminou a ação de subir o arquivo.';
                           break;
                      case UPLOAD_ERR_NO_FILE:    
-                          $message = 'Error: nenhum arquivo foi subido.';
+                          $message = 'Erro: nenhum arquivo foi subido.';
                           break;
                      case UPLOAD_ERR_NO_TMP_DIR: 
-                          $message = 'Error: servidor não configurado para carga de arquivos.';
+                          $message = 'Erro: servidor não configurado para carga de arquivos.';
                           break;
                      case UPLOAD_ERR_CANT_WRITE: 
-                          $message= 'Error: posible falha ao gravar o arquivo.';
+                          $message= 'Erro: posivel falha ao gravar o arquivo.';
                           break;
                      case  UPLOAD_ERR_EXTENSION: 
-                          $message = 'Error: carga de arquivo não completada.';
+                          $message = 'Erro: carga de arquivo não completada.';
                           break;
-                     default: $message = 'Error: carga de arquivo não completada.';
+                     default: $message = 'Erro: carga de arquivo não completada.';
                               break;
                     }
                     $result['success'] = false;
