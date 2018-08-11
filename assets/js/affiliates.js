@@ -166,7 +166,7 @@ $(document).ready(function () {
     });
     
     $('.btn_see_trnsaction').click(function () {
-        transaction_id = this.id;alert(transaction_id);
+        transaction_id = this.id;
         $.ajax({
             url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
             data:{
