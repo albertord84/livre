@@ -166,7 +166,7 @@ $(document).ready(function () {
     });
     
     $('.btn_see_trnsaction').click(function () {
-        transaction_id = this.id;
+        transaction_id = this.id;alert(transaction_id);
         $.ajax({
             url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
             data:{
@@ -182,7 +182,7 @@ $(document).ready(function () {
                     minutes=date.getMinutes();
                     seconds=date.getSeconds();
                     return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/                    
-                    $("#trans_id").text(response['message']['id']);
+                    $("#trans_id").text(response['message']['client_id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
                     $("#trans_cpf").text(response['message']['cpf']);
@@ -477,15 +477,6 @@ $(document).ready(function () {
         });
     };    
     /************END UPLOADING PHOTO/***********/
-    
-   /* $('.foto_usr').click(function () {
-        var id = this.id;
-        var foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
-        var left  = ($(window).width()/2)-(640/2),
-            top   = ($(window).height()/2)-(480/2);
-        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
-    });*/
-    
     $('.foto_usr').click(function () {
         var id = this.id;
         //var foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];

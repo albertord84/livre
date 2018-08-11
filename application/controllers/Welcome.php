@@ -2397,7 +2397,7 @@ class Welcome extends CI_Controller {
             $result['message'] = 'Transação não encontrada';
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-                if($transactions['id'] == $datas['id']){
+                if($transactions['client_id'] == $datas['id']){
                     $_SESSION['transaction_requested_id'] = $datas['id'];
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
