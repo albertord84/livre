@@ -481,7 +481,15 @@ $(document).ready(function () {
     
     $('.foto_usr').click(function () {
         var id = this.id;
-        var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png', 'cpf_card.png'];
+        var foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
+        var left  = ($(window).width()/2)-(640/2),
+            top   = ($(window).height()/2)-(480/2);
+        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
+    });
+    
+    $('.foto_usr').click(function () {
+        var id = this.id;
+        var foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
         var left  = ($(window).width()/2)-(640/2),
             top   = ($(window).height()/2)-(480/2);
         window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);

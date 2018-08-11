@@ -10,7 +10,18 @@ class Welcome extends CI_Controller {
         parent::__construct();
     }
     
-    public function test2() {               
+    public function test2() { 
+        /*$this->load->model('class/system_config');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $this->Gmail->credit_card_recused("Pedro Petti","seja@livre.digital");
+        $this->Gmail->transaction_email_approved("Pedro Petti","seja@livre.digital");
+        $this->Gmail->transaction_request_new_photos("Pedro Petti","seja@livre.digital","google.com");
+        $this->Gmail->transaction_request_new_account_bank("Pedro Petti","seja@livre.digital","google.com");
+        $this->Gmail->transaction_request_new_sing_us("Pedro Petti","seja@livre.digital","google.com");
+        $this->Gmail->transaction_request_recused("Pedro Petti","seja@livre.digital","google.com");
+        */
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
@@ -21,8 +32,8 @@ class Welcome extends CI_Controller {
         //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_loans(3);        
         //$result = $this->do_payment_iugu(3);                
-        //$result = $this->topazio_conciliations("2018-07-31");
-        //$result = $this->calculating_enconomical_values(1000,6);        
+        //$result = $this->topazio_conciliations("2018-08-10");
+        //$result = $this->calculating_enconomical_values(500,6);        
         //$result = $this->upload_document_D4Sign();        
     }
     
@@ -1551,11 +1562,12 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "application/pdf")
                     || ($_FILES["file"]["type"] == "image/jpg")
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
@@ -1572,28 +1584,26 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/".$file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = "Salvado " . $filename;
+                            //$result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -1649,11 +1659,12 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "application/pdf")
                     || ($_FILES["file"]["type"] == "image/jpg")
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
@@ -1665,34 +1676,27 @@ class Welcome extends CI_Controller {
                         } else {
                             $file_names = ["photo_profile"];
                             $id_file = 0;
-                            /*$id_file = $datas['id'];
-                            if(!is_numeric($id_file))
-                                $id_file = 0;
-                            if($id_file < 0 || $id_file > 4)
-                                $id_file = 0;*/
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/". $file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.'.$extension.'?'.time();
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile?'.time();
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -1750,9 +1754,9 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
                     || ($_FILES["file"]["type"] == "image/jpg")
@@ -1771,27 +1775,26 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/". $file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
+                            
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = "Salvado " . $filename;
+                            //$result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION["new_".$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -2161,7 +2164,7 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -2200,7 +2203,7 @@ class Welcome extends CI_Controller {
         $iof = $financials['IOF'];
         $tax = $financials['tax'];
         $tac = $financials['TAC'];
-        $total_value = $financials['funded_value'];
+        $total_value = $financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*********
         $cpf = $transaction["cpf"];
@@ -2250,8 +2253,9 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
+                
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
@@ -2325,7 +2329,7 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2377,11 +2381,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
@@ -2652,7 +2656,7 @@ class Welcome extends CI_Controller {
         $iof = $financials['IOF'];
         $tax = $financials['tax'];
         $tac = $financials['TAC'];
-        $total_value = $financials['funded_value'];
+        $total_value = $financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*****************************************
         
@@ -2752,7 +2756,10 @@ class Welcome extends CI_Controller {
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
         $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
+        
         $B3 = number_format( $B3*100, 2, '.', ''); 
+        $C5 = number_format($F13-$B1-$C4, 2, '.', '');
+        
         $result = array(
             'solicited_value' => $B1,                                
             'amount_months' => $B2,

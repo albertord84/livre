@@ -593,7 +593,7 @@ $(document).ready(function () {
         }
     });
         
-    $("#cartao").change(function (evt) {
+    $("#cartao_old").change(function (evt) {
         var files = evt.target.files; 
         f= files[0];
         if(!(f==undefined)){
@@ -818,6 +818,6 @@ $(document).ready(function () {
         }        
     });
     
-    //init();
+    init();
     
 }); 
