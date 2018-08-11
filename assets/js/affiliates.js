@@ -478,8 +478,7 @@ $(document).ready(function () {
     };    
     /************END UPLOADING PHOTO/***********/
     $('.foto_usr').click(function () {
-        var id = this.id;
-        //var foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
+        var id = this.id;        
         $.ajax({
             url: base_url+'index.php/welcome/get_url_image',            
             data:{id:id},
