@@ -1004,25 +1004,27 @@ class Welcome extends CI_Controller {
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
-        if($transaction){
-           if($datas['upc'] == $transaction['new_photos_code']){
-            $this->transaction_model->save_in_db(
-                'transactions',
-                'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');          
-            $_SESSION['session_new_foto'] = true;   
-            $this->load->model('class/system_config');
-            $GLOBALS['sistem_config'] = $this->system_config->load();
-            $params['transaction']=$transaction;
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-            $this->load->view('reenvio-documento',$params);
-            $this->load->view('inc/footer',$params);
-            } else{
-                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+            if($transaction){
+               if($datas['upc'] == $transaction['new_photos_code']){
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$transaction['id'],
+                    'new_photos_code',$transaction['new_photos_code'].'--used');          
+                $_SESSION['session_new_foto'] = true;   
+                $this->load->model('class/system_config');
+                $GLOBALS['sistem_config'] = $this->system_config->load();
+                $params['transaction']=$transaction;
+                $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+                $this->load->view('reenvio-documento',$params);
+                $this->load->view('inc/footer',$params);
+                } else{
+                    print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+                }
+            }else{
+                print_r('Access violation. Wrong prameters!!');
             }
-        }else{
-            print_r('Access violation. Wrong prameters!!');
         }
     }
     
@@ -1064,23 +1066,25 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
-        if($transaction){
-           if($datas['uabc'] == $transaction['new_account_bank_code']){
-            $this->transaction_model->save_in_db(
-                'transactions',
-                'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');
-            $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
-            $params['transaction']=$transaction;
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-            $this->load->view('reenvio-conta',$params);
-            $this->load->view('inc/footer',$params);
-            } else{
-                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
+            if($transaction){
+               if($datas['uabc'] == $transaction['new_account_bank_code']){
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$transaction['id'],
+                    'new_photos_code',$transaction['new_photos_code'].'--used');
+                $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
+                $params['transaction']=$transaction;
+                $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+                $this->load->view('reenvio-conta',$params);
+                $this->load->view('inc/footer',$params);
+                } else{
+                    print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+                }
+            }else{
+                print_r('Access violation. Wrong prameters!!');
             }
-        }else{
-            print_r('Access violation. Wrong prameters!!');
         }
     }
     
@@ -1233,6 +1237,29 @@ class Welcome extends CI_Controller {
             $url = $this->download_document_D4Sign($_SESSION['transaction_requested_id']);            
             if($url['success']){
                 $result['url_contract']= $url['message'];
+                $result['success']=true;
+            }else
+                $result['message']=$url['message'];
+        }
+        echo json_encode($result);
+    }
+    
+    public function get_url_image(){//revisar *************MORENO************
+        $this->load->model('class/transaction_model');
+        $result['success']=false ;
+        $result['message']='Access violation';
+        
+        $datas = $this->input->post();
+        $foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
+        if(!is_numeric($datas['id']) || $datas['id'] < 0 || $datas['id'] > 4)
+            $datas['id'] = 0;
+        
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $id = $_SESSION['transaction_requested_id'];
+            $client = $this->transaction_model->get_client('id', $id)[0];
+            
+            if($client){
+                $result['url_image']= 'assets/data_users/'.$client['folder_in_server'].'/'.$foto[$datas['id']];
                 $result['success']=true;
             }else
                 $result['message']=$url['message'];
@@ -1930,6 +1957,8 @@ class Welcome extends CI_Controller {
     }
 
     public function do_payment_iugu($id){
+        /*if($id !== $_SESSION['pk'])   //segurança
+            return;*/
         //Solicita na Iugu a cobrança no cartão do cliente
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1983,6 +2012,9 @@ class Welcome extends CI_Controller {
     }
 
     public function refund_bill_iugu($id){
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2019,7 +2051,9 @@ class Welcome extends CI_Controller {
     }
     
     public function get_bill_iugu($id){        
-            
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/    
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2116,6 +2150,9 @@ class Welcome extends CI_Controller {
     }
 
     public function basicCustomerTopazio($id, $API_token){        
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2179,6 +2216,9 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_loans($id, $API_token){
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/tax_model');
@@ -2318,6 +2358,9 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){
+            return;            
+        }*/
         $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);

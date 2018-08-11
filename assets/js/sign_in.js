@@ -713,6 +713,8 @@ $(document).ready(function () {
         formData.append("id", id);        
         formData.append("key", key);        
 
+        $("body").css("cursor", "wait");
+        
         $.ajax({
             type: "POST",
             dataType: 'json',
@@ -721,7 +723,7 @@ $(document).ready(function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
                     //myXhr.upload.addEventListener('progress', that.progressHandling, false);
-                }
+                }                
                 return myXhr;
             },
             success: function (response) {
@@ -745,9 +747,13 @@ $(document).ready(function () {
                             $('#check_selfie_with_identity').removeClass('uplred');
                             $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
                             break;
+                        case 4:
+                            $('#msg_ucpf_upload').text(' (Foi anexado)');                            
+                            break;
                         default:
                             ;                        
                     }
+                    $("body").css("cursor", "default");
                 }
                 else{
                     modal_alert_message(response['message']);
@@ -767,14 +773,19 @@ $(document).ready(function () {
                         case 3:
                             $('#check_selfie_with_identity').removeClass('uplsilver');
                             $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            break;                        
+                        case 4:
+                            $('#msg_ucpf_upload').text('');                            
                             break;
                         default:
                             ;                        
                     }
+                    $("body").css("cursor", "default");
                 }
             },
             error: function (error) {
                 // handle error
+                $("body").css("cursor", "default");
             },
             async: true,
             data: formData,
@@ -848,5 +859,5 @@ $(document).ready(function () {
         }        
     });
     
-    //init();    
+    init();    
 }); 

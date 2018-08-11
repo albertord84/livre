@@ -696,9 +696,20 @@
                                         <input type="checkbox" id="ucpf" style="margin-top: 2px;"> 
                                         <small style="text-decoration: none;">
                                             <b class="fleft100">Minha identidade não possui CPF</b> Marque para fazer upload do seu CPF
+                                            <?php 
+                                            if($_SESSION['cpf_card']){
+                                            ?>
+                                                <b><span id = 'msg_ucpf_upload'> (Foi anexado)</span></b>
+                                            <?php 
+                                            } else {
+                                            ?>
+                                                <b><span id = 'msg_ucpf_upload'></span></b>
+                                            <?php 
+                                            } 
+                                        ?>    
                                         </small>
                                     </label>
-                                </div>
+                                </div>                                
                             </div>
                             <div class="fleft100 m-top20 text-right">
                                 <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
