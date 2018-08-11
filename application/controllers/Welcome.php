@@ -11,17 +11,6 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
-        /*$this->load->model('class/system_config');
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $this->Gmail = new Gmail();
-        $this->Gmail->credit_card_recused("Pedro Petti","seja@livre.digital");
-        $this->Gmail->transaction_email_approved("Pedro Petti","seja@livre.digital");
-        $this->Gmail->transaction_request_new_photos("Pedro Petti","seja@livre.digital","google.com");
-        $this->Gmail->transaction_request_new_account_bank("Pedro Petti","seja@livre.digital","google.com");
-        $this->Gmail->transaction_request_new_sing_us("Pedro Petti","seja@livre.digital","google.com");
-        $this->Gmail->transaction_request_recused("Pedro Petti","seja@livre.digital","google.com");
-        */
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);

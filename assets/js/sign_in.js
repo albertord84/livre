@@ -111,7 +111,7 @@ $(document).ready(function () {
         if (!number){
             number = validate_element('#credit_card_number', "^(?:((((636368)|(438935)|(504175)|(451416)|(636297))[0-9]{0,10})|((5067)|(4576)|(4011))[0-9]{0,12}))$");
         // Validating a Hypercard
-        if (!number) {            
+        if (!number) {
             number = validate_element('#credit_card_number', "^(?:(606282[0-9]{10}([0-9]{3})?)|(3841[0-9]{15}))$");
         }}}}}}}
             
@@ -121,7 +121,7 @@ $(document).ready(function () {
         var year = validate_year('#credit_card_exp_year', "^[2-20-01-20-9]{4,4}$");            
         var date = validate_date($('#credit_card_exp_month').val(),$('#credit_card_exp_year').val(), '#credit_card_exp_month', '#credit_card_exp_year');
         if (number && name && cvv && month && year) {
-            if(date){                
+            if(date){
                 var datas={
                     'credit_card_name': $('#credit_card_name').val(),
                     'credit_card_number': $('#credit_card_number').val(),
@@ -162,13 +162,13 @@ $(document).ready(function () {
         }   
     });
     
-    $("#btn_steep_3_prev").click(function () {  
+    $("#btn_steep_3_prev").click(function () {
         $('.check3').toggle("hide");
         $('.check2').toggle("slow");
     });
         
     $("#btn_steep_3_next").click(function () {
-        var cpf_value=$('#titular_cpf').val();        
+        var cpf_value=$('#titular_cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');        
         var bank = validate_element('#bank', "^[0-9]{3,3}$");        
         var agency = validate_element('#agency', "^[0-9]{4,12}$");
@@ -817,7 +817,36 @@ $(document).ready(function () {
             e.preventDefault();            
         }        
     });
+
+    $("#phone_ddd").keydown(function (e) {   
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();            
+        }        
+    });
     
-    init();
+    $("#cpf").keydown(function (e) {   
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();            
+        }        
+    });
     
+    //init();    
 }); 
