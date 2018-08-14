@@ -2231,7 +2231,7 @@ class Welcome extends CI_Controller {
         $amount_pay = $financials["solicited_value"];        
         $iof = $financials['IOF'];
         $tax = $financials['tax'];
-        $tac = $financials['TAC'];
+        $tac = $financials['TAC_API'];
         $total_value = $financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*********
@@ -2702,7 +2702,7 @@ class Welcome extends CI_Controller {
                 $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
-					'name' => $transaction['name'],
+					'ccb_loans' => $transaction['ccb'],
 					'amount_solicited' => $amount_pay,
 					'num_plots' => $num_plots,
 					'plot_value' => $plot_value
@@ -2790,8 +2790,7 @@ class Welcome extends CI_Controller {
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
         
         $B3 = number_format( $B3*100, 2, '.', ''); 
-        $C5 = number_format($F13-$B1-$C4, 2, '.', '');
-        
+                
         $result = array(
             'solicited_value' => $B1,                                
             'amount_months' => $B2,
@@ -2802,7 +2801,11 @@ class Welcome extends CI_Controller {
             'IOF' => $C4,
             'TAC' => $C5,
             'CET_PERC' => $J10,
-            'CET_YEAR' => $J11                
+            'CET_YEAR' => $J11,                
+            'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
+            'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
+            'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
+            'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
             );
         return $result;
     }
