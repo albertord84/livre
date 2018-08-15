@@ -2886,63 +2886,60 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
-        while(true){
-            $date = date("Y-m-d",time());
-            $transactions = $this->topazio_conciliations($date);
-            if($transactions->success){
-                foreach ($transactions->datas as $transaction) {
-                    print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
-                    var_dump($transaction);
-                    if($transaction->ccbNumber){
-                        $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
-                        switch ($transaction->statusCode) {
-                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
-                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                                break;
-                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
-                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                                break;
-                            case 2100: //TOPAZIO - "CANCELADA"
-                                //1. enviar para PENDING
-                                $this->load->model('class/transactions_status');
-                                $this->load->model('class/transaction_model');
-                                $this->transaction_model->update_transaction_status(
-                                    $livre_tr['client_id'],
-                                    transactions_status::PENDING);
-                                break;
-                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                                //1. pedir nova conta
-                                $account_bank_reasonCodes = array(
-                                    1 /*Conta Destinatária do Crédito Encerrada*/,
-                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
-                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
-                                    5 /*Divergência na Titularidade*/
-                                );
-                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
-                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
-                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
-                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                    if($this->request_new_account())
-                                        print_r("<br><br>Nova conta pedida automaticamente com sucesso");
-                                } else{
-                                    print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
-                                }
-                                break;
-                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
-                                //TODO: email com dinheiro enviado
-                                break;
-                        }
+        $date = date("Y-m-d",time());
+        print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        $transactions = $this->topazio_conciliations($date);
+        if($transactions->success){
+            foreach ($transactions->datas as $transaction) {
+                var_dump($transaction);
+                if($transaction->ccbNumber){
+                    $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
+                    switch ($transaction->statusCode) {
+                        case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                            /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                            break;
+                         case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                            /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                            break;
+                        case 2100: //TOPAZIO - "CANCELADA"
+                            //1. enviar para PENDING
+                            $this->load->model('class/transactions_status');
+                            $this->load->model('class/transaction_model');
+                            $this->transaction_model->update_transaction_status(
+                                $livre_tr['client_id'],
+                                transactions_status::PENDING);
+                            break;
+                        case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                            //1. pedir nova conta
+                            $account_bank_reasonCodes = array(
+                                1 /*Conta Destinatária do Crédito Encerrada*/,
+                                2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                5 /*Divergência na Titularidade*/
+                            );
+                            if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                if($this->request_new_account())
+                                    print_r("<br><br>Nova conta pedida automaticamente com sucesso");
+                            } else{
+                                print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
+                            }
+                            break;
+                        case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                            //TODO: email com dinheiro enviado
+                            break;
                     }
-                    print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
-                }
-            }else{
-                $administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
-                foreach ($administrators_emails as $useremail) {
-                    $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
                 }
             }
-            sleep(15*60);
+        }else{
+            $administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+            foreach ($administrators_emails as $useremail) {
+                $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
+            }
         }
+        print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
     }
     
         
