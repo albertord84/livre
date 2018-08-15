@@ -204,7 +204,7 @@ class Welcome extends CI_Controller {
         session_destroy();
         header('Location: '.base_url().'index.php/welcome/afhome');
     }
-        
+    
     //-------TRANSACTION FUNCTIONS--------------------------------    
     /*
     //varaiveis armazenadas na sessao para a solicitação de um empréstimo
@@ -457,7 +457,7 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-       
+    
     public function is_possible_steep_2_for_this_client($datas) { 
         $this->load->model('class/transaction_model');
         $_SESSION['is_possible_steep_2']=false;
@@ -2885,7 +2885,7 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
-        $_SESSION['logged_role'] = 'ADMIN';        
+        $_SESSION['logged_role'] = 'ADMIN';
         while(true){
             $date = date("Y-m-d",time());
             $transactions = $this->topazio_conciliations($date);
@@ -2897,17 +2897,17 @@ class Welcome extends CI_Controller {
                         $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
                         switch ($transaction->statusCode) {
                             case 2000: //TOPAZIO - "EM PROCESSAMENTO"
-                                /* não devemos facer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
                                 break;
                              case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
-                                /* não devemos facer nada, até esperar que a transação mude para outro status*/
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
                                 break;
                             case 2100: //TOPAZIO - "CANCELADA"
                                 //1. enviar para PENDING
                                 $this->load->model('class/transactions_status');
                                 $this->load->model('class/transaction_model');
                                 $this->transaction_model->update_transaction_status(
-                                    $_SESSION['transaction_requested_id'], 
+                                    $livre_tr['client_id'],
                                     transactions_status::PENDING);
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
@@ -2945,8 +2945,7 @@ class Welcome extends CI_Controller {
         }
     }
     
-    
-    
+        
     
     
 }

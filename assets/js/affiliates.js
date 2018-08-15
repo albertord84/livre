@@ -51,7 +51,7 @@ $(document).ready(function () {
             modal_alert_message('As senhas devem ser iguais');
         }else{
             complete_name  = validate_element('#affiliate_complete_name', '^[A-ZÃÕÇÁÉÍÓÚÀÈÌÒÙ ]{6,150}$');
-            email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+            email = validate_element('#affiliate_email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,10}$');
             phone_ddd = validate_element('#affiliate_phone_ddd', '^[0-9]{2}$');
             phone_number = validate_element('#affiliate_phone_number', '^[0-9]{7,10}$');        
             if(complete_name!=="false" && email && phone_ddd && phone_number ){                                

@@ -10,19 +10,19 @@ $(document).ready(function () {
     $("#btn_steep_1").click(function () {
         var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
-        name  = validate_element('#name', '^[A-Z ]{6,150}$');
-        email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+        name  = validate_element('#name', '^[a-zA-Z ]{6,150}$');
+        email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,10}$');
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
-        phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
+        phone_number = validate_element('#phone_number', '^[0-9]{8,9}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
         cep = validate_element('#cep', '^[0-9]{8}$');
         street_address = validate_element('#street_address', '^[a-zA-Z áéíóúàãẽõ]{5,}$');
-        number_address = validate_element('#number_address', '^[0-9]{1,7}$');
-        complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
+        number_address = validate_element('#number_address', '^[0-9]{1,10}$');
+        //complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
         
-        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && complement && city && state){                                
+        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
                 data:{
@@ -115,7 +115,7 @@ $(document).ready(function () {
             number = validate_element('#credit_card_number', "^(?:(606282[0-9]{10}([0-9]{3})?)|(3841[0-9]{15}))$");
         }}}}}}}
             
-        var name = validate_element('#credit_card_name', "^[A-Z ]{4,50}$");
+        var name = validate_element('#credit_card_name', "^[a-zA-Z ]{4,150}$");
         var cvv = validate_element('#credit_card_cvv', "^[0-9]{3,4}$");
         var month = validate_month('#credit_card_exp_month', "^[0-10-9]{2,2}$");
         var year = validate_year('#credit_card_exp_year', "^[2-20-01-20-9]{4,4}$");            
@@ -175,7 +175,7 @@ $(document).ready(function () {
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
         var dig = validate_element('#dig', "^[0-9]{1}$");            
-        var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
+        var titular_name = validate_element('#titular_name','^[a-zA-Z ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
         if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
             datas={
@@ -228,7 +228,7 @@ $(document).ready(function () {
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
         var dig = validate_element('#dig', "^[0-9]{1}$");            
-        var titular_name = validate_element('#titular_name','^[A-Z ]{6,150}$');            
+        var titular_name = validate_element('#titular_name','^[a-zA-Z ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
         if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {            
             datas={
@@ -508,24 +508,30 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {  
-        $.ajax({
-            url: base_url+'index.php/welcome/request_sms_code',                
-            data: {
-                'phone_ddd':$('#phone_ddd').val(),
-                'phone_number': $('#phone_number').val(),
-                'key':key
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response) {
-                if(response['success']){
-                    $('#sms').modal('show');
-                } else{
-                    modal_alert_message(response['message']);
+    $("#btn_verify_phone_number").click(function () {
+        phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
+        phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
+        if(phone_ddd && phone_number){
+            $.ajax({
+                url: base_url+'index.php/welcome/request_sms_code',                
+                data: {
+                    'phone_ddd':$('#phone_ddd').val(),
+                    'phone_number': $('#phone_number').val(),
+                    'key':key
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']){
+                        $('#sms').modal('show');
+                    } else{
+                        modal_alert_message(response['message']);
+                    }
                 }
-            }
-        });
+            });            
+        }else{
+            modal_alert_message('Dados telefónicos com problemas');
+        }
     });    
     
     $("#btn_verify_sms_send_code").click(function () {
@@ -860,7 +866,7 @@ $(document).ready(function () {
              // Allow: home, end, left, right, down, up
             (e.keyCode >= 35 && e.keyCode <= 40)) {
                  // let it happen, don't do anything
-                 return;
+                return;
         }
         // Ensure that it is a number and stop the keypress
         if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
