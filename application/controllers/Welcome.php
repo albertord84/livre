@@ -11,7 +11,7 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
-        $uudid_doc = $this->upload_document_template_D4Sign(3);
+        //$uudid_doc = $this->upload_document_template_D4Sign(3);
         /*$token_signer = $this->signer_for_doc_D4Sign(3);
                if($token_signer){
                     //3.  mandar a assinar
@@ -34,7 +34,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test2();
+        //$this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -2736,7 +2736,7 @@ class Welcome extends CI_Controller {
                                         'release_day' => $tomorrow["mday"],
                                         'release_string_month' => $mes[ $tomorrow["mon"]-1 ],
                                         'release_year' => $tomorrow["year"],
-					'full_name' => $transaction['name'],
+					//'full_name' => $transaction['name'],
 					'ccb_loans2' => $transaction['ccb_number'],
 					'name2' => $transaction['name'],
 					'cpf2' => $transaction['cpf'],
@@ -2780,8 +2780,8 @@ class Welcome extends CI_Controller {
                                         'sum_month_value' => $financials['total_cust_value'],
                                         'release_day2' => $tomorrow["mday"],
                                         'release_string_month2' => $mes[ $tomorrow["mon"]-1 ],
-                                        'release_year2' => $tomorrow["year"],
-					'full_name2' => $transaction['name']
+                                        'release_year2' => $tomorrow["year"]//,
+					//'full_name2' => $transaction['name']
 					)
 			);							
 	
