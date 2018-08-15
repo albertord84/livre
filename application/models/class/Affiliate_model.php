@@ -99,6 +99,32 @@ class Affiliate_model extends CI_Model{
         return NULL;
     }
     
+    public function load_transaction_by_ccbNumber($transaction_ccbNumber){
+        try {
+            $this->load->model('class/Crypt');
+            $this->db->select('*');
+            $this->db->from('transactions');
+            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
+            $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
+            $this->db->where('transactions.ccb_number',$transaction_ccbNumber);                
+            $result = $this->db->get()->row_array();
+            if(count($result)){
+                $result['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
+                $result['credit_card_name'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+                $N = strlen($result['credit_card_number']);
+                $result['credit_card_final'] = substr($result['credit_card_number'], $N-4, $N);
+                $result['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
+                $result['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+                $result['dates'] = $this->load_transaction_dates($transaction['client_id']);//mismo problema
+                $result['bank_name'] = $this->Crypt->get_bank_by_code($result['bank']);
+            }
+            return $result;
+        } catch (Exception $exc) {
+            //echo $exc->getTraceAsString();                
+        }
+        return NULL;
+    }
+    
     public function load_transaction_dates($transaction_id){
         try {
             $this->db->select('*');

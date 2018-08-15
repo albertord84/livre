@@ -1104,7 +1104,6 @@ class Welcome extends CI_Controller {
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
             if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){                
-                //TODO Moreno API
                 //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
                 $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                 if($uudid_doc){
@@ -1167,7 +1166,6 @@ class Welcome extends CI_Controller {
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
                     'new_sing_us_code',$unique_new_sing_us_code);
-            //TODO Moreno API
             //1. subir el mismo contrato            
             $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
             if($uudid_doc){
@@ -2422,26 +2420,20 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
         $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
-        
         $ch = curl_init();
-
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-
-
         $headers = array();
         $headers[] = "Accept: text/plain";
         $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
         $result = curl_exec($ch);
         /*if (curl_errno($ch)) {
             echo 'Error:' . curl_error($ch);
         }*/
         curl_close ($ch);
-        
         $parsed_response = json_decode($result);
         return $parsed_response;
     }
@@ -2835,7 +2827,6 @@ class Welcome extends CI_Controller {
         return $result;
     }
     //-------End API D4Sign-----------------------------------------------
-    
     /*-------Calculating economical values-----------------------------------------------
      * Usando excel proporcionado por Pedro 
      * B1: valor solicitado por cliente
@@ -2888,18 +2879,74 @@ class Welcome extends CI_Controller {
     }
     
     public function robot_conciliation() {
-        $date = date("Y-m-d",time());
-        $transactions = $this->topazio_conciliations($date);
-        foreach ($transactions as $transaction) {
-            switch ($transaction) {
-                case $value:
-                    
-                    break;
-                default:
-                    break;
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $_SESSION['logged_role'] = 'ADMIN';        
+        while(true){
+            $date = date("Y-m-d",time());
+            $transactions = $this->topazio_conciliations($date);
+            if($transactions->success){
+                foreach ($transactions->datas as $transaction) {
+                    print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+                    var_dump($transaction);
+                    if($transaction->ccbNumber){
+                        $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos facer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos facer nada, até esperar que a transação mude para outro status*/
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $_SESSION['transaction_requested_id'], 
+                                    transactions_status::PENDING);
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. pedir nova conta
+                                $account_bank_reasonCodes = array(
+                                    1 /*Conta Destinatária do Crédito Encerrada*/,
+                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                    5 /*Divergência na Titularidade*/
+                                );
+                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                    if($this->request_new_account())
+                                        print_r("<br><br>Nova conta pedida automaticamente com sucesso");
+                                } else{
+                                    print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
+                                }
+                                break;
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                break;
+                        }
+                    }
+                    print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+                }
+            }else{
+                $administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+                foreach ($administrators_emails as $useremail) {
+                    $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
+                }
             }
-            
+            sleep(15*60);
         }
     }
+    
+    
+    
+    
     
 }
