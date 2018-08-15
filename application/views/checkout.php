@@ -729,7 +729,7 @@
 		<div class="col-md-3 col-sm-12 col-xs-12 pd-left25 text-center pd-none-480 m-top20-sm">
                     <div class="col-md-12 col-sm-5 col-xs-8 fnone i-block rs">
                         <div class="bverde4 cl-fff">
-                            <span class="ft-size12">RESUMO DO EMPRÉSTIMO:</span>
+                            <span class="ft-size12">RESUMO:</span>
                             <div class="fleft100 pd-tb5 pd-lr15 text-left">
                                 <span class="fleft100 m-top15">
                                     <small>Valor das parcelas:</small>

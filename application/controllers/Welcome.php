@@ -11,6 +11,12 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
+        /*$uudid_doc = $this->upload_document_template_D4Sign(3);
+        $token_signer = $this->signer_for_doc_D4Sign(3);
+               if($token_signer){
+                    //3.  mandar a assinar
+                    $result_send = $this->send_for_sign_document_D4Sign(3);
+                }*/
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
@@ -28,7 +34,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test2();
+        $this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -718,7 +724,7 @@ class Welcome extends CI_Controller {
                         $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                         if($token_signer){
                             //5.  mandar a assinar
-                            $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                            $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                             if($result_send){                                
                                 //6. matar session para evitar retroceder
                                 session_destroy();
@@ -1106,7 +1112,7 @@ class Welcome extends CI_Controller {
                     $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                     if($token_signer){
                         //3.  mandar a assinar
-                        $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                        $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                         if($result_send){
                             //4. cambiar el status de la transaccion
                             $this->transaction_model->update_transaction_status(
@@ -1169,7 +1175,7 @@ class Welcome extends CI_Controller {
                 $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                 if($token_signer){
                     //3.  mandar a assinar
-                    $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                    $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                     if($result_send){
                         //4. cambiar el status de la transaccion
                         $this->transaction_model->update_transaction_status(
@@ -2238,7 +2244,8 @@ class Welcome extends CI_Controller {
         $cpf = $transaction["cpf"];
         $name = $transaction["name"];
         $document_id = 10000000000 + time();
-        $release_date = $this->next_available_day();
+        $tomorrow = $this->next_available_day();
+        $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
@@ -2327,7 +2334,8 @@ class Welcome extends CI_Controller {
             $tomorrow["mon"] = "0".$tomorrow["mon"];
         if($tomorrow["mday"] < 10)
             $tomorrow["mday"] = "0".$tomorrow["mday"];
-        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        //return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        return $tomorrow;
     }
     
     public function next_month_to_pay($date){
@@ -2682,15 +2690,23 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
-        //********************************
-        $num_plots = $financials["amount_months"];
-        $amount_pay = $financials["solicited_value"];        
-        $iof = $financials['IOF'];
-        $tax = $financials['tax'];
-        $tac = $financials['TAC'];
-        $total_value = $financials['total_cust_value'];
-        $plot_value = $financials['month_value'];        
-        //*****************************************
+        
+        $address = $transaction['street_address']." ".$transaction['number_address'].", ".$transaction['city_address'].", ".$transaction['state_address'];
+        $tomorrow = $this->next_available_day();
+        $mes = ['Janeiro', 'Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];        
+        
+        $plot_resume = [[" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "]];
+        $num_plots = $transaction['number_plots'];
+        $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+        $plot_date2 = date("d/m/Y", strtotime($plot_date));
+        $plot_number = 1;
+
+        while ($plot_number <= $num_plots){                    
+            $plot_resume[$plot_number - 1] = [$plot_number, $plot_date2, $financials['month_value']];           
+            $plot_number ++;            
+            $plot_date = $this->next_month_to_pay($plot_date);
+            $plot_date2 = date("d/m/Y", strtotime($plot_date));
+        }
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
@@ -2702,10 +2718,70 @@ class Welcome extends CI_Controller {
                 $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
-					'ccb_loans' => $transaction['ccb'],
-					'amount_solicited' => $amount_pay,
-					'num_plots' => $num_plots,
-					'plot_value' => $plot_value
+					'ccb_loans' => $transaction['ccb_number'],
+					'name' => $transaction['name'],
+					'cpf' => $transaction['cpf'],
+					'address' => $address,
+					'release_date' => $tomorrow["mday"]."/".$tomorrow["mon"]."/".$tomorrow["year"],
+					'main_value' => $financials['main_value'],
+                                        'solicited_value' => $financials['solicited_value'],
+                                        'tax' => $financials['tax'],
+                                        'CET_YEAR' => $financials['CET_YEAR'],
+                                        'tax_value' => $financials['tax_value'],
+                                        'period' => "mensal",
+                                        'TAC' => $financials['TAC'],
+                                        'IOF' => $financials['IOF'],
+                                        'total_cust_value' => $financials['total_cust_value'],
+                                        'CET_PERC' => $financials['CET_PERC'],
+                                        'release_day' => $tomorrow["mday"],
+                                        'release_string_month' => $mes[ $tomorrow["mon"]-1 ],
+                                        'release_year' => $tomorrow["year"],
+					'full_name' => $transaction['name'],
+					'ccb_loans2' => $transaction['ccb_number'],
+					'name2' => $transaction['name'],
+					'cpf2' => $transaction['cpf'],
+                                        'address2' => $address,
+                                        'plot_1' => $plot_resume[0][0],
+                                        'date_1' => $plot_resume[0][1],
+                                        'month_value_1' => $plot_resume[0][2],
+                                        'plot_2' => $plot_resume[1][0],
+                                        'date_2' => $plot_resume[1][1],
+                                        'month_value_2' => $plot_resume[1][2],
+                                        'plot_3' => $plot_resume[2][0],
+                                        'date_3' => $plot_resume[2][1],
+                                        'month_value_3' => $plot_resume[2][2],
+                                        'plot_4' => $plot_resume[3][0],
+                                        'date_4' => $plot_resume[3][1],
+                                        'month_value_4' => $plot_resume[3][2],
+                                        'plot_5' => $plot_resume[4][0],
+                                        'date_5' => $plot_resume[4][1],
+                                        'month_value_5' => $plot_resume[4][2],
+                                        'plot_6' => $plot_resume[5][0],
+                                        'date_6' => $plot_resume[5][1],
+                                        'month_value_6' => $plot_resume[5][2],
+                                        'plot_7' => $plot_resume[6][0],
+                                        'date_7' => $plot_resume[6][1],
+                                        'month_value_7' => $plot_resume[6][2],
+                                        'plot_8' => $plot_resume[7][0],
+                                        'date_8' => $plot_resume[7][1],
+                                        'month_value_8' => $plot_resume[7][2],
+                                        'plot_9' => $plot_resume[8][0],
+                                        'date_9' => $plot_resume[8][1],
+                                        'month_value_9' => $plot_resume[8][2],
+                                        'plot_10' => $plot_resume[9][0],
+                                        'date_10' => $plot_resume[9][1],
+                                        'month_value_10' => $plot_resume[9][2],
+                                        'plot_11' => $plot_resume[10][0],
+                                        'date_11' => $plot_resume[10][1],
+                                        'month_value_11' => $plot_resume[10][2],
+                                        'plot_12' => $plot_resume[11][0],
+                                        'date_12' => $plot_resume[11][1],
+                                        'month_value_12' => $plot_resume[11][2],
+                                        'sum_month_value' => $financials['total_cust_value'],
+                                        'release_day2' => $tomorrow["mday"],
+                                        'release_string_month2' => $mes[ $tomorrow["mon"]-1 ],
+                                        'release_year2' => $tomorrow["year"],
+					'full_name2' => $transaction['name']
 					)
 			);							
 	

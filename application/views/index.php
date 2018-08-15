@@ -78,7 +78,7 @@
             <div class="verific prelative m-top40 m-top20-xs text-right center-xs">
                 <div id="verify_container">
                     <div class="col-md-4 col-sm-4 col-xs-12">
-                        <span class="fleft100">Quanto deseja pegar emprestado?</span>
+                        <span class="fleft100">Qual valor deseja solicitar?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 0500 até R$ 3000" placeholder="R$ 0.00" maxlength="11">                        
@@ -143,7 +143,7 @@
                                 </select>							
                             </div>						
                             <div class="col-md-5 col-sm-5 col-xs-12 cl-fff">
-                                <div id="btn_contratar_emprestimo" class="bt-green fleft100 btn-verificar" style="cursor: default;">Contratar empréstimo</div>
+                                <div id="btn_contratar_emprestimo" class="bt-green fleft100 btn-verificar" style="cursor: default;">Próximo passo</div>
                                 <label for="ck" class="dc m-top5">
                                     <input type="checkbox" id="use_term" checked> 
                                     <small>
@@ -174,7 +174,7 @@
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">
                         <div class="fleft100 pd-lr15">
-                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar seu empréstimo em apenas <b>2 minutos.</b></h5>
+                            <h5 class="fw-300 m-b10">Utilize seu <b>cartão de crédito</b> para solicitar crédito em apenas <b>2 minutos.</b></h5>
                         </div>
                         <div class="fleft100 pd-lr15">
                             <img src="<?php echo base_url().'assets/'?>img/icones/cards.png" style="width:90%" alt="">
@@ -210,14 +210,14 @@
 				<h1 class="fw-300 fleft100 text-left">crédito<b class="">fácil</b> <span>{</span></h1>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 center-xs">
-				<h2>Solicitar um empréstimo no Livre.digital leva apenas <b>2 minutos</b> e a resposta é instantânea!</h2>
+				<h2>Solicitar um crédito no Livre.digital leva apenas <b>2 minutos</b> e a resposta é instantânea!</h2>
 			</div>			
 		</div>
 
 		<div class="col-md-6 col-sm-6 col-xs-12 m-top80">
 			<div class="fleft100 bleftgreen pd-bottom20">
 				<div class="ft-size17">
-					O Livre.digital utiliza uma modalidade de empréstimo atrelada ao seu cartão de crédito, utilizando o limite disponível como garantia e o pagamento das parcelas através da sua fatura. Você recebe o dinheiro na sua conta bancária em até 1 dia útil. 
+					O Livre.digital utiliza uma modalidade de crédito atrelada ao seu cartão de crédito, utilizando o limite disponível como garantia e o pagamento das parcelas através da sua fatura. Você recebe o dinheiro na sua conta bancária em até 1 dia útil. 
 				</div>
 			</div>
 			<p class="ft-size17 bl-silver">
@@ -241,7 +241,7 @@
 		<div class="i i-block fnone pd-tb15 col-md-10">
 			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
-				<h5>IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
+				<h5>IMPORTANTE:</h5> Para solicitar crédito o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar crédito. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
 			</div>
 		</div>
 	</div>
