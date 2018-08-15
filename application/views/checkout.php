@@ -167,10 +167,10 @@
                                 <input id="cpf" type="text" placeholder="CPF">
                             </fieldset>
                             <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10">
-                                <input id="phone_ddd" type="text" placeholder="DDD">
+                                <input id="phone_ddd" type="text" placeholder="DDD" maxlength="3">
                             </fieldset>
                             <fieldset class="col-md-6 col-sm-6 col-xs-9 pd-lr10">
-                                <input id="phone_number" type="text" placeholder="Celular">
+                                <input id="phone_number" type="text" placeholder="Celular" maxlength="9">
                             </fieldset>
                             <fieldset class="col-md-3 col-sm-3 col-xs-12 pd-lr10 bti">
                                 <!--<button class="bt-green" data-toggle="modal" data-target="#sms" data-whatever="@mdo">Verificar</button>-->

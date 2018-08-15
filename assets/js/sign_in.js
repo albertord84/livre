@@ -430,11 +430,11 @@ $(document).ready(function () {
     
     function validate_element(element_selector, pattern) {
         if (!$(element_selector).val().match(pattern)) {
-            //$(element_selector).css("color", "red");
             $(element_selector).css("color", "red");
+            $(element_selector).css("border", "solid 1px red");
             return false;
         } else {
-            //$(element_selector).css("color", "black");
+            $(element_selector).css("border", "solid 1px black");
             $(element_selector).css("color", "black");
             return true;
         }
@@ -443,9 +443,11 @@ $(document).ready(function () {
     function validate_month(element_selector, pattern) {
         if (!$(element_selector).val().match(pattern) || Number($(element_selector).val()) > 12) {
             $(element_selector).css("color", "red");
+            $(element_selector).css("border", "solid 1px red");
             return false;
         } else {
             $(element_selector).css("color", "black");
+            $(element_selector).css("border", "solid 1px black");
             return true;
         }
     }
@@ -453,9 +455,11 @@ $(document).ready(function () {
     function validate_year(element_selector, pattern) {
         if (!$(element_selector).val().match(pattern) || Number($(element_selector).val()) < 2017) {
             $(element_selector).css("color", "red");
+            $(element_selector).css("border", "solid 1px red");
             return false;
         } else {
             $(element_selector).css("color", "black");
+            $(element_selector).css("border", "solid 1px black");
             return true;
         }
     }
@@ -465,7 +469,12 @@ $(document).ready(function () {
         if (year < d.getFullYear() || (year == d.getFullYear() && month <= d.getMonth()+1)){
             $(element_selector_month).css("color", "red");
             $(element_selector_year).css("color", "red");
+            $(element_selector_month).css("border", "solid 1px red");
+            $(element_selector_year).css("border", "solid 1px red");
             return false;
+        }else{
+            $(element_selector_month).css("border", "solid 1px black");
+            $(element_selector_year).css("border", "solid 1px black");
         }
         return true;
     }

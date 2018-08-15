@@ -2768,5 +2768,19 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
+    public function robot_conciliation() {
+        $date = date("Y-m-d",time());
+        $transactions = $this->topazio_conciliations($date);
+        foreach ($transactions as $transaction) {
+            switch ($transaction) {
+                case $value:
+                    
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+    }
     
 }
