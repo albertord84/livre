@@ -158,7 +158,7 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo">
+                                <input id="name" type="text" placeholder="Nome completo" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">
@@ -696,9 +696,20 @@
                                         <input type="checkbox" id="ucpf" style="margin-top: 2px;"> 
                                         <small style="text-decoration: none;">
                                             <b class="fleft100">Minha identidade não possui CPF</b> Marque para fazer upload do seu CPF
+                                            <?php 
+                                            if($_SESSION['cpf_card']){
+                                            ?>
+                                                <b><span id = 'msg_ucpf_upload'> (Foi anexado)</span></b>
+                                            <?php 
+                                            } else {
+                                            ?>
+                                                <b><span id = 'msg_ucpf_upload'></span></b>
+                                            <?php 
+                                            } 
+                                        ?>    
                                         </small>
                                     </label>
-                                </div>
+                                </div>                                
                             </div>
                             <div class="fleft100 m-top20 text-right">
                                 <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
@@ -718,7 +729,7 @@
 		<div class="col-md-3 col-sm-12 col-xs-12 pd-left25 text-center pd-none-480 m-top20-sm">
                     <div class="col-md-12 col-sm-5 col-xs-8 fnone i-block rs">
                         <div class="bverde4 cl-fff">
-                            <span class="ft-size12">RESUMO DO EMPRÉSTIMO:</span>
+                            <span class="ft-size12">RESUMO:</span>
                             <div class="fleft100 pd-tb5 pd-lr15 text-left">
                                 <span class="fleft100 m-top15">
                                     <small>Valor das parcelas:</small>

@@ -55,7 +55,7 @@ class Affiliate_model extends CI_Model{
                 $result[$i]['account_type'] = $this->Crypt->decrypt($transaction['account_type']);
                 $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
                 $result[$i]['dig'] = $this->Crypt->decrypt($transaction['dig']);                
-                $result[$i]['dates'] = $this->load_transaction_dates($transaction['id']);
+                $result[$i]['dates'] = $this->load_transaction_dates($transaction['client_id']);//Moreno cambio. Estaba $transaction['id'] (id del banco)
                 $img = $this->get_icon_by_status($transaction['status_id']);
                 $result[$i]['icon_by_status'] = $img['icon_by_status'];
                 $result[$i]['hint_by_status'] = $img['hint_by_status'];
@@ -89,7 +89,7 @@ class Affiliate_model extends CI_Model{
                 $result['credit_card_final'] = substr($result['credit_card_number'], $N-4, $N);
                 $result['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
                 $result['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
-                $result['dates'] = $this->load_transaction_dates($transaction['id']);
+                $result['dates'] = $this->load_transaction_dates($transaction['client_id']);//mismo problema
                 $result['bank_name'] = $this->Crypt->get_bank_by_code($result['bank']);
             }
             return $result;

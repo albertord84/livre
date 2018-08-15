@@ -41,7 +41,7 @@
                             <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
                                     <label for="avatar" style="cursor: pointer">
                                         <input type="file" id="avatar" class="hidden">
-                                        <img id ="avatar_img" style="border-radius: 50px" src="<?php echo base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id']."/photo_profile.png?a=".time();?>" class="mxw-50">                                        
+                                        <img id ="avatar_img" style="border-radius: 50px" src="<?php echo base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id']."/photo_profile?a=".time();?>" class="mxw-50">                                        
                                     </label>    
 				</div>
 				<div class="col-md-10 col-sm-10 col-xs-12 pd-lr10 ft-size14 m-top10-xs">

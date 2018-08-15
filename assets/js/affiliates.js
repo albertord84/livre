@@ -182,7 +182,7 @@ $(document).ready(function () {
                     minutes=date.getMinutes();
                     seconds=date.getSeconds();
                     return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/                    
-                    $("#trans_id").text(response['message']['id']);
+                    $("#trans_id").text(response['message']['client_id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
                     $("#trans_cpf").text(response['message']['cpf']);
@@ -201,8 +201,7 @@ $(document).ready(function () {
                     $("#trans_number_address").text(response['message']['number_address']);
                     $("#trans_city_address").text(response['message']['city_address']);
                     $("#trans_state_address").text(response['message']['state_address']);
-                    $("#trans_cep").text(response['message']['cep']);                    
-                    $('#folder_in_server').val(response['message']['folder_in_server']);
+                    $("#trans_cep").text(response['message']['cep']);                                        
 //                    $("#trans_").text(response['message']['']);
                     $('#trans').modal('show');
                 }
@@ -478,18 +477,28 @@ $(document).ready(function () {
         });
     };    
     /************END UPLOADING PHOTO/***********/
-    
     $('.foto_usr').click(function () {
-        var id = this.id;
-        var foto = ['front_credit_card.png','selfie_with_credit_card.png','open_identity.png','selfie_with_identity.png', 'cpf_card.png'];
-        var left  = ($(window).width()/2)-(640/2),
-            top   = ($(window).height()/2)-(480/2);
-        window.open(base_url + 'assets/data_users/'+$('#folder_in_server').val()+'/'+foto[id]+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
+        var id = this.id;        
+        $.ajax({
+            url: base_url+'index.php/welcome/get_url_image',            
+            data:{id:id},
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if(response['success']) {                    
+                    var left  = ($(window).width()/2)-(640/2),
+                    top   = ($(window).height()/2)-(480/2);
+                    window.open(base_url + response['url_image']+'?refresh='+$.now(), '','width=640,height=480, top='+top+', left='+left);
+                    return false;
+                }
+                else{
+                    modal_alert_message(response['message']);
+                }
+            },
+            error: function (xhr, status) {
+                modal_alert_message('Internal error');
+            }
+        });        
     });
-    
-//    $("#get_url_contract").click(function () {
-//        var id = $("#trans_id").text();
-//        $(location).attr('href',base_url+'index.php/welcome/download_document/?id='+id);        
-//    });
-    
+
 }); 

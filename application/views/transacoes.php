@@ -53,8 +53,7 @@
 					<div class="col-md-4 col-sm-4 col-xs-12">
                                             <div class="enviados pd-15">
                                                 <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
-                                                <ul>
-                                                    <input type="hidden" id="folder_in_server">
+                                                <ul>                                                    
                                                     <li><img class="foto_usr" id = "0" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "1" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
                                                     <li><img class="foto_usr" id = "2" src="<?php echo base_url().'assets/img/icones/env.jpg'?>"></li>
@@ -142,7 +141,7 @@
                                 <img style="width:20px; height:20px" title="<?php echo $transaction['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$transaction['icon_by_status'];?>" alt="">
                             </div>
                             <div class="w10 fw-500 m-top15 m-top10-xs">
-                                <?php echo $transaction['id']; ?>
+                                <?php echo $transaction['client_id']; ?>
                             </div>
                             <div class="w15 fw-500 m-top15 m-top10-xs">
                                 <?php echo $transaction['name']; ?>
@@ -168,7 +167,7 @@
                             </div>
                             <div class="w5 fw-500 m-top10">
                                 <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
-                                    <img id="<?php echo $transaction['id']; ?>" class="btn_see_trnsaction" src="<?php echo base_url().'assets/img/icones/add.png'?>" alt="">
+                                    <img id="<?php echo $transaction['client_id']; ?>" class="btn_see_trnsaction" src="<?php echo base_url().'assets/img/icones/add.png'?>" alt="">
                                 </a>
                             </div>
 			</li>

@@ -10,7 +10,13 @@ class Welcome extends CI_Controller {
         parent::__construct();
     }
     
-    public function test2() {
+    public function test2() { 
+        //$uudid_doc = $this->upload_document_template_D4Sign(3);
+        /*$token_signer = $this->signer_for_doc_D4Sign(3);
+               if($token_signer){
+                    //3.  mandar a assinar
+                    $result_send = $this->send_for_sign_document_D4Sign(3);
+                }*/
         //$safes = $this->upload_document_template_D4Sign(3);
         //$safes = $this->signer_for_doc_D4Sign(3);
         //$safes = $this->send_for_sign_document_D4Sign(3);
@@ -21,8 +27,8 @@ class Welcome extends CI_Controller {
         //$result = $this->topazio_emprestimo(3);        
         //$result = $this->topazio_loans(3);        
         //$result = $this->do_payment_iugu(3);                
-        //$result = $this->topazio_conciliations("2018-07-31");
-        //$result = $this->calculating_enconomical_values(1000,6);        
+        //$result = $this->topazio_conciliations("2018-08-10");
+        //$result = $this->calculating_enconomical_values(500,6);        
         //$result = $this->upload_document_D4Sign();        
     }
     
@@ -718,7 +724,7 @@ class Welcome extends CI_Controller {
                         $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                         if($token_signer){
                             //5.  mandar a assinar
-                            $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                            $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                             if($result_send){                                
                                 //6. matar session para evitar retroceder
                                 session_destroy();
@@ -1004,25 +1010,27 @@ class Welcome extends CI_Controller {
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
-        if($transaction){
-           if($datas['upc'] == $transaction['new_photos_code']){
-            $this->transaction_model->save_in_db(
-                'transactions',
-                'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');          
-            $_SESSION['session_new_foto'] = true;   
-            $this->load->model('class/system_config');
-            $GLOBALS['sistem_config'] = $this->system_config->load();
-            $params['transaction']=$transaction;
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-            $this->load->view('reenvio-documento',$params);
-            $this->load->view('inc/footer',$params);
-            } else{
-                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
+            if($transaction){
+               if($datas['upc'] == $transaction['new_photos_code']){
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$transaction['id'],
+                    'new_photos_code',$transaction['new_photos_code'].'--used');          
+                $_SESSION['session_new_foto'] = true;   
+                $this->load->model('class/system_config');
+                $GLOBALS['sistem_config'] = $this->system_config->load();
+                $params['transaction']=$transaction;
+                $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+                $this->load->view('reenvio-documento',$params);
+                $this->load->view('inc/footer',$params);
+                } else{
+                    print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+                }
+            }else{
+                print_r('Access violation. Wrong prameters!!');
             }
-        }else{
-            print_r('Access violation. Wrong prameters!!');
         }
     }
     
@@ -1064,23 +1072,25 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->get();        
-        $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
-        if($transaction){
-           if($datas['uabc'] == $transaction['new_account_bank_code']){
-            $this->transaction_model->save_in_db(
-                'transactions',
-                'id',$transaction['id'],
-                'new_photos_code',$transaction['new_photos_code'].'--used');
-            $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
-            $params['transaction']=$transaction;
-            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-            $this->load->view('reenvio-conta',$params);
-            $this->load->view('inc/footer',$params);
-            } else{
-                print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
+            if($transaction){
+               if($datas['uabc'] == $transaction['new_account_bank_code']){
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$transaction['id'],
+                    'new_photos_code',$transaction['new_photos_code'].'--used');
+                $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
+                $params['transaction']=$transaction;
+                $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+                $this->load->view('reenvio-conta',$params);
+                $this->load->view('inc/footer',$params);
+                } else{
+                    print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
+                }
+            }else{
+                print_r('Access violation. Wrong prameters!!');
             }
-        }else{
-            print_r('Access violation. Wrong prameters!!');
         }
     }
     
@@ -1102,7 +1112,7 @@ class Welcome extends CI_Controller {
                     $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                     if($token_signer){
                         //3.  mandar a assinar
-                        $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                        $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                         if($result_send){
                             //4. cambiar el status de la transaccion
                             $this->transaction_model->update_transaction_status(
@@ -1165,7 +1175,7 @@ class Welcome extends CI_Controller {
                 $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
                 if($token_signer){
                     //3.  mandar a assinar
-                    $result_send = send_for_sign_document_D4Sign($_SESSION['pk']);
+                    $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
                     if($result_send){
                         //4. cambiar el status de la transaccion
                         $this->transaction_model->update_transaction_status(
@@ -1233,6 +1243,29 @@ class Welcome extends CI_Controller {
             $url = $this->download_document_D4Sign($_SESSION['transaction_requested_id']);            
             if($url['success']){
                 $result['url_contract']= $url['message'];
+                $result['success']=true;
+            }else
+                $result['message']=$url['message'];
+        }
+        echo json_encode($result);
+    }
+    
+    public function get_url_image(){//revisar *************MORENO************
+        $this->load->model('class/transaction_model');
+        $result['success']=false ;
+        $result['message']='Access violation';
+        
+        $datas = $this->input->post();
+        $foto = ['front_credit_card','selfie_with_credit_card','open_identity','selfie_with_identity', 'cpf_card'];
+        if(!is_numeric($datas['id']) || $datas['id'] < 0 || $datas['id'] > 4)
+            $datas['id'] = 0;
+        
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $id = $_SESSION['transaction_requested_id'];
+            $client = $this->transaction_model->get_client('id', $id)[0];
+            
+            if($client){
+                $result['url_image']= 'assets/data_users/'.$client['folder_in_server'].'/'.$foto[$datas['id']];
                 $result['success']=true;
             }else
                 $result['message']=$url['message'];
@@ -1551,11 +1584,12 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "application/pdf")
                     || ($_FILES["file"]["type"] == "image/jpg")
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
@@ -1572,28 +1606,26 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/".$file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = "Salvado " . $filename;
+                            //$result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -1649,11 +1681,12 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
+                    || ($_FILES["file"]["type"] == "application/pdf")
                     || ($_FILES["file"]["type"] == "image/jpg")
                     || ($_FILES["file"]["type"] == "image/pjpeg")
                     || ($_FILES["file"]["type"] == "image/x-png")
@@ -1665,34 +1698,27 @@ class Welcome extends CI_Controller {
                         } else {
                             $file_names = ["photo_profile"];
                             $id_file = 0;
-                            /*$id_file = $datas['id'];
-                            if(!is_numeric($id_file))
-                                $id_file = 0;
-                            if($id_file < 0 || $id_file > 4)
-                                $id_file = 0;*/
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/". $file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
                             
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile.'.$extension.'?'.time();
+                            $result['message'] = base_url().'assets/data_affiliates/affiliate_'.$_SESSION['logged_id'].'/photo_profile?'.time();
                             $result['success'] = true;
                             $_SESSION[$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -1750,9 +1776,9 @@ class Welcome extends CI_Controller {
                 $result['message'] = "";
                 if($fileError == UPLOAD_ERR_OK){
                    //Processes your file here
-                    $allowedExts = array("gif", "jpeg", "jpg", "png");
+                    $allowedExts = array("gif", "jpeg", "jpg", "png", "pdf", "pjpeg", "x-png");
                     $temp = explode(".", $_FILES["file"]["name"]);
-                    $extension = end($temp);
+                    $extension = strtolower( end($temp) );
                     if ((($_FILES["file"]["type"] == "image/gif")
                     || ($_FILES["file"]["type"] == "image/jpeg")
                     || ($_FILES["file"]["type"] == "image/jpg")
@@ -1771,27 +1797,26 @@ class Welcome extends CI_Controller {
                             if($id_file < 0 || $id_file > 4)
                                 $id_file = 0;
                             
-                            $filename = $file_names[$id_file].".".$extension;
-                            
-                            //$filename = $label.$_FILES["file"]["name"];                   
-                            if (file_exists($path_name."/". $file_names[$id_file].".png")) {
-                                unlink($path_name."/". $file_names[$id_file].".png");
-                                //$result['message'] .= $filename . " já foi carregado. ";
+                            $filename = $file_names[$id_file];
+                                           
+                            if (file_exists($path_name."/". $file_names[$id_file])) {
+                                unlink($path_name."/".$file_names[$id_file]);                            
                             } 
+                            
                             move_uploaded_file($_FILES["file"]["tmp_name"],
                             $path_name."/". $filename);
-                            if($extension != "png"){
-                                imagepng(imagecreatefromstring(file_get_contents($path_name."/".$filename)), $path_name."/".$file_names[$id_file].".png");
-                                unlink($path_name."/". $filename);
-                                $extension = "png";
-                            }
                             
-                            $result['message'] = "Salvado " . $filename;
+                            //$result['message'] = "Salvado " . $filename;
                             $result['success'] = true;
                             $_SESSION["new_".$file_names[$id_file]] = true;
                         }
                     } else {
-                        $result['message'] .= "Arquivo inválido";
+                        if($_FILES["file"]["size"] >= 10485761){
+                            $result['message'] .= "O tamanho do arquivo excede os 10 mb!";
+                        }
+                        else{
+                            $result['message'] .= "Extensão da imagem inválida ou a imagem está corrompida";
+                        }
                     }            
                 }else{
                    switch($fileError){
@@ -1938,6 +1963,8 @@ class Welcome extends CI_Controller {
     }
 
     public function do_payment_iugu($id){
+        /*if($id !== $_SESSION['pk'])   //segurança
+            return;*/
         //Solicita na Iugu a cobrança no cartão do cliente
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1991,6 +2018,9 @@ class Welcome extends CI_Controller {
     }
 
     public function refund_bill_iugu($id){
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2027,7 +2057,9 @@ class Welcome extends CI_Controller {
     }
     
     public function get_bill_iugu($id){        
-            
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/    
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2124,6 +2156,9 @@ class Welcome extends CI_Controller {
     }
 
     public function basicCustomerTopazio($id, $API_token){        
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2161,7 +2196,7 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -2187,6 +2222,9 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_loans($id, $API_token){
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/tax_model');
@@ -2199,14 +2237,15 @@ class Welcome extends CI_Controller {
         $amount_pay = $financials["solicited_value"];        
         $iof = $financials['IOF'];
         $tax = $financials['tax'];
-        $tac = $financials['TAC'];
-        $total_value = $financials['funded_value'];
+        $tac = $financials['TAC_API'];
+        $total_value = $financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*********
         $cpf = $transaction["cpf"];
         $name = $transaction["name"];
         $document_id = 10000000000 + time();
-        $release_date = $this->next_available_day();
+        $tomorrow = $this->next_available_day();
+        $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
@@ -2250,8 +2289,9 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
+                
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/loans");
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
@@ -2294,7 +2334,8 @@ class Welcome extends CI_Controller {
             $tomorrow["mon"] = "0".$tomorrow["mon"];
         if($tomorrow["mday"] < 10)
             $tomorrow["mday"] = "0".$tomorrow["mday"];
-        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        //return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        return $tomorrow;
     }
     
     public function next_month_to_pay($date){
@@ -2325,7 +2366,10 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        /*if($_SESSION['logged_role'] !== 'ADMIN'){
+            return;            
+        }*/
+        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2361,7 +2405,7 @@ class Welcome extends CI_Controller {
             $result['message'] = 'Transação não encontrada';
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-                if($transactions['id'] == $datas['id']){
+                if($transactions['client_id'] == $datas['id']){
                     $_SESSION['transaction_requested_id'] = $datas['id'];
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
@@ -2377,11 +2421,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "7820afd5-70c1-3caf-9dfa-dc00a2f1b00b";//$this->get_topazio_API_token();
+        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "https://sandbox-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
@@ -2646,15 +2690,23 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
-        //********************************
-        $num_plots = $financials["amount_months"];
-        $amount_pay = $financials["solicited_value"];        
-        $iof = $financials['IOF'];
-        $tax = $financials['tax'];
-        $tac = $financials['TAC'];
-        $total_value = $financials['funded_value'];
-        $plot_value = $financials['month_value'];        
-        //*****************************************
+        
+        $address = $transaction['street_address']." ".$transaction['number_address'].", ".$transaction['city_address'].", ".$transaction['state_address'];
+        $tomorrow = $this->next_available_day();
+        $mes = ['Janeiro', 'Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];        
+        
+        $plot_resume = [[" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "]];
+        $num_plots = $transaction['number_plots'];
+        $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+        $plot_date2 = date("d/m/Y", strtotime($plot_date));
+        $plot_number = 1;
+
+        while ($plot_number <= $num_plots){                    
+            $plot_resume[$plot_number - 1] = [$plot_number, $plot_date2, $financials['month_value']];           
+            $plot_number ++;            
+            $plot_date = $this->next_month_to_pay($plot_date);
+            $plot_date2 = date("d/m/Y", strtotime($plot_date));
+        }
         
         require_once($_SERVER['DOCUMENT_ROOT'] . '/livre/application/libraries/d4sign-php-master/sdk/vendor/autoload.php');
         
@@ -2666,10 +2718,70 @@ class Welcome extends CI_Controller {
                 $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
+					'ccb_loans' => $transaction['ccb_number'],
 					'name' => $transaction['name'],
-					'amount_solicited' => $amount_pay,
-					'num_plots' => $num_plots,
-					'plot_value' => $plot_value
+					'cpf' => $transaction['cpf'],
+					'address' => $address,
+					'release_date' => $tomorrow["mday"]."/".$tomorrow["mon"]."/".$tomorrow["year"],
+					'main_value' => $financials['main_value'],
+                                        'solicited_value' => $financials['solicited_value'],
+                                        'tax' => $financials['tax'],
+                                        'CET_YEAR' => $financials['CET_YEAR'],
+                                        'tax_value' => $financials['tax_value'],
+                                        'period' => "mensal",
+                                        'TAC' => $financials['TAC'],
+                                        'IOF' => $financials['IOF'],
+                                        'total_cust_value' => $financials['total_cust_value'],
+                                        'CET_PERC' => $financials['CET_PERC'],
+                                        'release_day' => $tomorrow["mday"],
+                                        'release_string_month' => $mes[ $tomorrow["mon"]-1 ],
+                                        'release_year' => $tomorrow["year"],
+					//'full_name' => $transaction['name'],
+					'ccb_loans2' => $transaction['ccb_number'],
+					'name2' => $transaction['name'],
+					'cpf2' => $transaction['cpf'],
+                                        'address2' => $address,
+                                        'plot_1' => $plot_resume[0][0],
+                                        'date_1' => $plot_resume[0][1],
+                                        'month_value_1' => $plot_resume[0][2],
+                                        'plot_2' => $plot_resume[1][0],
+                                        'date_2' => $plot_resume[1][1],
+                                        'month_value_2' => $plot_resume[1][2],
+                                        'plot_3' => $plot_resume[2][0],
+                                        'date_3' => $plot_resume[2][1],
+                                        'month_value_3' => $plot_resume[2][2],
+                                        'plot_4' => $plot_resume[3][0],
+                                        'date_4' => $plot_resume[3][1],
+                                        'month_value_4' => $plot_resume[3][2],
+                                        'plot_5' => $plot_resume[4][0],
+                                        'date_5' => $plot_resume[4][1],
+                                        'month_value_5' => $plot_resume[4][2],
+                                        'plot_6' => $plot_resume[5][0],
+                                        'date_6' => $plot_resume[5][1],
+                                        'month_value_6' => $plot_resume[5][2],
+                                        'plot_7' => $plot_resume[6][0],
+                                        'date_7' => $plot_resume[6][1],
+                                        'month_value_7' => $plot_resume[6][2],
+                                        'plot_8' => $plot_resume[7][0],
+                                        'date_8' => $plot_resume[7][1],
+                                        'month_value_8' => $plot_resume[7][2],
+                                        'plot_9' => $plot_resume[8][0],
+                                        'date_9' => $plot_resume[8][1],
+                                        'month_value_9' => $plot_resume[8][2],
+                                        'plot_10' => $plot_resume[9][0],
+                                        'date_10' => $plot_resume[9][1],
+                                        'month_value_10' => $plot_resume[9][2],
+                                        'plot_11' => $plot_resume[10][0],
+                                        'date_11' => $plot_resume[10][1],
+                                        'month_value_11' => $plot_resume[10][2],
+                                        'plot_12' => $plot_resume[11][0],
+                                        'date_12' => $plot_resume[11][1],
+                                        'month_value_12' => $plot_resume[11][2],
+                                        'sum_month_value' => $financials['total_cust_value'],
+                                        'release_day2' => $tomorrow["mday"],
+                                        'release_string_month2' => $mes[ $tomorrow["mon"]-1 ],
+                                        'release_year2' => $tomorrow["year"]//,
+					//'full_name2' => $transaction['name']
 					)
 			);							
 	
@@ -2752,7 +2864,9 @@ class Welcome extends CI_Controller {
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
         $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
+        
         $B3 = number_format( $B3*100, 2, '.', ''); 
+                
         $result = array(
             'solicited_value' => $B1,                                
             'amount_months' => $B2,
@@ -2763,7 +2877,12 @@ class Welcome extends CI_Controller {
             'IOF' => $C4,
             'TAC' => $C5,
             'CET_PERC' => $J10,
-            'CET_YEAR' => $J11                
+            'CET_YEAR' => $J11,                
+            'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
+            //'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
+            'tax_value' => number_format( $F13-$B1-$C5-$C4, 2, '.', ''),                
+            'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
+            'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
             );
         return $result;
     }
