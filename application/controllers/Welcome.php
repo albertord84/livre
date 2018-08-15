@@ -11,8 +11,8 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
-        /*$uudid_doc = $this->upload_document_template_D4Sign(3);
-        $token_signer = $this->signer_for_doc_D4Sign(3);
+        $uudid_doc = $this->upload_document_template_D4Sign(3);
+        /*$token_signer = $this->signer_for_doc_D4Sign(3);
                if($token_signer){
                     //3.  mandar a assinar
                     $result_send = $this->send_for_sign_document_D4Sign(3);
@@ -2879,7 +2879,8 @@ class Welcome extends CI_Controller {
             'CET_PERC' => $J10,
             'CET_YEAR' => $J11,                
             'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
-            'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
+            //'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
+            'tax_value' => number_format( $F13-$B1-$C5-$C4, 2, '.', ''),                
             'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
             'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
             );

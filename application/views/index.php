@@ -48,7 +48,7 @@
                 </div>
                 <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h3 class="fw-400 ft-Rajdhani">Empréstimo Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>
+                        <h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
