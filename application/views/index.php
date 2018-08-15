@@ -231,7 +231,7 @@
 			</div>
 		</div>
 		<div class="col-md-6 col-sm-6 col-xs-12 m-top80">
-			<img src="<?php echo base_url().'assets/'?>img/banners/d.png" class="mxw-800">
+			<img src="<?php echo base_url().'assets/'?>img/banners/d.png?a=1" class="mxw-800">
 		</div>
 	</div>
 </section>
