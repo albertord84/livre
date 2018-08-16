@@ -9,17 +9,17 @@
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
 	        	<br><br>
-	          	<img src="../../assets/img/icones/atualize.jpg" alt="">   
+	          	<img src="../../assets/img/icones/09 - conta bancaria.png" alt="">   
           		<br><br>
 	          	<div style="text-align: left;">
 	          		<h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
 					<p>
-						Verificamos que sua conta bancária não é a mesma do titular do cartão de crédito. Para que o empréstimo seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária. <br><br>
-						<b style="background-color:#00ff66;">Você só precisa informar uma nova conta bancária.</b> <br><br>
+						Verificamos que sua conta bancária não foi preenchida corretamente ou não é a mesma do títular do cartão de crédito. Para que o crédito seja aprovado, é obrigatório que a conta bancária seja do mesmo titular do cartão de crédito. <br><br>
+						<b style="background-color:#00ff66;">Você só precisa informar sua conta bancária e reenviar sua assinatura.</b> <br><br>
 					</p> 
 					<a href="<?php echo urldecode($_GET["link"]);?>" style="background-color: #00ff66;padding: 10px 50px !important;font-weight: 600;color: black;text-align: center;border: none;border-radius: 30px !important;text-decoration: none;display: block;">Clique para informar conta bancária</a>
 					<p>
-						Se estiver tudo certo seu empréstimo será liberado. <br><br> <b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
+						Se estiver tudo certo com seus dados e sua assinatura, seu crédito será liberado. <br><br> <b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
 					</p>
 	          	</div> 
 	          	<div>

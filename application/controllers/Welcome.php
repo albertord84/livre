@@ -11,6 +11,11 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();       
+        $result = $this->Gmail->transaction_request_recused("Marcio","jorge85.mail@gmail.com");
+        
+        //$result = $this->Gmail->transaction_request_new_photos("Marcio","jorge85.mail@gmail.com","google.com");
         //$uudid_doc = $this->upload_document_template_D4Sign(3);
         /*$token_signer = $this->signer_for_doc_D4Sign(3);
                if($token_signer){
@@ -34,7 +39,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test2();
+        $this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
