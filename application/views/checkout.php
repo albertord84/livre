@@ -158,16 +158,16 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
+                                <input id="name" type="text" placeholder="Nome completo" required>
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="cpf" type="text" placeholder="CPF">
+                                <input id="cpf" type="text" placeholder="CPF" maxlength="11" minlength="11">
                             </fieldset>
                             <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10">
-                                <input id="phone_ddd" type="text" placeholder="DDD" maxlength="3">
+                                <input id="phone_ddd" type="text" placeholder="DDD" maxlength="2">
                             </fieldset>
                             <fieldset class="col-md-6 col-sm-6 col-xs-9 pd-lr10">
                                 <input id="phone_number" type="text" placeholder="Celular" maxlength="9">
@@ -264,12 +264,12 @@
                                         </select>
                                     </fieldset>
                                     <fieldset class="fleft100 pd-lr5">
-                                        <input id="credit_card_name" type="text" placeholder="SEU NOME NO CARTÃO" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
+                                        <input id="credit_card_name" type="text" placeholder="SEU NOME NO CARTÃO" required>
                                     </fieldset>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
                                     <fieldset class="fleft100 cvv">
-                                        <input id="credit_card_cvv" type="text" placeholder="CVV" required>
+                                        <input id="credit_card_cvv" type="text" placeholder="CVV" required minlength="3" maxlength="4">
                                     </fieldset>
                                 </div>
                             </div>
@@ -544,7 +544,8 @@
                                     </fieldset>
                                     <fieldset class="fleft100 col-md-12 pd-lr5">
                                         <small class="cl-black fw-600">NOME COMPLETO DO TITULAR</small>
-                                        <input id="titular_name" type="text" placeholder="Nome completo do titular" onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;" required>
+                                        <!--  onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;"  --!>
+                                        <input id="titular_name" type="text" placeholder="Nome completo do titular" required>
                                     </fieldset>
                                     <fieldset class="cpf col-md-7 col-sm-7 col-xs-12 pd-lr5 m-top20">
                                         <small class="cl-black fw-600">CPF DO TITULAR</small>
@@ -753,15 +754,15 @@
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
                                     <small class="ft-size11">IOF:</small>
-                                    <span class="fleft100 fw-300 ft-size11">R$ <?php echo $IOF;?></span>
+                                    <span class="fleft100 fw-300 ft-size10">R$ <?php echo $IOF;?></span>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
                                     <small class="ft-size11">CET:</small>
-                                    <span class="fleft100 fw-300 ft-size11"><?php echo $CET_PERC;?> %</span>
+                                    <span class="fleft100 fw-300 ft-size10"><?php echo $CET_PERC;?> %</span>
                                 </span>
                                 <span class="col-md-4 col-sm-4 col-xs-4 pd-0 m-top15">
                                     <small class="ft-size11">CET ANUAL:</small>
-                                    <span class="fleft100 fw-300 ft-size11"><?php echo $CET_YEAR;?> %</span>
+                                    <span class="fleft100 fw-300 ft-size10"><?php echo $CET_YEAR;?> %</span>
                                 </span>
                             </div>
                         </div>
