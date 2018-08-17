@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
     }
     
     public function test4(){
-        //$financials = $this->calculating_enconomical_values(2000, 10);
+        $financials = $this->calculating_enconomical_values(2000, 10);
         //$value_plot = $this->PGTO(0.1099, 10, 2738.77);
         //$response = $this->send_sms_kaio_api("55", "21", "982856319", "123456");
         //$response = $this->send_sms_kaio_api("55", "21", "991911934", "830947");
@@ -40,10 +40,10 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
-        $email = "jorge85.mail@gmail.com";//tom@livre.digital";
+        $email = "tom@livre.digital";
         $result = $this->Gmail->transaction_email_approved("Marcio",$email);
-        //$result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
-        /*$result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_recused("Marcio",$email);
         $result = $this->Gmail->credit_card_recused("Marcio",$email);
@@ -2295,7 +2295,7 @@ class Welcome extends CI_Controller {
         $name = "Pedro Bastos Petti";//;$transaction["name"];
         $document_id = 10000000000 + time();
         $tomorrow = $this->next_available_day();
-        $release_date = "2018-08-17";//$tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
@@ -2432,7 +2432,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        $API_token = "f86f5e5a-1cc2-36f6-b140-5e7f655fadc6";//$this->get_topazio_API_token();
+        $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
