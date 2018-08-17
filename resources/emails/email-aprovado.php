@@ -12,9 +12,10 @@
                 <img src="../../assets/img/icones/11 - dinheiro na conta.png" alt="">   
                 <br><br>
                 <div style="text-align: left;">
-                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!, pode comemorar!</h2>
+                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
                     <p>
-                        O valor solicitado acaba de ser enviado para sua conta. Sua transferencia já está em processamento, se os dados de sua conta bancária estiverem corretos, em breve o dinheiro será depositado em sua conta.<br><br> Ficamos felizes por poder ajudar você e agradecemos por utilizar a Livre.digital como sistema de crédito.  <br>
+                        Sua transferencia já está em processamento, se os dados de sua conta bancária estiverem corretos, em breve o dinheiro será depositado.
+                        Ficamos felizes por poder ajudar você e agradecemos por utilizar a Livre.digital como sistema de crédito.    <br>                        
                         <br>Se você gostou, divulgue para seus amigos sua experiência!
                     </p> 					
                 </div> 

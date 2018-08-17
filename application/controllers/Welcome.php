@@ -34,13 +34,13 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
-        /*$this->load->model('class/system_config');
+        $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $email = "jorge85.mail@gmail.com";//tom@livre.digital";
-        //$result = $this->Gmail->transaction_email_approved("Marcio",$email);
-        $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_email_approved("Marcio",$email);
+        //$result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
         /*$result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_recused("Marcio",$email);
@@ -74,7 +74,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test3();
+        //$this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
