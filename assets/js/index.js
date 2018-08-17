@@ -48,7 +48,8 @@ $(document).ready(function () {
         $("#input_verify").focus();
     });
     
-    $("#input_verify").maskMoney({symbol:'R$ ', thousands:'.', decimal:',', symbolStay: true});
+    //$("#input_verify").maskMoney({symbol:'R$ ', thousands:'.', decimal:',', symbolStay: true});
+    $("#input_verify").maskMoney({thousands:'.', decimal:',', symbolStay: true});
     
     function verify(flag){        
         if($('#input_verify').val()===''){
@@ -154,4 +155,29 @@ $(document).ready(function () {
     //amount_months=12;
     
     
+});
+
+$(function() {
+    // Solo numeros con coma o sin coma en lo que gastara por dia
+    var i = $('#input_verify');
+    //var real_length = ($('#input_verify').val()).length;
+    i.keydown(function(ev) {
+        var permittedChars = /[0-9\.,]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 7 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });    
 });
