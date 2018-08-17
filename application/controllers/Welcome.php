@@ -9,13 +9,48 @@ class Welcome extends CI_Controller {
     function __construct() {
         parent::__construct();
     }
+
+    public function test5(){
+        $this->robot_conciliation();
+    }
+    
+    public function test4(){
+        $response = $this->send_sms_kaio_api("55", "21", "982856319", "123456");
+        //$response = $this->send_sms_kaio_api("55", "21", "991911934", "830947");
+    }
+
+    public function test3(){
+        $resp = $this->topazio_emprestimo(6); 
+        if($resp['success']){
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',6,
+                    'ccb_number',$resp['ccb']);                
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',6,
+                    'contract_id',$resp['contract_id']);                
+        }
+    }
     
     public function test2() { 
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();       
-        $result = $this->Gmail->transaction_request_recused("Marcio","jorge85.mail@gmail.com");
+        $this->Gmail = new Gmail();
+        $email = "jorge85.mail@gmail.com";//tom@livre.digital";
+        $result = $this->Gmail->transaction_email_approved("Marcio",$email);
+        //$result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
+        /*$result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_recused("Marcio",$email);
+        $result = $this->Gmail->credit_card_recused("Marcio",$email);
+        $result = $this->Gmail->transaction_email_almost("Marcio",$email);
+        $result = $this->Gmail->transaction_email_trans_in_process("Marcio",$email);
+        $result = $this->Gmail->transaction_email_conclua("Marcio",$email);
+        $result = $this->Gmail->transaction_email_ainda_precisa("Marcio",$email);        
+        $pause = "here";/**/
         
-        //$result = $this->Gmail->transaction_request_new_photos("Marcio","jorge85.mail@gmail.com","google.com");
         //$uudid_doc = $this->upload_document_template_D4Sign(3);
         /*$token_signer = $this->signer_for_doc_D4Sign(3);
                if($token_signer){
@@ -2169,8 +2204,8 @@ class Welcome extends CI_Controller {
         
         $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = $client["cpf"];
-        $name = $client["name"];
+        $cpf = "05748906708";//$client["cpf"];
+        $name = "Pedro Bastos Petti";//$client["name"];
         $cep = $client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
         $number = $client["complement_number_address"];
@@ -2211,7 +2246,15 @@ class Welcome extends CI_Controller {
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        $result = curl_exec($ch);
+        $num_tentativas = 0;
+        while($num_tentativas < 10){
+            
+            $result = curl_exec($ch);
+            $num_tentativas++;
+            if($result != "Bad Gateway" && $result != "Gateway Timeout"){
+                $num_tentativas = 10;
+            }
+        }
         
         curl_close ($ch);
         
@@ -2234,7 +2277,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        //$financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        $financials = $this->calculating_enconomical_values(rand(500, 3000), rand(6,12));
+        //$financials = $this->calculating_enconomical_values(2291, 10);
         //********************************
         $num_plots = $financials["amount_months"];
         $amount_pay = $financials["solicited_value"];        
@@ -2244,18 +2289,18 @@ class Welcome extends CI_Controller {
         $total_value = $financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*********
-        $cpf = $transaction["cpf"];
-        $name = $transaction["name"];
+        $cpf = "05748906708";//$transaction["cpf"];
+        $name = "Pedro Bastos Petti";//;$transaction["name"];
         $document_id = 10000000000 + time();
         $tomorrow = $this->next_available_day();
-        $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        $release_date = "2018-08-17";//$tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
-        $bank_code = "001";//$account_bank["bank"];
-        $agency = substr($account_bank["agency"], 0, 4);
-        $account = "12570-9";//$account_bank["account"];
+        $bank_code = "341";//$account_bank["bank"];
+        $agency = "3750";//substr($account_bank["agency"], 0, 4);
+        $account = "00053-1";//$account_bank["account"]."-".$account_bank["dig"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
@@ -2292,7 +2337,8 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
-                
+        var_dump($fields); 
+        //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -2305,7 +2351,17 @@ class Welcome extends CI_Controller {
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($ch);
+        
+        $num_tentativas = 0;
+        while($num_tentativas < 10){
+            
+            $result = curl_exec($ch);
+            $num_tentativas++;
+            if($result != "Bad Gateway" && $result != "Gateway Timeout"){
+                $num_tentativas = 10;
+            }
+        }
+        
         curl_close ($ch);
         $parsed_response = json_decode($result);
         $response_loans['success'] = false;
@@ -2313,6 +2369,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
+            echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             $response_loans['message'] = $parsed_response->errors->values[0]->error[0];
@@ -2372,7 +2429,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
+        $API_token = "f86f5e5a-1cc2-36f6-b140-5e7f655fadc6";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2424,7 +2481,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "bf361def-8940-32ea-97f6-7bbe75f2a325";//$this->get_topazio_API_token();
+        $API_token = "f86f5e5a-1cc2-36f6-b140-5e7f655fadc6";//$this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -2857,6 +2914,7 @@ class Welcome extends CI_Controller {
         $C5 = number_format(0.1 * $F10, 2, '.', '');
         $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
         $F14 = number_format($F13/$B2, 2, '.', '');
+        $F13 = number_format($F14*$B2, 2, '.', '');
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
         $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
@@ -2895,7 +2953,7 @@ class Welcome extends CI_Controller {
         print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
         $transactions = $this->topazio_conciliations($date);
         if($transactions->success){
-            foreach ($transactions->datas as $transaction) {
+            foreach ($transactions->data as $transaction) {
                 var_dump($transaction);
                 if($transaction->ccbNumber){
                     $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
@@ -2939,10 +2997,10 @@ class Welcome extends CI_Controller {
                 }
             }
         }else{
-            $administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+            /*$administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
             foreach ($administrators_emails as $useremail) {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
-            }
+            }*/
         }
         print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
     }

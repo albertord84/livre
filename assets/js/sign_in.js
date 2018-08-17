@@ -18,11 +18,11 @@ $(document).ready(function () {
         cep = validate_element('#cep', '^[0-9]{8}$');
         street_address = validate_element('#street_address', '^[a-zA-Z áéíóúàãẽõ]{5,}$');
         number_address = validate_element('#number_address', '^[0-9]{1,10}$');
-        //complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
+        complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
         
-        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state){                                
+        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state && complement){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
                 data:{
@@ -596,7 +596,7 @@ $(document).ready(function () {
                         response = response['datas'];
                         $('#street_address').val(response['logradouro']);
                         $('#city_address').val(response['localidade']);
-                        $('#state_address').val(response['uf']);
+                        $('#state_address').val(response['uf']);                        
                         $('#address_container').css({"visibility":"visible", "display":"block"}); 
                         $('#btn_steep_1').removeAttr("disabled");                         
                     } else

@@ -18,10 +18,11 @@
                         <p>
                             Infelizmente suas fotos não estão legíveis ou os dados não batem com a conta informada. <br><br>
                             <b style="background-color:#00ff66;">Você só precisa reenviar novas fotos.</b> <br><br>
-                            <b>ATENÇÃO:</b> <br>
-                            <b>1.</b> Você precisa ser o titular da conta que receberá o valor do crédito. <br>
-                            <b>2.</b> As fotos precisam estar em boa qualidade e em local iluminado.
+                            <b>ATENÇÃO:</b> <br><br>
+                            <b>1.</b> Você precisa ser o titular da conta que receberá o valor do crédito. <br><br>
+                            <b>2.</b> As fotos precisam estar em boa qualidade e em local iluminado. <br>
                         </p> 
+                        <br>
                         <a href="<?php echo urldecode($_GET["link"]);?>" style="background-color: #00ff66;padding: 10px 50px !important;font-weight: 600;color: black;text-align: center;border: none;border-radius: 30px !important;text-decoration: none;display: block;">
                             Enviar novas fotos
                         </a>

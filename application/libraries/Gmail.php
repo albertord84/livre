@@ -102,7 +102,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'DINHEIRO NA CONTA - Livre.digital';
+            $this->mail->Subject = 'Aprovado! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name"), dirname(__FILE__));
@@ -123,7 +124,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'FOTOS ERRADAS - Livre.digital';            
+            $this->mail->Subject = 'Suas fotos não foram aprovadas - Livre.digital';            
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
@@ -144,7 +146,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'CONTA BANCARIA ERRADA - Livre.digital';
+            $this->mail->Subject = 'Atualize seus dados bancários - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-dados-bancarios.php?name=$name&link=$link"), dirname(__FILE__));
@@ -165,7 +168,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Assinar contrato novamente - Livre.digital';
+            $this->mail->Subject = 'Envie sua assinatura - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura.php?name=$name&link=$link"), dirname(__FILE__));
@@ -186,7 +190,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'NEGADO/EXTOR - Livre.digital';
+            $this->mail->Subject = 'Solicitação cancelada - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-cancelada.php?name=$name"), dirname(__FILE__));
@@ -207,7 +212,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'NEGADO/TRANS - Livre.digital';
+            $this->mail->Subject = 'Pedido negado - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name"), dirname(__FILE__));
@@ -228,7 +234,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'FALTA POUCO - Livre.digital';
+            $this->mail->Subject = 'Dados enviados com sucesso! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-almost.php?name=$name"), dirname(__FILE__));
@@ -249,7 +256,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'TRANS. EM PROCESSO - FALTA POUCO! - Livre.digital';
+            $this->mail->Subject = 'Falta pouco! Seus dados foram aprovados! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-in_process.php?name=$name"), dirname(__FILE__));
@@ -270,7 +278,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'CONCLUA SEU CADASTRO - Livre.digital';
+            $this->mail->Subject = 'Conclua seu cadastro - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-conclua.php?name=$name"), dirname(__FILE__));
@@ -291,7 +300,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'AINDA PRECISA DO DINHEIRO? - Livre.digital';
+            $this->mail->Subject = 'Ainda precisa do crédito solicitado? - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-ainda_precisa.php?name=$name"), dirname(__FILE__));
