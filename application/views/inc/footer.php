@@ -71,7 +71,8 @@
     <![endif]-->
     <!--[if gte IE 9]><!-->
     <script src="<?php echo base_url().'assets/js/jquery-3.1.1.min.js?'.$SCRIPT_VERSION;?>"></script>
-    <script src="<?php echo base_url().'assets/js/maskmoney_jquery.maskMoney.js?'.$SCRIPT_VERSION;?>"></script>
+    <!--<script src="<?php // echo base_url().'assets/js/maskmoney_jquery.maskMoney.js?'.$SCRIPT_VERSION;?>"></script>-->
+    <script src="<?php echo base_url().'assets/js/jquery.maskMoney.js?'.$SCRIPT_VERSION;?>"></script>
     <!--<![endif]-->
     <script src="<?php echo base_url().'assets/js/bootstrap.min.js?'.$SCRIPT_VERSION;?>"></script>
     <script src="<?php echo base_url().'assets/js/bootstrap-multiselect.js?'.$SCRIPT_VERSION;?>"></script>
