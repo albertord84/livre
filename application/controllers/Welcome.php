@@ -15,7 +15,9 @@ class Welcome extends CI_Controller {
     }
     
     public function test4(){
-        $response = $this->send_sms_kaio_api("55", "21", "982856319", "123456");
+        //$financials = $this->calculating_enconomical_values(2000, 10);
+        //$value_plot = $this->PGTO(0.1099, 10, 2738.77);
+        //$response = $this->send_sms_kaio_api("55", "21", "982856319", "123456");
         //$response = $this->send_sms_kaio_api("55", "21", "991911934", "830947");
     }
 
@@ -74,7 +76,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test2();
+        $this->test4();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -2410,18 +2412,19 @@ class Welcome extends CI_Controller {
         return $next_date->format('Y-m-d');
     }
 
-    public function get_field($money){
+    public function get_field($money_str){
+        $money = (float)($money_str);
         if($money == 500)
             return "500";
-        if($money >= 501 && $money <= 1000)
+        if($money > 500 && $money <= 1000)
             return "501_1000";
-        if($money >= 1001 && $money <= 1500)
+        if($money > 1000 && $money <= 1500)
             return "1001_1500";
-        if($money >= 1501 && $money <= 2000)
+        if($money > 1500 && $money <= 2000)
             return "1501_2000";
-        if($money >= 2001 && $money <= 2500)
+        if($money > 2000 && $money <= 2500)
             return "2001_2500";
-        if($money >= 2501 && $money <= 3000)
+        if($money > 2500 && $money <= 3000)
             return "2501_3000";
     }
 
@@ -2902,6 +2905,48 @@ class Welcome extends CI_Controller {
      * J10: CET%  
      * J11: CET anual
     */
+    
+    public function PGTO($taxa, $plot, $solicited){
+        return number_format($solicited * pow(1+$taxa, $plot)*$taxa/(pow(1+$taxa, $plot)-1), 2, '.', '');
+    }
+    
+    public function calculating_enconomical_values_Pedro($valor_solicitado, $num_parcelas) {
+        $this->load->model('class/tax_model');
+        $B1 = number_format($valor_solicitado, 2, '.', '');
+        $B2 = $num_parcelas;
+        $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
+        $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
+        $F9 = number_format($B1 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
+        $F10 = number_format($F9*$B2, 2, '.', '');
+        $C5 = number_format(0.1 * $F10, 2, '.', '');
+        $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
+        $F14 = number_format($F13/$B2, 2, '.', '');
+        $F13 = number_format($F14*$B2, 2, '.', '');
+        $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
+        $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
+        $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
+        
+        $B3 = number_format( $B3*100, 2, '.', ''); 
+                
+        $result = array(
+            'solicited_value' => $B1,                                
+            'amount_months' => $B2,
+            'tax' => $B3, //juros
+            'month_value' => $F14,
+            'total_cust_value' => $F13,
+            'funded_value' => $B7,
+            'IOF' => $C4,
+            'TAC' => $C5,
+            'CET_PERC' => $J10,
+            'CET_YEAR' => $J11,                
+            'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
+            //'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
+            'tax_value' => number_format( $F13-$B1-$C5-$C4, 2, '.', ''),                
+            'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
+            'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
+            );
+        return $result;
+    }
     
     public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
         $this->load->model('class/tax_model');
