@@ -11,28 +11,33 @@ class Welcome extends CI_Controller {
     }
 
     public function test5(){
-        $this->robot_conciliation();
+        //$this->robot_conciliation();
     }
     
     public function test4(){
-        $financials = $this->calculating_enconomical_values(2000, 10);
-        //$value_plot = $this->PGTO(0.1099, 10, 2738.77);
-        //$response = $this->send_sms_kaio_api("55", "21", "982856319", "123456");
-        //$response = $this->send_sms_kaio_api("55", "21", "991911934", "830947");
+        /*$uudid_doc = $this->upload_document_template_D4Sign(4);
+        if($uudid_doc){
+            //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+            $token_signer = $this->signer_for_doc_D4Sign(4);
+            if($token_signer){
+                //5.  mandar a assinar
+                $result_send = $this->send_for_sign_document_D4Sign(4);
+            }
+        }/**/
     }
 
     public function test3(){
-        $resp = $this->topazio_emprestimo(6); 
+        $resp = $this->topazio_emprestimo(4); 
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
+                    'id',4,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
+                    'id',4,
                     'contract_id',$resp['contract_id']);                
-        }
+        }/**/
     }
     
     public function test2() { 
@@ -74,9 +79,10 @@ class Welcome extends CI_Controller {
         //$result = $this->upload_document_D4Sign();        
     }
     
+    
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test4();
+        //$this->test5();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -2206,8 +2212,8 @@ class Welcome extends CI_Controller {
         
         $client = $this->transaction_model->get_client('id', $id)[0];
         
-        $cpf = "05748906708";//$client["cpf"];
-        $name = "Pedro Bastos Petti";//$client["name"];
+        $cpf = $client["cpf"];
+        $name = $client["name"];
         $cep = $client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
         $number = $client["complement_number_address"];
@@ -2279,30 +2285,34 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        //$financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
-        $financials = $this->calculating_enconomical_values(rand(500, 3000), rand(6,12));
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        //$financials = $this->calculating_enconomical_values(rand(500, 3000), rand(6,12));
         //$financials = $this->calculating_enconomical_values(2291, 10);
         //********************************
         $num_plots = $financials["amount_months"];
         $amount_pay = $financials["solicited_value"];        
         $iof = $financials['IOF'];
         $tax = $financials['tax'];
-        $tac = $financials['TAC_API'];
-        $total_value = $financials['total_cust_value'];
+        $tac = $financials['TAC'];
+        $total_value = $financials['funded_value'];//$financials['total_cust_value'];
         $plot_value = $financials['month_value'];        
         //*********
-        $cpf = "05748906708";//$transaction["cpf"];
-        $name = "Pedro Bastos Petti";//;$transaction["name"];
+        $cpf = $transaction["cpf"];
+        $name = $transaction["name"];
         $document_id = 10000000000 + time();
-        $tomorrow = $this->next_available_day();
+        $tomorrow = $this->topazio_util_day($this->next_available_day(), $API_token);
+        if(!$tomorrow)
+        {
+            return ['success' => false, 'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+        }
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
         $account_type_string = ["CC" => "CC", "PP" => "CP"];
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
-        $bank_code = "341";//$account_bank["bank"];
-        $agency = "3750";//substr($account_bank["agency"], 0, 4);
-        $account = "00053-1";//$account_bank["account"]."-".$account_bank["dig"];
+        $bank_code = $account_bank["bank"];
+        $agency = substr($account_bank["agency"], 0, 4);
+        $account = $account_bank["account"]."-".$account_bank["dig"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
@@ -2396,8 +2406,9 @@ class Welcome extends CI_Controller {
             $tomorrow["mon"] = "0".$tomorrow["mon"];
         if($tomorrow["mday"] < 10)
             $tomorrow["mday"] = "0".$tomorrow["mday"];
-        //return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
-        return $tomorrow;
+        
+        return $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
+        //return $tomorrow;
     }
     
     public function next_month_to_pay($date){
@@ -2432,7 +2443,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        $API_token = $this->get_topazio_API_token();
+        $API_token = "38cbc6d9-5c44-3bfe-a2ce-803ab4bb6e19";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2484,7 +2495,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "f86f5e5a-1cc2-36f6-b140-5e7f655fadc6";//$this->get_topazio_API_token();
+        $API_token = "38cbc6d9-5c44-3bfe-a2ce-803ab4bb6e19";//$this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -2501,6 +2512,48 @@ class Welcome extends CI_Controller {
         curl_close ($ch);
         $parsed_response = json_decode($result);
         return $parsed_response;
+    }
+    
+    public function topazio_util_day($date, $token = NULL){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        if($token)
+            $API_token = $token;
+        else
+            $API_token = $this->get_topazio_API_token();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/wd/v1/workdays/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        
+        $num_tentativas = 0;
+        while($num_tentativas < 10){
+            
+            $result = curl_exec($ch);
+            $num_tentativas++;
+            if($result != "Bad Gateway" && $result != "Gateway Timeout"){
+                $num_tentativas = 10;
+            }
+        }
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        $parsed_response = json_decode($result);
+        
+        if($parsed_response->success){
+            $next_day = $parsed_response->nextWorkday;
+            $temp = explode("-", $next_day);
+            $tomorrow = array('year' => $temp[0],'mon' => $temp[1],'mday' => $temp[2]);
+            return $tomorrow;
+        }
+        return NULL;
     }
     
     //-------API D4Sign-----------------------------------------------
@@ -2749,7 +2802,11 @@ class Welcome extends CI_Controller {
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         
         $address = $transaction['street_address']." ".$transaction['number_address'].", ".$transaction['city_address'].", ".$transaction['state_address'];
-        $tomorrow = $this->next_available_day();
+        $tomorrow = $this->topazio_util_day($this->next_available_day());
+        if(!$tomorrow)
+        {
+            return null;//['success' => false, 'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+        }
         $mes = ['Janeiro', 'Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];        
         
         $plot_resume = [[" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "]];
@@ -2780,7 +2837,7 @@ class Welcome extends CI_Controller {
 					'cpf' => $transaction['cpf'],
 					'address' => $address,
 					'release_date' => $tomorrow["mday"]."/".$tomorrow["mon"]."/".$tomorrow["year"],
-					'main_value' => $financials['main_value'],
+					'main_value' => $financials['funded_value'],
                                         'solicited_value' => $financials['solicited_value'],
                                         'tax' => $financials['tax'],
                                         'CET_YEAR' => $financials['CET_YEAR'],
@@ -2788,7 +2845,7 @@ class Welcome extends CI_Controller {
                                         'period' => "mensal",
                                         'TAC' => $financials['TAC'],
                                         'IOF' => $financials['IOF'],
-                                        'total_cust_value' => $financials['total_cust_value'],
+                                        'total_cust_value' => $financials['funded_value'],//$financials['total_cust_value'],
                                         'CET_PERC' => $financials['CET_PERC'],
                                         'release_day' => $tomorrow["mday"],
                                         'release_string_month' => $mes[ $tomorrow["mon"]-1 ],
@@ -2892,6 +2949,7 @@ class Welcome extends CI_Controller {
         return $result;
     }
     //-------End API D4Sign-----------------------------------------------
+
     /*-------Calculating economical values-----------------------------------------------
      * Usando excel proporcionado por Pedro 
      * B1: valor solicitado por cliente
@@ -2900,68 +2958,25 @@ class Welcome extends CI_Controller {
      * B7: valor financiado pelo cliente
      * C1: IOF
      * C5: TAC
-     * F13: CET
-     * F14: valor da parcela  
+     * F10: CET
+     * F9: valor da parcela  
      * J10: CET%  
      * J11: CET anual
+     * F16: JUROS 
     */
-    
-    public function PGTO($taxa, $plot, $solicited){
-        return number_format($solicited * pow(1+$taxa, $plot)*$taxa/(pow(1+$taxa, $plot)-1), 2, '.', '');
-    }
-    
-    public function calculating_enconomical_values_Pedro($valor_solicitado, $num_parcelas) {
-        $this->load->model('class/tax_model');
-        $B1 = number_format($valor_solicitado, 2, '.', '');
-        $B2 = $num_parcelas;
-        $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
-        $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
-        $F9 = number_format($B1 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
-        $F10 = number_format($F9*$B2, 2, '.', '');
-        $C5 = number_format(0.1 * $F10, 2, '.', '');
-        $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
-        $F14 = number_format($F13/$B2, 2, '.', '');
-        $F13 = number_format($F14*$B2, 2, '.', '');
-        $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
-        $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
-        $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
-        
-        $B3 = number_format( $B3*100, 2, '.', ''); 
-                
-        $result = array(
-            'solicited_value' => $B1,                                
-            'amount_months' => $B2,
-            'tax' => $B3, //juros
-            'month_value' => $F14,
-            'total_cust_value' => $F13,
-            'funded_value' => $B7,
-            'IOF' => $C4,
-            'TAC' => $C5,
-            'CET_PERC' => $J10,
-            'CET_YEAR' => $J11,                
-            'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
-            //'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
-            'tax_value' => number_format( $F13-$B1-$C5-$C4, 2, '.', ''),                
-            'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
-            'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
-            );
-        return $result;
-    }
-    
+
     public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
         $this->load->model('class/tax_model');
         $B1 = number_format($valor_solicitado, 2, '.', '');
         $B2 = $num_parcelas;
         $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
         $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
-        $F9 = number_format($B1 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
-        $F10 = number_format($F9*$B2, 2, '.', '');
-        $C5 = number_format(0.1 * $F10, 2, '.', '');
-        $F13 = number_format(1.1 * ($F10 + $C4), 2, '.', '');
-        $F14 = number_format($F13/$B2, 2, '.', '');
-        $F13 = number_format($F14*$B2, 2, '.', '');
+        $C5 = number_format(0.1*($B1+$C4), 2, '.', '');
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
-        $J10 = number_format( 100*($F13-$B1)/$B1, 2, '.', ''); 
+        $F9 = number_format($B7 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
+        $F10 = number_format($F9*$B2, 2, '.', '');
+        $F16 = number_format($F10-$B7, 2, '.', '');
+        $J10 = number_format( 100*($F10-$B1)/$B1, 2, '.', ''); 
         $J11 = number_format( (12*$J10)/$B2, 2, '.', ''); 
         
         $B3 = number_format( $B3*100, 2, '.', ''); 
@@ -2970,18 +2985,15 @@ class Welcome extends CI_Controller {
             'solicited_value' => $B1,                                
             'amount_months' => $B2,
             'tax' => $B3, //juros
-            'month_value' => $F14,
-            'total_cust_value' => $F13,
+            'month_value' => $F9,
+            'total_cust_value' => $F10,
             'funded_value' => $B7,
             'IOF' => $C4,
             'TAC' => $C5,
             'CET_PERC' => $J10,
-            'CET_YEAR' => $J11,                
-            'TAC_API' => number_format($F13-$B1-$C4, 2, '.', ''),                
-            //'tax_value' => number_format( $F10-$B1, 2, '.', ''),                
-            'tax_value' => number_format( $F13-$B1-$C5-$C4, 2, '.', ''),                
-            'main_value' => number_format( $B1+$C4+$C5, 2, '.', ''),               
-            'total_cust_perc' => number_format( (1.0*$F13)/$B1, 2, '.', '')
+            'CET_YEAR' => $J11,                            
+            'tax_value' => $F16,
+            'TAC_API' => number_format($F16 + $C5 , 2, '.', '') 
             );
         return $result;
     }
