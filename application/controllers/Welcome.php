@@ -2558,6 +2558,7 @@ class Welcome extends CI_Controller {
     
     //-------API D4Sign-----------------------------------------------
     public function get_safes_D4Sign(){
+        //obtener lista de cofres
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
@@ -2580,6 +2581,7 @@ class Welcome extends CI_Controller {
     }
     
     public function get_documents_D4Sign(){
+        //obtener lista de documentos
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
@@ -2602,6 +2604,7 @@ class Welcome extends CI_Controller {
     }
     
     public function get_document_D4Sign($id){
+        //obtener um documento em particular
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2627,6 +2630,7 @@ class Welcome extends CI_Controller {
     }
     
     public function upload_document_D4Sign($id){
+        //subir um documento (no la vamos usar)
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2657,6 +2661,7 @@ class Welcome extends CI_Controller {
     }
     
     public function signer_for_doc_D4Sign($id, $act = '1', $foreign = 0, $certificadoicpbr = 0, $assinatura_presencial = 0, $embed_methodauth = 'email'){
+        //asignar um signatario a um documento
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2709,6 +2714,7 @@ class Welcome extends CI_Controller {
     }
     
     public function send_for_sign_document_D4Sign($id){
+        //enviar para assinar um documento
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2738,6 +2744,7 @@ class Welcome extends CI_Controller {
     }
     
     public function resend_for_sign_document_D4Sign($id){
+        //re-enviar para assinar um documento
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2766,6 +2773,7 @@ class Welcome extends CI_Controller {
     }
     
     public function cancel_document_D4Sign($id){
+        //cancelar um documento (não cancela documentos finalizado)
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2791,6 +2799,7 @@ class Welcome extends CI_Controller {
     }
     
     public function upload_document_template_D4Sign($id){
+        //crear e subir um documento a partir do template da Livre
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2922,6 +2931,7 @@ class Welcome extends CI_Controller {
     }
     
     public function download_document_D4Sign($id){
+        //devolver url do documento para descarregar depois
         if($_SESSION['logged_role'] !== 'ADMIN')
             return NULL;
         $this->load->model('class/system_config');
