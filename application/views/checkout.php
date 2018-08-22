@@ -162,7 +162,7 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo" required>
+                                <input id="name" type="text" placeholder="Nome completo" required style="text-transform:uppercase;">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">
@@ -210,7 +210,7 @@
                             </div>
                         </div>
                         <div class="fleft100 m-top10 text-right center-sm">
-                            <button id="btn_steep_1" class="bt-green px1" disabled >Próximo</button>
+                            <button id="btn_steep_1" class="bt-green px1 m-top5" disabled >Próximo</button>
                         </div>
                     </div>                    
                     
@@ -283,10 +283,10 @@
                                 <input type="file" id="file" name="file">
                             </label> -->
                         </div>
-                        <div class="fleft100 m-top10 text-right col-12">                            
+                        <div class="fleft100 text-right col-12">                            
                             <div class="m-top10 text-right col-6">
                                 <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
-                                <button id="btn_steep_2_next" class="bt-green px2">Próximo</button>                            
+                                <button id="btn_steep_2_next" class="bt-green px2 m-top5">Próximo</button>                            
                             </div>
                             
                         </div>
@@ -548,7 +548,7 @@
                                     </fieldset>
                                     <fieldset class="fleft100 col-md-12 pd-lr5">
                                         <small class="cl-black fw-600">NOME COMPLETO DO TITULAR</small>
-                                        <!--  onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;"  --!>
+                                        
                                         <input id="titular_name" type="text" placeholder="Nome completo do titular" required>
                                     </fieldset>
                                     <fieldset class="cpf col-md-7 col-sm-7 col-xs-12 pd-lr5 m-top20">
@@ -558,7 +558,7 @@
                                 </div>
                                 <div class="fleft100 m-top10 text-right">
                                     <button id="btn_steep_3_prev" class="bt-green px3">Anterior</button>
-                                    <button id="btn_steep_3_next" class="bt-green px3">Próximo</button>
+                                    <button id="btn_steep_3_next" class="bt-green px3 m-top5">Próximo</button>
                                 </div>
                             </div>				
 			</div>
@@ -728,9 +728,9 @@
                                     </label>
                                 </div>                                
                             </div>
-                            <div class="fleft100 m-top20 text-right">
+                            <div class="fleft100 m-top10 text-right">
                                 <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
-                                <button id="do_sign" type="submit" class="bt-green mxw-250">Assinar e contratar</button>
+                                <button id="do_sign" type="submit" class="bt-green mxw-250 m-top5">Assinar e contratar</button>
                                 <!--<a href="https://secure.rightsignature.com/templates/a928ddf8-3448-471a-8715-5c380f20f4de/template-signer-link/ab8c91ff6a6120267167cbca08615106" class="embed_button embed_green_button" id="embed_d1e97fc8-9f46-4fe0-af4a-bd5141821f37" data-guid="d1e97fc8-9f46-4fe0-af4a-bd5141821f37">Sign Document</a><script charset="ISO-8859-1" src="https://secure.rightsignature.com/embed.js"></script>-->
                                 <!--<div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe></div>-->
                             </div>
