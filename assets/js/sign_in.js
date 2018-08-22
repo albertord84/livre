@@ -898,3 +898,67 @@ $(document).ready(function () {
     
     //init();    
 }); 
+
+$(function() {
+    // Solo numeros
+    var i = $('#agency');
+    i.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 12 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+    var i2 = $('#account');
+    i2.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 12 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+    var i3 = $('#dig');
+    i3.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 1 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+});

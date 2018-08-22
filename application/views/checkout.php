@@ -162,7 +162,7 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo" required style="text-transform:uppercase;">
+                                <input id="name" type="text" placeholder="Nome completo" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">
@@ -268,7 +268,7 @@
                                         </select>
                                     </fieldset>
                                     <fieldset class="fleft100 pd-lr5">
-                                        <input id="credit_card_name" type="text" placeholder="SEU NOME NO CARTÃO" required>
+                                        <input id="credit_card_name" type="text" placeholder="SEU NOME NO CARTÃO" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;">
                                     </fieldset>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-12 pd-0">
@@ -285,7 +285,7 @@
                         </div>
                         <div class="fleft100 text-right col-12">                            
                             <div class="m-top10 text-right col-6">
-                                <button id="btn_steep_2_prev" class="bt-green px2">Anterior</button>
+                                <button id="btn_steep_2_prev" class="bt-green px2" style="background-color: #7bffbf">Anterior</button>
                                 <button id="btn_steep_2_next" class="bt-green px2 m-top5">Próximo</button>                            
                             </div>
                             
@@ -549,7 +549,7 @@
                                     <fieldset class="fleft100 col-md-12 pd-lr5">
                                         <small class="cl-black fw-600">NOME COMPLETO DO TITULAR</small>
                                         
-                                        <input id="titular_name" type="text" placeholder="Nome completo do titular" required>
+                                        <input id="titular_name" type="text" placeholder="Nome completo do titular" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;">
                                     </fieldset>
                                     <fieldset class="cpf col-md-7 col-sm-7 col-xs-12 pd-lr5 m-top20">
                                         <small class="cl-black fw-600">CPF DO TITULAR</small>
@@ -557,7 +557,7 @@
                                     </fieldset>
                                 </div>
                                 <div class="fleft100 m-top10 text-right">
-                                    <button id="btn_steep_3_prev" class="bt-green px3">Anterior</button>
+                                    <button id="btn_steep_3_prev" class="bt-green px3" style="background-color: #7bffbf">Anterior</button>
                                     <button id="btn_steep_3_next" class="bt-green px3 m-top5">Próximo</button>
                                 </div>
                             </div>				
@@ -624,13 +624,13 @@
                                             if($_SESSION['front_credit_card']){
                                         ?>
                                         <div id="check_front_credit_card" class="upl uplgreen c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/CARTAO.png" alt="">
                                             <i style="font-size:16px;" id = "status_front_cc" class="fa fa-check-circle-o"></i>
                                         <?php 
                                             } else {
                                         ?>
                                         <div id="check_front_credit_card" class="upl uplsilver c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/CARTAO.png" alt="">
                                             <i style="font-size:16px;" id = "status_front_cc" class="fa fa-arrow-up"></i>
                                         <?php 
                                             }
@@ -646,13 +646,13 @@
                                             if($_SESSION['selfie_with_credit_card']){
                                         ?>
                                         <div id="check_selfie_credit_card" class="upl uplgreen c-pointer">  
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">                                            
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-CARTAO.png" alt="">                                            
                                             <i style="font-size:16px;" id = "status_selfie_cc" class="fa fa-check-circle-o"></i>
                                         <?php 
                                             } else {
                                         ?>
                                         <div id="check_selfie_credit_card" class="upl uplsilver c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">                                            
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-CARTAO.png" alt="">                                            
                                             <i style="font-size:16px;" id = "status_selfie_cc" class="fa fa-arrow-up"></i>
                                         <?php 
                                             }
@@ -670,13 +670,13 @@
                                             if($_SESSION['open_identity']){
                                         ?>
                                         <div id="check_open_identity" class="upl uplgreen c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/ID-ABERTA.png" alt="">
                                             <i style="font-size:16px;" id = "status_open_id" class="fa fa-check-circle-o"></i>
                                         <?php 
                                             } else {
                                         ?>
                                         <div id="check_open_identity" class="upl uplsilver c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/ID-ABERTA.png" alt="">
                                             <i style="font-size:16px;" id = "status_open_id" class="fa fa-arrow-up"></i>
                                         <?php 
                                             } 
@@ -692,13 +692,13 @@
                                             if($_SESSION['selfie_with_identity']){
                                         ?>
                                         <div id="check_selfie_with_identity" class="upl uplgreen c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt="">
                                             <i style="font-size:16px;" id = "status_selfie_id" class="fa fa-check-circle-o"></i>
                                         <?php 
                                             } else {
                                         ?>
                                         <div id="check_selfie_with_identity" class="upl uplsilver c-pointer">
-                                            <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
+                                            <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt="">
                                             <i style="font-size:16px;" id = "status_selfie_id" class="fa fa-arrow-up"></i>
                                         <?php 
                                             } 
@@ -729,8 +729,8 @@
                                 </div>                                
                             </div>
                             <div class="fleft100 m-top10 text-right">
-                                <button id="btn_steep_4_prev" class="bt-green px4">Anterior</button>
-                                <button id="do_sign" type="submit" class="bt-green mxw-250 m-top5">Assinar e contratar</button>
+                                <button id="btn_steep_4_prev" class="bt-green px4" style="background-color: #7bffbf">Anterior</button>
+                                <button id="do_sign" type="submit" class="bt-green mxw-250 m-top5">Contratar</button>
                                 <!--<a href="https://secure.rightsignature.com/templates/a928ddf8-3448-471a-8715-5c380f20f4de/template-signer-link/ab8c91ff6a6120267167cbca08615106" class="embed_button embed_green_button" id="embed_d1e97fc8-9f46-4fe0-af4a-bd5141821f37" data-guid="d1e97fc8-9f46-4fe0-af4a-bd5141821f37">Sign Document</a><script charset="ISO-8859-1" src="https://secure.rightsignature.com/embed.js"></script>-->
                                 <!--<div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe></div>-->
                             </div>
