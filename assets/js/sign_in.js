@@ -512,6 +512,7 @@ $(document).ready(function () {
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
         if(phone_ddd && phone_number){
+            $('#wait').show();
             $.ajax({
                 url: base_url+'index.php/welcome/request_sms_code',                
                 data: {
@@ -522,6 +523,7 @@ $(document).ready(function () {
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
+                    $('#wait').hide();
                     if(response['success']){
                         $('#sms').modal('show');
                     } else{
