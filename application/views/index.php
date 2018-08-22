@@ -169,7 +169,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/check2.png" width="60">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
-                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit clamp2">Pague as prestações através da fatura do seu cartão de crédito!</h2>
+                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit ">Pague as prestações através da fatura do seu cartão de crédito!</h2>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">

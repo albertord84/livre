@@ -583,6 +583,7 @@ $(document).ready(function () {
     
     $("#verify_cep").click(function () {
         if(validate_element("#cep",'^[0-9]{8}$')){
+            $('#wait').show();
             $.ajax({
                 url: base_url+'index.php/welcome/get_cep_datas',                
                 data: {
@@ -601,6 +602,7 @@ $(document).ready(function () {
                         $('#btn_steep_1').removeAttr("disabled");                         
                     } else
                         modal_alert_message('CEP inválido');
+                    $('#wait').hide();
                 }
             });
         } else{
@@ -729,7 +731,7 @@ $(document).ready(function () {
         formData.append("key", key);        
 
         $("body").css("cursor", "wait");
-        
+        $('#wait').show();
         $.ajax({
             type: "POST",
             dataType: 'json',
@@ -749,18 +751,26 @@ $(document).ready(function () {
                         case 0:
                             $('#check_front_credit_card').removeClass('uplred');
                             $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#status_front_cc').removeClass('fa fa-arrow-up');
+                            $('#status_front_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 1:
                             $('#check_selfie_credit_card').removeClass('uplred');
                             $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
+                            $('#status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 2:
                             $('#check_open_identity').removeClass('uplred');
                             $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#status_open_id').removeClass('fa fa-arrow-up');
+                            $('#status_open_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         case 3:
                             $('#check_selfie_with_identity').removeClass('uplred');
                             $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
+                            $('#status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         case 4:
                             $('#msg_ucpf_upload').text(' (Foi anexado)');                            
@@ -769,6 +779,7 @@ $(document).ready(function () {
                             ;                        
                     }
                     $("body").css("cursor", "default");
+                    $('#wait').hide();
                 }
                 else{
                     modal_alert_message(response['message']);
@@ -776,18 +787,26 @@ $(document).ready(function () {
                         case 0:
                             $('#check_front_credit_card').removeClass('uplsilver');
                             $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            $('#status_front_cc').removeClass('fa fa-arrow-up');                            
+                            $('#status_front_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 1:
                             $('#check_selfie_credit_card').removeClass('uplsilver');
                             $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            $('#status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 2:
                             $('#check_open_identity').removeClass('uplsilver');
                             $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            $('#status_open_id').removeClass('fa fa-arrow-up');
+                            $('#status_open_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 3:
                             $('#check_selfie_with_identity').removeClass('uplsilver');
                             $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            $('#status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;                        
                         case 4:
                             $('#msg_ucpf_upload').text('');                            
@@ -796,6 +815,7 @@ $(document).ready(function () {
                             ;                        
                     }
                     $("body").css("cursor", "default");
+                    $('#wait').hide();
                 }
             },
             error: function (error) {
@@ -874,5 +894,5 @@ $(document).ready(function () {
         }        
     });
     
-    //init();    
+    init();    
 }); 

@@ -11,7 +11,14 @@ class Welcome extends CI_Controller {
     }
 
     public function test5(){
+        //$hoje = strtotime("now");        
+        //$d = getdate($hoje);
+        //$da = date("Y-m-d");
         //$this->robot_conciliation();
+        $trasactions = $this->topazio_conciliations("2018-08-20");
+        foreach ($trasactions as $t) {
+            var_dump($t);
+        }
     }
     
     public function test4(){
@@ -27,15 +34,15 @@ class Welcome extends CI_Controller {
     }
 
     public function test3(){
-        $resp = $this->topazio_emprestimo(4); 
+        $resp = $this->topazio_emprestimo(6); 
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',4,
+                    'id',6,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',4,
+                    'id',6,
                     'contract_id',$resp['contract_id']);                
         }/**/
     }
@@ -79,10 +86,36 @@ class Welcome extends CI_Controller {
         //$result = $this->upload_document_D4Sign();        
     }
     
+    public function test1() {
+        //$result = $this->topazio_is_restricted("05401009194","350f3205-aa56-3a14-aed4-370d692f19bd");       
+        //$result = $this->topazio_emprestimo(6);
+        
+        /*$this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $date_contract = $this->transaction_model->get_last_date_signature(6);
+        $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), "c5f678f6-4ebf-3ad8-8e96-62a483e94761");*/
+        /*$uudid_doc = $this->upload_document_template_D4Sign(6);
+        if($uudid_doc){
+            //2. asignar signatario a documento                    
+            $token_signer = $this->signer_for_doc_D4Sign(6);
+            if($token_signer){
+                //3.  mandar a assinar
+                $result_send = $this->send_for_sign_document_D4Sign(6);
+                if($result_send){
+                    //4. cambiar el status de la transaccion
+                    $this->transaction_model->update_transaction_status(
+                            6,
+                            transactions_status::WAIT_SIGNATURE);
+                }
+            }
+        }
+        */
+        //$this->topazio_emprestimo(6);
+    }
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test5();
+        //$this->test1();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -302,12 +335,12 @@ class Welcome extends CI_Controller {
             //3. un mismo CPF no puede ser usado em menos de 24 horas para pedir de nuevo se la transaccion en un estado diferente de beginner        
             $last_operation_time = $this->transaction_model->get_last_date_status($clients[$N-1]['id']);
             if(time()- $last_operation_time < 24*60*60){
-                $result['message']='Você não pode fazer mais de uma solicitação em menos de 24 horas. ';
+                $result['message']='Não é permitido fazer mais de uma solicitação em menos de 24 hrs. ';
                 $result['success']=false;
                 
                 //revisar esto de nuevo
                 if($clients[$N-1]['status_id'] == transactions_status::REVERSE_MONEY){                
-                    $result['message'] .= 'O seu anterior pedido foi negado. Por favor, contate nosso atendimento.';                    
+                    $result['message'] .= 'O seu anterior pedido foi negado. Entre em contato conosco através do atendimento, obrigado!';                    
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::APPROVED){                
@@ -331,7 +364,7 @@ class Welcome extends CI_Controller {
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_APROVED){                
-                    $result['message'] .= 'O seu anterior pedido foi aprovado e já foi feita a transferência para sua conta.';                    
+                    $result['message'] .= 'O seu anterior pedido foi aprovado e já foi solicitada a transferência para sua conta.';                    
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::TOPAZIO_DENIED){                
@@ -358,7 +391,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if($N > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Sua solicitação foi negada devido a que seu CPF tem sido usado com outro nome. Por favor, contate nosso atendimento';
+            $result['message']='Este CPF foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
             $result['success']=false;
             return $result;
         }
@@ -373,7 +406,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro nome. Por favor, contate nosso atendimento';
+            $result['message']='Este telefone foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
@@ -760,11 +793,7 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 //1. pasar cartão de crédito na IUGU
                 $response = $this->do_payment_iugu($_SESSION['pk']);
-                if($response['success']){
-                    //2. salvar el status para WAIT_SIGNATURE
-                    $this->transaction_model->update_transaction_status(
-                        $_SESSION['pk'], 
-                        transactions_status::WAIT_SIGNATURE);
+                if($response['success']){                    
                     //3. crear documento a partir de plantilla y guardar token del documento en la BD
                     $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                     if($uudid_doc){
@@ -773,7 +802,11 @@ class Welcome extends CI_Controller {
                         if($token_signer){
                             //5.  mandar a assinar
                             $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
-                            if($result_send){                                
+                            if($result_send){
+                                //2. salvar el status para WAIT_SIGNATURE
+                                $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::WAIT_SIGNATURE);
                                 //6. matar session para evitar retroceder
                                 session_destroy();
                                 //7. pagina de sucesso de compra con los tags de adwords y analitics
@@ -996,11 +1029,7 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->save_in_db(
                         'transactions',
                         'id',$_SESSION['transaction_requested_id'],
-                        'ccb_number',$resp['ccb']);                
-                $this->transaction_model->save_in_db(
-                        'transactions',
-                        'id',$_SESSION['transaction_requested_id'],
-                        'contract_id',$resp['contract_id']);                
+                        'ccb_number',$resp['ccb']);                                
                 $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::TOPAZIO_IN_ANALISYS);
@@ -1226,7 +1255,7 @@ class Welcome extends CI_Controller {
                         //4. cambiar el status de la transaccion
                         $this->transaction_model->update_transaction_status(
                                     $_SESSION['transaction_requested_id'], 
-                                    transactions_status::WAIT_SING_US);
+                                    transactions_status::WAIT_SIGNATURE);
                         $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
                         if ($result['success'])
                             $result['message'] = 'Nova assinatura solicitada com sucesso!!';
@@ -1940,7 +1969,7 @@ class Welcome extends CI_Controller {
     }
     
     //-------IUGU API-----------------------------------------------
-    public function iugu_simples_sale(){
+    /*public function iugu_simples_sale(){
         require_once($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/iugu-php-master/lib/Iugu.php");
         Iugu::setApiKey("c73d49f9-6490-46ee-ba36-dcf69f6334fd"); // Ache sua chave API no Painel
         Iugu_Charge::create(
@@ -1956,12 +1985,13 @@ class Welcome extends CI_Controller {
                 ]
             ]
         );
-    }
+    }*/
     
     public function get_client_token_iugu($id){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $account_id = $GLOBALS['sistem_config']->ACCOUNT_ID_IUGU;        
+        $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
         
         $this->load->model('class/transaction_model');
         $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
@@ -1988,7 +2018,7 @@ class Welcome extends CI_Controller {
         
         $postFields = http_build_query($postData);
         
-        $url = "https://api.iugu.com/v1/payment_token";
+        $url = "https://api.iugu.com/v1/payment_token?api_token=".$API_TOKEN;
         $handler = curl_init();
         curl_setopt($handler, CURLOPT_URL, $url);  
         curl_setopt($handler, CURLOPT_POST,true);  
@@ -2016,12 +2046,15 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $API_TOKEN = $GLOBALS['sistem_config']->API_TOKEN_IUGU;        
         $this->load->model('class/transaction_model');
-        //$API_TOKEN = 'cf674d3db2f0431fc326f633e5f8a152';
+        
         $client = $this->transaction_model->get_client('id', $id)[0];
         $response_client = $this->get_client_token_iugu($id);
         if(!$response_client['success']){
             $response['success'] = false;
-            $response['message'] = $response_client['message'];
+            if($response_client['message'])
+                $response['message'] = $response_client['message'];
+            else
+                $response['message'] = "Erro tentando validar seu cartão. Espere uns segundos e tente novamente";
             return $response;
         }
         
@@ -2031,11 +2064,11 @@ class Welcome extends CI_Controller {
         $postData = array(
             'token' => $token,
             'email' => $client['email'],
-            'months' => $client['number_plots'],
+            'months' => $financials['amount_months'],
             'items' => array(
-                    'description' => 'money',
+                    'description' => 'Valor da parcela',
                     'quantity' => 1,
-                    'price_cents' => $financials['month_value']*100
+                    'price_cents' => $financials['total_cust_value']*100
                 )            
         );        
         $postFields = http_build_query($postData);
@@ -2058,7 +2091,7 @@ class Welcome extends CI_Controller {
         }
         else {
             $response['success'] = false;
-            $response['message'] = $parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos";//$parsed_response->message;
         }
         return $response;
     }
@@ -2067,6 +2100,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
         }*/
+        //Para estorno do cartao
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2285,9 +2319,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
         $transaction = $this->transaction_model->get_client('id', $id)[0];
+        $date_contract = $this->transaction_model->get_last_date_signature($id);
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         //$financials = $this->calculating_enconomical_values(rand(500, 3000), rand(6,12));
-        //$financials = $this->calculating_enconomical_values(2291, 10);
         //********************************
         $num_plots = $financials["amount_months"];
         $amount_pay = $financials["solicited_value"];        
@@ -2299,8 +2333,8 @@ class Welcome extends CI_Controller {
         //*********
         $cpf = $transaction["cpf"];
         $name = $transaction["name"];
-        $document_id = 10000000000 + time();
-        $tomorrow = $this->topazio_util_day($this->next_available_day(), $API_token);
+        $document_id = $transaction["contract_id"];
+        $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
         if(!$tomorrow)
         {
             return ['success' => false, 'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
@@ -2336,7 +2370,7 @@ class Welcome extends CI_Controller {
                         ."\",\n      \"accountType\": \"".$account_type."\"\n    }"
                     .",\n    \"planQuota\": [\n      ";
                     
-                    $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+                    $plot_date = $this->init_date_to_pay($release_date);
                     $plot_number = 1;
                     
                     while ($plot_number <= $num_plots){                    
@@ -2389,8 +2423,9 @@ class Welcome extends CI_Controller {
         return $response_loans;
     }
     
-    public function next_available_day(){
-        $hoje = strtotime("now");        
+    public function next_available_day($hoje = NULL){
+        if(!$hoje)
+            $hoje = strtotime("now");        
         $d = getdate($hoje);
 
         $next_day = "+1 day";    
@@ -2400,7 +2435,7 @@ class Welcome extends CI_Controller {
         if($d['wday'] == 6){
             $next_day = "+2 day";
         }
-        $amanha = strtotime($next_day);
+        $amanha = strtotime($next_day, $hoje);
         $tomorrow = getdate($amanha);
         if($tomorrow["mon"] < 10)
             $tomorrow["mon"] = "0".$tomorrow["mon"];
@@ -2443,7 +2478,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        $API_token = "38cbc6d9-5c44-3bfe-a2ce-803ab4bb6e19";//$this->get_topazio_API_token();
+        $API_token = "c5f678f6-4ebf-3ad8-8e96-62a483e94761";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic){
@@ -2495,7 +2530,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "38cbc6d9-5c44-3bfe-a2ce-803ab4bb6e19";//$this->get_topazio_API_token();
+        $API_token = "c5f678f6-4ebf-3ad8-8e96-62a483e94761";//$this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -2554,6 +2589,51 @@ class Welcome extends CI_Controller {
             return $tomorrow;
         }
         return NULL;
+    }
+    
+    public function topazio_is_restricted($document, $token = NULL){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        if($token)
+            $API_token = $token;
+        else
+            $API_token = $this->get_topazio_API_token();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/chk/v1/restrictions/".$document);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        
+        $num_tentativas = 0;
+        while($num_tentativas < 10){
+            
+            $result = curl_exec($ch);
+            $num_tentativas++;
+            if($result != "Bad Gateway" && $result != "Gateway Timeout"){
+                $num_tentativas = 10;
+            }
+        }
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        $parsed_response = json_decode($result);
+        
+        $result_api['success'] = false;
+        if($parsed_response->success){
+            $result_api['success'] = true;
+            $result_api['restriction'] = $parsed_response->restriction;            
+            return $result_api;
+        }
+        else{
+            $result_api['message'] = $parsed_response->error->errors[0];
+        }
+        return $result_api;
     }
     
     //-------API D4Sign-----------------------------------------------
@@ -2806,6 +2886,12 @@ class Welcome extends CI_Controller {
         $token_4sign = $GLOBALS['sistem_config']->TOKEN_API_D4SIGN;        
         $crypt_4sign = $GLOBALS['sistem_config']->CRYPT_D4SIGN;        
         
+        $document_id = 10000000000 + time();
+        $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$id,
+                        'contract_id',$document_id);                
+        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
@@ -2814,13 +2900,14 @@ class Welcome extends CI_Controller {
         $tomorrow = $this->topazio_util_day($this->next_available_day());
         if(!$tomorrow)
         {
-            return null;//['success' => false, 'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+            return null;//['success' => false, 'message' => 'Impossivel gerar o documento neste momento devido a problemas de comunicação com o banco'];
         }
         $mes = ['Janeiro', 'Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];        
         
         $plot_resume = [[" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "], [" "," "," "]];
         $num_plots = $transaction['number_plots'];
-        $plot_date = $this->init_date_to_pay( date("Y-m-d H:i:s") );
+        
+        $plot_date = $this->init_date_to_pay( $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"] );
         $plot_date2 = date("d/m/Y", strtotime($plot_date));
         $plot_number = 1;
 
@@ -2841,7 +2928,7 @@ class Welcome extends CI_Controller {
                 $id_template = $GLOBALS['sistem_config']->TEMPLATE_D4SIGN;                
                 $templates = array(
 			$id_template => array(
-					'ccb_loans' => $transaction['ccb_number'],
+					'ccb_loans' => $transaction['contract_id'],
 					'name' => $transaction['name'],
 					'cpf' => $transaction['cpf'],
 					'address' => $address,
@@ -2860,7 +2947,7 @@ class Welcome extends CI_Controller {
                                         'release_string_month' => $mes[ $tomorrow["mon"]-1 ],
                                         'release_year' => $tomorrow["year"],
 					//'full_name' => $transaction['name'],
-					'ccb_loans2' => $transaction['ccb_number'],
+					'ccb_loans2' => $transaction['contract_id'],
 					'name2' => $transaction['name'],
 					'cpf2' => $transaction['cpf'],
                                         'address2' => $address,
@@ -2980,7 +3067,8 @@ class Welcome extends CI_Controller {
         $B1 = number_format($valor_solicitado, 2, '.', '');
         $B2 = $num_parcelas;
         $B3 = ( $this->tax_model->get_tax_row($B2)[$this->get_field($B1)] )/100;
-        $C4 = number_format( ((0.0025 * $B2) + 0.0038) * $B1, 2, '.', '');
+        $num_days = 30*($num_parcelas-1) + 10;
+        $C4 = number_format( ((0.000082 * $num_days)+0.0038) * $B1, 2, '.', '');
         $C5 = number_format(0.1*($B1+$C4), 2, '.', '');
         $B7 = number_format($B1 + $C4 +$C5, 2, '.', ''); 
         $F9 = number_format($B7 * pow(1+$B3, $B2)*$B3/(pow(1+$B3, $B2)-1), 2, '.', '');
