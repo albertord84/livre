@@ -84,6 +84,8 @@ $(document).ready(function () {
         formData.append("id", id);        
         formData.append("trid", trid);        
 
+        $("body").css("cursor", "wait");
+        $('#wait_resend').show();
         $.ajax({
             type: "POST",
             dataType: 'json',
@@ -103,49 +105,71 @@ $(document).ready(function () {
                         case 0:
                             $('#new_check_front_credit_card').removeClass('uplred');
                             $('#new_check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#new_status_front_cc').removeClass('fa fa-arrow-up');
+                            $('#new_status_front_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 1:
                             $('#new_check_selfie_credit_card').removeClass('uplred');
                             $('#new_check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
+                            $('#new_status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#new_status_selfie_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 2:
                             $('#new_check_open_identity').removeClass('uplred');
                             $('#new_check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#new_status_open_id').removeClass('fa fa-arrow-up');
+                            $('#new_status_open_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         case 3:
                             $('#new_check_selfie_with_identity').removeClass('uplred');
                             $('#new_check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
+                            $('#new_status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#new_status_selfie_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         default:
                             ;                        
                     }
+                    $("body").css("cursor", "default");
+                    $('#wait_resend').hide();
                 }
                 else{
+                    $("body").css("cursor", "default");
+                    $('#wait_resend').hide();
                     modal_alert_message(response['message']);
                     switch (id) {
                         case 0:
                             $('#new_check_front_credit_card').removeClass('uplsilver');
                             $('#new_check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            $('#new_status_front_cc').removeClass('fa fa-arrow-up');                            
+                            $('#new_status_front_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 1:
                             $('#new_check_selfie_credit_card').removeClass('uplsilver');
                             $('#new_check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            $('#new_status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#new_status_selfie_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 2:
                             $('#new_check_open_identity').removeClass('uplsilver');
                             $('#new_check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            $('#new_status_open_id').removeClass('fa fa-arrow-up');
+                            $('#new_status_open_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 3:
                             $('#new_check_selfie_with_identity').removeClass('uplsilver');
                             $('#new_check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
-                            break;
+                            $('#new_status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#new_status_selfie_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
+                            break
                         default:
-                            ;                        
+                            ;                                 
                     }
                 }
             },
             error: function (error) {
                 // handle error
+                $("body").css("cursor", "default");
+                $('#wait_resend').hide();
             },
             async: true,
             data: formData,

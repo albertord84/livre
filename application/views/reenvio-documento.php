@@ -7,7 +7,8 @@
     <link rel="shortcut icon" type="image/png" href="<?php echo base_url().'assets/'?>img/icones/favicon.jpeg">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">-->
+    <link rel="stylesheet" href="<?php echo base_url().'assets/css/font-awesome/font-awesome.min.css'?>">
 
     <!-- GALERIA -->	
     <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/galeria/css/fresco/fresco.css?'.$SCRIPT_VERSION;?>" />
@@ -38,6 +39,9 @@
     <?php //include_once "pixel_adwords.php";?>
 </head>
 <body id="bcheck">
+        <div class="modal" id="wait_resend" style="left: 50%; top: 40%;">
+            <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
+        </div>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
 		<div class="container">
 			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
@@ -89,7 +93,7 @@
 					</ul>
 
 					<div class="fleft100 pd-lr30 m-top30 ft-size16 fmr-check">
-						<h4 class="cl-blue m-b15">Oi Marcio!</h4>
+						<h4 class="cl-blue m-b15">Oi <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
 						<p>
 							Infelizmente suas fotos não estão legíveis ou os dados não batem com a conta informada. <b>Você só precisa reenviar novas fotos. </b>
 							<br><br>
@@ -109,14 +113,17 @@
                                                                                         if($_SESSION['new_front_credit_card']){
                                                                                     ?>
                                                                                     <div id="new_check_front_credit_card" class="upl uplgreen c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/CARTAO.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "new_status_front_cc" class="fa fa-check-circle-o"></i>
                                                                                     <?php 
                                                                                         } else {
                                                                                     ?>
                                                                                     <div id="new_check_front_credit_card" class="upl uplsilver c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/CARTAO.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "new_status_front_cc" class="fa fa-arrow-up"></i>
                                                                                     <?php 
                                                                                         } 
                                                                                     ?>  
-                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/icartao.png" alt="">
                                                                                         <small class="fleft100">Foto da parte <br>frontal do seu cartão</small>
                                                                                     </div>
                                                                                 </label>
@@ -129,14 +136,17 @@
                                                                                         if($_SESSION['new_selfie_with_credit_card']){
                                                                                     ?>
                                                                                     <div id="new_check_selfie_credit_card" class="upl uplgreen c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-CARTAO.png" alt="">                                            
+                                                                                        <i style="font-size:16px;" id = "new_status_selfie_cc" class="fa fa-check-circle-o"></i>
                                                                                     <?php 
                                                                                         } else {
                                                                                     ?>
                                                                                     <div id="new_check_selfie_credit_card" class="upl uplsilver c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-CARTAO.png" alt="">                                            
+                                                                                        <i style="font-size:16px;" id = "new_status_selfie_cc" class="fa fa-arrow-up"></i>
                                                                                     <?php 
                                                                                         } 
-                                                                                    ?>                                         
-                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iselcart.png" alt="">
+                                                                                    ?>  
                                                                                         <small class="fleft100">Selfie segurando <br>seu cartão</small>
                                                                                     </div>
                                                                                 </label>
@@ -152,14 +162,17 @@
                                                                                         if($_SESSION['open_identity']){
                                                                                     ?>
                                                                                     <div id="new_check_open_identity" class="upl uplgreen c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/ID-ABERTA.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "new_status_open_id" class="fa fa-check-circle-o"></i>
                                                                                     <?php 
                                                                                         } else {
                                                                                     ?>
                                                                                     <div id="new_check_open_identity" class="upl uplsilver c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/ID-ABERTA.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "new_status_open_id" class="fa fa-arrow-up"></i>
                                                                                     <?php 
                                                                                         } 
-                                                                                    ?>                                         
-                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iid.png" alt="">
+                                                                                    ?>  
                                                                                         <small class="fleft100">Foto identidade aberta <br>(Frente e verso junto)</small>
                                                                                     </div>
                                                                                 </label>
@@ -171,14 +184,17 @@
                                                                                         if($_SESSION['new_selfie_with_identity']){
                                                                                     ?>
                                                                                     <div id="new_check_selfie_with_identity" class="upl uplgreen c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "new_status_selfie_id" class="fa fa-check-circle-o"></i>
                                                                                     <?php 
                                                                                         } else {
                                                                                     ?>
                                                                                     <div id="new_check_selfie_with_identity" class="upl uplsilver c-pointer">
+                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt="">
+                                                                                        <i style="font-size:16px;" id = "status_selfie_id" class="fa fa-arrow-up"></i>
                                                                                     <?php 
                                                                                         } 
-                                                                                    ?>                                         
-                                                                                        <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt="">
+                                                                                    ?>  
                                                                                         <small class="fleft100">Selfie com identidade <br>(Lado com foto)</small>
                                                                                     </div>
                                                                                 </label>
