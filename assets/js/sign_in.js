@@ -241,12 +241,14 @@ $(document).ready(function () {
                 'titular_cpf': cpf_value,                
                 'trid': typeof getUrlVars()["trid"] !== 'undefined' ? getUrlVars()["trid"] : 'NULL',
             };
+            $('#wait').show();
             $.ajax({
                 url: base_url + 'index.php/welcome/recibe_new_account',
                 data: datas,
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
+                    $('#wait').hide();
                     if (response['success']) {
                         $('.cad_new_account1').toggle("hide");
                         $('.cad_new_account2').toggle("slow");
@@ -255,7 +257,8 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status) {
-                    modal_alert_message('Internal error in Steep 3');
+                    $('#wait').hide();
+                    modal_alert_message('Internal error in sending new account');
                 }
             });
         } else{
@@ -823,6 +826,7 @@ $(document).ready(function () {
             error: function (error) {
                 // handle error
                 $("body").css("cursor", "default");
+                $('#wait').hide();
             },
             async: true,
             data: formData,
@@ -844,10 +848,14 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             success: function (response) {
+                $('#wait').hide();
                 if(response['success']){
-                    $('#modal').modal('show');
+                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                    $(location).attr('href',url);
                 } else
-                    modal_alert_message(response['message']);
+                    modal_alert_message(response['message']);                
+            },
+            error: function (xhr, status) {
                 $('#wait').hide();
             }
         });        

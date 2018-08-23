@@ -52,11 +52,11 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
-        $email = "tom@livre.digital";
-        $result = $this->Gmail->transaction_email_approved("Marcio",$email);
+        $email = "jorge85.mail@gmail.com";
+        /*$result = $this->Gmail->transaction_email_approved("Marcio",$email);
         $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
+        */$result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
+        /*$result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_recused("Marcio",$email);
         $result = $this->Gmail->credit_card_recused("Marcio",$email);
         $result = $this->Gmail->transaction_email_almost("Marcio",$email);
@@ -117,7 +117,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test1();
+        $this->test2();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -155,6 +155,15 @@ class Welcome extends CI_Controller {
         $params['CET_PERC']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_PERC']); 
         $params['CET_YEAR']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_YEAR']); 
         $this->load->view('checkout',$params);
+        $this->load->view('inc/footer');
+    }
+    
+    public function suceso_compra(){
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params = $this->input->get();        
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        $this->load->view('sucesso-compra',$params);
         $this->load->view('inc/footer');
     }
     
@@ -789,12 +798,12 @@ class Welcome extends CI_Controller {
         }            
         if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
             if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){           
-                $result['success'] = TRUE;
+                $result['success'] = TRUE;    
                 $value_ucpf = 0;
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
-                //1. pasar cartão de crédito na IUGU
+                //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);
                 if($response['success']){                    
                     //3. crear documento a partir de plantilla y guardar token del documento en la BD
@@ -811,15 +820,28 @@ class Welcome extends CI_Controller {
                                                     $_SESSION['pk'], 
                                                     transactions_status::WAIT_SIGNATURE);
                                 //6. matar session para evitar retroceder
-                                session_destroy();
+                                //session_destroy();
                                 //7. pagina de sucesso de compra con los tags de adwords y analitics
+                                /*Codigo antiguo no funcionava bien
                                 $params['transactionId']=$_SESSION['pk'];
                                 $params['transactionAffiliation']='site';
                                 $params['transactionTotal']=['transaction_values']['total_cust_value'];
                                 $params['solicited_value']=['transaction_values']['solicited_value'];
                                 $params['amount_months']=['transaction_values']['amount_months'] ;
-                                $this->load->view('sucesso-compra',$params);
-                                $this->load->view('inc/footer');
+                                //$this->load->view('sucesso-compra',$params);
+                                //$this->load->view('inc/footer');
+                                $result['success'] = true;
+                                $result['params'] = $params;                                 
+                                 */
+                                $string_param = "transactionId=".$_SESSION['pk']
+                                        . "&transactionAffiliation=site"
+                                        . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                                        . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                                        . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                                        . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                   
+                                $result['success'] = true;
+                                $result['params'] = $string_param;                                
+                                session_destroy();
                             }
                             else{
                                 session_destroy();
@@ -1109,13 +1131,13 @@ class Welcome extends CI_Controller {
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $datas = $this->input->get();        
-        if($_SESSION['logged_role'] === 'ADMIN'){
+        //if($_SESSION['logged_role'] === 'ADMIN'){  //esto es para el usuario por tanto sobra aqui
             $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));           
             if($transaction){
                if($datas['upc'] == $transaction['new_photos_code']){
                 $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',$transaction['id'],
+                    'id',$transaction['client_id'],
                     'new_photos_code',$transaction['new_photos_code'].'--used');          
                 $_SESSION['session_new_foto'] = true;   
                 $this->load->model('class/system_config');
@@ -1128,9 +1150,9 @@ class Welcome extends CI_Controller {
                     print_r('Esse recurso só pode ser usado uma vez. Contate nosso atendimento para pedir um novo acesso.');
                 }
             }else{
-                print_r('Access violation. Wrong prameters!!');
+                print_r('Access violation. Wrong parameters!!');
             }
-        }
+        //}
     }
     
     public function request_new_account(){
@@ -1139,10 +1161,10 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $this->load->model('class/Crypt');
         $result['success'] = false;
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");        
         if($_SESSION['logged_role'] === 'ADMIN'){
             $GLOBALS['sistem_config'] = $this->system_config->load();
+            $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
             $useremail = $_SESSION['transaction_requested_datas']['email'];
             $unique_new_account_bank_code = md5(time()).'-'.md5($_SESSION['transaction_requested_id']);            
@@ -1171,14 +1193,14 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $datas = $this->input->get();        
-        if($_SESSION['logged_role'] === 'ADMIN'){
+        //if($_SESSION['logged_role'] === 'ADMIN'){//lo quite tambien, sobra para el usuario
             $transaction = $this->affiliate_model->load_transaction_datas_by_id($this->Crypt->decrypt($datas['trid']));
             if($transaction){
                if($datas['uabc'] == $transaction['new_account_bank_code']){
                 $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',$transaction['id'],
-                    'new_photos_code',$transaction['new_photos_code'].'--used');
+                    'id',$transaction['client_id'],
+                    'new_account_bank_code',$transaction['new_account_bank_code'].'--used');
                 $_SESSION['pk'] = $this->Crypt->decrypt($datas['trid']);
                 $params['transaction']=$transaction;
                 $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -1190,7 +1212,7 @@ class Welcome extends CI_Controller {
             }else{
                 print_r('Access violation. Wrong prameters!!');
             }
-        }
+        //}
     }
     
     public function recibe_new_account(){
@@ -1265,14 +1287,14 @@ class Welcome extends CI_Controller {
                     'transactions',
                     'id',$_SESSION['transaction_requested_id'],
                     'new_sing_us_code',$unique_new_sing_us_code);
-            //1. subir el mismo contrato            
-            $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+            //1. subir el mismo contrato                        
+            $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['transaction_requested_id']);
             if($uudid_doc){
                 //2. asignar signatario a documento                    
-                $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                $token_signer = $this->signer_for_doc_D4Sign($_SESSION['transaction_requested_id']);
                 if($token_signer){
                     //3.  mandar a assinar
-                    $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
+                    $result_send = $this->send_for_sign_document_D4Sign($_SESSION['transaction_requested_id']);
                     if($result_send){
                         //4. cambiar el status de la transaccion
                         $this->transaction_model->update_transaction_status(
@@ -1960,6 +1982,7 @@ class Welcome extends CI_Controller {
     
     public function new_finished_upload() {
         $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
         $this->load->model('class/Crypt');
         $datas = $this->input->post();
         $cpf_upload = true;
@@ -1984,8 +2007,8 @@ class Welcome extends CI_Controller {
         }
         else{
             $result['success'] = false;
-            //$result['message'] = "Sessão expirou";
-            header('Location: '.base_url());
+            $result['message'] = "As fotos foran enviadas! Link de um uso único";
+            //header('Location: '.base_url());
         }
         echo json_encode($result);
     }
@@ -2363,9 +2386,10 @@ class Welcome extends CI_Controller {
         }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
+        $this->load->model('class/transaction_status');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         $date_contract = $this->transaction_model->get_last_date_signature($id);
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);

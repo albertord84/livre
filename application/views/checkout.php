@@ -90,7 +90,7 @@
             <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
         </div>
         
-        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal fade" id="modal_signature" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog mxw-700" role="document">
                 <div class="modal-content b-none">                    
                    <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->

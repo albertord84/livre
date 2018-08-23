@@ -63,12 +63,12 @@
 		<div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2  m-top150">
 			<div class="fleft100 final">
 				<h2 class="bk-green5 text-center pd-tb15 fw-800">
-                                    <img src="<?php echo base_url().'assets/'?>img/icones/iselid.png" alt=""> Falta pouco!</h2>
+                                    <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt=""> Falta pouco!</h2>
 				<div class="fleft100 pd-30 bk-fff ">
 					<div class="fleft100 pd-lr60 m-top40 m-b40">
-						<h4 class="cl-blue m-b10">Parabéns <?php echo explode(' ',$_SESSION['client_datas']['name'])[0];?>!</h4>
+						<h4 class="cl-blue m-b10">Parabéns <?php echo $name;?>!</h4>
 						<p>
-							Agora falta muito pouco para seu empréstimo ser liberado.
+							Agora falta muito pouco para seu crédito ser liberado.
                                                         <b>Você só precisa fornecer sua assinatura pelo link enviado para seu e-mail.</b>
                                                         Após analisar suas fotos vamos liberar seu dinheiro. Se tudo estiver certo, em 
                                                         24 horas você receberá o valor solicitado.
