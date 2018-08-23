@@ -2091,7 +2091,7 @@ class Welcome extends CI_Controller {
         }
         else {
             $response['success'] = false;
-            $response['message'] = "Erro no pagamento, verifique os dados fornecidos";//$parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito";//$parsed_response->message;
         }
         return $response;
     }
