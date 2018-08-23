@@ -36,14 +36,14 @@ class Welcome extends CI_Controller {
     public function test3(){
         $resp = $this->topazio_emprestimo(6); 
         if($resp['success']){
-            $this->transaction_model->save_in_db(
+            /*$this->transaction_model->save_in_db(
                     'transactions',
                     'id',6,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
                     'id',6,
-                    'contract_id',$resp['contract_id']);                
+                    'contract_id',$resp['contract_id']);                */
         }/**/
     }
     
@@ -87,6 +87,8 @@ class Welcome extends CI_Controller {
     }
     
     public function test1() {
+        //$result = $this->topazio_is_restricted("05401009194");       
+        //$this->robot_checking_contracts();
         //$result = $this->topazio_is_restricted("05401009194","350f3205-aa56-3a14-aed4-370d692f19bd");       
         //$result = $this->topazio_emprestimo(6);
         
@@ -425,7 +427,8 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
-        }                
+        }         
+        
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->transaction_model->get_client('cpf', $datas['cpf'], transactions_status::BEGINNER);
         if(count($clients)>1){ //caso imposivel, so por inconsistencia no sistema, po puede haber más de um beginner com o mesmo CPF
@@ -1046,6 +1049,25 @@ class Welcome extends CI_Controller {
                     $result['message'] = 'Falha enviando email de aprovação. Tente depois.';                
             } else{
                 //tratamiento de diferentes problemas que me va am amndar Moreno
+                switch ($resp['code_error']){
+                    case 1001: //Erro solicitando token de topazio
+                            break;
+                    case 2001: //Cliente em lista negra de topazio
+                            break;
+                    case 2002: //Erro verificando lista negra de topazio
+                            break;
+                    case 2003: //Imposivel comunicar com topazio
+                            break;
+                    case 2004: //Erro criando basicCustomer dado por Topazio
+                            break;
+                    case 3001: //Erro calculando proximo dia util com topazio
+                            break;
+                    case 3002: //Erro com os dados bancarios para a trasferencia
+                            break;
+                    case 3003: //Erro com algum outro dado para a trasferencia
+                            break;
+                    default:;
+                }
             }
             echo json_encode($result);
         }
@@ -1325,7 +1347,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function get_url_image(){//revisar *************MORENO************
+    public function get_url_image(){
         $this->load->model('class/transaction_model');
         $result['success']=false ;
         $result['message']='Access violation';
@@ -2245,6 +2267,21 @@ class Welcome extends CI_Controller {
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
         
         $client = $this->transaction_model->get_client('id', $id)[0];
+        $restricted_response = $this->topazio_is_restricted($client['cpf'], $API_token);
+        if($restricted_response['success']){
+            if($restricted_response['restriction']){
+                $response['success'] = false;
+                $response['message'] = "Cliente em lista de restrições de Topazio";
+                $response['code_error'] = 2001;
+                return $response;
+            }               
+        }
+        else{
+            $response['success'] = false;
+            $response['message'] = $restricted_response['message'];
+            $response['code_error'] = 2002;
+            return $response;
+        }
         
         $cpf = $client["cpf"];
         $name = $client["name"];
@@ -2302,9 +2339,20 @@ class Welcome extends CI_Controller {
         
         $parsed_response = json_decode($result);
         
-        $result_query = false;
-        if(is_object($parsed_response) && $parsed_response->success == TRUE)
-            $result_query = true;
+        $result_query['success'] = false;
+        if(is_object($parsed_response) && $parsed_response->success == TRUE){
+            $result_query['success'] = true;
+        }
+        else{
+            if($result == "Bad Gateway" || $result == "Gateway Timeout"){
+                $result_query['message'] = "Impossivel comunicar com API de Topazio";
+                $result_query['code_error'] = 2003;
+            }
+            else{
+                $result_query['message'] = $parsed_response->errors->values[0]->error[0];
+                $result_query['code_error'] = 2004;
+            }
+        }
         
         return $result_query;
     }
@@ -2321,7 +2369,7 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         $date_contract = $this->transaction_model->get_last_date_signature($id);
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
-        //$financials = $this->calculating_enconomical_values(rand(500, 3000), rand(6,12));
+        
         //********************************
         $num_plots = $financials["amount_months"];
         $amount_pay = $financials["solicited_value"];        
@@ -2337,7 +2385,7 @@ class Welcome extends CI_Controller {
         $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
         if(!$tomorrow)
         {
-            return ['success' => false, 'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+            return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
         }
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
@@ -2346,7 +2394,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
         $bank_code = $account_bank["bank"];
         $agency = substr($account_bank["agency"], 0, 4);
-        $account = $account_bank["account"]."-".$account_bank["dig"];
+        $account = $account_bank["account"]."-a".$account_bank["dig"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
@@ -2418,7 +2466,23 @@ class Welcome extends CI_Controller {
             echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
-            $response_loans['message'] = $parsed_response->errors->values[0]->error[0];
+            if($result == "Bad Gateway" || $result == "Gateway Timeout"){
+                $result_query['message'] = "Impossivel comunicar com API de Topazio";
+                $result_query['code_error'] = 2003;
+            }
+            else{
+                $response_loans['message'] = $parsed_response->errors->values[0]->error[0];
+                if( $response_loans['message'] == "'bankCode' is invalid." ||
+                    $response_loans['message'] == "'branch' is invalid." ||                    
+                    $response_loans['message'] == "'accountNumber' is invalid." ||
+                    $response_loans['message'] == "'accountNumber' has invalid digit."
+                    ){
+                    $response_loans['code_error'] = 3002;
+                }
+                else{
+                    $response_loans['code_error'] = 3003;
+                }
+            }
         }
         return $response_loans;
     }
@@ -2478,10 +2542,10 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        $API_token = "c5f678f6-4ebf-3ad8-8e96-62a483e94761";//$this->get_topazio_API_token();
+        $API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
-            if($result_basic){
+            if($result_basic['success']){
                 $response = $this->topazio_loans($id, $API_token);
                 if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
@@ -2492,16 +2556,19 @@ class Welcome extends CI_Controller {
                 else{
                     $result['message'] = $response['message'];
                     $result['success'] = false;            
+                    $result['code_error'] = $response['code_error'];
                 }
             }
             else{
-                $result['message'] = "Erro criando usuario com topazio";
+                $result['message'] = $result_basic['message'];
                 $result['success'] = false;            
+                $result['code_error'] = $result_basic['code_error'];
             }            
         }
         else{
             $result['message'] = "Erro solicitando token de topazio";
-            $result['success'] = false;            
+            $result['success'] = false;
+            $result['code_error'] = 1001;
         }
         
         return $result;
@@ -2631,7 +2698,10 @@ class Welcome extends CI_Controller {
             return $result_api;
         }
         else{
-            $result_api['message'] = $parsed_response->error->errors[0];
+            if($parsed_response)
+                $result_api['message'] = $parsed_response->error->errors[0];
+            else
+                $result_api['message'] = $result;
         }
         return $result_api;
     }
@@ -3160,7 +3230,57 @@ class Welcome extends CI_Controller {
         print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
     }
     
+    
+    /* 
+        Status dos documentos na D4Sign
+        ID 1 - Processando
+        ID 2 - Aguardando Signatários
+        ID 3 - Aguardando Assinaturas
+        ID 4 - Finalizado
+        ID 5 - Arquivado
+        ID 6 - Cancelado
+     */
+    public function robot_checking_contracts() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');        
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $_SESSION['logged_role'] = 'ADMIN';
+        $date = date("Y-m-d",time());
+        print_r("<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+       
+        do{
+            //transactions waiting signature
+            $transactions = $this->transaction_model->get_client('status_id', transactions_status::WAIT_SIGNATURE);
+
+            foreach ($transactions as $transaction) {
+                $signature_status = $this->get_document_D4Sign($transaction['id']);    
+                if($signature_status[0]->statusId == 4){
+                   //documento assinado                
+                    $this->transaction_model->update_transaction_status(
+                        $transaction['id'],
+                        transactions_status::PENDING);
+                    print_r("<br><br>Contrato assinado por ".$transaction[email]);
+                    //send e-mail for atendente?
+                    /*$atendente_emails = array("pedro@livre.digital");
+                    foreach ($administrators_emails as $useremail) {
+                        $this->Gmail->send_mail($useremail, $useremail, 'Novo contrato assinado','Novo contrato assinado para o cliente: '.$transaction['email']);
+                    }*/
+                }
+                else{
+                    if($signature_status[0]->statusId == 6){
+                        //fazer o que neste caso?    
+                    }
+                }
+            }
+            sleep(15*60);
+        }while(true);
         
+        //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+    }    
     
     
 }
