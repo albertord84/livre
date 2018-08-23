@@ -834,6 +834,7 @@ $(document).ready(function () {
     };
     
     $("#do_sign").click(function () {                
+        $('#wait').show();
         $.ajax({
             url: base_url+'index.php/welcome/sign_contract',
             data:{
@@ -847,6 +848,7 @@ $(document).ready(function () {
                     $('#modal').modal('show');
                 } else
                     modal_alert_message(response['message']);
+                $('#wait').hide();
             }
         });        
     });

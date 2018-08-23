@@ -2091,7 +2091,7 @@ class Welcome extends CI_Controller {
         }
         else {
             $response['success'] = false;
-            $response['message'] = "Erro no pagamento, verifique os dados fornecidos";//$parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito";//$parsed_response->message;
         }
         return $response;
     }
@@ -2530,7 +2530,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
-        $API_token = "c5f678f6-4ebf-3ad8-8e96-62a483e94761";//$this->get_topazio_API_token();
+        $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
