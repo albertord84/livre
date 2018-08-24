@@ -48,7 +48,7 @@ class Welcome extends CI_Controller {
     }
     
     public function test2() { 
-        $this->load->model('class/system_config');
+        /*$this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
