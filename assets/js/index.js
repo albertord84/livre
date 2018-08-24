@@ -48,7 +48,8 @@ $(document).ready(function () {
         $("#input_verify").focus();
     });
     
-    $("#input_verify").maskMoney({symbol:'R$ ', thousands:'.', decimal:',', symbolStay: true});
+    //$("#input_verify").maskMoney({symbol:'R$ ', thousands:'.', decimal:',', symbolStay: true});
+    $("#input_verify").maskMoney();
     
     function verify(flag){        
         if($('#input_verify').val()===''){
@@ -152,6 +153,5 @@ $(document).ready(function () {
     }
     
     //amount_months=12;
-    
     
 });

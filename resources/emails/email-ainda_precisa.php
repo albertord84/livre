@@ -2,21 +2,21 @@
 	<tbody>
 	    <tr>
 	        <td colspan="3" height="180" bgcolor="#ff1945" align="center">
-	    		<h1 style="font-weight: 600;font-size: 30px;line-height: 30px;color:#fff">Pedido negado</h1>
+	    		<h1 style="font-weight: 600;font-size: 30px;line-height: 30px;color:#fff">Ainda precisa do crédito solicitado?</h1>
 	  		</td>
 	    </tr>
 	    <tr>
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
 	        	<br><br>
-	          	<img src="../../assets/img/icones/10 - negado trans.png" alt="">   
+	          	<img src="../../assets/img/icones/04 - ainda precisa do.png" alt="">   
           		<br><br>
 	          	<div style="text-align: left;">
 	          		<h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
 					<p>
-						Parece que houve um erro durante o processamento dos dados do seu cartão. 
+						Você ainda precisa da solicitação que iniciou em nosso site?  
 						<br><br>
-						<b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do crédito solicitado deve ser menor que o valor de limite do seu cartão. </u> Se mesmo assim não conseguir proesseguir, entre em contato com a operadora do seu cartão para maiores informações.
+						<b>Se precisar de ajuda ou tiver qualquer dúvida, nos escreva.</b> <br>Esperamos você!
 					</p> 					
 	          	</div> 
 	          	<div>

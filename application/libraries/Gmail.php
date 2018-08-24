@@ -102,7 +102,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Emprestimo aprovado - Livre.digital';
+            $this->mail->Subject = 'Aprovado! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name"), dirname(__FILE__));
@@ -123,7 +124,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Enviar fotos novamente - Livre.digital';
+            $this->mail->Subject = 'Suas fotos não foram aprovadas - Livre.digital';            
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
@@ -144,7 +146,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Enviar conta bancaria novamente - Livre.digital';
+            $this->mail->Subject = 'Atualize seus dados bancários - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-dados-bancarios.php?name=$name&link=$link"), dirname(__FILE__));
@@ -165,10 +168,11 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Assinar contrato novamente - Livre.digital';
+            $this->mail->Subject = 'Envie sua assinatura - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura.php?name=$name&link=$link"), dirname(__FILE__));
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link"), dirname(__FILE__));
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -186,7 +190,8 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Assinar contrato novamente - Livre.digital';
+            $this->mail->Subject = 'Solicitação cancelada - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-cancelada.php?name=$name"), dirname(__FILE__));
@@ -207,10 +212,122 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Cartao de credito nao aceito - Livre.digital';
+            $this->mail->Subject = 'Pedido negado - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function transaction_email_almost($name, $useremail) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Dados enviados com sucesso! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
+            $name = urlencode($name);           
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-almost.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function transaction_email_trans_in_process($name, $useremail) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Falta pouco! Seus dados foram aprovados! - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
+            $name = urlencode($name);           
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-in_process.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function transaction_email_conclua($name, $useremail) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Conclua seu cadastro - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
+            $name = urlencode($name);           
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-conclua.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function transaction_email_ainda_precisa($name, $useremail) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Ainda precisa do crédito solicitado? - Livre.digital';
+            $this->mail->CharSet = 'UTF-8';
+            $name = urlencode($name);           
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-ainda_precisa.php?name=$name"), dirname(__FILE__));
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
+        
+        public function credor_ccb($name, $useremail,$ccb) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = 'Credor da CCB - Livre.digital';            
+            $this->mail->CharSet = 'UTF-8';
+            $name = urlencode($name);
+            $ccb = urlencode($ccb);
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/credor-ccb.php?name=$name&ccb=$ccb"), dirname(__FILE__));
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;

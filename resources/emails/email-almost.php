@@ -2,21 +2,20 @@
     <tbody>
         <tr>
             <td colspan="3" height="180" bgcolor="#00ff66" align="center">
-                <h1 style="font-weight: 600;font-size: 30px;line-height: 30px">Aprovado!</h1>
+                <h1 style="font-weight: 600;font-size: 30px;line-height: 30px">Dados enviados com sucesso!</h1>
             </td>
         </tr>
         <tr>
             <td width="105"></td>
             <td width="440" valign="top" align="center" height="40">
                 <br><br>
-                <img src="../../assets/img/icones/11 - dinheiro na conta.png" alt="">   
+                <img src="../../assets/img/icones/01 - falta pouco.png" alt="">   
                 <br><br>
                 <div style="text-align: left;">
-                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
+                    <h2 style="color: #20a7d3;">Parabéns <?php echo urldecode($_GET["name"]);?>!</h2>
                     <p>
-                        Sua transferencia já está em processamento, se os dados de sua conta bancária estiverem corretos, em breve o dinheiro será depositado.
-                        Ficamos felizes por poder ajudar você e agradecemos por utilizar a Livre.digital como sistema de crédito.    <br>                        
-                        <br>Se você gostou, divulgue para seus amigos sua experiência!
+                        Recebemos todas as informações e o último passo para analisarmos sua solicitação é a assinatura do contrato, que já deve estar chegando em outro email.<br><br> Assim que recebermos o contrato assinado inciamos o processo de análise e atualizaremos o status da sua solicitação via email. <br>
+                        <br>Até já!
                     </p> 					
                 </div> 
                 <div>

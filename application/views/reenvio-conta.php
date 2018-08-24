@@ -37,6 +37,9 @@
     
 </head>
 <body id="bcheck">
+        <div class="modal" id="wait" style="left: 50%; top: 40%;">
+            <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
+        </div>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
 		<div class="container">
 			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
@@ -88,7 +91,7 @@
                     </ul>
 
                     <div class="fleft100 pd-lr30 m-top30 ft-size16 fmr-check">
-                        <h4 class="cl-blue m-b15">Oi, <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
+                        <h4 class="cl-blue m-b15">Oi <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
                         <p>
                             Verificamos que sua conta bancária não é a mesma do títular do cartão de crédito. Para que o empréstimo seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária.
                         </p>
@@ -331,11 +334,11 @@
                                 <div class="fleft100 pd-30 bk-fff m-top20 text-justify">
                                     <h1 class="ft-size45 text-center cl-green m-b20">Pronto!</h1>
                                     <h3>Obrigado, <li id="affiliate_first_name"></li>!</h3>
-                                    <h4 class="m-top20">Opa, seus dados bancários foram atualizados corretamente, agora para continuar, deve assinar novamente o contrato.</h4>
+                                    <h4 class="m-top20">Opa, seus dados bancários foram atualizados corretamente, agora para continuar, deve assinar novamente o contrato que receberá no seu e-mail.</h4>
                                 </div>
-                                <div class="fleft100 m-top10 text-right">
+<!--                                <div class="fleft100 m-top10 text-right">
                                     <button id="send_new_account_datas" class="bt-green w100">Assinar novamente</button>
-                                </div>
+                                </div>-->
                             </div>
                             
                             

@@ -29,7 +29,7 @@
         <!-- JS -->
         <script type="text/javascript">
             var base_url = '<?php echo base_url();?>';
-            var key = '<?php echo $key;?>';
+            var key = '<?php echo $key;?>';            
         </script>
         
         <?php include_once "pixel_facebook.php";?>
@@ -78,10 +78,10 @@
             <div class="verific prelative m-top40 m-top20-xs text-right center-xs">
                 <div id="verify_container">
                     <div class="col-md-4 col-sm-4 col-xs-12">
-                        <span class="fleft100">Qual valor deseja solicitar?</span>
+                        <span class="fleft100 m-top12">Qual valor deseja solicitar?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 0500 até R$ 3000" placeholder="R$ 0.00" maxlength="11">                        
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 0500 até R$ 3000" placeholder="R$ 0.00" maxlength="11" data-thousands="." data-decimal="," data-prefix="R$ " >                        
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
@@ -166,10 +166,10 @@
                 <div class="fleft100">
                     <div class="col-md-6 col-sm-6 col-xs-12 pd-lr0-xs m-top20 m-none-xs">
                         <div class="col-md-3 col-sm-3 col-xs-12">
-                            <img src="<?php echo base_url().'assets/'?>img/icones/check2.png" width="60">
+                            <img src="<?php echo base_url().'assets/'?>img/icones/check3.png" width="60">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12 m-top10-xs">
-                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit clamp2">Pague as prestações através da fatura do seu cartão de crédito!</h2>
+                            <h2 class="ft-size20 fw-600 fleft100 wrap d-webkit ">Pague as prestações através da fatura do seu cartão de crédito!</h2>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 m-top20">

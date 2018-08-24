@@ -18,11 +18,11 @@ $(document).ready(function () {
         cep = validate_element('#cep', '^[0-9]{8}$');
         street_address = validate_element('#street_address', '^[a-zA-Z áéíóúàãẽõ]{5,}$');
         number_address = validate_element('#number_address', '^[0-9]{1,10}$');
-        //complement = validate_element('#complement_number_address', '^[0-9]{0,7}$');
+        complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
         
-        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state){                                
+        if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state && complement){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
                 data:{
@@ -241,12 +241,14 @@ $(document).ready(function () {
                 'titular_cpf': cpf_value,                
                 'trid': typeof getUrlVars()["trid"] !== 'undefined' ? getUrlVars()["trid"] : 'NULL',
             };
+            $('#wait').show();
             $.ajax({
                 url: base_url + 'index.php/welcome/recibe_new_account',
                 data: datas,
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
+                    $('#wait').hide();
                     if (response['success']) {
                         $('.cad_new_account1').toggle("hide");
                         $('.cad_new_account2').toggle("slow");
@@ -255,7 +257,8 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status) {
-                    modal_alert_message('Internal error in Steep 3');
+                    $('#wait').hide();
+                    modal_alert_message('Internal error in sending new account');
                 }
             });
         } else{
@@ -512,6 +515,7 @@ $(document).ready(function () {
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
         if(phone_ddd && phone_number){
+            $('#wait').show();
             $.ajax({
                 url: base_url+'index.php/welcome/request_sms_code',                
                 data: {
@@ -522,6 +526,7 @@ $(document).ready(function () {
                 type: 'POST',
                 dataType: 'json',
                 success: function (response) {
+                    $('#wait').hide();
                     if(response['success']){
                         $('#sms').modal('show');
                     } else{
@@ -583,6 +588,7 @@ $(document).ready(function () {
     
     $("#verify_cep").click(function () {
         if(validate_element("#cep",'^[0-9]{8}$')){
+            $('#wait').show();
             $.ajax({
                 url: base_url+'index.php/welcome/get_cep_datas',                
                 data: {
@@ -596,11 +602,12 @@ $(document).ready(function () {
                         response = response['datas'];
                         $('#street_address').val(response['logradouro']);
                         $('#city_address').val(response['localidade']);
-                        $('#state_address').val(response['uf']);
+                        $('#state_address').val(response['uf']);                        
                         $('#address_container').css({"visibility":"visible", "display":"block"}); 
                         $('#btn_steep_1').removeAttr("disabled");                         
                     } else
                         modal_alert_message('CEP inválido');
+                    $('#wait').hide();
                 }
             });
         } else{
@@ -729,7 +736,7 @@ $(document).ready(function () {
         formData.append("key", key);        
 
         $("body").css("cursor", "wait");
-        
+        $('#wait').show();
         $.ajax({
             type: "POST",
             dataType: 'json',
@@ -749,18 +756,26 @@ $(document).ready(function () {
                         case 0:
                             $('#check_front_credit_card').removeClass('uplred');
                             $('#check_front_credit_card').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#status_front_cc').removeClass('fa fa-arrow-up');
+                            $('#status_front_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 1:
                             $('#check_selfie_credit_card').removeClass('uplred');
                             $('#check_selfie_credit_card').removeClass('uplsilver').addClass('uplgreen'); 
+                            $('#status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_cc').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                            
                             break;
                         case 2:
                             $('#check_open_identity').removeClass('uplred');
                             $('#check_open_identity').removeClass('uplsilver').addClass('uplgreen');                            
+                            $('#status_open_id').removeClass('fa fa-arrow-up');
+                            $('#status_open_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         case 3:
                             $('#check_selfie_with_identity').removeClass('uplred');
                             $('#check_selfie_with_identity').removeClass('uplsilver').addClass('uplgreen');                              
+                            $('#status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_id').removeClass('fa fa-times-circle-o').addClass('fa fa-check-circle-o');                           
                             break;
                         case 4:
                             $('#msg_ucpf_upload').text(' (Foi anexado)');                            
@@ -769,6 +784,7 @@ $(document).ready(function () {
                             ;                        
                     }
                     $("body").css("cursor", "default");
+                    $('#wait').hide();
                 }
                 else{
                     modal_alert_message(response['message']);
@@ -776,18 +792,26 @@ $(document).ready(function () {
                         case 0:
                             $('#check_front_credit_card').removeClass('uplsilver');
                             $('#check_front_credit_card').removeClass('uplgreen').addClass('uplred');                            
+                            $('#status_front_cc').removeClass('fa fa-arrow-up');                            
+                            $('#status_front_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 1:
                             $('#check_selfie_credit_card').removeClass('uplsilver');
                             $('#check_selfie_credit_card').removeClass('uplgreen').addClass('uplred'); 
+                            $('#status_selfie_cc').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_cc').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 2:
                             $('#check_open_identity').removeClass('uplsilver');
                             $('#check_open_identity').removeClass('uplgreen').addClass('uplred');                            
+                            $('#status_open_id').removeClass('fa fa-arrow-up');
+                            $('#status_open_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;
                         case 3:
                             $('#check_selfie_with_identity').removeClass('uplsilver');
                             $('#check_selfie_with_identity').removeClass('uplgreen').addClass('uplred');                              
+                            $('#status_selfie_id').removeClass('fa fa-arrow-up');
+                            $('#status_selfie_id').removeClass('fa fa-check-circle-o').addClass('fa fa-times-circle-o');                            
                             break;                        
                         case 4:
                             $('#msg_ucpf_upload').text('');                            
@@ -796,11 +820,13 @@ $(document).ready(function () {
                             ;                        
                     }
                     $("body").css("cursor", "default");
+                    $('#wait').hide();
                 }
             },
             error: function (error) {
                 // handle error
                 $("body").css("cursor", "default");
+                $('#wait').hide();
             },
             async: true,
             data: formData,
@@ -812,6 +838,7 @@ $(document).ready(function () {
     };
     
     $("#do_sign").click(function () {                
+        $('#wait').show();
         $.ajax({
             url: base_url+'index.php/welcome/sign_contract',
             data:{
@@ -821,10 +848,15 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             success: function (response) {
+                $('#wait').hide();
                 if(response['success']){
-                    $('#modal').modal('show');
+                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                    $(location).attr('href',url);
                 } else
-                    modal_alert_message(response['message']);
+                    modal_alert_message(response['message']);                
+            },
+            error: function (xhr, status) {
+                $('#wait').hide();
             }
         });        
     });
@@ -876,3 +908,67 @@ $(document).ready(function () {
     
     //init();    
 }); 
+
+$(function() {
+    // Solo numeros
+    var i = $('#agency');
+    i.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 12 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+    var i2 = $('#account');
+    i2.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 12 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+    var i3 = $('#dig');
+    i3.keydown(function(ev) {
+        var permittedChars = /[0-9]/;
+        var v = ev.target.value;
+        var k = ev.originalEvent.key;
+        var c = ev.originalEvent.keyCode.toString();
+        var ctrlKeys = /^(8|35|36|37|38|39|40|46)$/; // delete, backspace, left, right...
+        if (k.match(permittedChars)===null && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (k === '.' && v.indexOf('.') !== -1) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+        if (v.length === 1 && c.match(ctrlKeys)===null) {
+            ev.originalEvent.preventDefault();
+            return;
+        }
+    });
+});
