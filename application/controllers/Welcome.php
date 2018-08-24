@@ -120,7 +120,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test1();
+        //$this->test3();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -1091,10 +1091,10 @@ class Welcome extends CI_Controller {
                             break;
                     case 3003: //Erro com algum outro dado para a trasferencia
                             break;
-                    default: $result['message'] = $res['message'];
-                    $result['message'] = $res['message'];    
-                    $result['success'] = false;    
+                    default: ;                    
                 }
+                $result['message'] = $res['message'];    
+                $result['success'] = false;    
             }
             echo json_encode($result);
         }

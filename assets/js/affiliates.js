@@ -30,17 +30,17 @@ $(document).ready(function () {
                     break;
             }
             if(fn!=''){
-                $('#wait').show();
+                $('#wait_aff').show();
                 $.ajax({
                     url: base_url + 'index.php/welcome/'+fn,
                     type: 'POST',
                     dataType: 'json',
                     success: function (response) {  
-                        $('#wait').hide();
+                        $('#wait_aff').hide();
                         modal_alert_message(response['message']);
                     },
                     error: function (xhr, status) {
-                        $('#wait').hide();
+                        $('#wait_aff').hide();
                         modal_alert_message('Internal error');                        
                     }
                 });                
