@@ -2396,7 +2396,7 @@ class Welcome extends CI_Controller {
         }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $this->load->model('class/transaction_status');
+        $this->load->model('class/transactions_status');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
