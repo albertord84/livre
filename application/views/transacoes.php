@@ -9,7 +9,10 @@
     var has_next_page = '<?php echo $has_next_page;?>';
 </script>
 <!--  -->
-
+<div class="modal" id="wait" style="left: 50%; top: 40%;">
+    <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
+</div>
+        
 <div class="modal fade" id="trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 	<div class="modal-dialog mxw-1100" role="document">
 		<div class="modal-content b-none">

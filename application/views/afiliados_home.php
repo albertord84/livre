@@ -37,6 +37,10 @@
         <?php //include_once "pixel_adwords.php";?>       
 </head>
 <body>
+        <div class="modal" id="wait" style="left: 50%; top: 40%;">
+            <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
+        </div>
+        
 	<header class="fleft100 pd-tb30 pabsolute m-top100 m-none-xs">
 		<div class="container">
 			<div class="logo col-md-2 col-sm-3 col-xs-12 pd-0 center-xs m-top12"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
