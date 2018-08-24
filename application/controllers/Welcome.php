@@ -2395,6 +2395,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
         }*/
+        echo "2.0.0 ";
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transaction_status');
