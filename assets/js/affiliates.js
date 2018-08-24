@@ -40,8 +40,8 @@ $(document).ready(function () {
                         modal_alert_message(response['message']);
                     },
                     error: function (xhr, status) {
-                        modal_alert_message('Internal error');
                         $('#wait').hide();
+                        modal_alert_message('Internal error');                        
                     }
                 });                
             }

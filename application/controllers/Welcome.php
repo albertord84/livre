@@ -1095,6 +1095,12 @@ class Welcome extends CI_Controller {
             }
             echo json_encode($result);
         }
+        else{
+            $_SESSION['logged_id'] = -1;
+            $result['message'] = 'Você não possui permisos para fazer esta operação';            
+            $result['success'] = false;
+            echo json_encode($result);
+        }
     }
     
     public function request_new_photos(){
