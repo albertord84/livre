@@ -35,7 +35,6 @@ class Welcome extends CI_Controller {
 
     public function test3(){
         $resp = $this->topazio_emprestimo(13); 
-        var_dump($resp);
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
@@ -48,7 +47,7 @@ class Welcome extends CI_Controller {
             print_r("ok");
         }/**/
         else{
-            print_r("error");
+        print_r("error");
         }
     }
     
@@ -123,7 +122,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test3();
+        //$this->test1();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -2395,17 +2394,14 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
         }*/
-        echo "2.0.0 ";
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $this->load->model('class/transaction_status');
+        $this->load->model('class/transactions_status');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        echo "2.0.1 ";
         $date_contract = $this->transaction_model->get_last_date_signature($id);
-        echo "2.0.2 ";
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         
         //********************************
@@ -2421,12 +2417,10 @@ class Welcome extends CI_Controller {
         $name = $transaction["name"];
         $document_id = $transaction["contract_id"];
         $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
-        echo "2.1 ";
         if(!$tomorrow)
         {
             return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
         }
-        echo "2.2 ";
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
@@ -2471,7 +2465,7 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
-        var_dump($fields);echo "2.2 "; 
+        var_dump($fields); 
         //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
@@ -2583,11 +2577,11 @@ class Welcome extends CI_Controller {
             return;            
         }*/
         $API_token = $this->get_topazio_API_token();
-        if($API_token){echo "1";
+        if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
-            if($result_basic['success']){echo "2";
+            if($result_basic['success']){
                 $response = $this->topazio_loans($id, $API_token);
-                if($response['success']){echo "3";
+                if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            
                     $result['ccb'] = $response['ccb'];            
