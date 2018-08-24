@@ -46,7 +46,9 @@ class Welcome extends CI_Controller {
                     'contract_id',$resp['contract_id']);                
             print_r("ok");
         }/**/
-        print_r("ok");
+        else{
+            print_r("error");
+        }
     }
     
     public function test2() { 
