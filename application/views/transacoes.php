@@ -9,7 +9,7 @@
     var has_next_page = '<?php echo $has_next_page;?>';
 </script>
 <!--  -->
-<div class="modal" id="wait_aff" style="left: 50%; top: 40%;">
+<div class="modal" id="wait_aff" style="left: 50%; top: 20%;">
     <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
 </div>
         

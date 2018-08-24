@@ -39,9 +39,9 @@ $(document).ready(function () {
                         $('#wait_aff').hide();
                         modal_alert_message(response['message']);
                     },
-                    error: function (xhr, status) {
-                        $('#wait_aff').hide();
+                    error: function (xhr, status) {                        
                         modal_alert_message('Internal error');                        
+                        $('#wait_aff').hide();
                     }
                 });                
             }

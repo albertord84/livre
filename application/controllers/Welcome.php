@@ -1051,6 +1051,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
+        $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);
             if($resp['success']){
@@ -1093,17 +1094,16 @@ class Welcome extends CI_Controller {
                             break;
                     default: ;                    
                 }
-                $result['message'] = $res['message'];    
+                $result['message'] = "Error emprestimo. Motivo: ( ".$resp['message']." )";    
                 $result['success'] = false;    
-            }
-            echo json_encode($result);
+            }            
         }
         else{
             $_SESSION['logged_id'] = -1;
             $result['message'] = 'Você não possui permisos para fazer esta operação';            
-            $result['success'] = false;
-            echo json_encode($result);
+            $result['success'] = false;            
         }
+        echo json_encode($result);
     }
     
     public function request_new_photos(){
@@ -2466,7 +2466,7 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
-        var_dump($fields); 
+        //var_dump($fields); 
         //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
@@ -2606,6 +2606,9 @@ class Welcome extends CI_Controller {
             $result['code_error'] = 1001;
         }
         
+        $message = $result['message'];
+        $message = implode(" ",explode("'",$message));
+        $result['message'] = $message;
         return $result;
     }
     
