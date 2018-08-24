@@ -2418,10 +2418,12 @@ class Welcome extends CI_Controller {
         $name = $transaction["name"];
         $document_id = $transaction["contract_id"];
         $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
+        echo "2.1 ";
         if(!$tomorrow)
         {
             return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
         }
+        echo "2.2 ";
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
         $cnpj_livre = $GLOBALS['sistem_config']->CNPJ_LIVRE;
@@ -2466,7 +2468,7 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
-        var_dump($fields); 
+        var_dump($fields);echo "2.2 "; 
         //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
