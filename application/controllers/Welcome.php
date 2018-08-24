@@ -34,17 +34,19 @@ class Welcome extends CI_Controller {
     }
 
     public function test3(){
-        $resp = $this->topazio_emprestimo(6); 
+        $resp = $this->topazio_emprestimo(13); 
         if($resp['success']){
-            /*$this->transaction_model->save_in_db(
+            $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
+                    'id',13,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
-                    'contract_id',$resp['contract_id']);                */
+                    'id',13,
+                    'contract_id',$resp['contract_id']);                
+            print_r("ok");
         }/**/
+        print_r("ok");
     }
     
     public function test2() { 
@@ -118,7 +120,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test1();
+        $this->test3();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
