@@ -2402,7 +2402,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
+        echo "2.0.1 ";
         $date_contract = $this->transaction_model->get_last_date_signature($id);
+        echo "2.0.2 ";
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         
         //********************************
