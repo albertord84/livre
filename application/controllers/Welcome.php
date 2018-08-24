@@ -35,6 +35,7 @@ class Welcome extends CI_Controller {
 
     public function test3(){
         $resp = $this->topazio_emprestimo(13); 
+        var_dump($resp);
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
