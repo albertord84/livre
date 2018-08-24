@@ -34,19 +34,19 @@ class Welcome extends CI_Controller {
     }
 
     public function test3(){
-        $resp = $this->topazio_emprestimo(13); 
+        $resp = $this->topazio_emprestimo(4); 
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',13,
+                    'id',4,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',13,
+                    'id',4,
                     'contract_id',$resp['contract_id']);                
             print_r("ok");
         }/**/
-        print_r("ok");
+        var_dump($resp);
     }
     
     public function test2() { 
@@ -120,7 +120,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test1();
+        $this->test3();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -1091,8 +1091,9 @@ class Welcome extends CI_Controller {
                             break;
                     case 3003: //Erro com algum outro dado para a trasferencia
                             break;
-                    default:;
+                    default: $result['message'] = $res['message'];
                     $result['message'] = $res['message'];    
+                    $result['success'] = false;    
                 }
             }
             echo json_encode($result);
@@ -2396,7 +2397,7 @@ class Welcome extends CI_Controller {
         }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $this->load->model('class/transactions_status');
+        //$this->load->model('class/transactions_status');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
@@ -2428,7 +2429,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
         $bank_code = $account_bank["bank"];
         $agency = substr($account_bank["agency"], 0, 4);
-        $account = $account_bank["account"]."-a".$account_bank["dig"];
+        $account = $account_bank["account"].$account_bank["dig"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
