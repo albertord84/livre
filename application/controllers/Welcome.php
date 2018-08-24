@@ -2795,7 +2795,7 @@ class Welcome extends CI_Controller {
         } catch (Exception $e) {
                 //echo $e->getMessage();
                 return null;
-        } 
+        }
         return $uuid_doc;
     }
     
