@@ -53,10 +53,11 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $email = "jorge85.mail@gmail.com";
+        $result = $this->Gmail->credor_ccb("Luis",$email,"131211239");
         /*$result = $this->Gmail->transaction_email_approved("Marcio",$email);
         $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
-        */$result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
-        /*$result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
+        $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
         $result = $this->Gmail->transaction_request_recused("Marcio",$email);
         $result = $this->Gmail->credit_card_recused("Marcio",$email);
         $result = $this->Gmail->transaction_email_almost("Marcio",$email);
@@ -117,7 +118,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        $this->test2();
+        //$this->test1();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
