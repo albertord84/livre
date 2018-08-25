@@ -20,19 +20,7 @@ class Welcome extends CI_Controller {
             var_dump($t);
         }
     }
-    
-    public function test4(){
-        /*$uudid_doc = $this->upload_document_template_D4Sign(4);
-        if($uudid_doc){
-            //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
-            $token_signer = $this->signer_for_doc_D4Sign(4);
-            if($token_signer){
-                //5.  mandar a assinar
-                $result_send = $this->send_for_sign_document_D4Sign(4);
-            }
-        }/**/
-    }
-
+   
     public function test3(){
         $resp = $this->topazio_emprestimo(4); 
         if($resp['success']){
@@ -48,79 +36,9 @@ class Welcome extends CI_Controller {
         }/**/
         var_dump($resp);
     }
-    
-    public function test2() { 
-        /*$this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();
-        $email = "jorge85.mail@gmail.com";
-        $result = $this->Gmail->credor_ccb("Luis",$email,"131211239");
-        /*$result = $this->Gmail->transaction_email_approved("Marcio",$email);
-        $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_recused("Marcio",$email);
-        $result = $this->Gmail->credit_card_recused("Marcio",$email);
-        $result = $this->Gmail->transaction_email_almost("Marcio",$email);
-        $result = $this->Gmail->transaction_email_trans_in_process("Marcio",$email);
-        $result = $this->Gmail->transaction_email_conclua("Marcio",$email);
-        $result = $this->Gmail->transaction_email_ainda_precisa("Marcio",$email);        
-        $pause = "here";/**/
-        
-        //$uudid_doc = $this->upload_document_template_D4Sign(3);
-        /*$token_signer = $this->signer_for_doc_D4Sign(3);
-               if($token_signer){
-                    //3.  mandar a assinar
-                    $result_send = $this->send_for_sign_document_D4Sign(3);
-                }*/
-        //$safes = $this->upload_document_template_D4Sign(3);
-        //$safes = $this->signer_for_doc_D4Sign(3);
-        //$safes = $this->send_for_sign_document_D4Sign(3);
-        //$safes = $this->cancel_document_D4Sign(3);        
-        //$safes = $this->resend_for_sign_document_D4Sign(3);
-        //$safes = $this->get_document_D4Sign(3);
-        //$tomorrow = $this->next_available_day();
-        //$result = $this->topazio_emprestimo(3);        
-        //$result = $this->topazio_loans(3);        
-        //$result = $this->do_payment_iugu(3);                
-        //$result = $this->topazio_conciliations("2018-08-10");
-        //$result = $this->calculating_enconomical_values(500,6);        
-        //$result = $this->upload_document_D4Sign();        
-    }
-    
-    public function test1() {
-        //$result = $this->topazio_is_restricted("05401009194");       
-        //$this->robot_checking_contracts();
-        //$result = $this->topazio_is_restricted("05401009194","350f3205-aa56-3a14-aed4-370d692f19bd");       
-        //$result = $this->topazio_emprestimo(6);
-        
-        /*$this->load->model('class/transaction_model');
-        $this->load->model('class/transactions_status');
-        $date_contract = $this->transaction_model->get_last_date_signature(6);
-        $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), "c5f678f6-4ebf-3ad8-8e96-62a483e94761");*/
-        /*$uudid_doc = $this->upload_document_template_D4Sign(6);
-        if($uudid_doc){
-            //2. asignar signatario a documento                    
-            $token_signer = $this->signer_for_doc_D4Sign(6);
-            if($token_signer){
-                //3.  mandar a assinar
-                $result_send = $this->send_for_sign_document_D4Sign(6);
-                if($result_send){
-                    //4. cambiar el status de la transaccion
-                    $this->transaction_model->update_transaction_status(
-                            6,
-                            transactions_status::WAIT_SIGNATURE);
-                }
-            }
-        }
-        */
-        //$this->topazio_emprestimo(6);
-    }
-    
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test3();
+        //$this->test3();        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -809,6 +727,12 @@ class Welcome extends CI_Controller {
                 //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);
                 if($response['success']){                    
+                    $string_param = "transactionId=".$_SESSION['pk']
+                                . "&transactionAffiliation=site"
+                                . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                                . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                                . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                                . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
                     //3. crear documento a partir de plantilla y guardar token del documento en la BD
                     $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                     if($uudid_doc){
@@ -835,33 +759,28 @@ class Welcome extends CI_Controller {
                                 //$this->load->view('inc/footer');
                                 $result['success'] = true;
                                 $result['params'] = $params;                                 
-                                 */
-                                $string_param = "transactionId=".$_SESSION['pk']
-                                        . "&transactionAffiliation=site"
-                                        . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
-                                        . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
-                                        . "&amount_months=".$_SESSION['transaction_values']['amount_months']
-                                        . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                   
-                                $result['success'] = true;
-                                $result['params'] = $string_param;                                
-                                session_destroy();
+                                 */                                
                             }
                             else{
-                                session_destroy();
-                                $result['success'] = false;
-                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                                $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                             }
                         }
                         else{
-                            session_destroy();
-                            $result['success'] = false;
-                            $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                            $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                         }
                     }else{
-                        session_destroy();
-                        $result['success'] = false;
-                        $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                        $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                     }
+                    //sucesso de contrato se foi cobrado
+                    $result['success'] = true;
+                    $result['params'] = $string_param;                                
+                    session_destroy();
                 }else{
                     $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
                     $useremail = $_SESSION['client_datas']['email'];
@@ -2463,7 +2382,7 @@ class Welcome extends CI_Controller {
                         else
                             $fields .= "\n    ";
                         $plot_number ++;
-                        $plot_date = $this->next_month_to_pay($plot_date);
+                        $plot_date = $this->next_month_to_pay($plot_date, $plot_number);
                     }
                     $fields .= "]\n  }\n}";
         //var_dump($fields); 
@@ -2498,7 +2417,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
-            echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
+            //echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             if($result == "Bad Gateway" || $result == "Gateway Timeout"){
@@ -2545,15 +2464,18 @@ class Welcome extends CI_Controller {
         //return $tomorrow;
     }
     
-    public function next_month_to_pay($date){
+    public function next_month_to_pay($date, $i){
         $next_date = new DateTime($date); // Y-m-d
-        $next_date->add(new DateInterval('P30D'));
+        if($i%2 == 0)
+            $next_date->add(new DateInterval('P31D'));
+        else
+            $next_date->add(new DateInterval('P30D'));
         return $next_date->format('Y-m-d');
     }
     
     public function init_date_to_pay($date){
         $next_date = new DateTime($date); // Y-m-d
-        $next_date->add(new DateInterval('P10D'));
+        $next_date->add(new DateInterval('P31D'));
         return $next_date->format('Y-m-d');
     }
 
@@ -3022,7 +2944,7 @@ class Welcome extends CI_Controller {
         while ($plot_number <= $num_plots){                    
             $plot_resume[$plot_number - 1] = [$plot_number, $plot_date2, $financials['month_value']];           
             $plot_number ++;            
-            $plot_date = $this->next_month_to_pay($plot_date);
+            $plot_date = $this->next_month_to_pay($plot_date, $plot_number);
             $plot_date2 = date("d/m/Y", strtotime($plot_date));
         }
         
@@ -3170,7 +3092,7 @@ class Welcome extends CI_Controller {
      * F16: JUROS 
     */
 
-    public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
+    public function calculating_enconomical_values2($valor_solicitado, $num_parcelas) {
         $this->load->model('class/tax_model');
         $B1 = number_format($valor_solicitado, 2, '.', '');
         $B2 = $num_parcelas;
@@ -3320,5 +3242,125 @@ class Welcome extends CI_Controller {
         //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
     }    
     
+    public function ARRED ($value){
+        return number_format($value, 2, '.', '');
+    }
+    
+    public function PGTO ($rate, $periods, $pV){
+        return number_format($pV * pow(1+$rate, $periods)*$rate/(pow(1+$rate, $periods)-1), 2, '.', '');
+    }
+    
+    public function PGTOPRINC ($rate, $periods, $pV, $start, $end, $type){
+        //adjust the start and end periods based on the type
+        //if it's 1 then payments are at the beginning of the period
+        //which is the same as the end of the previous period
+        if ($type == 1)
+        {
+            $start -= 1;
+            $end -= 1;
+        }
+
+        //calculate the monthlyPayment
+        $monthlyPayment = (($rate * $pV * pow((1 + $rate), $periods)) / (pow((1 + $rate), $periods) - 1));
+
+        $remainingBalanceAtStart = ((pow((1 + $rate), $start - 1) * $pV) - (((pow((1 + $rate), $start - 1) - 1) / $rate) * $monthlyPayment));
+
+        $remainingBalanceAtEnd = ((pow((1 + $rate), $end) * $pV) - (((pow((1 + $rate), $end) - 1) / $rate) * $monthlyPayment));
+
+        return number_format(-1*($remainingBalanceAtEnd - $remainingBalanceAtStart), 2, '.', '');
+    }
+    
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas){
+        $this->load->model('class/tax_model');
+        $B11 = number_format($valor_solicitado, 2, '.', '');
+        $B16 = $num_parcelas;
+        $B10 = ( $this->tax_model->get_tax_row($B16)[$this->get_field($B11)] )/100;
+        $num_days = 30*($num_parcelas-1) + 10;
+        $B20 = 0.1;
+        $B21 = number_format($B20*$B11, 2, '.', ''); //TAC
+        $IOF_YEAR = 0.0038; 
+        $IOF_DAY = 0.000082;
+        $IOF_LIM = 0.03;        
+        /************  simulando oper ***************/
+        $B9 = $B11 + $B21;
+        $IOF_ADD_oper = $IOF_YEAR * $B9;
+        $oper_parcela = $this->PGTO($B10, $B16, $B9);
+        $operB13 = number_format(pow(pow((1+$B10),12),(1.0/365))-1, 2, '.', '');
+        $acumulado = 0;
+        $IOF_PRAZO_oper = 0;
+        $oper_table = [];        
+        $oper_table['saldo_dev'][0] = $B9;
+        for($i = 1; $i <= $num_parcelas; $i++){
+            $oper_table['parcela'][$i] = $i;
+            //esta estrategia sera definida posteriormente
+            if($i <= 2){
+                $acumulado += 31;            
+            }
+            else {
+                $acumulado += 30 + ($i+1)%2;            
+            }
+            /*$extra_day = ($i <= ($num_parcelas+2)/2 + 1)?1:0;
+            $acumulado += 30 + $extra_day;*/
+            $oper_table['dias_juros'][$i] = $acumulado;
+            $oper_table['parcela'][$i] = $oper_parcela;
+            $oper_table['pgto_princ'][$i] = $this->PGTOPRINC($B10, $B16, $B9, $i, $i, 0);
+            $oper_table['saldo_dev'][$i] = number_format($oper_table['saldo_dev'][$i-1] - $oper_table['pgto_princ'][$i], 2, '.', '');
+            $oper_table['pgto_juros'][$i] = number_format($oper_table['saldo_dev'][$i-1]*( pow(1+$operB13, $oper_table['dias_juros'][$i]) ) - $oper_table['saldo_dev'][$i-1], 2, '.', '');            
+            $oper_table['limite_iof'][$i] = number_format($oper_table['pgto_princ'][$i]*$IOF_LIM, 2, '.', '');
+            $oper_table['prazo_iof'][$i] = min([$oper_table['pgto_princ'][$i]*$IOF_DAY*$oper_table['dias_juros'][$i], $oper_table['limite_iof'][$i]]);
+            $IOF_PRAZO_oper += number_format($oper_table['prazo_iof'][$i], 2, '.', '');
+        }
+        $IOF_PRAZO_oper = number_format($IOF_PRAZO_oper, 2, '.', '');
+        /************  OPER ***************/
+        $IOF_FINAC = number_format($B9*($IOF_PRAZO_oper + $IOF_ADD_oper)/ ($B9-($IOF_PRAZO_oper + $IOF_ADD_oper)), 2, '.', '');
+        $B8 = $B9 + $IOF_FINAC; //valor principal
+        $IOF_ADD = $IOF_ADD_oper;
+        $OP_parcela = $this->PGTO($B10, $B16, $B8);
+        $acumulado = 0;
+        
+        $OP_table = [];        
+        $OP_table['saldo_dev'][0] = $B8;
+        for($i = 1; $i <= $num_parcelas; $i++){
+            $OP_table['parcela'][$i] = $i;
+            //esta estrategia sera definida posteriormente
+            if($i <= 2){
+                $acumulado += 31;            
+            }
+            else {
+                $acumulado += 30 + ($i+1)%2;            
+            }
+            /*$extra_day = ($i <= ($num_parcelas+2)/2 + 1)?1:0;
+            $acumulado += 30 + $extra_day;*/
+            $OP_table['dias_juros'][$i] = $acumulado;
+            $OP_table['parcela'][$i] = $OP_parcela;
+            $OP_table['pgto_princ'][$i] = $this->PGTOPRINC($B10, $B16, $B8, $i, $i, 0);
+            $OP_table['saldo_dev'][$i] = number_format($OP_table['saldo_dev'][$i-1] - $OP_table['pgto_princ'][$i], 2, '.', '');
+            $OP_table['pgto_juros'][$i] = number_format($OP_table['saldo_dev'][$i-1]*( pow(1+$OPB13, $OP_table['dias_juros'][$i]) ) - $OP_table['saldo_dev'][$i-1], 2, '.', '');            
+            $OP_table['limite_iof'][$i] = number_format($OP_table['pgto_princ'][$i]*$IOF_LIM, 2, '.', '');
+            $OP_table['prazo_iof'][$i] = min([$OP_table['pgto_princ'][$i]*$IOF_DAY*$OP_table['dias_juros'][$i], $OP_table['limite_iof'][$i]]);
+            $IOF_PRAZO_OP += number_format($OP_table['prazo_iof'][$i], 2, '.', '');
+        }
+        $IOF_PRAZO_OP = number_format($IOF_PRAZO_OP, 2, '.', '');
+        /************* retornando valores *************/
+        $B10 = number_format( $B10*100, 2, '.', ''); 
+        $total_cust = number_format($B16 * $OP_parcela , 2, '.', '');        
+        $cet_month = number_format( 100.0*($total_cust - $B11)/$B11 , 2, '.', '');        
+        $cet_year = number_format( ($cet_month*12)/$B16 , 2, '.', '');        
+        $result = array(
+            'solicited_value' => $B11,                                
+            'amount_months' => $B16,
+            'tax' => $B10, //juros
+            'month_value' => $OP_parcela,
+            'total_cust_value' => $total_cust,
+            'funded_value' => $B8,
+            'IOF' => $IOF_FINAC,
+            'TAC' => $B21,
+            'CET_PERC' => $cet_month,
+            'CET_YEAR' => $cet_year,                            
+            'tax_value' => number_format($total_cust - $B8 , 2, '.', '') ,
+            'TAC_API' => number_format($total_cust - $B8 , 2, '.', '') 
+            );
+        return $result;
+    }
     
 }
