@@ -242,6 +242,7 @@ class Welcome extends CI_Controller {
             $this->load->model('class/Crypt');
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
+            $_SESSION["filter_datas"]=$datas;
             $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
             $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
                     $_SESSION['affiliate_logged_datas']['code'],
@@ -273,13 +274,11 @@ class Welcome extends CI_Controller {
             $this->load->model('class/affiliate_model');
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-            $params['view'] = 'resumo';
-            
+            $params['view'] = 'resumo';            
             $params['total_CET'] = $this->affiliate_model->total_CET($datas);
             $params['loan_value'] = $this->affiliate_model->loan_value($datas);
             $params['average_ticket'] = $this->affiliate_model->average_ticket($datas);
-            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);
-            
+            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);            
             $this->load->view('resumo');
         }
     }
@@ -1044,6 +1043,102 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
         
+    public function export_transactions() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $page = $_SESSION["filter_datas"]["num_page"];
+            $token = $_SESSION["filter_datas"]["token"];
+            $start_period = $_SESSION["filter_datas"]["start_period"];
+            $end_period = $_SESSION["filter_datas"]["end_period"];
+            $has_next_page = 0;
+            //TODO: Moreno
+            //1. abrir archivo temporal em modo escritura
+            do{
+                //lee pagina de transacciones segun la configuracion de la consulta actual 
+                //guardada en la variable de seccion
+                $transactions = $this->affiliate_model->load_transactions(
+                    NULL,
+                    $page,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $token,
+                    $start_period,
+                    $end_period,
+                    $has_next_page
+                );
+                foreach ($transactions as $tr) {
+                    //2. crear una linea en csv a partir de cada transacion de la pagina actual
+                        //donde el contenido de la variable $tr es:
+                    /*
+                    'id' => string '4' (length=1)
+                    'status_id' => string '1' (length=1)
+                    'cpf' => string '07367014196' (length=11)
+                    'name' => string 'JOSE RAMON GONZALEZ MONTERO' (length=27)
+                    'email' => string 'josergm86@gmail.com' (length=19)
+                    'phone_ddd' => string '21' (length=2)
+                    'phone_number' => string '965913089' (length=9)
+                    'cep' => string '24020206' (length=8)
+                    'number_address' => string '223' (length=3)
+                    'street_address' => string 'Rua Visconde de Sepetiba' (length=24)
+                    'complement_number_address' => string '302' (length=3)
+                    'city_address' => string 'Niterói' (length=8)
+                    'state_address' => string 'RJ' (length=2)
+                    'HTTP_SERVER_VARS' => string '{"UNIQUE_ID":"W22utH8AAQEAABMz8JEAAAAG","HTTP_HOST":"localhost","HTTP_USER_AGENT":"Mozilla\/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko\/20100101 Firefox\/61.0","HTTP_ACCEPT":"application\/json, text\/javascript, *\/*; q=0.01","HTTP_ACCEPT_LANGUAGE":"en-GB,en;q=0.5","HTTP_ACCEPT_ENCODING":"gzip, deflate","HTTP_REFERER":"http:\/\/localhost\/livre\/index.php\/welcome\/checkout?utm_source=NULL&frm_money_use_form=08","CONTENT_TYPE":"application\/x-www-form-urlencoded; charset=UTF-8","HTTP_X_REQUESTED_WITH":"XMLHttpRequest","CONTENT_LENGTH":"310","HTTP_COOKIE":"_ga=GA1.1.1275033201.1532962393; _gid=GA1.1.155893956.1533907490; ci_session=61759068776d9f237220805ca2c4995f22b4e200","HTTP_CONNECTION":"keep-alive","PATH":"\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin:\/snap\/bin","LD_LIBRARY_PATH":"\/opt\/lampp\/lib:\/opt\/lampp\/lib","SERVER_SIGNATURE":"","SERVER_SOFTWARE":"Apache\/2.4.27 (Unix) OpenSSL\/1.0.2l PHP\/7.0.23 mod_perl\/2.0.8-dev Perl\/v5.16.3","SERVER_NAME":"localhost","SERVER_ADDR":"127.0.0.1","SERVER_PORT":"80","REMOTE_ADDR":"127.0.0.1","DOCUMENT_ROOT":"\/opt\/lampp\/htdocs","REQUEST_SCHEME":"http","CONTEXT_PREFIX":"","CONTEXT_DOCUMENT_ROOT":"\/opt\/lampp\/htdocs","SERVER_ADMIN":"you@example.com","SCRIPT_FILENAME":"\/opt\/lampp\/htdocs\/livre\/index.php","REMOTE_PORT":"39862","GATEWAY_INTERFACE":"CGI\/1.1","SERVER_PROTOCOL":"HTTP\/1.1","REQUEST_METHOD":"POST","QUERY_STRING":"","REQUEST_URI":"\/livre\/index.php\/welcome\/insert_datas_steep_1","SCRIPT_NAME":"\/livre\/index.php","PATH_INFO":"\/welcome\/insert_datas_steep_1","PATH_TRANSLATED":"\/opt\/lampp\/htdocs\/welcome\/insert_datas_steep_1","PHP_SELF":"\/livre\/index.php\/welcome\/insert_datas_steep_1","REQUEST_TIME_FLOAT":1533914804.66,"REQUEST_TIME":1533914804}' (length=1779)
+                    'utm_source' => string '' (length=0)
+                    'purchase_counter' => string '0' (length=1)
+                    'amount_solicited' => string '111111' (length=6)
+                    'number_plots' => string '12' (length=2)
+                    'invoice_id' => null
+                    'total_effective_cost' => string '229931' (length=6)
+                    'way_to_spend' => string '08' (length=2)
+                    'folder_in_server' => string '07367014196_1533914804' (length=22)
+                    'contract_id' => null
+                    'ucpf' => string '0' (length=1)
+                    'affiliate_code' => string '' (length=0)
+                    'ccb_number' => null
+                    'new_photos_code' => null
+                    'new_account_bank_code' => null
+                    'new_sing_us_code' => null
+                    'doc_d4sign' => null
+                    'client_id' => string '2' (length=1)
+                    'credit_card_name' => string 'JOSE R G MONTERO' (length=16)
+                    'credit_card_number' => string '5293230325454401' (length=16)
+                    'credit_card_cvv' => string '123' (length=3)
+                    'credit_card_exp_month' => string 'JOSE R G MONTERO' (length=16)
+                    'credit_card_exp_year' => string 'QmE2MWFBPT0=' (length=12)
+                    'bank' => string '268' (length=3)
+                    'agency' => string '44598' (length=5)
+                    'account' => string '125490' (length=6)
+                    'account_type' => string 'CC' (length=2)
+                    'dig' => string '3' (length=1)
+                    'titular_name' => string 'JOSE RAMON GONZALEZ MONTERO' (length=27)
+                    'titular_cpf' => string '07367014196' (length=11)
+                    'propietary_type' => string '0' (length=1)
+                    'credit_card_final' => string '4401' (length=4)
+                    'bank_name' => string 'BARIGUI CH' (length=10)
+                    'dates' => 
+                      array (size=1)
+                        0 => 
+                          array (size=4)
+                            'id' => string '6' (length=1)
+                            'transaction_id' => string '2' (length=1)
+                            'status_id' => string '1' (length=1)
+                            'date' => string '1533914804' (length=10)
+                    'icon_by_status' => string '8 BEGGINER.png' (length=14)
+                    'hint_by_status' => string 'BEGGINER' (length=8)
+                    'solicited_date' => string '10-08-2018 / 12:26' (length=18)
+                    */
+                    
+                    //ATENNCION: en el caso del campo dates, exportar la fecha en que fue creada
+                    //la transaccion, que la de la posicion N-1 del array dates                    
+                }                
+            }while($has_next_page > 0);
+            
+            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
+        }
+    }
+
     //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
     public function approve_transaction(){
         $this->load->model('class/transaction_model');
@@ -1642,6 +1737,38 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    public function to_csv($values){
+	// We can use one implode for the headers =D
+	//$csv = implode(",", array_keys(reset($values))) . PHP_EOL;
+	$csv = "";
+	foreach ($values as $row) {
+            foreach ($row as $elem){
+                    $csv .= $elem.",";	    
+            }
+	    $csv .= PHP_EOL;
+	}
+	return $csv;
+    }
+    
+    function str_putcsv2($data) {
+        # Generate CSV data from array
+        $fh = fopen('php://temp', 'rw'); # don't create a file, attempt
+                                         # to use memory instead
+
+        # write out the headers
+        fputcsv($fh, array_keys(current($data)),PHP_EOL);
+
+        # write out the data
+        foreach ( $data as $row ) {
+                fputcsv($fh, $row, PHP_EOL);
+        }
+        rewind($fh);
+        $csv = stream_get_contents($fh);
+        fclose($fh);
+
+        return $csv;
+    }
+    
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
@@ -2051,13 +2178,13 @@ class Welcome extends CI_Controller {
             'method' => 'credit_card',
             'test' => 'true',
             'data' => array(
-                            'number' => $credit_card['credit_card_number'],
-                            'verification_value' => $credit_card['credit_card_cvv'],
-                            'first_name' => $firstname,
-                            'last_name' => "$lastname",
-                            'month' => $credit_card['credit_card_exp_month'],
-                            'year' => $credit_card['credit_card_exp_year']
-                        )            
+                'number' => $credit_card['credit_card_number'],
+                'verification_value' => $credit_card['credit_card_cvv'],
+                'first_name' => $firstname,
+                'last_name' => "$lastname",
+                'month' => $credit_card['credit_card_exp_month'],
+                'year' => $credit_card['credit_card_exp_year']
+            )            
         );        
         
         $postFields = http_build_query($postData);
@@ -2454,7 +2581,6 @@ class Welcome extends CI_Controller {
                         $plot_date = $this->next_month_to_pay($plot_date);
                     }
                     $fields .= "]\n  }\n}";
-        var_dump($fields); 
         //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
@@ -3202,7 +3328,6 @@ class Welcome extends CI_Controller {
         $transactions = $this->topazio_conciliations($date);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
-                var_dump($transaction);
                 if($transaction->ccbNumber){
                     $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
                     switch ($transaction->statusCode) {
@@ -3303,7 +3428,7 @@ class Welcome extends CI_Controller {
         }while(true);
         
         //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
-    }    
+    }
     
     
 }

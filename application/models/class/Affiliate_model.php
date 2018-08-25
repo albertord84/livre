@@ -59,9 +59,10 @@ class Affiliate_model extends CI_Model{
                 $img = $this->get_icon_by_status($transaction['status_id']);
                 $result[$i]['icon_by_status'] = $img['icon_by_status'];
                 $result[$i]['hint_by_status'] = $img['hint_by_status'];
-                $i++;
-                
+                $result[$i]['solicited_date'] = date("d-m-Y / H:i",$result[$i]['dates'][count($result[$i]['dates'])-1]['date']);
+                $i++;                
             }
+            var_dump($result[$i-1]);
             $has_next_page=false;
             if(count($result)>$amount_by_page){
                 $has_next_page=true;

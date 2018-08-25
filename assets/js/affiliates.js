@@ -188,7 +188,7 @@ $(document).ready(function () {
                     $("#trans_cpf").text(response['message']['cpf']);
                     $("#trans_phone_ddd").text(response['message']['phone_ddd']);
                     $("#trans_phone_number").text(response['message']['phone_number']);
-                    $("#trans_date").text('DD-MM-YY / HH:MM');
+                    $("#trans_date").text(response['message']['solicited_date']);
                     $("#trans_solicited_value").text((response['message']['amount_solicited']/100).toString().replace('.',','));
                     $("#trans_credit_card_name").text(response['message']['credit_card_name']);
                     $("#trans_credit_card_final").text(response['message']['credit_card_final']);

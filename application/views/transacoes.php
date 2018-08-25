@@ -92,7 +92,9 @@
 
 <section class="fleft100 m-top40 m-b100">
 	<div class="container">
-		<h4 class="pd-lr15 m-b10 fw-500 fleft100"><em>Transações</em></h4>
+                <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs text-left">
+                    <h4 class="pd-lr15 m-b10 fw-500 fleft100"><em>Transações</em></h4>                
+                </div>
                 <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
                     <div class="trans cl-fff fleft100 pd-20">
                         <div class="col-md-5 col-sm-5 col-xs-12">
@@ -133,8 +135,38 @@
 			</div>
                     </div>
                 </form>
-		<h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados:</h4>
+                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs text-left">
+                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados:</h4>                
+                </div>
+                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
+                     <button>Exportar</button>
+                </div>
+		
 		<ul class="zebra fleft100 ft-size12 cl-black">
+			<li>
+                            <div class="w5 m-top15 m-top10-xs">                                                                
+                                <img style="width:20px; height:20px" title="<?php echo $transaction['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$transaction['icon_by_status'];?>" alt="">
+                            </div>
+                            <div class="w10 fw-500 m-top15 m-top10-xs">
+                                Trans - ID
+                            </div>
+                            <div class="w15 fw-500 m-top15 m-top10-xs">
+                                Name
+                            </div>
+                            <div class="w15 fw-500 m-top15 m-top10-xs">
+                                Change status
+                            </div>
+                            <div class="w10 m-top15 m-top10-xs fw-500">
+                               Value
+                            </div>
+                            <div class="w15 m-top15 m-top10-xs fw-500">
+                                Account bank 
+                            </div>
+                            <div class="w20 m-top15 m-top10-xs fw-500">
+                                Dados do cartão                        
+                            </div>
+                            
+			</li>
                     <?php foreach($_SESSION['affiliate_logged_transactions'] as $transaction) { ?>
 			<li>
                             <div class="w5 m-top15 m-top10-xs">                                                                
@@ -159,7 +191,7 @@
                                 ?>  
                             </div>
                             <div class="w20 fw-500 text-left center-xs m-top10-xs">
-                                <small class="fleft100">Dados do cartão</small>
+                                <!--<small class="fleft100">Dados do cartão</small>-->
                                 <?php 
                                     echo $transaction['bank_name'].'<br>';
                                     echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
