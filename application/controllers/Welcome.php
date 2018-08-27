@@ -1533,7 +1533,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999);
+            $random_code = rand(100000,999999); $random_code = 123;
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -1574,6 +1574,8 @@ class Welcome extends CI_Controller {
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
+        $response['success'] = TRUE;    //remover essas dos lineas
+        return $response;
         
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
