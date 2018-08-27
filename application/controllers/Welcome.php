@@ -1056,7 +1056,7 @@ class Welcome extends CI_Controller {
                 }                
             }while($has_next_page > 0);
             
-            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
+            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads
         }
     }
 
