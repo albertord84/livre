@@ -20,105 +20,25 @@ class Welcome extends CI_Controller {
             var_dump($t);
         }
     }
-    
-    public function test4(){
-        /*$uudid_doc = $this->upload_document_template_D4Sign(4);
-        if($uudid_doc){
-            //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
-            $token_signer = $this->signer_for_doc_D4Sign(4);
-            if($token_signer){
-                //5.  mandar a assinar
-                $result_send = $this->send_for_sign_document_D4Sign(4);
-            }
-        }/**/
-    }
-
+   
     public function test3(){
-        $resp = $this->topazio_emprestimo(6); 
+        $resp = $this->topazio_emprestimo(4); 
         if($resp['success']){
-            /*$this->transaction_model->save_in_db(
+            $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
+                    'id',4,
                     'ccb_number',$resp['ccb']);                
             $this->transaction_model->save_in_db(
                     'transactions',
-                    'id',6,
-                    'contract_id',$resp['contract_id']);                */
+                    'id',4,
+                    'contract_id',$resp['contract_id']);                
+            print_r("ok");
         }/**/
+        var_dump($resp);
     }
-    
-    public function test2() { 
-        /*$this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
-        $this->Gmail = new Gmail();
-        $email = "jorge85.mail@gmail.com";
-        $result = $this->Gmail->credor_ccb("Luis",$email,"131211239");
-        /*$result = $this->Gmail->transaction_email_approved("Marcio",$email);
-        $result = $this->Gmail->transaction_request_new_photos("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_account_bank("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_new_sing_us("Marcio",$email,"google.com");
-        $result = $this->Gmail->transaction_request_recused("Marcio",$email);
-        $result = $this->Gmail->credit_card_recused("Marcio",$email);
-        $result = $this->Gmail->transaction_email_almost("Marcio",$email);
-        $result = $this->Gmail->transaction_email_trans_in_process("Marcio",$email);
-        $result = $this->Gmail->transaction_email_conclua("Marcio",$email);
-        $result = $this->Gmail->transaction_email_ainda_precisa("Marcio",$email);        
-        $pause = "here";/**/
-        
-        //$uudid_doc = $this->upload_document_template_D4Sign(3);
-        /*$token_signer = $this->signer_for_doc_D4Sign(3);
-               if($token_signer){
-                    //3.  mandar a assinar
-                    $result_send = $this->send_for_sign_document_D4Sign(3);
-                }*/
-        //$safes = $this->upload_document_template_D4Sign(3);
-        //$safes = $this->signer_for_doc_D4Sign(3);
-        //$safes = $this->send_for_sign_document_D4Sign(3);
-        //$safes = $this->cancel_document_D4Sign(3);        
-        //$safes = $this->resend_for_sign_document_D4Sign(3);
-        //$safes = $this->get_document_D4Sign(3);
-        //$tomorrow = $this->next_available_day();
-        //$result = $this->topazio_emprestimo(3);        
-        //$result = $this->topazio_loans(3);        
-        //$result = $this->do_payment_iugu(3);                
-        //$result = $this->topazio_conciliations("2018-08-10");
-        //$result = $this->calculating_enconomical_values(500,6);        
-        //$result = $this->upload_document_D4Sign();        
-    }
-    
-    public function test1() {
-        //$result = $this->topazio_is_restricted("05401009194");       
-        //$this->robot_checking_contracts();
-        //$result = $this->topazio_is_restricted("05401009194","350f3205-aa56-3a14-aed4-370d692f19bd");       
-        //$result = $this->topazio_emprestimo(6);
-        
-        /*$this->load->model('class/transaction_model');
-        $this->load->model('class/transactions_status');
-        $date_contract = $this->transaction_model->get_last_date_signature(6);
-        $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), "c5f678f6-4ebf-3ad8-8e96-62a483e94761");*/
-        /*$uudid_doc = $this->upload_document_template_D4Sign(6);
-        if($uudid_doc){
-            //2. asignar signatario a documento                    
-            $token_signer = $this->signer_for_doc_D4Sign(6);
-            if($token_signer){
-                //3.  mandar a assinar
-                $result_send = $this->send_for_sign_document_D4Sign(6);
-                if($result_send){
-                    //4. cambiar el status de la transaccion
-                    $this->transaction_model->update_transaction_status(
-                            6,
-                            transactions_status::WAIT_SIGNATURE);
-                }
-            }
-        }
-        */
-        //$this->topazio_emprestimo(6);
-    }
-    
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test1();
+        //$this->test3();        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -806,6 +726,12 @@ class Welcome extends CI_Controller {
                 //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);
                 if($response['success']){                    
+                    $string_param = "transactionId=".$_SESSION['pk']
+                                . "&transactionAffiliation=site"
+                                . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                                . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                                . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                                . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
                     //3. crear documento a partir de plantilla y guardar token del documento en la BD
                     $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                     if($uudid_doc){
@@ -832,33 +758,28 @@ class Welcome extends CI_Controller {
                                 //$this->load->view('inc/footer');
                                 $result['success'] = true;
                                 $result['params'] = $params;                                 
-                                 */
-                                $string_param = "transactionId=".$_SESSION['pk']
-                                        . "&transactionAffiliation=site"
-                                        . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
-                                        . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
-                                        . "&amount_months=".$_SESSION['transaction_values']['amount_months']
-                                        . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                   
-                                $result['success'] = true;
-                                $result['params'] = $string_param;                                
-                                session_destroy();
+                                 */                                
                             }
                             else{
-                                session_destroy();
-                                $result['success'] = false;
-                                $result['message'] = "Não foi possivel enviar o documento para assinar! Contate aos nossos atendentes.";  
+                                $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                             }
                         }
                         else{
-                            session_destroy();
-                            $result['success'] = false;
-                            $result['message'] = "Não foi possivel cadastrar assinantes no contrato! Contate aos nossos atendentes.";  
+                            $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                         }
                     }else{
-                        session_destroy();
-                        $result['success'] = false;
-                        $result['message'] = "Não foi possivel criar o contrato para a transacação! Contate aos nossos atendentes.";  
+                        $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
                     }
+                    //sucesso de contrato se foi cobrado
+                    $result['success'] = true;
+                    $result['params'] = $string_param;                                
+                    session_destroy();
                 }else{
                     $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
                     $useremail = $_SESSION['client_datas']['email'];
@@ -1141,9 +1062,11 @@ class Welcome extends CI_Controller {
 
     //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
     public function approve_transaction(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
+        $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);
             if($resp['success']){
@@ -1161,8 +1084,11 @@ class Welcome extends CI_Controller {
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
                 $result = $this->Gmail->transaction_email_approved($name,$useremail);
-                if ($result['success'])
+                if ($result['success']){
                     $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+                    $result['reload'] = 1;
+                    $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::TOPAZIO_IN_ANALISYS);                    
+                }
                 else             
                     $result['message'] = 'Falha enviando email de aprovação. Tente depois.';                
             } else{
@@ -1184,14 +1110,22 @@ class Welcome extends CI_Controller {
                             break;
                     case 3003: //Erro com algum outro dado para a trasferencia
                             break;
-                    default:;
+                    default: ;                    
                 }
-            }
-            echo json_encode($result);
+                $result['message'] = "Error emprestimo. Motivo: ( ".$resp['message']." )";    
+                $result['success'] = false;    
+            }            
         }
+        else{
+            $_SESSION['logged_id'] = -1;
+            $result['message'] = 'Você não possui permisos para fazer esta operação';            
+            $result['success'] = false;            
+        }
+        echo json_encode($result);
     }
     
     public function request_new_photos(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1214,8 +1148,11 @@ class Welcome extends CI_Controller {
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_PHOTO);
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
-            if ($result['success'])
+            if ($result['success']){
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_PHOTO);
+            }
             else             
                 $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
         }
@@ -1252,6 +1189,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_new_account(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1274,8 +1212,11 @@ class Welcome extends CI_Controller {
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_ACCOUNT);
             $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
-            if ($result['success'])
+            if ($result['success']){
                 $result['message'] = 'Nova conta solicitada com sucesso!!';
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_ACCOUNT);
+            }
             else             
                 $result['message'] = 'Falha enviando email de solicitação de nova conta. Tente depois.';                
         }
@@ -1365,6 +1306,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_new_sing_us(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1397,8 +1339,11 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_id'], 
                                     transactions_status::WAIT_SIGNATURE);
                         $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
-                        if ($result['success'])
+                        if ($result['success']){
                             $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+                            $result['reload'] = 1;
+                            $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_SIGNATURE);
+                        }
                         else             
                             $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
                     }
@@ -1424,6 +1369,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_recuse_and_reverse_money(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1444,6 +1390,8 @@ class Welcome extends CI_Controller {
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
                 $result = $this->Gmail->transaction_request_recused($name,$useremail);
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::REVERSE_MONEY);
             }else{
                 $result['message'] = $resp['message'];
             }
@@ -1699,7 +1647,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999);
+            $random_code = rand(100000,999999); $random_code = 123;
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -1772,6 +1720,8 @@ class Welcome extends CI_Controller {
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
+        $response['success'] = TRUE;    //remover essas dos lineas
+        return $response;
         
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2512,7 +2462,7 @@ class Welcome extends CI_Controller {
         }*/
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $this->load->model('class/transaction_status');
+        //$this->load->model('class/transactions_status');
         $this->load->model('class/tax_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
@@ -2544,7 +2494,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($id,0)[0];
         $bank_code = $account_bank["bank"];
         $agency = substr($account_bank["agency"], 0, 4);
-        $account = $account_bank["account"]."-a".$account_bank["dig"];
+        $account = $account_bank["account"].$account_bank["dig"];
         $account_type = $account_type_string[ $account_bank["account_type"] ];
         $fields = "{\n  \"client\":"
                         ." {\n    \"document\": \"".$cpf
@@ -2578,9 +2528,10 @@ class Welcome extends CI_Controller {
                         else
                             $fields .= "\n    ";
                         $plot_number ++;
-                        $plot_date = $this->next_month_to_pay($plot_date);
+                        $plot_date = $this->next_month_to_pay($plot_date, $plot_number);
                     }
                     $fields .= "]\n  }\n}";
+
         //return;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
@@ -2612,7 +2563,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
-            echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
+            //echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             if($result == "Bad Gateway" || $result == "Gateway Timeout"){
@@ -2659,15 +2610,18 @@ class Welcome extends CI_Controller {
         //return $tomorrow;
     }
     
-    public function next_month_to_pay($date){
+    public function next_month_to_pay($date, $i){
         $next_date = new DateTime($date); // Y-m-d
-        $next_date->add(new DateInterval('P30D'));
+        if($i%2 == 0)
+            $next_date->add(new DateInterval('P31D'));
+        else
+            $next_date->add(new DateInterval('P30D'));
         return $next_date->format('Y-m-d');
     }
     
     public function init_date_to_pay($date){
         $next_date = new DateTime($date); // Y-m-d
-        $next_date->add(new DateInterval('P10D'));
+        $next_date->add(new DateInterval('P31D'));
         return $next_date->format('Y-m-d');
     }
 
@@ -2690,8 +2644,9 @@ class Welcome extends CI_Controller {
     public function topazio_emprestimo($id) {// recebe id da transacao        
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/  
-        $API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
+        }*/
+        //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
+        $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic['success']){
@@ -2720,10 +2675,14 @@ class Welcome extends CI_Controller {
             $result['code_error'] = 1001;
         }
         
+        $message = $result['message'];
+        $message = implode(" ",explode("'",$message));
+        $result['message'] = $message;
         return $result;
     }
     
     public function get_transaction_datas_by_id(){
+        $this->load->model('class/affiliate_model');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $datas = $this->input->post();
@@ -2735,6 +2694,9 @@ class Welcome extends CI_Controller {
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
                     $result['success']=true;
+                    //para refrescar icono
+                    $src_status = $this->affiliate_model->get_icon_by_status($transactions['status_id']);
+                    $result['src_status'] = $src_status;
                     break;
                 }
             }
@@ -3133,7 +3095,7 @@ class Welcome extends CI_Controller {
         while ($plot_number <= $num_plots){                    
             $plot_resume[$plot_number - 1] = [$plot_number, $plot_date2, $financials['month_value']];           
             $plot_number ++;            
-            $plot_date = $this->next_month_to_pay($plot_date);
+            $plot_date = $this->next_month_to_pay($plot_date, $plot_number);
             $plot_date2 = date("d/m/Y", strtotime($plot_date));
         }
         
@@ -3281,7 +3243,7 @@ class Welcome extends CI_Controller {
      * F16: JUROS 
     */
 
-    public function calculating_enconomical_values($valor_solicitado, $num_parcelas) {
+    public function calculating_enconomical_values2($valor_solicitado, $num_parcelas) {
         $this->load->model('class/tax_model');
         $B1 = number_format($valor_solicitado, 2, '.', '');
         $B2 = $num_parcelas;
@@ -3430,5 +3392,125 @@ class Welcome extends CI_Controller {
         //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
     }
     
+    public function ARRED ($value){
+        return number_format($value, 2, '.', '');
+    }
+    
+    public function PGTO ($rate, $periods, $pV){
+        return number_format($pV * pow(1+$rate, $periods)*$rate/(pow(1+$rate, $periods)-1), 2, '.', '');
+    }
+    
+    public function PGTOPRINC ($rate, $periods, $pV, $start, $end, $type){
+        //adjust the start and end periods based on the type
+        //if it's 1 then payments are at the beginning of the period
+        //which is the same as the end of the previous period
+        if ($type == 1)
+        {
+            $start -= 1;
+            $end -= 1;
+        }
+
+        //calculate the monthlyPayment
+        $monthlyPayment = (($rate * $pV * pow((1 + $rate), $periods)) / (pow((1 + $rate), $periods) - 1));
+
+        $remainingBalanceAtStart = ((pow((1 + $rate), $start - 1) * $pV) - (((pow((1 + $rate), $start - 1) - 1) / $rate) * $monthlyPayment));
+
+        $remainingBalanceAtEnd = ((pow((1 + $rate), $end) * $pV) - (((pow((1 + $rate), $end) - 1) / $rate) * $monthlyPayment));
+
+        return number_format(-1*($remainingBalanceAtEnd - $remainingBalanceAtStart), 2, '.', '');
+    }
+    
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas){
+        $this->load->model('class/tax_model');
+        $B11 = number_format($valor_solicitado, 2, '.', '');
+        $B16 = $num_parcelas;
+        $B10 = ( $this->tax_model->get_tax_row($B16)[$this->get_field($B11)] )/100;
+        $num_days = 30*($num_parcelas-1) + 10;
+        $B20 = 0.1;
+        $B21 = number_format($B20*$B11, 2, '.', ''); //TAC
+        $IOF_YEAR = 0.0038; 
+        $IOF_DAY = 0.000082;
+        $IOF_LIM = 0.03;        
+        /************  simulando oper ***************/
+        $B9 = $B11 + $B21;
+        $IOF_ADD_oper = $IOF_YEAR * $B9;
+        $oper_parcela = $this->PGTO($B10, $B16, $B9);
+        $operB13 = number_format(pow(pow((1+$B10),12),(1.0/365))-1, 2, '.', '');
+        $acumulado = 0;
+        $IOF_PRAZO_oper = 0;
+        $oper_table = [];        
+        $oper_table['saldo_dev'][0] = $B9;
+        for($i = 1; $i <= $num_parcelas; $i++){
+            $oper_table['parcela'][$i] = $i;
+            //esta estrategia sera definida posteriormente
+            if($i <= 2){
+                $acumulado += 31;            
+            }
+            else {
+                $acumulado += 30 + ($i+1)%2;            
+            }
+            /*$extra_day = ($i <= ($num_parcelas+2)/2 + 1)?1:0;
+            $acumulado += 30 + $extra_day;*/
+            $oper_table['dias_juros'][$i] = $acumulado;
+            $oper_table['parcela'][$i] = $oper_parcela;
+            $oper_table['pgto_princ'][$i] = $this->PGTOPRINC($B10, $B16, $B9, $i, $i, 0);
+            $oper_table['saldo_dev'][$i] = number_format($oper_table['saldo_dev'][$i-1] - $oper_table['pgto_princ'][$i], 2, '.', '');
+            $oper_table['pgto_juros'][$i] = number_format($oper_table['saldo_dev'][$i-1]*( pow(1+$operB13, $oper_table['dias_juros'][$i]) ) - $oper_table['saldo_dev'][$i-1], 2, '.', '');            
+            $oper_table['limite_iof'][$i] = number_format($oper_table['pgto_princ'][$i]*$IOF_LIM, 2, '.', '');
+            $oper_table['prazo_iof'][$i] = min([$oper_table['pgto_princ'][$i]*$IOF_DAY*$oper_table['dias_juros'][$i], $oper_table['limite_iof'][$i]]);
+            $IOF_PRAZO_oper += number_format($oper_table['prazo_iof'][$i], 2, '.', '');
+        }
+        $IOF_PRAZO_oper = number_format($IOF_PRAZO_oper, 2, '.', '');
+        /************  OPER ***************/
+        $IOF_FINAC = number_format($B9*($IOF_PRAZO_oper + $IOF_ADD_oper)/ ($B9-($IOF_PRAZO_oper + $IOF_ADD_oper)), 2, '.', '');
+        $B8 = $B9 + $IOF_FINAC; //valor principal
+        $IOF_ADD = $IOF_ADD_oper;
+        $OP_parcela = $this->PGTO($B10, $B16, $B8);
+        $acumulado = 0;
+        
+        $OP_table = [];        
+        $OP_table['saldo_dev'][0] = $B8;
+        for($i = 1; $i <= $num_parcelas; $i++){
+            $OP_table['parcela'][$i] = $i;
+            //esta estrategia sera definida posteriormente
+            if($i <= 2){
+                $acumulado += 31;            
+            }
+            else {
+                $acumulado += 30 + ($i+1)%2;            
+            }
+            /*$extra_day = ($i <= ($num_parcelas+2)/2 + 1)?1:0;
+            $acumulado += 30 + $extra_day;*/
+            $OP_table['dias_juros'][$i] = $acumulado;
+            $OP_table['parcela'][$i] = $OP_parcela;
+            $OP_table['pgto_princ'][$i] = $this->PGTOPRINC($B10, $B16, $B8, $i, $i, 0);
+            $OP_table['saldo_dev'][$i] = number_format($OP_table['saldo_dev'][$i-1] - $OP_table['pgto_princ'][$i], 2, '.', '');
+            $OP_table['pgto_juros'][$i] = number_format($OP_table['saldo_dev'][$i-1]*( pow(1+$OPB13, $OP_table['dias_juros'][$i]) ) - $OP_table['saldo_dev'][$i-1], 2, '.', '');            
+            $OP_table['limite_iof'][$i] = number_format($OP_table['pgto_princ'][$i]*$IOF_LIM, 2, '.', '');
+            $OP_table['prazo_iof'][$i] = min([$OP_table['pgto_princ'][$i]*$IOF_DAY*$OP_table['dias_juros'][$i], $OP_table['limite_iof'][$i]]);
+            $IOF_PRAZO_OP += number_format($OP_table['prazo_iof'][$i], 2, '.', '');
+        }
+        $IOF_PRAZO_OP = number_format($IOF_PRAZO_OP, 2, '.', '');
+        /************* retornando valores *************/
+        $B10 = number_format( $B10*100, 2, '.', ''); 
+        $total_cust = number_format($B16 * $OP_parcela , 2, '.', '');        
+        $cet_month = number_format( 100.0*($total_cust - $B11)/$B11 , 2, '.', '');        
+        $cet_year = number_format( ($cet_month*12)/$B16 , 2, '.', '');        
+        $result = array(
+            'solicited_value' => $B11,                                
+            'amount_months' => $B16,
+            'tax' => $B10, //juros
+            'month_value' => $OP_parcela,
+            'total_cust_value' => $total_cust,
+            'funded_value' => $B8,
+            'IOF' => $IOF_FINAC,
+            'TAC' => $B21,
+            'CET_PERC' => $cet_month,
+            'CET_YEAR' => $cet_year,                            
+            'tax_value' => number_format($total_cust - $B8 , 2, '.', '') ,
+            'TAC_API' => number_format($total_cust - $B8 , 2, '.', '') 
+            );
+        return $result;
+    }
     
 }

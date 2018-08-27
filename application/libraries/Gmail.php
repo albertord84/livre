@@ -322,7 +322,7 @@
             $this->mail->clearCCs();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
-            $this->mail->Subject = 'Credor da CCB - Livre.digital';            
+            $this->mail->Subject = 'Informação sobre sua transação - Livre.digital';            
             $this->mail->CharSet = 'UTF-8';
             $name = urlencode($name);
             $ccb = urlencode($ccb);

@@ -5,6 +5,13 @@ $(document).ready(function () {
     var transaction_id;
     
     //---------ADMIN FUNCTIONS-----------------------------------
+    $("#trans").on("hidden.bs.modal", function () {
+        if(reload == 1){
+            location.reload(); //recargar pagina porque a ordem pode mudar
+            reload = 0;
+        }
+      });
+    
     $("#save_transaction_status").click(function () {
         val = parseInt($("#sel_admin_actions").val());        
         if(val && confirm("Tem certeza que deseja realizar essa operação na transação")){            
@@ -30,15 +37,25 @@ $(document).ready(function () {
                     break;
             }
             if(fn!=''){
+                $('#wait_aff').show();
                 $.ajax({
                     url: base_url + 'index.php/welcome/'+fn,
                     type: 'POST',
                     dataType: 'json',
-                    success: function (response) {                
+                    success: function (response) {  
+                        $('#wait_aff').hide();
+                        reload = response['reload'];
+                        if(reload){
+                            var d = new Date();
+                            var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
+                            $("#icon_trans").attr("src", url_status+"?"+d.getTime());
+                            $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
+                        }
                         modal_alert_message(response['message']);
                     },
-                    error: function (xhr, status) {
-                        modal_alert_message('Internal error');
+                    error: function (xhr, status) {                        
+                        modal_alert_message('Internal error');                        
+                        $('#wait_aff').hide();
                     }
                 });                
             }
@@ -207,6 +224,10 @@ $(document).ready(function () {
                     }
                     
                     
+                    var d = new Date();
+                    var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
+                    $("#icon_trans").attr("src", url_status+"?"+d.getTime());
+                    $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
                     $('#trans').modal('show');
                 }
                 else{

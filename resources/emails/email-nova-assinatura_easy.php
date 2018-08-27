@@ -14,15 +14,14 @@
 	          	<div style="text-align: left;">
                             <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
                             <p>
-                                Sua assinatura não corresponde àquela apresentada na sua identidade. <br><br>
-                                <b> Este é apenas um procedimento de segurança e pode ser feito pelo seu computador ou celular.</b> <br>
-                                <b> Você só precisa assinar online usando o sistema de assinatura digital.</b>                                
+                                Ainda não identificamos a assinatura do contrato e sem ela não podemos seguir com sua solicitação. <br><br>
+                                <b> Você receberá um e-mail solicitando sua assinatura através da D4Sign e só precisa assinar online.</b> <br>                                
                             </p> 
 <!--                            <a href="<?php echo urldecode($_GET["link"]);?>" style="background-color: #00ff66;padding: 10px 50px !important;font-weight: 600;color: black;text-align: center;border: none;border-radius: 30px !important;text-decoration: none;display: block;">
                                 Assinar
                             </a>-->
                             <p>
-                                Se estiver tudo certo sua solicitação será liberada. <br><br> <b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
+                                Após enviar sua assinatura, se estiver tudo certo sua solicitação será liberada. <br><br> <b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
                             </p>
                         </div> 
 	          	<div>
