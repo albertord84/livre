@@ -7,6 +7,7 @@
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';
+    var reload = 0;
 </script>
 <!--  -->
 <div class="modal" id="wait_aff" style="left: 50%; top: 20%;">
@@ -50,6 +51,7 @@
                                                 <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
+
 				<div class="w5 fw-500 m-top10 center-xs"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
 
 				<div class="fleft100 m-top40">
