@@ -50,7 +50,7 @@
                                                 <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
-				<div class="w5 fw-500 m-top10 center-xs"><a href=""><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
+				<div class="w5 fw-500 m-top10 center-xs"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
 
 				<div class="fleft100 m-top40">
 					<div class="col-md-4 col-sm-4 col-xs-12">
