@@ -7,6 +7,7 @@
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';
+    var reload = 0;
 </script>
 <!--  -->
 <div class="modal" id="wait_aff" style="left: 50%; top: 20%;">

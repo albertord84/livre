@@ -6,7 +6,10 @@ $(document).ready(function () {
     
     //---------ADMIN FUNCTIONS-----------------------------------
     $("#trans").on("hidden.bs.modal", function () {
-        location.reload(); //recargar pagina porque a ordem pode mudar
+        if(reload == 1){
+            location.reload(); //recargar pagina porque a ordem pode mudar
+            reload = 0;
+        }
       });
     
     $("#save_transaction_status").click(function () {
@@ -41,6 +44,13 @@ $(document).ready(function () {
                     dataType: 'json',
                     success: function (response) {  
                         $('#wait_aff').hide();
+                        reload = response['reload'];
+                        if(reload){
+                            var d = new Date();
+                            var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
+                            $("#icon_trans").attr("src", url_status+"?"+d.getTime());
+                            $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
+                        }
                         modal_alert_message(response['message']);
                     },
                     error: function (xhr, status) {                        

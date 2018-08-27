@@ -967,6 +967,7 @@ class Welcome extends CI_Controller {
         
     //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
     public function approve_transaction(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
@@ -988,8 +989,11 @@ class Welcome extends CI_Controller {
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
                 $result = $this->Gmail->transaction_email_approved($name,$useremail);
-                if ($result['success'])
+                if ($result['success']){
                     $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
+                    $result['reload'] = 1;
+                    $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::TOPAZIO_IN_ANALISYS);                    
+                }
                 else             
                     $result['message'] = 'Falha enviando email de aprovação. Tente depois.';                
             } else{
@@ -1026,6 +1030,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_new_photos(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1048,8 +1053,11 @@ class Welcome extends CI_Controller {
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_PHOTO);
             $result = $this->Gmail->transaction_request_new_photos($name,$useremail,$link);
-            if ($result['success'])
+            if ($result['success']){
                 $result['message'] = 'Fotos novas solicitadas com sucesso!!';
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_PHOTO);
+            }
             else             
                 $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
         }
@@ -1086,6 +1094,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_new_account(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1108,8 +1117,11 @@ class Welcome extends CI_Controller {
                         $_SESSION['transaction_requested_id'], 
                         transactions_status::WAIT_ACCOUNT);
             $result = $this->Gmail->transaction_request_new_account_bank($name,$useremail,$link);
-            if ($result['success'])
+            if ($result['success']){
                 $result['message'] = 'Nova conta solicitada com sucesso!!';
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_ACCOUNT);
+            }
             else             
                 $result['message'] = 'Falha enviando email de solicitação de nova conta. Tente depois.';                
         }
@@ -1199,6 +1211,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_new_sing_us(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1231,8 +1244,11 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_id'], 
                                     transactions_status::WAIT_SIGNATURE);
                         $result = $this->Gmail->transaction_request_new_sing_us($name,$useremail,$link);
-                        if ($result['success'])
+                        if ($result['success']){
                             $result['message'] = 'Nova assinatura solicitada com sucesso!!';
+                            $result['reload'] = 1;
+                            $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_SIGNATURE);
+                        }
                         else             
                             $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
                     }
@@ -1258,6 +1274,7 @@ class Welcome extends CI_Controller {
     }
     
     public function request_recuse_and_reverse_money(){
+        $this->load->model('class/affiliate_model');
         $this->load->model('class/system_config');
         $this->load->model('class/transactions_status');
         $this->load->model('class/transaction_model');
@@ -1278,6 +1295,8 @@ class Welcome extends CI_Controller {
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
                 $result = $this->Gmail->transaction_request_recused($name,$useremail);
+                $result['reload'] = 1;
+                $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::REVERSE_MONEY);
             }else{
                 $result['message'] = $resp['message'];
             }
