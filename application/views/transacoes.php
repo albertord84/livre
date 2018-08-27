@@ -19,18 +19,12 @@
 		<div class="modal-content b-none">
                     <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
 			<div class="fleft100 pd-20 bk-fff ft-size13"> 				
-<<<<<<< HEAD
                             <div class="w5 m-top15 m-top10-xs center-xs"><img src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
 				<div class="w25 fw-500 m-top10-xs center-xs">
                                     <small class="fleft100 cl-silver">Dados pessoais</small>
                                     <p>
                                         #<span id="trans_id"></span>
                                         <span id="trans_name"></span> <br>
-=======
-                            <div class="w5 m-top15 m-top10-xs center-xs"><img style="width:20px; height:20px" id = "icon_trans" src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
-				<div class="w25 fw-500 m-top15 m-top10-xs center-xs">
-                                    <p>#<span id="trans_id"></span> <span id="trans_name"></span> <br>
->>>>>>> db265b1b39bb6259a94126edeeb78f3a114b50e4
 					E-mail: <span id="trans_email"></span> <br>
 					CPF: <span id="trans_cpf"></span> <br>
 					Cel.: (<span id="trans_phone_ddd"></span>) <span id="trans_phone_number"></span> 
@@ -66,16 +60,13 @@
                                                 <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
-<<<<<<< HEAD
                             
 				<div class="w5 fw-500 m-top10 center-xs"><a href=""><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
-                                
                                 <div class="fleft100 m-top40">
-=======
-                                <div class="w5 fw-500 m-top10 center-xs"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
-
-				<div class="fleft100 m-top40">
->>>>>>> db265b1b39bb6259a94126edeeb78f3a114b50e4
+                                    
+<!--                                <div class="w5 fw-500 m-top10 center-xs"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
+				<div class="fleft100 m-top40">-->
+                                    
 					<div class="col-md-4 col-sm-4 col-xs-12">
                                             <div class="enviados pd-15">
                                                 <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
