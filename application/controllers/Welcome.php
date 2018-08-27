@@ -2533,6 +2533,7 @@ class Welcome extends CI_Controller {
     }
     
     public function get_transaction_datas_by_id(){
+        $this->load->model('class/affiliate_model');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $datas = $this->input->post();
@@ -2544,6 +2545,9 @@ class Welcome extends CI_Controller {
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
                     $result['success']=true;
+                    //para refrescar icono
+                    $src_status = $this->affiliate_model->get_icon_by_status($transactions['status_id']);
+                    $result['src_status'] = $src_status;
                     break;
                 }
             }

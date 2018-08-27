@@ -5,6 +5,10 @@ $(document).ready(function () {
     var transaction_id;
     
     //---------ADMIN FUNCTIONS-----------------------------------
+    $("#trans").on("hidden.bs.modal", function () {
+        location.reload(); //recargar pagina porque a ordem pode mudar
+      });
+    
     $("#save_transaction_status").click(function () {
         val = parseInt($("#sel_admin_actions").val());        
         if(val && confirm("Tem certeza que deseja realizar essa operação na transação")){            
@@ -205,7 +209,11 @@ $(document).ready(function () {
                     $("#trans_city_address").text(response['message']['city_address']);
                     $("#trans_state_address").text(response['message']['state_address']);
                     $("#trans_cep").text(response['message']['cep']);                                        
-//                    $("#trans_").text(response['message']['']);
+//                    $("#trans_").text(response['message']['']);                    
+                    var d = new Date();
+                    var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
+                    $("#icon_trans").attr("src", url_status+"?"+d.getTime());
+                    $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
                     $('#trans').modal('show');
                 }
                 else{
