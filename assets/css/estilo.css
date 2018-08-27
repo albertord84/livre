@@ -19,6 +19,20 @@ Facebook: https://www.facebook.com/felipe.golfetto
   max-width: 70px;
 }
 
+.status-history{
+    border:1px solid gray;
+    font-size:10px;
+    border-radius:15px;
+    margin-left:5px;
+    margin-right:5px; 
+    padding:15px; 
+    background-color:cyan
+}
+
+#ctn_status_history{
+    /*TODO: Jose R - permitir scroll*/
+}
+
 #banner{
   height: 560px;
 }

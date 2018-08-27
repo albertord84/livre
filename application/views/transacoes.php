@@ -16,23 +16,32 @@
                     <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
 			<div class="fleft100 pd-20 bk-fff ft-size13"> 				
                             <div class="w5 m-top15 m-top10-xs center-xs"><img src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
-				<div class="w25 fw-500 m-top15 m-top10-xs center-xs">
-                                    <p>#<span id="trans_id"></span> <span id="trans_name"></span> <br>
+				<div class="w25 fw-500 m-top10-xs center-xs">
+                                    <small class="fleft100 cl-silver">Dados pessoais</small>
+                                    <p>
+                                        #<span id="trans_id"></span>
+                                        <span id="trans_name"></span> <br>
 					E-mail: <span id="trans_email"></span> <br>
 					CPF: <span id="trans_cpf"></span> <br>
 					Cel.: (<span id="trans_phone_ddd"></span>) <span id="trans_phone_number"></span> 
                                     </p>
 				</div>
-				<div class="w15 fw-500 m-top15 m-top10-xs center-xs"><span id="trans_date"></span></div>
-				<div class="w10 cl-blue m-top15 m-top10-xs center-xs fw-500">R$ <span id="trans_solicited_value"></span></div>
-				<div class="w20 fw-500 text-left center-xs m-top10-xs">
+				<div class="w15 fw-500 text-left m-top10-xs center-xs">
+                                    <small class="fleft100 cl-silver">Data de Solicitação</small>
+                                    <span id="trans_date"></span>
+                                </div>
+				<div class="w10 fw-500 cl-blue m-top10-xs center-xs text-left">
+                                    <small class="fleft100 cl-silver">Valor tomado</small>
+                                    R$ <span id="trans_solicited_value"></span>
+                                </div>
+				<div class="w20 fw-500 text-left m-top10-xs center-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
-					<span id="trans_credit_card_name"></span> - Final <span id="trans_credit_card_final"></span> <br>
-					<!--24/Julho - CVV 245
+					<span id="trans_credit_card_name"></span> - Final 
+                                        <span id="trans_credit_card_final"></span> <br>
 					<div class="fleft100">
-						<small class="fleft100 cl-silver m-top20">Dados do cartão</small>
-						Investimento em estudos
-					</div>-->
+                                            <small class="fleft100 cl-silver m-top20">Uso:</small>
+                                            <span id="way_to_spend_name"></span> <br>
+					</div>
 				</div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados bancários</small>
@@ -47,9 +56,10 @@
                                                 <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
+                            
 				<div class="w5 fw-500 m-top10 center-xs"><a href=""><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
-
-				<div class="fleft100 m-top40">
+                                
+                                <div class="fleft100 m-top40">
 					<div class="col-md-4 col-sm-4 col-xs-12">
                                             <div class="enviados pd-15">
                                                 <h5 class="fleft100 m-b10"><img src="<?php echo base_url().'assets/img/icones/anx.png'?>"> Arquivos enviados</h5>
@@ -84,7 +94,17 @@
                                                     <button id="save_transaction_status" class="bt-green">Salvar</button>
                                                 </div>
 					</div>
+				</div>	
+                                
+                                <div class="fleft100 m-top20 m-l15 m-r20">
+				    <small class="fleft100 cl-silver">Histórico dos status</small>
+                                    <div id="ctn_status_history">
+                                        <table id="">
+                                            <tr id="status_history"></tr>
+                                        </table>
+                                    </div>
 				</div>
+                                
 			</div>	
 		</div>
 	</div>

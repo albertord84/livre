@@ -2690,7 +2690,7 @@ class Welcome extends CI_Controller {
     public function topazio_emprestimo($id) {// recebe id da transacao        
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/
+        }*/  
         $API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);

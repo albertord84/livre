@@ -175,13 +175,7 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                if(response['success']) {
-                    /*year=date.getFullYear();
-                    day=date.getDate();
-                    hour=date.getHours();
-                    minutes=date.getMinutes();
-                    seconds=date.getSeconds();
-                    return day+"/"+month+"/"+year+" "+hour+":"+minutes+":"+seconds;*/                    
+                if(response['success']) {               
                     $("#trans_id").text(response['message']['client_id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
@@ -202,7 +196,17 @@ $(document).ready(function () {
                     $("#trans_city_address").text(response['message']['city_address']);
                     $("#trans_state_address").text(response['message']['state_address']);
                     $("#trans_cep").text(response['message']['cep']);                                        
-//                    $("#trans_").text(response['message']['']);
+                    $("#way_to_spend_name").text(response['message']['way_to_spend_name']);    
+                    for(i=0;i<response['message']['dates'].length;i++){
+                        st = get_icon_by_status(response['message']['dates'][i]['status_id']);
+                        $("#status_history").append((
+                            "<td title='"+st['hint_by_status']+"'><div class='status-history'>"+
+                                "<img style='width:20px; margin-right:10px' src='"+base_url+"assets/img/icones/"+st['icon_by_status']+"'>"+
+                                    response['message']['dates'][i]['date']));
+                            //TODO:fecha con JS en formato dd-mm-YY
+                    }
+                    
+                    
                     $('#trans').modal('show');
                 }
                 else{
@@ -214,6 +218,41 @@ $(document).ready(function () {
             }
         });         
     });
+    
+    function get_icon_by_status($status_id) {
+        BEGINNER= '1';
+        WAIT_SIGNATURE = '2';
+        APPROVED = '3';
+        WAIT_PHOTO = '4';
+        WAIT_ACCOUNT = '5';
+        TOPAZIO_APROVED = '6';
+        TOPAZIO_IN_ANALISYS = '7';
+        TOPAZIO_DENIED = '8';
+        REVERSE_MONEY = '9';
+        PENDING = '22';
+        switch ($status_id) {
+            case BEGINNER:
+                return {'hint_by_status':'BEGGINER','icon_by_status':'8 BEGGINER.png'};
+            case WAIT_SIGNATURE:
+                return {'hint_by_status':'WAIT_SIGNATURE','icon_by_status':'6 AGUARD.png'}; 
+            case APPROVED:
+                return {'hint_by_status':'APPROVED','icon_by_status':'3 APROV.png'};
+            case WAIT_PHOTO:
+                return {'hint_by_status':'WAIT_PHOTO','icon_by_status':'6 AGUARD.png'};
+            case WAIT_ACCOUNT:
+                return {'hint_by_status':'WAIT_ACCOUNT','icon_by_status':'6 AGUARD.png'};
+            case TOPAZIO_APROVED:
+                return {'hint_by_status':'TOPAZIO_APROVED','icon_by_status':'1 APROV  TOP.png'};
+            case TOPAZIO_IN_ANALISYS:
+                return {'hint_by_status':'TOPAZIO_IN_ANALISYS','icon_by_status':'2 AGUARD TOP.png'};
+            case TOPAZIO_DENIED:
+                return {'hint_by_status':'TOPAZIO_DENIED','icon_by_status':'4 REPROV TOP.png'};
+            case REVERSE_MONEY:
+                return {'hint_by_status':'REVERSE_MONEY','icon_by_status':'5 REPROV DEVOLVIDO.png'};
+            case PENDING:
+                return {'hint_by_status':'PENDING FOR ANALYSIS','icon_by_status':'7 PENDENTE.png'};
+        }
+    }
         
     $('#get_url_contract').click(function () {
         $.ajax({

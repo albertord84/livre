@@ -59,10 +59,10 @@ class Affiliate_model extends CI_Model{
                 $img = $this->get_icon_by_status($transaction['status_id']);
                 $result[$i]['icon_by_status'] = $img['icon_by_status'];
                 $result[$i]['hint_by_status'] = $img['hint_by_status'];
-                $result[$i]['solicited_date'] = date("d-m-Y / H:i",$result[$i]['dates'][count($result[$i]['dates'])-1]['date']);
+                $result[$i]['solicited_date'] = date("d-m-y / H:i",$result[$i]['dates'][count($result[$i]['dates'])-1]['date']);
+                $result[$i]['way_to_spend_name'] = $this->get_transaction_way_to_spend($result[$i]['way_to_spend']);
                 $i++;                
             }
-            var_dump($result[$i-1]);
             $has_next_page=false;
             if(count($result)>$amount_by_page){
                 $has_next_page=true;
@@ -304,6 +304,29 @@ class Affiliate_model extends CI_Model{
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
         } 
+    }
+    
+    public function get_transaction_way_to_spend($way_to_spend){
+        switch ($way_to_spend) {
+            case "01":
+                return "Compras";
+            case "02":
+                return "Quitar dívida do cartão de crédito";
+            case "03":
+                return "Quitar cheque especial";
+            case "04":
+                return "Quitar outras dívidas";
+            case "05":
+                return "Investir em negócio próprio";
+            case "06":
+                return "Educação";
+            case "07":
+                return "Viagem";
+            case "08":
+                return "Saúde";
+            case "09":
+                return "Outros ...";            
+        }
     }
     
 
