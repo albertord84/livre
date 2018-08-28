@@ -2556,8 +2556,8 @@ class Welcome extends CI_Controller {
                 $result_query['code_error'] = 2003;
             }
             else{
-                return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error basic'];
-                $result_query['message'] = $parsed_response->errors->values[0]->error[0];
+                //return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error basic'];
+                $result_query['message'] = (string)($result);//$parsed_response->errors->values[0]->error[0];
                 $result_query['code_error'] = 2004;
             }
         }
