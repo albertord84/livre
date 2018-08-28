@@ -178,7 +178,7 @@
                                 Trans - ID
                             </div>
                             <div class="w15 fw-500 m-top15 m-top10-xs">
-                                Name
+                                CPF
                             </div>
                             <div class="w15 fw-500 m-top15 m-top10-xs">
                                 Change status
@@ -203,7 +203,7 @@
                                 <?php echo $transaction['client_id']; ?>
                             </div>
                             <div class="w15 fw-500 m-top15 m-top10-xs">
-                                <?php echo $transaction['name']; ?>
+                                <?php echo $transaction['cpf']; ?>
                             </div>
                             <div class="w15 fw-500 m-top15 m-top10-xs">
                                 <?php echo date("d-m-y / H:i", $transaction['dates'][0]['date']); ?>
