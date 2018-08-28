@@ -2757,6 +2757,7 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
+        return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error'];
         //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
         $API_token = $this->get_topazio_API_token();
         if($API_token){
