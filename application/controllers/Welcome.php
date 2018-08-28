@@ -1108,8 +1108,7 @@ class Welcome extends CI_Controller {
             //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
             if(!$first_result)
                 fclose($file); 
-            exit;                            
-        }
+            exit;                                    }
     }
     
     public function file_transactions(){        
