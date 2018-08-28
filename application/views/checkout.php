@@ -285,7 +285,7 @@
                         </div>
                         <div class="fleft100 text-right col-12">                            
                             <div class="m-top10 text-right col-6">
-                                <button id="btn_steep_2_prev" class="bt-green px2" style="background-color: #7bffbf">Anterior</button>
+                                <button id="btn_steep_2_prev" class="bt-green px2" style="background-color: #e1e1e1">Anterior</button>
                                 <button id="btn_steep_2_next" class="bt-green px2 m-top5">Próximo</button>                            
                             </div>
                             
@@ -557,7 +557,7 @@
                                     </fieldset>
                                 </div>
                                 <div class="fleft100 m-top10 text-right">
-                                    <button id="btn_steep_3_prev" class="bt-green px3" style="background-color: #7bffbf">Anterior</button>
+                                    <button id="btn_steep_3_prev" class="bt-green px3" style="background-color: #e1e1e1">Anterior</button>
                                     <button id="btn_steep_3_next" class="bt-green px3 m-top5">Próximo</button>
                                 </div>
                             </div>				
@@ -729,7 +729,7 @@
                                 </div>                                
                             </div>
                             <div class="fleft100 m-top10 text-right">
-                                <button id="btn_steep_4_prev" class="bt-green px4" style="background-color: #7bffbf">Anterior</button>
+                                <button id="btn_steep_4_prev" class="bt-green px4" style="background-color: #e1e1e1">Anterior</button>
                                 <button id="do_sign" type="submit" class="bt-green mxw-250 m-top5">Contratar</button>
                                 <!--<a href="https://secure.rightsignature.com/templates/a928ddf8-3448-471a-8715-5c380f20f4de/template-signer-link/ab8c91ff6a6120267167cbca08615106" class="embed_button embed_green_button" id="embed_d1e97fc8-9f46-4fe0-af4a-bd5141821f37" data-guid="d1e97fc8-9f46-4fe0-af4a-bd5141821f37">Sign Document</a><script charset="ISO-8859-1" src="https://secure.rightsignature.com/embed.js"></script>-->
                                 <!--<div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe></div>-->

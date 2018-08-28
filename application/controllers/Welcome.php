@@ -976,12 +976,13 @@ class Welcome extends CI_Controller {
             $has_next_page = 0;
             //TODO: Moreno
             //1. abrir archivo temporal em modo escritura
+            $first_result = TRUE;
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
                 //guardada en la variable de seccion
                 $transactions = $this->affiliate_model->load_transactions(
                     NULL,
-                    $page,
+                    $page-1,
                     $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $token,
                     $start_period,
@@ -1052,12 +1053,120 @@ class Welcome extends CI_Controller {
                     */
                     
                     //ATENNCION: en el caso del campo dates, exportar la fecha en que fue creada
-                    //la transaccion, que la de la posicion N-1 del array dates                    
+                    //la transaccion, que la de la posicion N-1 del array dates 
+                    $way_to_spend = [
+                        '00' => 'Selecione',
+                        '01' => 'Compras',
+                        '02' => 'Quitar dívida do cartão de crédito',
+                        '03' => 'Quitar cheque especial',
+                        '04' => 'Quitar outras dívidas',
+                        '05' => 'Investir em negócio próprio',
+                        '06' => 'Educação',
+                        '07' => 'Viagem',
+                        '08' => 'Saúde',
+                        '09' => 'Outros ...'
+                    ];
+                    $tr_reduce['id_trans'] = $tr['client_id'];
+                    $tr_reduce['status'] = $tr['hint_by_status'];
+                    $tr_reduce['cpf'] = $tr['cpf'];
+                    $tr_reduce['name'] = $tr['name'];
+                    $tr_reduce['email'] = $tr['email'];
+                    $tr_reduce['phone_number'] = $tr['phone_ddd'].$tr['phone_number'];
+                    $tr_reduce['cep'] = $tr['cep'];
+                    $tr_reduce['number_address'] = $tr['number_address'];
+                    $tr_reduce['street'] = $tr['street_address'];
+                    $tr_reduce['complement_number'] = $tr['complement_number_address'];
+                    $tr_reduce['city'] = $tr['city_address'];
+                    $tr_reduce['state'] = $tr['state_address'];
+                    $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
+                    $tr_reduce['months'] = $tr['number_plots'];
+                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                    
+                    $tr_reduce['bank_name'] = $tr['bank_name'];
+                    $tr_reduce['credit_card_final'] = $tr['credit_card_final'];
+                    $tr_reduce['solicited_date'] = $tr['solicited_date'];
+                    $tr_reduce['partnerId'] = $tr['contract_id'];                    
+                    $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
+                    
+                    if($first_result && $tr_reduce){
+                        $first_result = FALSE;
+                        $filename = 'transactions'.date('Ymd', time()).'.csv'; 
+                        header("Content-Description: File Transfer"); 
+                        header("Content-Disposition: attachment; filename=$filename"); 
+                        header("Content-Type: application/csv; ");
+
+                        // file creation 
+                        $file = fopen('php://output', 'w');
+
+                        fputcsv($file, array_keys($tr_reduce));                            
+                    }
+
+                    //foreach ($tr as $key=>$line){ 
+                      fputcsv($file,$tr_reduce);                          
+                    //}
                 }                
             }while($has_next_page > 0);
-            
             //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
+            if(!$first_result)
+                fclose($file); 
+            exit;                            
         }
+    }
+    
+    public function file_transactions(){        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');
+        if($_SESSION['logged_role'] === 'ADMIN'){                
+            $datas = $this->input->get();
+            
+            $init_date = $datas['init_date'];
+            $end_date = $this->real_end_date($datas['end_date']);  
+
+            if($init_date!=NULL && $end_date!=NULL && $init_date == $end_date){
+                $end_date = $init_date + 24*3600-1;
+            }
+
+            while ($result_sql){
+                $result_sql = $this->campaing_model->get_leads_limit( $this->session->userdata('id'),
+                                                                $id_campaing,
+                                                                $profile_row['id'],
+                                                                $init_date,
+                                                                $end_date,
+                                                                $info_to_get,
+                                                                $max_id
+                                                                );                    
+                $result_sql = $this->convert_from_latin1_to_utf8_recursively($result_sql);
+
+                if($first_result && count($result_sql) > 0){
+                    $first_result = FALSE;
+                    $filename = 'leads_'.date('Ymd', $init_date).'_'.date('Ymd', $end_date).'.csv'; 
+                    header("Content-Description: File Transfer"); 
+                    header("Content-Disposition: attachment; filename=$filename"); 
+                    header("Content-Type: application/csv; ");
+
+                    // file creation 
+                    $file = fopen('php://output', 'w');
+
+                    fputcsv($file, array_keys(current($result_sql)));                            
+                }
+
+                foreach ($result_sql as $key=>$line){ 
+                  fputcsv($file,$line);                          
+                }
+            }
+            if(!$first_result)
+                fclose($file); 
+            exit;
+            $result['success'] = true;
+            $result['message'] = '';
+            $result['resource'] = 'afhome';
+        }
+        else{
+            $result['success'] = false;
+            $result['message'] = $this->T("Não existe sessão ativa", array(), $GLOBALS['language']);
+            $result['resource'] = 'afhome';
+        } 
+        $this->load->view('afhome');
     }
 
     //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
