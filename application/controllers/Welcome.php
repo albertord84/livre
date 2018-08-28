@@ -2762,7 +2762,8 @@ class Welcome extends CI_Controller {
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic['success']){
-                $response = $this->topazio_loans($id, $API_token);
+                //$response = $this->topazio_loans($id, $API_token);
+                $response = ['success' => false, 'code_error' => 3003, 'message' => 'Testing error'];
                 if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            
