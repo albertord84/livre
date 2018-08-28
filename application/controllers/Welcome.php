@@ -2756,8 +2756,7 @@ class Welcome extends CI_Controller {
     public function topazio_emprestimo($id) {// recebe id da transacao        
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/
-        return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error'];
+        }*/        
         //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
         $API_token = $this->get_topazio_API_token();
         if($API_token){
@@ -2926,7 +2925,7 @@ class Welcome extends CI_Controller {
             if($parsed_response)
                 $result_api['message'] = $parsed_response->error->errors[0];
             else
-                $result_api['message'] = $result;
+                $result_api['message'] = "error llamando a restricted";
         }
         return $result_api;
     }
