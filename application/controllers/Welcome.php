@@ -2671,7 +2671,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
-            //echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
+            ///echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             if($result == "Bad Gateway" || $result == "Gateway Timeout"){
