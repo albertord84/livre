@@ -214,12 +214,13 @@ $(document).ready(function () {
                     $("#trans_state_address").text(response['message']['state_address']);
                     $("#trans_cep").text(response['message']['cep']);                                        
                     $("#way_to_spend_name").text(response['message']['way_to_spend_name']);    
+                    $("#status_history").html('<td>');
                     for(i=0;i<response['message']['dates'].length;i++){
                         st = get_icon_by_status(response['message']['dates'][i]['status_id']);
                         $("#status_history").append((
                             "<td title='"+st['hint_by_status']+"'><div class='status-history'>"+
                                 "<img style='width:20px; margin-right:10px' src='"+base_url+"assets/img/icones/"+st['icon_by_status']+"'>"+
-                                    response['message']['dates'][i]['date']));
+                                    toDate(response['message']['dates'][i]['date'])));
                             //TODO:fecha con JS en formato dd-mm-YY
                     }
 //                    var d = new Date();
@@ -459,6 +460,63 @@ $(document).ready(function () {
             return true;
         }
     }   
+    
+    $("#export_transactions").on("click", function(){                
+        /*var initDate = $('#init_date').val();
+        initDate = initDate.split("/");        
+        var init_date = toTimestamp(initDate[1]+"/"+initDate[0]+"/"+initDate[2]);
+        
+        var endDate = $('#end_date').val();
+        endDate = endDate.split("/");        
+        var end_date = toTimestamp(endDate[1]+"/"+endDate[0]+"/"+endDate[2]);
+                
+        if(init_date && end_date){
+            if(init_date <= end_date){*/
+            $(location).attr('href',base_url+'index.php/welcome/export_transactions');                                                            
+            /*    $.ajax({
+                type: "POST",
+                url: base_url + 'index.php/welcome/export_transactions', //calling method in controller
+                data: {                
+                    init_date: init_date,
+                    end_date: end_date                
+                },
+                dataType:'json',
+                success: function (response) {
+                    if (response['success']) {
+                        $(location).attr('href',base_url+'index.php/welcome/export_transactions');                                                            
+                    }
+                    else{
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Ooops ... problema no servidor'); 
+                }
+            });*/
+        /*    }
+            else
+            {
+                modal_alert_message(T("A data incial deve ser anterior à data final",language));
+            }  
+        }
+        else
+            modal_alert_message(T("Deve fornecer o intervalo válido de datas para a extração",language));
+        */
+    });
+    
+    function toDate(number){    
+        var a = new Date(number*1000);
+        var year = a.getFullYear();
+        var month = a.getMonth()+1;
+        if(month <= 9)
+            month = '0'+month;
+
+        var date = a.getDate();
+        if(date <= 9)
+            date = '0'+date;
+        var t = date + '/' + month + '/' + year;
+        return t;
+    }
     
     function init_signin(){        
         $('#affiliate_complete_name').val('JOSÉ RAMÓN GONZÁLEZ MONTERO');
