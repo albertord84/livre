@@ -2492,7 +2492,7 @@ class Welcome extends CI_Controller {
         
         $cpf = $client["cpf"];
         $name = $client["name"];
-        $cep = $client["cep"];
+        $cep = (int)$client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
         $number = $client["complement_number_address"];
         $district = "_"; //"";
@@ -2509,7 +2509,7 @@ class Welcome extends CI_Controller {
                     ."  \"postalCode\": ".$cep
                     .",\n    \"street\": \"".$street
                     ."\",\n    \"number\": \"".$number
-                    ."\",\n    \"complement\": \"\",\n    \"district\": \"".$district
+                    ."\",\n    \"complement\": \"_\",\n    \"district\": \"".$district
                     ."\",\n    \"city\": \"".$city
                     ."\",\n    \"state\": \"".$state
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
@@ -2555,8 +2555,7 @@ class Welcome extends CI_Controller {
                 $result_query['message'] = "Impossivel comunicar com API de Topazio";
                 $result_query['code_error'] = 2003;
             }
-            else{
-                //return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error basic'];
+            else{                
                 $result_query['message'] = (string)($result);//$parsed_response->errors->values[0]->error[0];
                 $result_query['code_error'] = 2004;
             }
@@ -2757,14 +2756,12 @@ class Welcome extends CI_Controller {
     public function topazio_emprestimo($id) {// recebe id da transacao        
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/        
-        //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
+        }*/
         $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic['success']){
-                //$response = $this->topazio_loans($id, $API_token);
-                $response = ['success' => false, 'code_error' => 3003, 'message' => 'Testing error'];
+                $response = $this->topazio_loans($id, $API_token);                
                 if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            
