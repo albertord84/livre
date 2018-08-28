@@ -2576,6 +2576,10 @@ class Welcome extends CI_Controller {
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         $date_contract = $this->transaction_model->get_last_date_signature($id);
+        if(!$date_contract)
+        {
+            return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+        }
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         
         //********************************
@@ -2593,7 +2597,7 @@ class Welcome extends CI_Controller {
         $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
         if(!$tomorrow)
         {
-            return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+            return ['success' => false, 'code_error' => 3003,'message' => 'Contrato ainda não passou pelo estado de esperar assinatura'];
         }
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
