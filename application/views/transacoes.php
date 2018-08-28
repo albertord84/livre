@@ -19,7 +19,7 @@
 		<div class="modal-content b-none">
                     <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
 			<div class="fleft100 pd-20 bk-fff ft-size13"> 				
-                            <div class="w5 m-top15 m-top10-xs center-xs"><img src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
+                            <div class="w5 m-top15 m-top10-xs center-xs"><img style="width:20px; height:20px" id="icon_trans" src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
 				<div class="w25 fw-500 m-top10-xs center-xs">
                                     <small class="fleft100 cl-silver">Dados pessoais</small>
                                     <p>

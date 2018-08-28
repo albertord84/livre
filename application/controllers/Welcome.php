@@ -1755,7 +1755,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); $random_code = 123;
+            $random_code = rand(100000,999999); //$random_code = 123;
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -1828,8 +1828,8 @@ class Welcome extends CI_Controller {
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        $response['success'] = TRUE;    //remover essas dos lineas
-        return $response;
+        //$response['success'] = TRUE;    //remover essas dos lineas
+        //return $response;
         
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2492,7 +2492,7 @@ class Welcome extends CI_Controller {
         
         $cpf = $client["cpf"];
         $name = $client["name"];
-        $cep = $client["cep"];
+        $cep = (int)$client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
         $number = $client["complement_number_address"];
         $district = "_"; //"";
@@ -2509,7 +2509,7 @@ class Welcome extends CI_Controller {
                     ."  \"postalCode\": ".$cep
                     .",\n    \"street\": \"".$street
                     ."\",\n    \"number\": \"".$number
-                    ."\",\n    \"complement\": \"\",\n    \"district\": \"".$district
+                    ."\",\n    \"complement\": \"_\",\n    \"district\": \"".$district
                     ."\",\n    \"city\": \"".$city
                     ."\",\n    \"state\": \"".$state
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
@@ -2555,8 +2555,8 @@ class Welcome extends CI_Controller {
                 $result_query['message'] = "Impossivel comunicar com API de Topazio";
                 $result_query['code_error'] = 2003;
             }
-            else{
-                $result_query['message'] = $parsed_response->errors->values[0]->error[0];
+            else{                
+                $result_query['message'] = (string)($result);//$parsed_response->errors->values[0]->error[0];
                 $result_query['code_error'] = 2004;
             }
         }
@@ -2675,7 +2675,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
-            //echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
+            ///echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             if($result == "Bad Gateway" || $result == "Gateway Timeout"){
@@ -2757,12 +2757,11 @@ class Welcome extends CI_Controller {
         /*if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }*/
-        //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
         $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic['success']){
-                $response = $this->topazio_loans($id, $API_token);
+                $response = $this->topazio_loans($id, $API_token);                
                 if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            

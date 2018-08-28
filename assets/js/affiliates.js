@@ -223,10 +223,10 @@ $(document).ready(function () {
                                     toDate(response['message']['dates'][i]['date'])));
                             //TODO:fecha con JS en formato dd-mm-YY
                     }
-//                    var d = new Date();
-//                    var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
-//                    $("#icon_trans").attr("src", url_status+"?"+d.getTime());
-//                    $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
+                    var d = new Date();
+                    var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
+                    $("#icon_trans").attr("src", url_status+"?"+d.getTime());
+                    $("#icon_trans").attr("title", response['src_status']['hint_by_status']);
                     $('#trans').modal('show');
                 }
                 else{
