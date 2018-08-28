@@ -2489,7 +2489,7 @@ class Welcome extends CI_Controller {
             $response['code_error'] = 2002;
             return $response;
         }
-        
+        return ['success' => false, 'code_error' => 3003, 'message' => 'Testing error basic'];
         $cpf = $client["cpf"];
         $name = $client["name"];
         $cep = $client["cep"];
@@ -2925,7 +2925,7 @@ class Welcome extends CI_Controller {
             if($parsed_response)
                 $result_api['message'] = $parsed_response->error->errors[0];
             else
-                $result_api['message'] = "error llamando a restricted";
+                $result_api['message'] = $result;
         }
         return $result_api;
     }
