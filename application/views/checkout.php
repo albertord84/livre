@@ -27,7 +27,7 @@
 	<link rel="stylesheet" href="<?php echo base_url().'assets/css/media.css?'.$SCRIPT_VERSION;?>" />
         
         <!-- IUGU JS -->
-        <!--<script type="text/javascript" src="https://js.iugu.com/v2"></script>-->
+        <script type="text/javascript" src="https://js.iugu.com/v2"></script>
                 
         <!-- JS -->
         <script type="text/javascript">

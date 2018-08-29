@@ -6,8 +6,56 @@ $(document).ready(function () {
     * this debe ser un formulario e cada campo debe tener un atributo data-iugu
     * ademas deben especificarse los campos como aparece en la API
    */
-  
-    $("#btn_steep_2_next").click(function () {  
+    
+    Iugu.createPaymentToken(this, function(response) {
+            if (response.errors) {
+                    alert("Erro salvando cartão");
+            } else {
+                    alert("Token criado:" + response.id);
+            }	
+    });
+    
+    function get_token() {
+        var cc = Iugu.CreditCard("4111111111111111", 
+                     "12", "2017", "Nome", 
+                     "Sobrenome", "123");
+        var form = $(this);
+        var tokenResponseHandler = function(data) {
+
+            if (data.errors) {
+                alert("Erro salvando cartão: " + JSON.stringify(data.errors));
+            } else {
+                //$("#token").val( data.id );
+                //form.get(0).submit();
+                alert("Token criado")
+            }
+
+            // Seu código para continuar a submissão
+            // Ex: form.submit();
+        }
+        
+        var tokenResponseHandler2 = function(data2) {
+
+            if (data.errors) {
+                alert("Erro salvando cartão: " + JSON.stringify(data.errors2));
+            } else {
+                //$("#token").val( data.id );
+                //form.get(0).submit();
+                alert("Token criado")
+            }
+
+            // Seu código para continuar a submissão
+            // Ex: form.submit();
+        }
+
+        Iugu.createPaymentToken(cc, tokenResponseHandler);
+        Iugu.createPaymentToken(cc, tokenResponseHandler2);
+        return false;
+    }
+    $("#btn_steep_2_next").click(function () {   
+       get_token(); 
+    });
+    /*$("#btn_steep_2_next").click(function () {  
         alert("solicitando token");
         var data = JSON.stringify({
             "account_id": "80BF7285A577436483EE04E0A80B63F4",
@@ -44,25 +92,5 @@ $(document).ready(function () {
             }	
         });
     });
-    /*jQuery(function($) {
-      $('#payment-form').submit(function(evt) {
-          var form = $(this);
-          var tokenResponseHandler = function(data) {
-
-              if (data.errors) {
-                  alert("Erro salvando cartão: " + JSON.stringify(data.errors));
-              } else {
-                  $("#token").val( data.id );
-                  form.get(0).submit();
-              }
-
-              // Seu código para continuar a submissão
-              // Ex: form.submit();
-          }
-
-          Iugu.createPaymentToken(this, tokenResponseHandler);
-          return false;
-      });
-    });*/
-    
+    */
 });

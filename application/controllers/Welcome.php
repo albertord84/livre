@@ -479,17 +479,19 @@ class Welcome extends CI_Controller {
         //2. Analisar cartões bloqueados e nomes de hackers
         $card_bloqued = ["5178057308185854","5178057258138580","4500040041538532", "4984537159084527"];
         $name_bloqued = [ "JUNIOR SUMA", "JUNIOR LIMA", "JUNIOR SANTOS","JUNIOR S SILVA", "FERNANDO ALVES", "LUCAS BORSATTO22", "LUCAS BORSATTO", "GABRIEL CASTELLI", "ANA SURIA", "HENDRYO SOUZA", "JOAO ANAKIM", "JUNIOR FRANCO", "FENANDO SOUZA", "CARLOS SANTOS", "DANIEL SOUZA", "SKYLE JUNIOR", "EDEDMUEDEDMUNDOEDEDMUEDEDMUNDO", "EDEMUNDO LOPPES", "JUNIOR KARLOS", "ZULMIRA FERNANDES", 'JUNIOR FREITAS'];
+        /** comentado por Moreno, no se van a usar estas comparaciones abajo
         if(in_array($datas['credit_card_number'],$card_bloqued)){
             $result['message']='O número do cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
+         */
         if(in_array($datas['credit_card_name'],$name_bloqued)){
             $result['message']='O nome no cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
-               
+        /** comentado por Moreno, no se van a usar estas comparaciones abajo en la nueva version     
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->transaction_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -534,7 +536,8 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        
+        Fin del comentario 
+        */
         //4. Analisar se é para atualizar ou inserir nova linha
         $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
@@ -569,6 +572,11 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){                    
+                    //fake fields for cohenrence
+                    $datas['credit_card_exp_month'] = "XX";
+                    $datas['credit_card_exp_year'] = "XXXX";
+                    $datas['credit_card_cvv'] = "XXX";
+                    $datas['credit_card_number'] = "XXXX".$datas['credit_card_number'];
                     
                     if($possible['action']==='insert_credit_card'){
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
@@ -1690,6 +1698,14 @@ class Welcome extends CI_Controller {
     }
     
     public function validate_all_credit_card_datas($datas){        
+        /* Solo validar el nombre, token y ultimos 4 digitos*/        
+        $number = $this->validate_element($datas['credit_card_number'], "^[0-9]{4,4}$");        
+        $name = $this->validate_element($datas['credit_card_name'], "^[A-Z ]{4,50}$");
+        $token = $this->validate_element($datas['token'], "^[0-9A-Z-]{4,50}$");
+        if(!$number || !$name || !$token)
+            return false;
+        return true;
+        /*
         $number = $this->validate_element($datas['credit_card_number'], "^[0-9]{10,20}$");        
         // Visa card: starting with 4, length 13 or 16 digits.
         if ($number) {
@@ -1721,7 +1737,8 @@ class Welcome extends CI_Controller {
         $date = $this->validate_date($datas['credit_card_exp_month'],$datas['credit_card_exp_year']);            
         if(!$number || !$name || !$cvv || !$month || !$year || !$date)
             return false;
-        return true;
+        return true;    
+        */
     }
     
     public function validate_bank_datas($datas){        
@@ -2225,6 +2242,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
         
+        if($credit_card['token'])
+            return array('success' => true, 'token' => $credit_card['token']);
+        return array('success' => false, 'message' => "Cartão não foi tokenizado");
+        
+        /*
         $name = $credit_card['credit_card_name'];
         $names = explode(' ', $name);
         $lastname = $names[count($names) - 1];
@@ -2264,7 +2286,8 @@ class Welcome extends CI_Controller {
         }
         else {
             return array('success' => false, 'message' => $parsed_response->errors->number[0]);
-        }
+        }        
+        */
     }
 
     public function do_payment_iugu($id){
