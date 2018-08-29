@@ -1702,7 +1702,7 @@ class Welcome extends CI_Controller {
         $number = $this->validate_element($datas['credit_card_number'], "^[0-9]{4,4}$");        
         $name = $this->validate_element($datas['credit_card_name'], "^[A-Z ]{4,50}$");
         $token = $this->validate_element($datas['token'], "^[0-9A-Z-]{4,50}$");
-        if(!$number || !$name || !$token)
+        if(!$number || !$name || !$token || !$datas['token'])
             return false;
         return true;
         /*
