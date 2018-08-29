@@ -162,7 +162,7 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo" required onkeyup="javascript:this.value=this.value.toUpperCase();" style="text-transform:uppercase;">
+                                <input id="name" type="text" placeholder="Nome completo" required style="text-transform:uppercase;">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">

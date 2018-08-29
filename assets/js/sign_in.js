@@ -21,12 +21,12 @@ $(document).ready(function () {
         complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
-        
+        var upper_name = $('#name').val(); upper_name = upper_name.toUpperCase();
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state && complement){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
                 data:{
-                    'name': $('#name').val(),
+                    'name': upper_name,
                     'email': $('#email').val(),
                     'phone_ddd': $('#phone_ddd').val(),
                     'phone_number': $('#phone_number').val(),
@@ -46,11 +46,11 @@ $(document).ready(function () {
                     if (response['success']) {
                         set_global_var('pk',response['pk']);
                         $('#titular_cpf').val($('#cpf').val());
-                        $('#titular_name').val($('#name').val());
-                        $('#credit_card_name').val($('#name').val());
-                        a=$('#name').val();
-                        $('#first_name').text($('#name').val().split(' ')[0]);
-                        $('li[id=li_complete_name]').text($('#name').val());
+                        $('#titular_name').val(upper_name);
+                        $('#credit_card_name').val(upper_name);
+                        a=upper_name;
+                        $('#first_name').text(upper_name.split(' ')[0]);
+                        $('li[id=li_complete_name]').text(upper_name);
                         $('li[id=li_email]').text($('#email').val());        
                         $('li[id=li_phone]').text( "("+$('#phone_ddd').val()+")"+$('#phone_number').val() );        
                         $('li[id=li_cpf]').text($('#cpf').val());
@@ -123,6 +123,7 @@ $(document).ready(function () {
         if (number && name && cvv && month && year) {
             if(date){
                 /************* IUGU **********/
+                $('#wait').show();
                 var fullName = $('#credit_card_name').val();
                 var firstName = fullName.split(' ').slice(0, -1).join(' ');
                 var lastName = fullName.split(' ').slice(-1).join(' ');
@@ -138,6 +139,7 @@ $(document).ready(function () {
                 var tokenResponseHandler = function(data) {
 
                     if (data.errors) {
+                        $('#wait').hide();
                         modal_alert_message("Erro salvando cartão: " + JSON.stringify(data.errors));
                     } else {                        
                         var datas={
@@ -152,6 +154,7 @@ $(document).ready(function () {
                             'pk': pk,
                             'key':key
                         };
+                        $('#wait').hide();
                         $.ajax({
                             url: base_url + 'index.php/welcome/insert_datas_steep_2',
                             data: datas,
