@@ -214,7 +214,15 @@ $(document).ready(function () {
                     $("#trans_state_address").text(response['message']['state_address']);
                     $("#trans_cep").text(response['message']['cep']);                                        
                     $("#way_to_spend_name").text(response['message']['way_to_spend_name']);    
-                    $("#status_history").html('<td>');
+                    //financials values
+                    $("#trans_numb_plots").text(response['message']['number_plots']);    
+                    $("#trans_value_plots").text(response['message']['month_value']);    
+                    $("#trans_cet").text(response['message']['total_cust_value']);    
+                    $("#trans_iof").text(response['message']['IOF']);    
+                    $("#trans_tax").text(response['message']['tax']);    
+                    $("#trans_cet_m").text(response['message']['CET_PERC']);    
+                    $("#trans_cet_a").text(response['message']['CET_YEAR']);    
+                    $("#status_history").html('');
                     for(i=0;i<response['message']['dates'].length;i++){
                         st = get_icon_by_status(response['message']['dates'][i]['status_id']);
                         $("#status_history").append((
