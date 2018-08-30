@@ -2774,6 +2774,7 @@ class Welcome extends CI_Controller {
             return "2001_2500";
         if($money > 2500 && $money <= 3000)
             return "2501_3000";
+        return "2501_3000";
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
@@ -2824,6 +2825,15 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
                 if($transactions['client_id'] == $datas['id']){
+                    //adicionar datos da transacao
+                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
+                    $transactions['total_cust_value'] = $financials['total_cust_value'];                        
+                    $transactions['month_value'] =$financials['month_value'];
+                    $transactions['tax'] =$financials['tax'];
+                    $transactions['IOF'] =$financials['IOF']; //valor a cobrar por IOF                    
+                    $transactions['CET_PERC'] =$financials['CET_PERC'];
+                    $transactions['CET_YEAR'] =$financials['CET_YEAR'];
+                    //////
                     $_SESSION['transaction_requested_id'] = $datas['id'];
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;

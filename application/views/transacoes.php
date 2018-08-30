@@ -17,10 +17,11 @@
 <div class="modal fade" id="trans" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
 	<div class="modal-dialog mxw-1100" role="document">
 		<div class="modal-content b-none">
-                    <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->
+                    <!--  <button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button> -->                        
 			<div class="fleft100 pd-20 bk-fff ft-size13"> 				
                             <div class="w5 m-top15 m-top10-xs center-xs"><img style="width:20px; height:20px" id="icon_trans" src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
-				<div class="w25 fw-500 m-top10-xs center-xs">
+				<div style="position: relative;top: 5px;right: 5px;text-align:right;"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
+                                <div class="w25 fw-500 m-top10-xs center-xs">
                                     <small class="fleft100 cl-silver">Dados pessoais</small>
                                     <p>
                                         #<span id="trans_id"></span>
@@ -30,20 +31,12 @@
 					Cel.: (<span id="trans_phone_ddd"></span>) <span id="trans_phone_number"></span> 
                                     </p>
 				</div>
-				<div class="w15 fw-500 text-left m-top10-xs center-xs">
-                                    <small class="fleft100 cl-silver">Data de Solicitação</small>
-                                    <span id="trans_date"></span>
-                                </div>
-				<div class="w10 fw-500 cl-blue m-top10-xs center-xs text-left">
-                                    <small class="fleft100 cl-silver">Valor tomado</small>
-                                    R$ <span id="trans_solicited_value"></span>
-                                </div>
-				<div class="w20 fw-500 text-left m-top10-xs center-xs">
+                                <div class="w20 fw-500 text-left m-top10-xs center-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
-					<span id="trans_credit_card_name"></span> - Final 
-                                        <span id="trans_credit_card_final"></span> <br>
+					<span id="trans_credit_card_name"></span> <br> 
+                                        Final <span id="trans_credit_card_final"></span> <br>
 					<div class="fleft100">
-                                            <small class="fleft100 cl-silver m-top20">Uso:</small>
+                                            <small class="fleft100 cl-silver m-top20">Uso do dinheiro:</small>
                                             <span id="way_to_spend_name"></span> <br>
 					</div>
 				</div>
@@ -52,7 +45,6 @@
 					(<span id="trans_bank_code"></span>) <span id="trans_bank_name"></span> <br>
                                         AG. <span id="trans_agency"></span> <br>
                                         CC. <span id="trans_account"></span>-<span id="trans_dig"></span>
-
 					<div class="fleft100">
 						<small class="fleft100 cl-silver m-top20">Endereço</small>
                                                 <span id="trans_street_address"></span>, <span id="trans_number_address"></span> <br> 
@@ -60,11 +52,23 @@
                                                 <br> CEP. <span id="trans_cep"></span>
 					</div>
 				</div>
-                            
-<!--				<div class="w5 fw-500 m-top10 center-xs"><a href=""><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
-                                <div class="fleft100 m-top40">-->
-                                    
-                                <div class="w5 fw-500 m-top10 center-xs"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
+                                <div class="w20 fw-500 text-left m-top10-xs center-xs">
+                                    <small class="fleft100 cl-silver">Dados da Solicitação</small>
+                                    <span id="trans_date"></span><br>                                    
+                                    Valor solicitado: R$<span id="trans_solicited_value"></span><br>
+                                    Prazo: <span id="trans_numb_plots"></span> meses <br>
+                                    Parcelas: R$ <span id="trans_value_plots"></span><br>                                    
+                                    CET: R$ <span id="trans_cet"></span><br>                                    
+                                    IOF: R$ <span id="trans_iof"></span><br>
+                                    Juros ao mes: <span id="trans_tax"></span>%<br>                                    
+                                </div>				                                    
+                                <div class="w12 fw-500 text-left m-top40 center-xs">
+                                    <small class="fleft100 cl-silver"></small>                                                                        
+                                    CET MENSAL: <br>
+                                    <span id="trans_cet_m"></span>%<br><br>
+                                    CET ANUAL: <br>
+                                    <span id="trans_cet_a"></span>%                                    
+                                </div>
 				<div class="fleft100 m-top40">
                                     
 					<div class="col-md-4 col-sm-4 col-xs-12">
