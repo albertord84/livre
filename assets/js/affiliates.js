@@ -222,15 +222,15 @@ $(document).ready(function () {
                     $("#trans_tax").text(response['message']['tax']);    
                     $("#trans_cet_m").text(response['message']['CET_PERC']);    
                     $("#trans_cet_a").text(response['message']['CET_YEAR']);    
-                    $("#status_history").html('');
+                    var history = '';
                     for(i=0;i<response['message']['dates'].length;i++){
                         st = get_icon_by_status(response['message']['dates'][i]['status_id']);
-                        $("#status_history").append((
-                            "<td title='"+st['hint_by_status']+"'><div class='status-history'>"+
+                        history += (
+                            "<spam title='"+st['hint_by_status']+"' style='float: left; padding-top: 11px; padding-bottom: 11px;' ><spam class='status-history' style='width:80px;'>"+
                                 "<img style='width:20px; margin-right:10px' src='"+base_url+"assets/img/icones/"+st['icon_by_status']+"'>"+
-                                    toDate(response['message']['dates'][i]['date'])));
-                            //TODO:fecha con JS en formato dd-mm-YY
+                                    toDate(response['message']['dates'][i]['date'])+'</spam></spam>');
                     }
+                    $("#status_history").html(history);
                     var d = new Date();
                     var url_status = base_url + 'assets/img/icones/' + response['src_status']['icon_by_status'];
                     $("#icon_trans").attr("src", url_status+"?"+d.getTime());
