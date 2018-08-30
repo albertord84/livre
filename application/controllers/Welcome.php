@@ -2543,7 +2543,7 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/cli/v1/basic-customers");
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -2669,7 +2669,7 @@ class Welcome extends CI_Controller {
 
         //return;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
@@ -2854,7 +2854,7 @@ class Welcome extends CI_Controller {
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
         $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -2880,7 +2880,7 @@ class Welcome extends CI_Controller {
         else
             $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/wd/v1/workdays/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/wd/v1/workdays/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -2922,7 +2922,7 @@ class Welcome extends CI_Controller {
         else
             $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/chk/v1/restrictions/".$document);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/chk/v1/restrictions/".$document);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
