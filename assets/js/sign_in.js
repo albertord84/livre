@@ -666,33 +666,6 @@ $(document).ready(function () {
         }
     });
 
-    function init(){
-        $('#name').val('JOSE RAMON GONZALEZ MONTERO');
-        $('#email').val('josergm86@gmail.com');
-        $('#phone_ddd').val('21');
-        $('#phone_number').val('965913089');
-        $('#cpf').val('073.670.141-96');
-        $('#cep').val('24020206');
-        $('#street_address').val('SAO JOAO');
-        $('#number_address').val('223');
-        $('#complement_number_address').val('302');
-        $('#city_address').val('NITEROI');
-        $('#state_address').val('RJ');
-        $('#utm_source').val('organico');
-        
-        $('#credit_card_number').val('4415241617725370');
-        $('#credit_card_cvv').val('123');
-        $('#credit_card_name').val('JOSE R GONZALEZ');
-        $('#credit_card_exp_month').val('08');
-        $('#credit_card_exp_year').val('2026');
-        
-        $('#bank').val('117');
-        $('#agency').val('44598');
-        $('#account_type').val('CC');
-        $('#account').val('125490');
-        $('#dig').val('3');
-    }
-    
     $("#cartao").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
