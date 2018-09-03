@@ -129,7 +129,7 @@
             $this->mail->SMTPSecure = 'ssl';
             $this->mail->SMTPAuth = true;
             $this->mail->Port = 465;
-            $this->mail->IsHTML(true);
+            $this->mail->isHTML(true);
             //$this->mail->Body = "Hello";
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
