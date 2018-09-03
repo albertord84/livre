@@ -268,11 +268,11 @@
                             <h1 class="ft-size55 fw-300 fleft100 pd-lr15">Como funciona</h1>
                             <div class="col-md-6 col-sm-6 col-xs-12 m-top40" style="border-right: 3px solid #fff;padding-bottom: 10px;">
                                     <p class="ft-size17">
-                                            O programa de afiliados do Live.digital é ideal para lojas de crédito que fazem atendimento ao público e pessoas físicas que buscam uma renda extra. 
+                                            O programa de afiliados do livre.digital é ideal para lojas de crédito que fazem atendimento ao público e pessoas físicas que buscam uma renda extra. 
                                             <br><br>
                                             A verificação de crédito é feita na mesma hora e a resposta é imediata.
                                             <br><br>
-                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do Live.digital. 
+                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do livre.digital. 
                                             <br><br>
                                             
                                     </p>
@@ -281,7 +281,7 @@
                                     <p class="ft-size17">
                                             Para realizar a operação, o afiliado precisa apenas contratar o empréstimo em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
                                             <br><br>
-                                            Traga seus clientes para o Live.digital! 
+                                            Traga seus clientes para o livre.digital! 
                                             Receba até 10 vezes mais do que a sua comissão atual, diariamente, sem burocracia, sem custos operacionais para o seu negócio e com muito mais benefícios para seus clientes!
                                             <br><br>
                                             Seja livre!
