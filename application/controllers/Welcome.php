@@ -287,7 +287,7 @@ class Welcome extends CI_Controller {
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::WAIT_SIGNATURE){                
-                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado. Casso dúvidas, contate nosso atendimento.';                    
+                    $result['message'] .= 'Se está analisando a sua assinatura no seu anterior pedido. Casso dúvidas, contate nosso atendimento.';                    
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
@@ -3530,7 +3530,7 @@ class Welcome extends CI_Controller {
                     }
                 }
             }
-            sleep(15*60);
+            sleep(5*60);
         }while(true);
         
         //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
