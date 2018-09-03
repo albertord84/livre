@@ -138,10 +138,10 @@
             
             if (!$this->mail->send()) {
                 $result['success'] = false;
-                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo. var_dump($f);
             } else {
                 $result['success'] = true;
-                $result['message'] = "Message sent!" . $this->mail->ErrorInfo. var_dump($f);
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
             }
             $this->mail->smtpClose();
             return $result;
