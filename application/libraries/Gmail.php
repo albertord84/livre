@@ -134,11 +134,11 @@
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
             //$this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
-            $this->mail->Body = $f = file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");
+            $this->mail->Body = file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");
             
             if (!$this->mail->send()) {
                 $result['success'] = false;
-                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo. var_dump($f);
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
             } else {
                 $result['success'] = true;
                 $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
