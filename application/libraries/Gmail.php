@@ -145,7 +145,8 @@
             //$this->mail->Body = "Hello";
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
-            $this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
+            //$this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
+            $this->mail->AddEmbeddedImage(realpath('../../assets/img/icones/09 - fotos erradas.png'), "logo_09", "passos.png", "base64", "image/png");
             //$html = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");            
             if (!$this->mail->send()) {
                 $result['success'] = false;
