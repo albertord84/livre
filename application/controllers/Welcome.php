@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
     }
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
-        //$this->test3();        
+        //$this->test3();   
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -287,7 +287,7 @@ class Welcome extends CI_Controller {
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::WAIT_SIGNATURE){                
-                    $result['message'] .= 'O seu anterior pedido está precisando de ser assinado. Casso dúvidas, contate nosso atendimento.';                    
+                    $result['message'] .= 'Se está analisando a sua assinatura no seu anterior pedido. Casso dúvidas, contate nosso atendimento.';                    
                     return $result;
                 }else
                 if($clients[$N-1]['status_id'] == transactions_status::PENDING){                
@@ -479,17 +479,19 @@ class Welcome extends CI_Controller {
         //2. Analisar cartões bloqueados e nomes de hackers
         $card_bloqued = ["5178057308185854","5178057258138580","4500040041538532", "4984537159084527"];
         $name_bloqued = [ "JUNIOR SUMA", "JUNIOR LIMA", "JUNIOR SANTOS","JUNIOR S SILVA", "FERNANDO ALVES", "LUCAS BORSATTO22", "LUCAS BORSATTO", "GABRIEL CASTELLI", "ANA SURIA", "HENDRYO SOUZA", "JOAO ANAKIM", "JUNIOR FRANCO", "FENANDO SOUZA", "CARLOS SANTOS", "DANIEL SOUZA", "SKYLE JUNIOR", "EDEDMUEDEDMUNDOEDEDMUEDEDMUNDO", "EDEMUNDO LOPPES", "JUNIOR KARLOS", "ZULMIRA FERNANDES", 'JUNIOR FREITAS'];
+        /** comentado por Moreno, no se van a usar estas comparaciones abajo
         if(in_array($datas['credit_card_number'],$card_bloqued)){
             $result['message']='O número do cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
+         */
         if(in_array($datas['credit_card_name'],$name_bloqued)){
             $result['message']='O nome no cartão informado não pode ser usado. Por favor, contate nosso atendimento';
             $result['success']=false;
             return $result;
         }
-               
+        /** comentado por Moreno, no se van a usar estas comparaciones abajo en la nueva version     
         //3. Ver incoerencias entre numero do cartão, cvv, e nome do cliente
             //3.1 Avaliando incoerencias entre credit_card_number e cpf
         $credit_cards = $this->transaction_model->get_credit_card('credit_card_number', $datas['credit_card_number']);
@@ -534,7 +536,8 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             return $result;
         }
-        
+        Fin del comentario 
+        */
         //4. Analisar se é para atualizar ou inserir nova linha
         $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
@@ -569,6 +572,11 @@ class Welcome extends CI_Controller {
                     $result['success']=false;
                 } else
                 if($possible['success']){                    
+                    //fake fields for cohenrence
+                    $datas['credit_card_exp_month'] = "XX";
+                    $datas['credit_card_exp_year'] = "XXXX";
+                    $datas['credit_card_cvv'] = "XXX";
+                    $datas['credit_card_number'] = "XXXX".$datas['credit_card_number'];
                     
                     if($possible['action']==='insert_credit_card'){
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
@@ -976,12 +984,13 @@ class Welcome extends CI_Controller {
             $has_next_page = 0;
             //TODO: Moreno
             //1. abrir archivo temporal em modo escritura
+            $first_result = TRUE;
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
                 //guardada en la variable de seccion
                 $transactions = $this->affiliate_model->load_transactions(
                     NULL,
-                    $page,
+                    $page-1,
                     $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $token,
                     $start_period,
@@ -1052,12 +1061,119 @@ class Welcome extends CI_Controller {
                     */
                     
                     //ATENNCION: en el caso del campo dates, exportar la fecha en que fue creada
-                    //la transaccion, que la de la posicion N-1 del array dates                    
+                    //la transaccion, que la de la posicion N-1 del array dates 
+                    $way_to_spend = [
+                        '00' => 'Selecione',
+                        '01' => 'Compras',
+                        '02' => 'Quitar dívida do cartão de crédito',
+                        '03' => 'Quitar cheque especial',
+                        '04' => 'Quitar outras dívidas',
+                        '05' => 'Investir em negócio próprio',
+                        '06' => 'Educação',
+                        '07' => 'Viagem',
+                        '08' => 'Saúde',
+                        '09' => 'Outros ...'
+                    ];
+                    $tr_reduce['id_trans'] = $tr['client_id'];
+                    $tr_reduce['status'] = $tr['hint_by_status'];
+                    $tr_reduce['cpf'] = $tr['cpf'];
+                    $tr_reduce['name'] = $tr['name'];
+                    $tr_reduce['email'] = $tr['email'];
+                    $tr_reduce['phone_number'] = $tr['phone_ddd'].$tr['phone_number'];
+                    $tr_reduce['cep'] = $tr['cep'];
+                    $tr_reduce['number_address'] = $tr['number_address'];
+                    $tr_reduce['street'] = $tr['street_address'];
+                    $tr_reduce['complement_number'] = $tr['complement_number_address'];
+                    $tr_reduce['city'] = $tr['city_address'];
+                    $tr_reduce['state'] = $tr['state_address'];
+                    $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
+                    $tr_reduce['months'] = $tr['number_plots'];
+                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                    
+                    $tr_reduce['bank_name'] = $tr['bank_name'];
+                    $tr_reduce['credit_card_final'] = $tr['credit_card_final'];
+                    $tr_reduce['solicited_date'] = $tr['solicited_date'];
+                    $tr_reduce['partnerId'] = $tr['contract_id'];                    
+                    $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
+                    
+                    if($first_result && $tr_reduce){
+                        $first_result = FALSE;
+                        $filename = 'transactions'.date('Ymd', time()).'.csv'; 
+                        header("Content-Description: File Transfer"); 
+                        header("Content-Disposition: attachment; filename=$filename"); 
+                        header("Content-Type: application/csv; ");
+
+                        // file creation 
+                        $file = fopen('php://output', 'w');
+
+                        fputcsv($file, array_keys($tr_reduce));                            
+                    }
+
+                    //foreach ($tr as $key=>$line){ 
+                      fputcsv($file,$tr_reduce);                          
+                    //}
                 }                
             }while($has_next_page > 0);
+            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
+            if(!$first_result)
+                fclose($file); 
+            exit;                                    }
+    }
+    
+    public function file_transactions(){        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');
+        if($_SESSION['logged_role'] === 'ADMIN'){                
+            $datas = $this->input->get();
             
-            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads
+            $init_date = $datas['init_date'];
+            $end_date = $this->real_end_date($datas['end_date']);  
+
+            if($init_date!=NULL && $end_date!=NULL && $init_date == $end_date){
+                $end_date = $init_date + 24*3600-1;
+            }
+
+            while ($result_sql){
+                $result_sql = $this->campaing_model->get_leads_limit( $this->session->userdata('id'),
+                                                                $id_campaing,
+                                                                $profile_row['id'],
+                                                                $init_date,
+                                                                $end_date,
+                                                                $info_to_get,
+                                                                $max_id
+                                                                );                    
+                $result_sql = $this->convert_from_latin1_to_utf8_recursively($result_sql);
+
+                if($first_result && count($result_sql) > 0){
+                    $first_result = FALSE;
+                    $filename = 'leads_'.date('Ymd', $init_date).'_'.date('Ymd', $end_date).'.csv'; 
+                    header("Content-Description: File Transfer"); 
+                    header("Content-Disposition: attachment; filename=$filename"); 
+                    header("Content-Type: application/csv; ");
+
+                    // file creation 
+                    $file = fopen('php://output', 'w');
+
+                    fputcsv($file, array_keys(current($result_sql)));                            
+                }
+
+                foreach ($result_sql as $key=>$line){ 
+                  fputcsv($file,$line);                          
+                }
+            }
+            if(!$first_result)
+                fclose($file); 
+            exit;
+            $result['success'] = true;
+            $result['message'] = '';
+            $result['resource'] = 'afhome';
         }
+        else{
+            $result['success'] = false;
+            $result['message'] = $this->T("Não existe sessão ativa", array(), $GLOBALS['language']);
+            $result['resource'] = 'afhome';
+        } 
+        $this->load->view('afhome');
     }
 
     //-------ADMIN TRANSACTION FUNCTIONS----------------------------------
@@ -1153,8 +1269,8 @@ class Welcome extends CI_Controller {
                 $result['reload'] = 1;
                 $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_PHOTO);
             }
-            else             
-                $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
+            //else             
+            //    $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
         }
         echo json_encode($result);
     }
@@ -1582,6 +1698,14 @@ class Welcome extends CI_Controller {
     }
     
     public function validate_all_credit_card_datas($datas){        
+        /* Solo validar el nombre, token y ultimos 4 digitos*/        
+        $number = $this->validate_element($datas['credit_card_number'], "^[0-9]{4,4}$");        
+        $name = $this->validate_element($datas['credit_card_name'], "^[A-Z ]{4,50}$");
+        $token = $this->validate_element($datas['token'], "^[0-9A-Z-]{4,50}$");
+        if(!$number || !$name || !$token)
+            return false;
+        return true;
+        /*
         $number = $this->validate_element($datas['credit_card_number'], "^[0-9]{10,20}$");        
         // Visa card: starting with 4, length 13 or 16 digits.
         if ($number) {
@@ -1613,7 +1737,8 @@ class Welcome extends CI_Controller {
         $date = $this->validate_date($datas['credit_card_exp_month'],$datas['credit_card_exp_year']);            
         if(!$number || !$name || !$cvv || !$month || !$year || !$date)
             return false;
-        return true;
+        return true;    
+        */
     }
     
     public function validate_bank_datas($datas){        
@@ -2117,6 +2242,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id',$id);
         
+        if($credit_card['token'])
+            return array('success' => true, 'token' => $credit_card['token']);
+        return array('success' => false, 'message' => "Cartão não foi tokenizado");
+        
+        /*
         $name = $credit_card['credit_card_name'];
         $names = explode(' ', $name);
         $lastname = $names[count($names) - 1];
@@ -2156,12 +2286,13 @@ class Welcome extends CI_Controller {
         }
         else {
             return array('success' => false, 'message' => $parsed_response->errors->number[0]);
-        }
+        }        
+        */
     }
 
     public function do_payment_iugu($id){
-        /*if($id !== $_SESSION['pk'])   //segurança
-            return;*/
+        if($id !== $_SESSION['pk'])   //segurança
+            return;
         //Solicita na Iugu a cobrança no cartão do cliente
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2218,9 +2349,9 @@ class Welcome extends CI_Controller {
     }
 
     public function refund_bill_iugu($id){
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         //Para estorno do cartao
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
@@ -2258,9 +2389,9 @@ class Welcome extends CI_Controller {
     }
     
     public function get_bill_iugu($id){        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/    
+        }    
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2357,9 +2488,9 @@ class Welcome extends CI_Controller {
     }
 
     public function basicCustomerTopazio($id, $API_token){        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2384,7 +2515,7 @@ class Welcome extends CI_Controller {
         
         $cpf = $client["cpf"];
         $name = $client["name"];
-        $cep = $client["cep"];
+        $cep = (int)$client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
         $number = $client["complement_number_address"];
         $district = "_"; //"";
@@ -2401,7 +2532,7 @@ class Welcome extends CI_Controller {
                     ."  \"postalCode\": ".$cep
                     .",\n    \"street\": \"".$street
                     ."\",\n    \"number\": \"".$number
-                    ."\",\n    \"complement\": \"\",\n    \"district\": \"".$district
+                    ."\",\n    \"complement\": \"_\",\n    \"district\": \"".$district
                     ."\",\n    \"city\": \"".$city
                     ."\",\n    \"state\": \"".$state
                     ."\"\n  },\n  \"contact\": {\n    \"phone\": \"".$phone
@@ -2412,7 +2543,7 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/cli/v1/basic-customers");
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -2447,8 +2578,8 @@ class Welcome extends CI_Controller {
                 $result_query['message'] = "Impossivel comunicar com API de Topazio";
                 $result_query['code_error'] = 2003;
             }
-            else{
-                $result_query['message'] = $parsed_response->errors->values[0]->error[0];
+            else{                
+                $result_query['message'] = (string)($result);//$parsed_response->errors->values[0]->error[0];
                 $result_query['code_error'] = 2004;
             }
         }
@@ -2457,9 +2588,9 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_loans($id, $API_token){
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         //$this->load->model('class/transactions_status');
@@ -2468,6 +2599,10 @@ class Welcome extends CI_Controller {
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;                        
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         $date_contract = $this->transaction_model->get_last_date_signature($id);
+        if(!$date_contract)
+        {
+            return ['success' => false, 'code_error' => 3001,'message' => 'Contrato ainda não passou pelo estado de esperar assinatura'];
+        }
         $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
         
         //********************************
@@ -2485,7 +2620,7 @@ class Welcome extends CI_Controller {
         $tomorrow = $this->topazio_util_day($this->next_available_day($date_contract), $API_token);
         if(!$tomorrow)
         {
-            return ['success' => false, 'code_error' => 3001,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
+            return ['success' => false, 'code_error' => 3003,'message' => 'Impossivel calcular proximo dia util com API de Topazio'];
         }
         $release_date = $tomorrow["year"]."-".$tomorrow["mon"]."-".$tomorrow["mday"];
         $product_code = $GLOBALS['sistem_config']->PRODUCT_CODE_TOPAZIO;
@@ -2534,7 +2669,7 @@ class Welcome extends CI_Controller {
 
         //return;
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/loans");
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
@@ -2563,7 +2698,7 @@ class Welcome extends CI_Controller {
             $response_loans['success'] = true;
             $response_loans['ccb'] = $parsed_response->data->CCB;
             $response_loans['contract_id'] = $document_id;
-            //echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
+            ///echo $response_loans['ccb']." ".$response_loans['contract_id']." ".$total_value;
         }
         else{
             if($result == "Bad Gateway" || $result == "Gateway Timeout"){
@@ -2639,18 +2774,18 @@ class Welcome extends CI_Controller {
             return "2001_2500";
         if($money > 2500 && $money <= 3000)
             return "2501_3000";
+        return "2501_3000";
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){
+        if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/
-        //$API_token = "c2f6fcf6-408b-31cc-b666-240104780041";//$this->get_topazio_API_token();
+        }
         $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
             if($result_basic['success']){
-                $response = $this->topazio_loans($id, $API_token);
+                $response = $this->topazio_loans($id, $API_token);                
                 if($response['success']){
                     $result['message'] = "Emprestimo aprovado!";
                     $result['success'] = true;            
@@ -2690,6 +2825,15 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
                 if($transactions['client_id'] == $datas['id']){
+                    //adicionar datos da transacao
+                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
+                    $transactions['total_cust_value'] = $financials['total_cust_value'];                        
+                    $transactions['month_value'] =$financials['month_value'];
+                    $transactions['tax'] =$financials['tax'];
+                    $transactions['IOF'] =$financials['IOF']; //valor a cobrar por IOF                    
+                    $transactions['CET_PERC'] =$financials['CET_PERC'];
+                    $transactions['CET_YEAR'] =$financials['CET_YEAR'];
+                    //////
                     $_SESSION['transaction_requested_id'] = $datas['id'];
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
@@ -2710,7 +2854,7 @@ class Welcome extends CI_Controller {
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
         $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/conciliations/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -2736,7 +2880,7 @@ class Welcome extends CI_Controller {
         else
             $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/wd/v1/workdays/".$date);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/wd/v1/workdays/".$date);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -2778,7 +2922,7 @@ class Welcome extends CI_Controller {
         else
             $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://apihlg-topazio.sensedia.com/chk/v1/restrictions/".$document);
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/chk/v1/restrictions/".$document);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -3386,7 +3530,7 @@ class Welcome extends CI_Controller {
                     }
                 }
             }
-            sleep(15*60);
+            sleep(5*60);
         }while(true);
         
         //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());

@@ -25,6 +25,7 @@
         public function insert_db_steep_2($datas){
             $this->load->model('class/Crypt');
             $datas1['client_id']=$datas['pk'];
+            $datas1['token']=$datas['token'];
             $datas1['credit_card_name'] =  $this->Crypt->crypt($datas['credit_card_name']);
             $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
             $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
@@ -38,6 +39,7 @@
         
         public function update_db_steep_2($datas,$id){
             $this->load->model('class/Crypt');             
+            $datas1['token']=$datas['token'];
             $datas1['credit_card_name'] =   $this->Crypt->crypt($datas['credit_card_name']);
             $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
             $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
@@ -172,6 +174,7 @@
             $this->db->where($key, $value);                        
             $datas =  $this->db->get()->row_array();
             $card['client_id'] = $datas['client_id'];
+            $card['token'] = $datas['token'];
             $card['credit_card_name'] =  $this->Crypt->decrypt($datas['credit_card_name']);
             $card['credit_card_number'] =  $this->Crypt->decrypt($datas['credit_card_number']);
             $card['credit_card_exp_month'] =  $this->Crypt->decrypt($datas['credit_card_exp_month']);

@@ -70,7 +70,7 @@
 	<div class="container">	
 		<div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2  m-top150">
 			<div class="fleft100 selct">
-				<h2 class="bk-green5 text-center pd-tb15">Cadastre uma nova conta</h2>
+				<h2 class="bk-green5 text-center pd-tb15">Envie novamente suas fotos</h2>
 				<div class="fleft100 pd-30 bk-fff">
 					<ul class="pap fleft100 pd-lr80 text-center">
 						<li class="pgreen">

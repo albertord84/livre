@@ -21,12 +21,12 @@ $(document).ready(function () {
         complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
         city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
-        
+        var upper_name = $('#name').val(); upper_name = upper_name.toUpperCase();
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state && complement){                                
             $.ajax({
                 url: base_url + 'index.php/welcome/insert_datas_steep_1',
                 data:{
-                    'name': $('#name').val(),
+                    'name': upper_name,
                     'email': $('#email').val(),
                     'phone_ddd': $('#phone_ddd').val(),
                     'phone_number': $('#phone_number').val(),
@@ -46,11 +46,11 @@ $(document).ready(function () {
                     if (response['success']) {
                         set_global_var('pk',response['pk']);
                         $('#titular_cpf').val($('#cpf').val());
-                        $('#titular_name').val($('#name').val());
-                        $('#credit_card_name').val($('#name').val());
-                        a=$('#name').val();
-                        $('#first_name').text($('#name').val().split(' ')[0]);
-                        $('li[id=li_complete_name]').text($('#name').val());
+                        $('#titular_name').val(upper_name);
+                        $('#credit_card_name').val(upper_name);
+                        a=upper_name;
+                        $('#first_name').text(upper_name.split(' ')[0]);
+                        $('li[id=li_complete_name]').text(upper_name);
                         $('li[id=li_email]').text($('#email').val());        
                         $('li[id=li_phone]').text( "("+$('#phone_ddd').val()+")"+$('#phone_number').val() );        
                         $('li[id=li_cpf]').text($('#cpf').val());
@@ -82,7 +82,7 @@ $(document).ready(function () {
         $('.check1').toggle("slow");
     });
     
-    $("#btn_steep_2_next").click(function () {        
+    $("#btn_steep_2_next").click(function () {                
         if(        ($('#credit_card_name').val()).toUpperCase()==='VISA' 
                 || ($('#credit_card_name').val()).toUpperCase()==='MASTERCARD' 
                 || ($('#credit_card_name').val()).toUpperCase()==='ELO' 
@@ -122,38 +122,66 @@ $(document).ready(function () {
         var date = validate_date($('#credit_card_exp_month').val(),$('#credit_card_exp_year').val(), '#credit_card_exp_month', '#credit_card_exp_year');
         if (number && name && cvv && month && year) {
             if(date){
-                var datas={
-                    'credit_card_name': $('#credit_card_name').val(),
-                    'credit_card_number': $('#credit_card_number').val(),
-                    'credit_card_cvv': $('#credit_card_cvv').val(),
-                    'credit_card_exp_month': $('#credit_card_exp_month').val(),
-                    'credit_card_exp_year': $('#credit_card_exp_year').val(),                                
-                    //TODO: 'credit_card_front_photo': 'nome da foto',
-                    'pk': pk,
-                    'key':key
-                };
-                $.ajax({
-                    url: base_url + 'index.php/welcome/insert_datas_steep_2',
-                    data: datas,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response['success']) {
-                            $('li[id=li_credit_card_name]').text($('#credit_card_name').val());
-                            $('li[id=li_credit_card_number]').text($('#credit_card_number').val());
-                            $('li[id=li_credit_card_cvv]').text($('#credit_card_cvv').val());
-                            $('li[id=li_credit_card_exp_month]').text( $('#credit_card_exp_month').val()+' / '+$('#credit_card_exp_year').val() );
-                            //$('li[id=li_credit_card_exp_year]').text();
-                            $('.check2').toggle("hide");
-                            $('.check3').toggle("slow");
-                        } else {
-                            modal_alert_message(response['message']);
-                        }
-                    },
-                    error: function (xhr, status) {
-                        modal_alert_message('Internal error in Steep 2');
+                /************* IUGU **********/
+                $('#wait').show();
+                var fullName = $('#credit_card_name').val();
+                var firstName = fullName.split(' ').slice(0, -1).join(' ');
+                var lastName = fullName.split(' ').slice(-1).join(' ');
+                var numberC = $('#credit_card_number').val();
+                var last4 = numberC.slice(-4);
+                var cc = Iugu.CreditCard($('#credit_card_number').val(), 
+                     $('#credit_card_exp_month').val(), 
+                     $('#credit_card_exp_year').val(),
+                     firstName, 
+                     lastName,
+                     $('#credit_card_cvv').val());
+                     
+                var tokenResponseHandler = function(data) {
+
+                    if (data.errors) {
+                        $('#wait').hide();
+                        modal_alert_message("Erro salvando cartão: " + JSON.stringify(data.errors));
+                    } else {                        
+                        var datas={
+                            'credit_card_name': $('#credit_card_name').val(),
+                            'credit_card_number': last4,
+                            'token': data.id,
+                            //'credit_card_number': $('#credit_card_number').val(),
+                            //'credit_card_cvv': $('#credit_card_cvv').val(),
+                            //'credit_card_exp_month': $('#credit_card_exp_month').val(),
+                            //'credit_card_exp_year': $('#credit_card_exp_year').val(),                                
+                            //TODO: 'credit_card_front_photo': 'nome da foto',
+                            'pk': pk,
+                            'key':key
+                        };
+                        $('#wait').hide();
+                        $.ajax({
+                            url: base_url + 'index.php/welcome/insert_datas_steep_2',
+                            data: datas,
+                            type: 'POST',
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response['success']) {
+                                    $('li[id=li_credit_card_name]').text($('#credit_card_name').val());
+                                    $('li[id=li_credit_card_number]').text($('#credit_card_number').val());
+                                    $('li[id=li_credit_card_cvv]').text($('#credit_card_cvv').val());
+                                    $('li[id=li_credit_card_exp_month]').text( $('#credit_card_exp_month').val()+' / '+$('#credit_card_exp_year').val() );
+                                    //$('li[id=li_credit_card_exp_year]').text();
+                                    $('.check2').toggle("hide");
+                                    $('.check3').toggle("slow");
+                                } else {
+                                    modal_alert_message(response['message']);
+                                }
+                            },
+                            error: function (xhr, status) {
+                                modal_alert_message('Internal error in Steep 2');
+                            }
+                        });
                     }
-                });
+                }
+
+                Iugu.createPaymentToken(cc, tokenResponseHandler);
+                /******************************************/                
             } else {
                 modal_alert_message('Data errada');                
             }
@@ -638,33 +666,6 @@ $(document).ready(function () {
         }
     });
 
-    function init(){
-        $('#name').val('JOSE RAMON GONZALEZ MONTERO');
-        $('#email').val('josergm86@gmail.com');
-        $('#phone_ddd').val('21');
-        $('#phone_number').val('965913089');
-        $('#cpf').val('073.670.141-96');
-        $('#cep').val('24020206');
-        $('#street_address').val('SAO JOAO');
-        $('#number_address').val('223');
-        $('#complement_number_address').val('302');
-        $('#city_address').val('NITEROI');
-        $('#state_address').val('RJ');
-        $('#utm_source').val('organico');
-        
-        $('#credit_card_number').val('4415241617725370');
-        $('#credit_card_cvv').val('123');
-        $('#credit_card_name').val('JOSE R GONZALEZ');
-        $('#credit_card_exp_month').val('08');
-        $('#credit_card_exp_year').val('2026');
-        
-        $('#bank').val('117');
-        $('#agency').val('44598');
-        $('#account_type').val('CC');
-        $('#account').val('125490');
-        $('#dig').val('3');
-    }
-    
     $("#cartao").on("change", function (e) {
         var file = $(this)[0].files[0];        
         var upload = new Upload(file);
@@ -971,4 +972,22 @@ $(function() {
             return;
         }
     });
+    
 });
+
+
+    Iugu.setAccountID("80BF7285A577436483EE04E0A80B63F4");
+    
+   /*
+    * this debe ser un formulario e cada campo debe tener un atributo data-iugu
+    * ademas deben especificarse los campos como aparece en la API
+   */
+    
+    Iugu.createPaymentToken(this, function(response) {
+            if (response.errors) {
+                    alert("Erro salvando cartão");
+            } else {
+                    alert("Token criado:" + response.id);
+            }	
+    });
+    
