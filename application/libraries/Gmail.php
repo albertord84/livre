@@ -141,12 +141,12 @@
             $this->mail->SMTPAuth = true;
             $this->mail->Port = 465;
             $this->mail->isHTML(true);
+            $this->mail->SMTPOptions = array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true  ) ); 
             //$this->mail->Body = "Hello";
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
             $this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
-            //$this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");
-            
+            //$html = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");            
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;

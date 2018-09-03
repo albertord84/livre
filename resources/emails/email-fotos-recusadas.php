@@ -1,4 +1,3 @@
-<html>
 <table width="650" cellspacing="0" cellpadding="0" border="0" bgcolor="#fff" align="center" style="@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');font-family: 'Roboto', sans-serif;font-size:13px;color:#3e3e3e;">
 	<tbody>
 	    <tr>
@@ -48,4 +47,3 @@
 	    </tr>
 	</tbody>
 </table>
-</html>
