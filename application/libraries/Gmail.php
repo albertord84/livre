@@ -109,7 +109,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -169,9 +169,11 @@
             $this->mail->CharSet = 'UTF-8';            
             $this->mail->SMTPSecure = 'ssl';           
             $this->mail->Port = 465;
+            $this->mail->isHTML(true);
+            
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-dados-bancarios.php?name=$name&link=$link");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-dados-bancarios.php?name=$name&link=$link");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -196,7 +198,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -221,7 +223,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-cancelada.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-cancelada.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -246,7 +248,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -271,7 +273,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-almost.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-almost.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -296,7 +298,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-in_process.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-in_process.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -321,7 +323,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-conclua.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-conclua.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -346,7 +348,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-ainda_precisa.php?name=$name");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-ainda_precisa.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -372,7 +374,7 @@
             $name = urlencode($name);
             $ccb = urlencode($ccb);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/credor-ccb.php?name=$name&ccb=$ccb");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/credor-ccb.php?name=$name&ccb=$ccb");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
