@@ -128,7 +128,7 @@
             $this->mail->CharSet = 'UTF-8';
             $this->mail->SMTPSecure = 'ssl';
             $this->mail->SMTPAuth = true;
-            //$this->mail->Port = 465;
+            $this->mail->Port = 465;
             $this->mail->Body = "Hello";
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
