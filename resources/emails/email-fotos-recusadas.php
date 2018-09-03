@@ -11,7 +11,7 @@
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
                     <br><br>
-                    <img src="<?php echo "https://" . $_SERVER['SERVER_NAME'] ."/livre/assets/img/icones/09 - fotos erradas.png";?>" alt="">   
+                    <img src="src='cid:logo_09'" alt="">   
                     <br><br>
                     <div style="text-align: left;">
                         <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
