@@ -137,11 +137,10 @@
             $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->Subject = 'Suas fotos não foram aprovadas - Livre.digital';            
             $this->mail->CharSet = 'UTF-8';
-            $this->mail->SMTPSecure = 'ssl';
-           // $this->mail->SMTPAuth = true;
+            $this->mail->SMTPSecure = 'ssl';           
             $this->mail->Port = 465;
             $this->mail->isHTML(true);
-            $this->mail->SMTPOptions = array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true  ) );             
+            
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
             //$this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));            
