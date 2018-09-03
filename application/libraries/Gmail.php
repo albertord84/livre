@@ -138,7 +138,7 @@
             $this->mail->Subject = 'Suas fotos não foram aprovadas - Livre.digital';            
             $this->mail->CharSet = 'UTF-8';
             $this->mail->SMTPSecure = 'ssl';
-            $this->mail->SMTPAuth = true;
+           // $this->mail->SMTPAuth = true;
             $this->mail->Port = 465;
             $this->mail->isHTML(true);
             $this->mail->SMTPOptions = array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true  ) ); 
