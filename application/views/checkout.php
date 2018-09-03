@@ -135,7 +135,7 @@
                     <div class="prelative fleft100 pd-20 bk-fff text-center">
                         <img src="<?php echo base_url().'assets/'?>img/icones/sms.png">	
                         <p class="m-top20 pd-lr50 text-left"><b class="fleft100 m-b20 text-center">
-                                Insira o código recebido:
+                                Insira o código recebido por SMS:
                         </b></p>
                         <input id="input_sms_code_confirmation" type="text" class="bverde ph-fff" placeholder=""  pattern="[0-9]{3}">			
                         <p id="text_error_sms_confirmation"></p>
