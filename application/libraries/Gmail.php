@@ -128,6 +128,7 @@
             $this->mail->CharSet = 'UTF-8';
             $this->mail->SMTPSecure = 'ssl';
             $mail->SMTPAuth = true;
+            $mail->Port = 465;
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             $this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
