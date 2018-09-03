@@ -103,7 +103,9 @@
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];            
             $this->db->where('id',$id);
-            return $this->db->update('account_banks',$datas1);  
+            $a = $this->db->update('account_banks',$datas1);  
+            $b =  $this->db->affected_rows();
+            return $b;
         }
         
         public function get_client($key, $value, $status=NULL){
