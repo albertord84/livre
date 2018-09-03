@@ -69,6 +69,7 @@
         }
        
         public function send_client_contact_form($username, $useremail, $usermsg) {
+            $aaa = $GLOBALS['sistem_config']->ATENDENT_EMAIL;
             $this->mail->clearAddresses();
             $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
             $this->mail->clearReplyTos();
