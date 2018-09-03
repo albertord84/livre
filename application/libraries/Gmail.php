@@ -118,6 +118,17 @@
             return $result;
         }
         
+        function curl_get_contents($url){
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            $data = curl_exec($ch);
+            curl_close($ch);
+            return $data;
+        }
+        
         public function transaction_request_new_photos($name, $useremail,$link) {
             $this->mail->clearAddresses();
             $this->mail->addAddress($useremail, $name);
@@ -134,7 +145,7 @@
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
             //$this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));
-            $this->mail->Body = file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");
+            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");
             
             if (!$this->mail->send()) {
                 $result['success'] = false;
