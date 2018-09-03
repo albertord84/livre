@@ -2291,8 +2291,8 @@ class Welcome extends CI_Controller {
     }
 
     public function do_payment_iugu($id){
-        /*if($id !== $_SESSION['pk'])   //segurança
-            return;*/
+        if($id !== $_SESSION['pk'])   //segurança
+            return;
         //Solicita na Iugu a cobrança no cartão do cliente
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2349,9 +2349,9 @@ class Welcome extends CI_Controller {
     }
 
     public function refund_bill_iugu($id){
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         //Para estorno do cartao
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
@@ -2389,9 +2389,9 @@ class Welcome extends CI_Controller {
     }
     
     public function get_bill_iugu($id){        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/    
+        }    
         $this->load->model('class/transaction_model');
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2488,9 +2488,9 @@ class Welcome extends CI_Controller {
     }
 
     public function basicCustomerTopazio($id, $API_token){        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2588,9 +2588,9 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_loans($id, $API_token){
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
-        }*/
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         //$this->load->model('class/transactions_status');
@@ -2778,9 +2778,9 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao        
-        /*if($_SESSION['logged_role'] !== 'ADMIN'){
+        if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
-        }*/
+        }
         $API_token = $this->get_topazio_API_token();
         if($API_token){
             $result_basic = $this->basicCustomerTopazio($id, $API_token);
