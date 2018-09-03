@@ -11,8 +11,7 @@
 	        <td width="105"></td>
 	        <td width="440" valign="top" align="center" height="40">
                     <br><br>
-                    <!--<img src="../../assets/img/icones/09 - fotos erradas.png" alt="">-->   
-                    <!--<img src='cid:logo_09' alt="">-->   
+                    <img src="../../assets/img/icones/09 - fotos erradas.png" alt="">   
                     <br><br>
                     <div style="text-align: left;">
                         <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
