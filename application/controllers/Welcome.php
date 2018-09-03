@@ -39,7 +39,6 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
         //$this->test3();   
-        echo $_SERVER['SERVER_NAME']." y ". base_url();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -1270,8 +1269,8 @@ class Welcome extends CI_Controller {
                 $result['reload'] = 1;
                 $result['src_status'] = $this->affiliate_model->get_icon_by_status(transactions_status::WAIT_PHOTO);
             }
-            else             
-                $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
+            //else             
+            //    $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
         }
         echo json_encode($result);
     }
