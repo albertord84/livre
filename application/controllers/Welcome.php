@@ -2716,6 +2716,7 @@ class Welcome extends CI_Controller {
                 }
                 else{
                     $response_loans['code_error'] = 3003;
+                    $response_loans['message'] = $result_query['message'] = (string)($result);
                 }
             }
         }
