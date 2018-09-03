@@ -1228,7 +1228,7 @@ class Welcome extends CI_Controller {
                             break;
                     default: ;                    
                 }
-                $result['message'] = "Error emprestimo. Motivo: ( ".$resp['message']." )";    
+                $result['message'] = "Error emprestimo: ".$resp['code_error'].". Motivo: ( ".$resp['message']." )";    
                 $result['success'] = false;    
             }            
         }
