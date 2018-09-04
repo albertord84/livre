@@ -150,8 +150,8 @@ class Welcome extends CI_Controller {
     
     public function transacoes() {
         if($_SESSION['logged_role'] === 'ADMIN'){
-            if(count($_POST))
-                $datas=$_POST;
+            if(count($_GET))
+                $datas=$_GET;
             else{
                 $datas['num_page']=1;
                 $datas['token']='';
@@ -1228,7 +1228,7 @@ class Welcome extends CI_Controller {
                             break;
                     default: ;                    
                 }
-                $result['message'] = "Error emprestimo. Motivo: ( ".$resp['message']." )";    
+                $result['message'] = "Error emprestimo: ".$resp['code_error'].". Motivo: ( ".$resp['message']." )";    
                 $result['success'] = false;    
             }            
         }
@@ -1377,7 +1377,8 @@ class Welcome extends CI_Controller {
         $datas = $this->input->post();
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
-            if($this->transaction_model->update_db_steep_3($datas,$_SESSION['pk'])){                
+            $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0)[0];
+            if($this->transaction_model->update_db_steep_3($datas,$account_bank['id'])){                
                 //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
                 $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                 if($uudid_doc){
@@ -2716,6 +2717,7 @@ class Welcome extends CI_Controller {
                 }
                 else{
                     $response_loans['code_error'] = 3003;
+                    $response_loans['message'] = $result_query['message'] = (string)($result);
                 }
             }
         }
@@ -3430,8 +3432,9 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
+        echo "<br> Number of loans: ".count($transactions);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3439,9 +3442,11 @@ class Welcome extends CI_Controller {
                     switch ($transaction->statusCode) {
                         case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                             /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                             break;
                          case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                             /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2100: //TOPAZIO - "CANCELADA"
                             //1. enviar para PENDING
@@ -3450,6 +3455,7 @@ class Welcome extends CI_Controller {
                             $this->transaction_model->update_transaction_status(
                                 $livre_tr['client_id'],
                                 transactions_status::PENDING);
+                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                             //1. pedir nova conta
@@ -3464,13 +3470,14 @@ class Welcome extends CI_Controller {
                                 $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                 $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                 if($this->request_new_account())
-                                    print_r("<br><br>Nova conta pedida automaticamente com sucesso");
+                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
                             } else{
-                                print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
+                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
                             }
                             break;
                         case 2500: //TOPAZIO - "PAGA CONFIRMADA"
                             //TODO: email com dinheiro enviado
+                            echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
                             break;
                     }
                 }
@@ -3481,7 +3488,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
     
@@ -3504,7 +3511,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        print_r("<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
        
         do{
             //transactions waiting signature
@@ -3517,7 +3524,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    print_r("<br><br>Contrato assinado por ".$transaction[email]);
+                    echo "<br><br>Contrato assinado por ".$transaction[email];
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {

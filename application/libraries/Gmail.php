@@ -82,8 +82,13 @@
             $usermsg  = urlencode($usermsg);
             $file = "https://".$_SERVER['SERVER_NAME'] . "/livre/resources/emails/contact_form.php?username=$username&useremail=$useremail&userphone=$userphone&usermsg=$usermsg";
             //echo $file;
-            $a=file_get_contents($file);
-            $this->mail->msgHTML(file_get_contents($file), dirname(__FILE__));
+            $this->mail->SMTPSecure = 'ssl';           
+            $this->mail->Port = 465;
+            $this->mail->isHTML(true);
+            
+            //$a=file_get_contents($file);
+            //$this->mail->msgHTML(file_get_contents($file), dirname(__FILE__));
+            $this->mail->Body = $this->curl_get_contents($file);
             //Replace the plain text body with one created manually
             $this->mail->AltBody = "User Contact: $username";            
             if (!$this->mail->send()) {

@@ -28,7 +28,7 @@
 	          		<br><br>
 	          		<h2 style="color: #20a7d3;">Está com dúvidas?</h2>
 					<p>
-						Fale com a gente pelo e-mail: <br><b>seja@live.digital</b>
+						Fale com a gente pelo e-mail: <br><b>seja@livre.digital</b>
 					</p> 
 	          	</div>      
 	        </td>
