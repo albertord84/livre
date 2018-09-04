@@ -150,8 +150,8 @@ class Welcome extends CI_Controller {
     
     public function transacoes() {
         if($_SESSION['logged_role'] === 'ADMIN'){
-            if(count($_POST))
-                $datas=$_POST;
+            if(count($_GET))
+                $datas=$_GET;
             else{
                 $datas['num_page']=1;
                 $datas['token']='';
