@@ -36,6 +36,7 @@ class Welcome extends CI_Controller {
         }/**/
         var_dump($resp);
     }
+
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
         //$this->test3();   
@@ -3491,7 +3492,82 @@ class Welcome extends CI_Controller {
         echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
-    
+    /*Vamos resolver con dos funciones separadas*/
+    public function robot_conciliation2() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $_SESSION['logged_role'] = 'ADMIN';
+        $date = date("Y-m-d",time());
+        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        $transactions = $this->topazio_conciliations($date);
+        echo "<br> Number of loans: ".count($transactions);
+        if($transactions->success){
+            foreach ($transactions->data as $transaction) {
+                if($transaction->ccbNumber){
+                    $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
+                    switch ($transaction->statusCode) {
+                        case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                            /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                            break;
+                         case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                            /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                            break;
+                        case 2100: //TOPAZIO - "CANCELADA"
+                            //1. enviar para PENDING
+                            $this->load->model('class/transactions_status');
+                            $this->load->model('class/transaction_model');
+                            $this->transaction_model->update_transaction_status(
+                                $livre_tr['client_id'],
+                                transactions_status::PENDING);
+                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                            break;
+                        case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                            //1. pedir nova conta
+                            $account_bank_reasonCodes = array(
+                                1 /*Conta Destinatária do Crédito Encerrada*/,
+                                2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                5 /*Divergência na Titularidade*/
+                            );
+                            if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                if($this->request_new_account())
+                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                            } else{
+                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                            }
+                            break;
+                        case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                            //TODO: email com dinheiro enviado
+                            //1. enviar para TOPAZIO_APROVED
+                            $this->load->model('class/transactions_status');
+                            $this->load->model('class/transaction_model');
+                            $this->transaction_model->update_transaction_status(
+                                $livre_tr['client_id'],
+                                transactions_status::TOPAZIO_APROVED);
+                            $name = explode(' ', $livre_tr['name']); $name = $name[0];                
+                            $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
+                            echo "<br><br>PAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
+                            break;
+                    }
+                }
+            }
+        }else{
+            /*$administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+            foreach ($administrators_emails as $useremail) {
+                $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
+            }*/
+        }
+        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+    }
     /* 
         Status dos documentos na D4Sign
         ID 1 - Processando
