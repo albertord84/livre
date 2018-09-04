@@ -3432,8 +3432,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo 'hello';
-        print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
@@ -3467,9 +3466,9 @@ class Welcome extends CI_Controller {
                                 $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                 $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                 if($this->request_new_account())
-                                    print_r("<br><br>Nova conta pedida automaticamente com sucesso");
+                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
                             } else{
-                                print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
+                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
                             }
                             break;
                         case 2500: //TOPAZIO - "PAGA CONFIRMADA"
@@ -3484,7 +3483,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
     
