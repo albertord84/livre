@@ -3442,9 +3442,11 @@ class Welcome extends CI_Controller {
                     switch ($transaction->statusCode) {
                         case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                             /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                             break;
                          case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                             /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2100: //TOPAZIO - "CANCELADA"
                             //1. enviar para PENDING
@@ -3453,6 +3455,7 @@ class Welcome extends CI_Controller {
                             $this->transaction_model->update_transaction_status(
                                 $livre_tr['client_id'],
                                 transactions_status::PENDING);
+                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                             //1. pedir nova conta
