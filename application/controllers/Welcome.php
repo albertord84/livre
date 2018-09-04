@@ -3511,7 +3511,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        print_r("<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
        
         do{
             //transactions waiting signature
@@ -3524,7 +3524,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    print_r("<br><br>Contrato assinado por ".$transaction[email]);
+                    echo "<br><br>Contrato assinado por ".$transaction[email];
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
