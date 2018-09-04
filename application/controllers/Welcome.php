@@ -3440,46 +3440,48 @@ class Welcome extends CI_Controller {
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
                     $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
-                    switch ($transaction->statusCode) {
-                        case 2000: //TOPAZIO - "EM PROCESSAMENTO"
-                            /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
-                            break;
-                         case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
-                            /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2100: //TOPAZIO - "CANCELADA"
-                            //1. enviar para PENDING
-                            $this->load->model('class/transactions_status');
-                            $this->load->model('class/transaction_model');
-                            $this->transaction_model->update_transaction_status(
-                                $livre_tr['client_id'],
-                                transactions_status::PENDING);
-                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                            //1. pedir nova conta
-                            $account_bank_reasonCodes = array(
-                                1 /*Conta Destinatária do Crédito Encerrada*/,
-                                2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
-                                3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
-                                5 /*Divergência na Titularidade*/
-                            );
-                            if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
-                                $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
-                                $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
-                                $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                if($this->request_new_account())
-                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
-                            } else{
-                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
-                            }
-                            break;
-                        case 2500: //TOPAZIO - "PAGA CONFIRMADA"
-                            //TODO: email com dinheiro enviado
-                            echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
-                            break;
+                    if($livre_tr['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. pedir nova conta
+                                $account_bank_reasonCodes = array(
+                                    1 /*Conta Destinatária do Crédito Encerrada*/,
+                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                    5 /*Divergência na Titularidade*/
+                                );
+                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                    if($this->request_new_account())
+                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                } else{
+                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                }
+                                break;
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
+                                break;
+                        }
                     }
                 }
             }
@@ -3509,54 +3511,56 @@ class Welcome extends CI_Controller {
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
                     $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
-                    switch ($transaction->statusCode) {
-                        case 2000: //TOPAZIO - "EM PROCESSAMENTO"
-                            /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
-                            break;
-                         case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
-                            /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2100: //TOPAZIO - "CANCELADA"
-                            //1. enviar para PENDING
-                            $this->load->model('class/transactions_status');
-                            $this->load->model('class/transaction_model');
-                            $this->transaction_model->update_transaction_status(
-                                $livre_tr['client_id'],
-                                transactions_status::PENDING);
-                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                            //1. pedir nova conta
-                            $account_bank_reasonCodes = array(
-                                1 /*Conta Destinatária do Crédito Encerrada*/,
-                                2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
-                                3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
-                                5 /*Divergência na Titularidade*/
-                            );
-                            if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
-                                $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
-                                $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
-                                $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                if($this->request_new_account())
-                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
-                            } else{
-                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
-                            }
-                            break;
-                        case 2500: //TOPAZIO - "PAGA CONFIRMADA"
-                            //TODO: email com dinheiro enviado
-                            //1. enviar para TOPAZIO_APROVED
-                            $this->load->model('class/transactions_status');
-                            $this->load->model('class/transaction_model');
-                            $this->transaction_model->update_transaction_status(
-                                $livre_tr['client_id'],
-                                transactions_status::TOPAZIO_APROVED);
-                            $name = explode(' ', $livre_tr['name']); $name = $name[0];                
-                            $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
-                            echo "<br><br>PAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
-                            break;
+                    if($livre_tr['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. pedir nova conta
+                                $account_bank_reasonCodes = array(
+                                    1 /*Conta Destinatária do Crédito Encerrada*/,
+                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                    5 /*Divergência na Titularidade*/
+                                );
+                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                    if($this->request_new_account())
+                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                } else{
+                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                }
+                                break;
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                //1. enviar para TOPAZIO_APROVED
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::TOPAZIO_APROVED);
+                                $name = explode(' ', $livre_tr['name']); $name = $name[0];                
+                                $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
+                                echo "<br><br>PAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
+                                break;
+                        }
                     }
                 }
             }
