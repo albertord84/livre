@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
-    var has_next_page = false;
+    //var has_next_page = false;
     var transaction_id;
     
     //---------ADMIN FUNCTIONS-----------------------------------
@@ -308,32 +308,36 @@ $(document).ready(function () {
     });
     
     $('#btn_afiliate_search').click(function () {
-        if($('#token').val()=='' ||$('#token').val().match('^[ ]{1,}$')){
+        /*if($('#token').val()=='' ||$('#token').val().match('^[ ]{1,}$')){
             $('#token').val('');
             return false;
-        }else{
-            num_page=1;
-            $('#num_page').val(num_page);            
-            return true;            
-        }
+        }else{*/
+            //num_page=1;
+            see_transactions();
+        //}
     });
         
+    function see_transactions(){
+        $('#num_page').val(num_page);            
+        $(location).attr('href',base_url+'index.php/welcome/transacoes?num_page='+num_page); 
+    }
     
     $('#prev_page').click(function () {
         if(num_page>1){
             num_page--;
-            $('#num_page').val(num_page);    
-            $('#btn_afiliate_search').click();
+            //$('#num_page').val(num_page);    
+            //$('#btn_afiliate_search').click();
+            see_transactions();
         }
         return false;
     });
     
-    $('#next_page').click(function () {
+    $('#next_page').click(function () {        
         if(has_next_page){
-            num_page++;
-            $('#num_page').text(num_page);
-            $('#num_page').val(num_page);
-            $('#btn_afiliate_search').click();
+            num_page++;            
+            //$('#num_page').val(num_page);
+            //$('#btn_afiliate_search').click();
+            see_transactions();
         }
         return false;
     });
@@ -524,17 +528,6 @@ $(document).ready(function () {
             date = '0'+date;
         var t = date + '/' + month + '/' + year;
         return t;
-    }
-    
-    function init_signin(){        
-        $('#affiliate_complete_name').val('JOSÉ RAMÓN GONZÁLEZ MONTERO');
-        $('#affiliate_username').val('josergm86');
-        $('#affiliate_email').val('josergm86@gmail.com');
-        $('#affiliate_phone_ddd').val('21');
-        $('#affiliate_phone_number').val('965913089');
-        $('#affiliate_pass').val('jr24666gm');
-        $('#affiliate_pass_confirmation').val('jr24666gm');
-        $('#titular_cpf').val('07367014196');
     }
     
     
