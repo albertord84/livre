@@ -3434,6 +3434,7 @@ class Welcome extends CI_Controller {
         $date = date("Y-m-d",time());
         echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
+        echo "<br> Number of loans: ".count($transactions);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3473,6 +3474,7 @@ class Welcome extends CI_Controller {
                             break;
                         case 2500: //TOPAZIO - "PAGA CONFIRMADA"
                             //TODO: email com dinheiro enviado
+                            echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
                             break;
                     }
                 }
