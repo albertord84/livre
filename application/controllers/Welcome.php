@@ -3432,8 +3432,9 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
+        echo "<br> Number of loans: ".count($transactions);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3441,9 +3442,11 @@ class Welcome extends CI_Controller {
                     switch ($transaction->statusCode) {
                         case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                             /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                             break;
                          case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                             /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2100: //TOPAZIO - "CANCELADA"
                             //1. enviar para PENDING
@@ -3452,6 +3455,7 @@ class Welcome extends CI_Controller {
                             $this->transaction_model->update_transaction_status(
                                 $livre_tr['client_id'],
                                 transactions_status::PENDING);
+                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
                             break;
                         case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                             //1. pedir nova conta
@@ -3466,13 +3470,14 @@ class Welcome extends CI_Controller {
                                 $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                 $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                 if($this->request_new_account())
-                                    print_r("<br><br>Nova conta pedida automaticamente com sucesso");
+                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
                             } else{
-                                print_r("<br><br>NEW REASON CODE TO 2300 ERROR");
+                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
                             }
                             break;
                         case 2500: //TOPAZIO - "PAGA CONFIRMADA"
                             //TODO: email com dinheiro enviado
+                            echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
                             break;
                     }
                 }
@@ -3483,7 +3488,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        print_r("<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
     
@@ -3506,7 +3511,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        print_r("<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        echo "<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
        
         do{
             //transactions waiting signature
@@ -3519,7 +3524,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    print_r("<br><br>Contrato assinado por ".$transaction[email]);
+                    echo "<br><br>Contrato assinado por ".$transaction[email];
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
