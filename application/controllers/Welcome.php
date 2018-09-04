@@ -3432,6 +3432,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
+        echo 'hello';
         print_r("<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time());
         $transactions = $this->topazio_conciliations($date);
         if($transactions->success){
