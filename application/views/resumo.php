@@ -28,38 +28,42 @@
                                 <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-12 text-center m-top20 m-top20-xs">
-                                <input id="btn_abstract_admin_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
+                                <input id="btn_abstract_admin_search" type="button" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
                             </div>
                         </div>
                     </form>
                 </div>
 		<div class="col-md-6 col-sm-6 col-xs-12">
-			<h4 class="pd-lr15 m-b10"><em>Geral</em> 
+			<h4 class="pd-lr15 m-b10">
+                            <!--<em>Geral</em>--> 
                         </h4>
+                    <h5 class="pd-lr15 m-b10">TRANSAÇÕES COBRADAS: <span id ='num_transactions'><?php echo $total_transactions; ?></span>
+                        </h5>
 			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">VALOR TOTAL (CET)</span>
-					<h4 class="fw-600 cl-blue">R$ 265.000,00</h4>
+                                        <h4 class="fw-600 cl-blue"><span id ='total_cet'>R$ <?php echo $total_CET; ?></span></h4>
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
-					<span class="ft-size12 fw-600 cl-black">VALOR EMPRESTADO</span>
-					<h4 class="fw-600 cl-blue">R$ 265.000,00</h4>
+					<span class="ft-size12 fw-600 cl-black">VALOR TOMADO</span>
+                                        <h4 class="fw-600 cl-blue"><span id ='total_tomado'>R$ <?php echo $loan_value; ?></span></h4>
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">TIKET MÉDIO</span>
-					<h4 class="fw-600 cl-blue">R$ 5.190,85</h4>
+                                        <h4 class="fw-600 cl-blue"><span id ='ave_ticket'>R$ <?php echo $average_ticket; ?></span></h4>
 				</div>
 			</div>
 			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">NÚMERO MÉDIO DE PARCELAS</span>
-					<h4 class="fw-600 cl-blue">10 X</h4>
+                                        <h4 class="fw-600 cl-blue"><span id ='ave_plot'><?php echo $average_amount_months; ?> X</span></h4>
 				</div>
 			</div>
+			
 <!--			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">SALDO RETIDO PELO BANCO</span>
@@ -168,6 +172,8 @@
         <script src="<?php echo base_url().'assets/js/maskinput.js?'.$SCRIPT_VERSION;?>" type="text/javascript" ></script>
         <!-- Scripts -->
         <script src="<?php echo base_url().'assets/js/script.js?'.$SCRIPT_VERSION;?>" type="text/javascript" ></script>
+        
+        <script src="<?php echo base_url().'assets/js/resume.js?'.$SCRIPT_VERSION;?>" type="text/javascript" ></script>
 
 
 </html>

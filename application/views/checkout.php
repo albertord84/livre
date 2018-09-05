@@ -162,13 +162,13 @@
                         <div class="fleft100 pd-lr20 pd-tb25 bk-fff h441">
                             <span class="ft-size14 fw-600 fleft100">SEUS DADOS</span>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="name" type="text" placeholder="Nome completo" required style="text-transform:uppercase;">
+                                <input id="name" type="text" placeholder="Nome completo   (como aparece no CPF)" required style="text-transform:uppercase;">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
                                 <input id="email" type="text" placeholder="E-mail">
                             </fieldset>
                             <fieldset class="fleft100 col-md-12 pd-lr10">
-                                <input id="cpf" type="text" placeholder="CPF" maxlength="11" minlength="11">
+                                <input id="cpf" type="text" placeholder="CPF  (Apenas dígitos)" maxlength="11" minlength="11">
                             </fieldset>
                             <fieldset class="col-md-3 col-sm-3 col-xs-3 pd-lr10">
                                 <input id="phone_ddd" type="text" placeholder="DDD" maxlength="2">
