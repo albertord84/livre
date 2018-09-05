@@ -60,6 +60,7 @@ class Welcome extends CI_Controller {
     public function checkout() {
         //die('This functionalities is under development :-)');
         if(session_id()=='')header('Location: '.base_url());
+        if(!$_SESSION['transaction_values']['amount_months'])header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -2379,7 +2380,7 @@ class Welcome extends CI_Controller {
         }
         else {
             $response['success'] = false;
-            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito";//$parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito. Motivo: (".$parsed_response->message.")";//$parsed_response->message;
         }
         return $response;
     }
