@@ -38,8 +38,7 @@ class Welcome extends CI_Controller {
     }
 
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
-        //$this->test3();   
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -196,11 +195,42 @@ class Welcome extends CI_Controller {
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $params['view'] = 'resumo';            
-            $params['total_CET'] = $this->affiliate_model->total_CET($datas);
-            $params['loan_value'] = $this->affiliate_model->loan_value($datas);
-            $params['average_ticket'] = $this->affiliate_model->average_ticket($datas);
-            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);            
-            $this->load->view('resumo');
+            $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
+            $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+            $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
+            $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
+            $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+            $this->load->view('resumo', $params);
+        }
+    }
+    
+    public function filter_resume() {
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST)){
+                $datas=$_POST;
+                if($datas['abstract_end_date'] != '')
+                    $datas['abstract_end_date'] = (string)($datas['abstract_end_date'] + 23*60*60+59*60);
+            }
+            else{
+                $datas['abstract_init_date']='';
+                $datas['abstract_end_date']='';
+            }
+            $this->load->model('class/affiliate_model');
+            
+            $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
+            if($params['total_transactions']){
+                $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+                $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
+                $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
+                $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+            }
+            else{
+                $params['total_CET'] = "0.00";
+                $params['loan_value'] = "0.00";
+                $params['average_ticket'] = "0.00";
+                $params['average_amount_months'] = '0';            
+            }
+            echo json_encode($params);
         }
     }
     
@@ -734,7 +764,11 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);
-                if($response['success']){                    
+                if($response['success']){
+                    $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['pk'],
+                        'pay_date', time());                                
                     $string_param = "transactionId=".$_SESSION['pk']
                                 . "&transactionAffiliation=site"
                                 . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
