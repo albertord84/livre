@@ -259,10 +259,10 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');            
             $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
             $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
-            if($datas['abstract_init_date']!='' && $datas['abstract_end_date']!=''){
+            if($datas['abstract_init_date']!='')
                 $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
-                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                
-            }
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
             return $this->db->get()->row_array()['total_transactions'];
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
