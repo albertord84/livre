@@ -16,7 +16,7 @@
 					<p>
 						Parece que houve um erro durante o processamento dos dados do seu cartão. 
 						<br><br>
-						<b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do crédito solicitado deve ser menor que o valor de limite do seu cartão. </u> Se mesmo assim não conseguir proesseguir, entre em contato com a operadora do seu cartão para maiores informações.
+						<b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do crédito solicitado deve ser menor que o valor de limite do seu cartão. </u> Se mesmo assim não conseguir prosseguir, entre em contato com a operadora do seu cartão para maiores informações.
 					</p> 					
 	          	</div> 
 	          	<div>

@@ -117,7 +117,7 @@
                         <p class="m-top20 pd-lr50 text-left">
                             <b class="fleft100 m-b20 text-center">Parece que houve um erro durante o <br>processamento dos dados do seu cartão.</b> 
                             <b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do empréstimo deve ser menor que o valor de limite do seu cartão.</u> <br><br>
-                            Se mesmo assim não conseguir proesseguir, entre em contato com a operadora do seu cartão para maiores informações.
+                            Se mesmo assim não conseguir prosseguir, entre em contato com a operadora do seu cartão para maiores informações.
                         </p>			
                     </div>	
                     <div class="fleft100 m-top10 text-right center-sm">

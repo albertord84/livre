@@ -439,7 +439,13 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function insert_datas_steep_1(){
+    public function insert_datas_steep_1(){        
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
@@ -587,6 +593,12 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_2() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $datas = $this->input->post();
         if(!$_SESSION['is_possible_steep_1'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -701,6 +713,12 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_3() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $datas = $this->input->post();
         if(!$_SESSION['is_possible_steep_1'] || !$_SESSION['is_possible_steep_2'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -744,6 +762,12 @@ class Welcome extends CI_Controller {
     }
     
     public function sign_contract() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -829,7 +853,8 @@ class Welcome extends CI_Controller {
                     $useremail = $_SESSION['client_datas']['email'];
                     $this->Gmail->credit_card_recused($name,$useremail);
                     $result['success'] = false;
-                    $result['message'] = $response['message'];  
+                    $result['message'] = $response['message'];                    
+                    session_destroy();
                 }
             }
             else{                
@@ -2380,8 +2405,12 @@ class Welcome extends CI_Controller {
         }
         else {
             $error = "";
-            if($parsed_response->message)
+            if($parsed_response->message){
                 $error = $parsed_response->message;
+                /*if($parsed_response->LR){
+                    $error_cause = $this->iugu_action
+                }*/
+            }
             else{
                 if(is_object($parsed_response->errors)){
                     $array_error = (array)($parsed_response->errors);                    
