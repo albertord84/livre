@@ -66,9 +66,12 @@
         public function save_cpf_card($id, $ucpf){    
             $result = NULL;
             try{
+                $this->db->trans_start();
                 $this->db->where('id', $id);
                 $this->db->update('transactions',['ucpf' => $ucpf]);
-                $result =  $this->db->affected_rows();
+                //$result =  $this->db->affected_rows();
+                $this->db->trans_complete();
+                $result = $this->db->trans_status();
             } catch (Exception $exception) {
                echo 'Error accediendo a la base de datos';
             } finally {
@@ -93,6 +96,7 @@
         }
         
         public function update_db_steep_3($datas,$id){
+            $this->db->trans_start();
             $this->load->model('class/Crypt');             
             $datas1['client_id']=$datas['pk'];
             $datas1['bank']= $this->Crypt->crypt($datas['bank']);
@@ -103,9 +107,11 @@
             $datas1['titular_name']=$datas['titular_name'];
             $datas1['titular_cpf']=$datas['titular_cpf'];            
             $this->db->where('id',$id);
-            $a = $this->db->update('account_banks',$datas1);  
+            $this->db->trans_complete();
+            return $this->db->trans_status();
+            /*$a = $this->db->update('account_banks',$datas1);  
             $b =  $this->db->affected_rows();
-            return $b;
+            return $b;*/
         }
         
         public function get_client($key, $value, $status=NULL){

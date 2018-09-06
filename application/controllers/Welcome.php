@@ -2379,8 +2379,20 @@ class Welcome extends CI_Controller {
             $response['message'] = $parsed_response->message;
         }
         else {
+            $error = "";
+            if($parsed_response->message)
+                $error = $parsed_response->message;
+            else{
+                if(is_object($parsed_response->errors)){
+                    $array_error = (array)($parsed_response->errors);                    
+                    $error_keys = array_keys($array_error);
+                    $error = $error_keys[0].": ".$array_error[$error_keys[0]][0];
+                }
+                else
+                    $error = $parsed_response->errors;
+            }            
             $response['success'] = false;
-            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito. Motivo: (".$parsed_response->message.")";//$parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito. Motivo: (".$error.")";
         }
         return $response;
     }
