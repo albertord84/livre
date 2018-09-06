@@ -53,7 +53,7 @@ $(document).ready(function () {
     
     function verify(flag){    
         if($('#input_verify').val()===''){
-           modal_alert_message("Preencha com o valor que deseja solicitar o empréstimo. Lembre-se que ele deve ser menor que o seu limite no cartão de crédito.");
+           modal_alert_message("Preencha com o valor que deseja solicitar o crédito. Lembre-se que ele deve ser menor que o seu limite no cartão de crédito.");
         }else{
             solicited_value = $('#input_verify').val();
             solicited_value = solicited_value.replace('R$ ','');

@@ -93,9 +93,9 @@
                     <div class="fleft100 pd-lr30 m-top30 ft-size16 fmr-check">
                         <h4 class="cl-blue m-b15">Oi <?php echo explode(' ',$transaction['name'])[0];?>!</h4>
                         <p>
-                            Verificamos que sua conta bancária não é a mesma do títular do cartão de crédito. Para que o empréstimo seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária.
+                            Verificamos que sua conta bancária não é a mesma do títular do cartão de crédito. Para que o crédito seja aprovado, é obrigatório que o titular do cartão seja o mesmo titular da conta bancária.
                         </p>
-                        <b>Por favor, informe uma nova conta para prosseguir com o seu empréstimo:</b>
+                        <b>Por favor, informe uma nova conta para prosseguir com o seu crédito:</b>
 
                         <div class="col-md-8 col-sm-8 col-xs-12 col-md-offset-2">
                             <div class="cad_new_account1 bk-fff fleft100 pd-30">

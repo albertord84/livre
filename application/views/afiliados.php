@@ -64,7 +64,7 @@
 				<div class="col-md-12 col-sm-12 col-xs-12 pd-lr5 m-top10 text-center">Este mês</div>                                
                                     <div class="col-md-12 col-sm-12 col-xs-12 pd-lr5 m-top10 text-center">                              
                                     <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">
-                                        <span class="fleft100">Empréstimos</span>
+                                        <span class="fleft100">Créditos</span>
                                         <span class="emp"><?php echo $_SESSION['affiliate_logged_datas']['amount_transactions'];?></span>
                                     </div>
                                     <div class="col-md-6 col-sm-6 col-xs-12 pd-lr5 m-top10">

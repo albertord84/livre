@@ -116,7 +116,7 @@
                         <img src="<?php echo base_url().'assets/'?>img/icones/erro.png">	
                         <p class="m-top20 pd-lr50 text-left">
                             <b class="fleft100 m-b20 text-center">Parece que houve um erro durante o <br>processamento dos dados do seu cartão.</b> 
-                            <b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do empréstimo deve ser menor que o valor de limite do seu cartão.</u> <br><br>
+                            <b>Pedimos que verifique o limite do seu cartão.</b> <br><u>Lembre-se que o valor do crédito deve ser menor que o valor de limite do seu cartão.</u> <br><br>
                             Se mesmo assim não conseguir prosseguir, entre em contato com a operadora do seu cartão para maiores informações.
                         </p>			
                     </div>	
@@ -788,7 +788,7 @@
 		<!-- <div class="i fleft100 pd-30 bk-fff fw-600 m-top40">
                     <div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="img/icones/i.png" width="30"></div>
                     <div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size13">
-                        <h5 class="fw-700">IMPORTANTE:</h5> Para solicitar o empréstimo o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa. Não é permitido usar o cartão de outra pessoa para solicitar o empréstimo. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
+                        <h5 class="fw-700">IMPORTANTE:</h5> Para solicitar o crédito o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa. Não é permitido usar o cartão de outra pessoa para solicitar o crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora.
                     </div>
 		</div> -->
 	</div>

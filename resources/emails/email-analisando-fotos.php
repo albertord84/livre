@@ -14,7 +14,7 @@
 	          	<div style="text-align: left;">
 	          		<h2 style="color: #20a7d3;">Oi Marcio!</h2>
 					<p>
-						Suas fotos já estão sendo analisadas pela nossa equipe. Se estiver tudo certo seu empréstimo será liberado.
+						Suas fotos já estão sendo analisadas pela nossa equipe. Se estiver tudo certo seu crédito será liberado.
 						<br>
 						<b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
 					</p> 

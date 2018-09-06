@@ -97,7 +97,7 @@
         <div class="container">
             <div class="col-md-10 col-sm-10 col-xs-12 pull-right">
                 <h1 class="ft-size45 cl-fff">QUER GANHAR UMA <br>RENDA EXTRA?</h1>
-                <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do empréstimo!</h2>
+                <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do crédito!</h2>
             </div>
         </div>
     </section>
@@ -222,7 +222,7 @@
                                                     <img src="<?php echo base_url().'assets/'?>img/icones/rd.png" alt="">
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                                    Empréstimo através do limite disponível no cartão de crédito
+                                                    Crédito através do limite disponível no cartão de crédito
                                             </div>
                                     </div>
                             </div>			
@@ -272,14 +272,14 @@
                                             <br><br>
                                             A verificação de crédito é feita na mesma hora e a resposta é imediata.
                                             <br><br>
-                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do livre.digital. 
+                                            O papel do afiliado é recepcionar o cliente e recomendar o crédito do livre.digital. 
                                             <br><br>
                                             
                                     </p>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12 m-top80">
                                     <p class="ft-size17">
-                                            Para realizar a operação, o afiliado precisa apenas contratar o empréstimo em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
+                                            Para realizar a operação, o afiliado precisa apenas contratar o crédito em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
                                             <br><br>
                                             Traga seus clientes para o livre.digital! 
                                             Receba até 10 vezes mais do que a sua comissão atual, diariamente, sem burocracia, sem custos operacionais para o seu negócio e com muito mais benefícios para seus clientes!
