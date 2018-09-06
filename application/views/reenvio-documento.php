@@ -98,7 +98,7 @@
 							Infelizmente suas fotos não estão legíveis ou os dados não batem com a conta informada. <b>Você só precisa reenviar novas fotos. </b>
 							<br><br>
 							<b>ATENÇÃO:</b> <br>
-							<b>1.</b> Você precisa ser o titular da conta que receberá o valor do empréstimo. <br>
+							<b>1.</b> Você precisa ser o titular da conta que receberá o valor do crédito. <br>
 							<b>2.</b> As fotos precisam estar em boa qualidade e em local iluminado.
 						</p>
 
@@ -226,7 +226,7 @@
 					<div class="fleft100 pd-lr60 m-top40 m-b40">
 						<h4 class="cl-blue m-b10">Dados enviados com sucesso!</h4>
 						<p>
-							Se estiver tudo certo seu empréstimo será liberado. <br><b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
+							Se estiver tudo certo seu crédito será liberado. <br><b>Vamos enviar e-mails de atualizações sobre o seu pedido.</b> Até já!
 						</p>
 						<div class="fleft100 text-center m-top30">
 							<h4 class="cl-blue m-b10">Está com dúvidas?</h4>

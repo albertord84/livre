@@ -33,7 +33,7 @@
 				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href=""><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
 				<div class="col-md-6 col-sm-6 col-xs-12 fr text-left">
 					<div class="fleft100">
-						<h3 class="fw-400 ft-Rajdhani">Empréstimo Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
+						<h3 class="fw-400 ft-Rajdhani">Crédito Online e rápido <br>através do seu <b>cartão de crédito.</b></h3>
 					</div>
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-12 pd-0 text-right center-xs m-top20">
