@@ -73,7 +73,10 @@ $(document).ready(function () {
                 }
             });            
         } else{
-            modal_alert_message("Erro nos dados fornecidos. Por favor, verifique.");
+            if(name==="false")
+                modal_alert_message("O nome não pode conter acentos, ñ ou ç. Por favor, verifique seus dados");
+            else
+                modal_alert_message("Erro nos dados fornecidos. Por favor, verifique.");
         } 
     });
     
