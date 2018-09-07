@@ -32,6 +32,8 @@
     <?php include_once "pixel_ecomerce_analytics.php";?>
     <?php include_once "pixel_adwords.php";?>
     
+    <!-- Event snippet for Empréstimos conversion page --> <script> gtag('event', 'conversion', { 'send_to': 'AW-789597034/H8OyCI6S6IgBEOqWwfgC', 'value': 1.0, 'currency': 'BRL', 'transaction_id': '' }); </script> 
+    
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
