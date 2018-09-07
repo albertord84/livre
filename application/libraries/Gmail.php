@@ -391,5 +391,35 @@
             $this->mail->smtpClose();
             return $result;
         }
+        
+        public function email_iugu_report($name, $useremail, $subject, $text) {
+            $this->mail->clearAddresses();
+            $this->mail->addAddress($useremail, $name);
+            $this->mail->clearCCs();
+            $this->mail->addCC($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->addReplyTo($GLOBALS['sistem_config']->ATENDENT_EMAIL, $GLOBALS['sistem_config']->ATENDENT_USER_LOGIN);
+            $this->mail->Subject = $subject;
+            $this->mail->CharSet = 'UTF-8';
+            $this->mail->SMTPSecure = 'ssl';           
+            $this->mail->Port = 465;
+            $this->mail->isHTML(true);
+            $name = urlencode($name);
+            //$text = urlencode($text);
+            $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //$this->mail->Body = $this->curl_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-iugu-report.php?name=$name&text=$tex");
+            $message_body = 'Olá '.$name.'! Tudo bem?<br>';
+            $message_body .= '<p>'.$text.'<br><br>';
+            $message_body .= 'Se precisar de ajuda é só escrever! ';
+            $this->mail->Body = $message_body;
+            if (!$this->mail->send()) {
+                $result['success'] = false;
+                $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
+            } else {
+                $result['success'] = true;
+                $result['message'] = "Message sent!" . $this->mail->ErrorInfo;
+            }
+            $this->mail->smtpClose();
+            return $result;
+        }
                 
     }
