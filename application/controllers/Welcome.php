@@ -852,6 +852,7 @@ class Welcome extends CI_Controller {
                     $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
                     $useremail = $_SESSION['client_datas']['email'];
                     $this->Gmail->credit_card_recused($name,$useremail);
+                    //analisar erro da transação
                     $result['success'] = false;
                     $result['message'] = $response['message'];                    
                     session_destroy();
@@ -2407,9 +2408,9 @@ class Welcome extends CI_Controller {
             $error = "";
             if($parsed_response->message){
                 $error = $parsed_response->message;
-                /*if($parsed_response->LR){
-                    $error_cause = $this->iugu_action
-                }*/
+                if($parsed_response->LR){
+                    $response['LR'] = $parsed_response->LR;
+                }
             }
             else{
                 if(is_object($parsed_response->errors)){
