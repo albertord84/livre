@@ -788,7 +788,7 @@ class Welcome extends CI_Controller {
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
                 //1. pasar cartão de crédito na IUGU                
-                $response = $this->do_payment_iugu($_SESSION['pk']);
+                $response = $this->do_payment_iugu($_SESSION['pk']);                
                 if($response['success']){
                     $this->transaction_model->save_in_db(
                         'transactions',
@@ -853,8 +853,26 @@ class Welcome extends CI_Controller {
                     $useremail = $_SESSION['client_datas']['email'];
                     $this->Gmail->credit_card_recused($name,$useremail);
                     //analisar erro da transação
-                    $result['success'] = false;
-                    $result['message'] = $response['message'];                    
+                    if($response['LR'] && $response['LR'] != '00')
+                    {
+                        $report_iugu = $this->iugu_report(
+                                                        $response['LR'], 
+                                                        $_SESSION['transaction_values']['total_cust_value'],
+                                                        $_SESSION['transaction_values']['amount_months']
+                                                        );                    
+                        if($report_iugu['known']){
+                            $result['message'] = $report_iugu['message'];                    
+                            //enviar email com passos
+                            //$result['message'] = $report_iugu['email'];                    
+                        }
+                        else
+                            $result['message'] = "Transação foi negada";                    
+                    }
+                    else{
+                        $result['message'] = $response['message'];                    
+                    }
+                    
+                    $result['success'] = false;                    
                     session_destroy();
                 }
             }
@@ -2352,7 +2370,7 @@ class Welcome extends CI_Controller {
         }        
         */
     }
-
+    
     public function do_payment_iugu($id){
         if($id !== $_SESSION['pk'])   //segurança
             return;
@@ -3820,5 +3838,67 @@ class Welcome extends CI_Controller {
             );
         return $result;
     }
+    
+    public function iugu_report($LR, $CET, $parcelas) {
+        $report = [
+                    [
+                        'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
+                        'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
+                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma.                              PARA LIBERAR O DINHEIRO:
+                                    Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes.                                 Depois disso, basta solicitar novamente em nosso site que ele será aprovado!                               Se precisar de ajuda é só escrever!'
+                    ],
+                    [
+                        'LR' => ['51','70'],
+                        'message' => 'Não há limite suficiente em seu cartão de crédito. Que tal escolher um valor menor? Solicite metade do valor agora e o restante em 24h, assim a aprovação será mais fácil.',
+                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?
+                                    Experimente solicitar metade do valor primeiro e amanhã solicitar o restante. 
+                                    Lembre que o valor total do crédito (CET) deve ser menor que o limite que você tem. 
+                                    Por exemplo, se você tem R$3.000,00 de limite, você deve solicitar ao Livre um valor que seja menor que o Custo Toral (CET) e que caiba nesse limite.'
+                    ],
+                    [
+                        'LR' => ['91','AA','AE','19'],
+                        'message' => 'Não foi possível aprovar sua solicitação devido a falta de comunicação com o banco emissor do cartão de crédito. Tente novamente em alguns minutos.',
+                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo. Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.'
+                    ],
+                    [
+                        'LR' => ['BV'],
+                        'message' => 'Utilize outro cartão de crédito, o cartão utilizado não tem validade.',
+                        'email' => 'Identificamos que seu cartão está vencido e por isso o valor solicitado não pode ser aprovado. Mas não tem problema, você pode utilizar outro cartão de crédito para solicitar um novo valor. Ele só precisa ser da mesma titularidade da conta bancária.'
+                    ],
+                    [
+                        'LR' => ['KA','KE','12'],
+                        'message' => 'O valor não pode ser aprovado devido aos dados do cartão de crédito não estarem corretos.
+                                      Volte e atualize seus dados do cartão com atenção. Não utilize espaço ou caracteres especiais.',
+                        'email' => 'O banco não autorizou a transação pois os dados do cartão estão incorretos, você só precisa refazer o pedido e preencher os dados corretamente. Atente-se para não adicionar espaços ou caracteres em locais que não são permitidos como no número do cartão, no seu nome e no CVV (Código de verificação de 3 dígitos que fica atrás do seu cartão)'
+                    ],
+                    [
+                        'LR' => ['N7'],
+                        'message' => 'Volte e corrija seu o CVV (Código de verificação - Número de 3 dígitos na parte de trás do cartão, ou se for American Express, 4 digitos localizados na frente do cartão). Lembre-se de não utilizar espaços ou caracteres especiais.',
+                        'email' => 'O valor solicitado não pode ser aprovado pois o Código de Verificação do seu cartão foi preenchido incorretamente. Você precisa utilizar o CVV código de verificação que fica atrás do cartão. Esse código tem 3 dígitos (ou 4, se for American Express). Se precisar de ajuda é só nos comunicar!'
+                    ],
+                    [
+                        'LR' => ['AC'],
+                        'message' => 'Você utilizou seu cartão de DÉBITO. Para que seu pedido seja aprovado, volte e atualize os dados com seu cartão de CRÉDITO.',
+                        'email' => 'Você utilizou seu cartão de débito. Para que o pedido seja aprovado, é necessário utilizar seu cartão de crédito. É importante lembrar que o valor final (Custo Total - CET) deve caber no seu limite de crédito, ou seja, ele deve ser menor que o limite do seu cartão de crédito.'
+                    ]
+                ];
+        
+        $result = [];
+        $result['known'] = false;
+        foreach ($report as $type) {
+            if(in_array($LR, $type['LR'])){
+                $result = $type;
+                $result['known'] = true;
+                break;
+            }
+        }
+        
+        $email91 = 'O valor solicitado não pode ser aprovado pois não conseguimos a resposta do banco emissor do cartão de crédito.
+                      Mas não se preocupe, é só você tentar novamente em alguns minutos. 
+                      Aproveite e faça contato com seu banco para informar que você aprova a transação feita pela iugu*livre.digital, assim o empréstimo será liberado com muito mais facilidade!';
+        if($LR == '91')
+            $result['email'] = $email91;
+        return $result;
+    }   
     
 }
