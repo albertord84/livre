@@ -81,12 +81,19 @@ class Welcome extends CI_Controller {
     }
     
     public function suceso_compra(){
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params = $this->input->get();        
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $this->load->view('sucesso-compra',$params);
-        $this->load->view('inc/footer');
+        if($_SESSION['buy'] == true){
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params = $this->input->get();        
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            session_destroy();
+            $this->load->view('sucesso-compra',$params);
+            $this->load->view('inc/footer');
+        }
+        else{
+            session_destroy();
+            header('Location: '.base_url());
+        }
     }
     
     public function afhome() {
@@ -875,9 +882,10 @@ class Welcome extends CI_Controller {
                                                     transactions_status::PENDING);                        
                     }
                     //sucesso de contrato se foi cobrado
+                    $_SESSION['buy'] = true;
                     $result['success'] = true;
                     $result['params'] = $string_param;                                
-                    session_destroy();
+                    //session_destroy(); se mata na no carga
                 }else{
                     $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
                     $useremail = $_SESSION['client_datas']['email'];
