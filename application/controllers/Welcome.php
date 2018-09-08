@@ -2656,7 +2656,7 @@ class Welcome extends CI_Controller {
         $name = $client["name"];
         $cep = (int)$client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
-        $number = $client["complement_number_address"];
+        $number = substr($client["complement_number_address"],0,10);
         $district = "_"; //"";
         $city = $client["city_address"];
         $state = $client["state_address"];
