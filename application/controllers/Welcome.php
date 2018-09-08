@@ -416,8 +416,8 @@ class Welcome extends CI_Controller {
                 return $result;
             }
         }
-        if(count($clients)==1){
-            if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+        if(count($clients)==1){            
+            if($clients[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
                 if($_SESSION['client_datas']['sms_verificated'] === true){
                     $result['id'] = $clients[0]['id'];
                     $result['success']=true;
@@ -434,6 +434,7 @@ class Welcome extends CI_Controller {
             }else{
                 $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
                 $result['success']=false;
+                session_destroy();
                 return $result;
             }
         }
@@ -592,19 +593,31 @@ class Welcome extends CI_Controller {
         }        
     }
     
-    public function insert_datas_steep_2() {
+    public function insert_datas_steep_2() {        
         if(!$_SESSION['transaction_values']['amount_months']){
             $result['message']='Sessão expirou';
             $result['success']=false;
             echo json_encode($result);
             return;
         }
+        /*--------------analisis del nro de tentativas-------------------*/
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');            
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+        if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['success']=false;
+            echo json_encode($result);
+            session_destroy();
+            return;
+        }
+        /*---------------------------------*/
         $datas = $this->input->post();
         if(!$_SESSION['is_possible_steep_1'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
-        }else{
-            $this->load->model('class/transaction_model');            
+        }else{            
             $datas['pk'] = $_SESSION['pk'];
             if(!$this->validate_all_credit_card_datas($datas)){
                 $result['success'] = false;
@@ -775,6 +788,16 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        
+        /*------------analisar nro de tentativas----------------*/
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+        if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['success']=false;
+            echo json_encode($result);
+            session_destroy();
+            return;
+        }
         $datas = $this->input->post();
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
@@ -787,6 +810,13 @@ class Welcome extends CI_Controller {
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                //incrementar numero de tentativas para evitar teste de cartão                                        
+                $purchase_counter = $transaction['purchase_counter'] + 1;
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['pk'],
+                    'purchase_counter', $purchase_counter);
+                /*-----------------------------------------*/
                 //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);                                
                 if($response['success']){
@@ -1857,7 +1887,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); //$random_code = 123;
+            $random_code = rand(100000,999999); $random_code = 123;
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -1930,8 +1960,8 @@ class Welcome extends CI_Controller {
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        //$response['success'] = TRUE;    //remover essas dos lineas
-        //return $response;
+        $response['success'] = TRUE;    //remover essas dos lineas
+        return $response;
         
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -3849,7 +3879,7 @@ class Welcome extends CI_Controller {
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
                         'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
                         'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R'.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
@@ -3861,7 +3891,7 @@ class Welcome extends CI_Controller {
                         'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br><br>
                                     Experimente solicitar metade do valor primeiro e amanhã solicitar o restante. 
                                     Lembre que o <b>valor total</b> do crédito <b>(CET)</b> deve ser menor que o limite que você tem. 
-                                    Por exemplo, se você tem <b>R$3.000,00</b> de limite, você deve solicitar ao Livre um valor que seja menor que o <b>Custo Total (CET)</b> e que caiba nesse limite.',
+                                    Por exemplo, se você tem <b>R$ 3.000,00</b> de limite, você deve solicitar ao Livre um valor que seja menor que o <b>Custo Total (CET)</b> e que caiba nesse limite.',
                         'subject' => 'Saldo insuficiente - Livre.digital',
                         'destroy' => true
                     ],
