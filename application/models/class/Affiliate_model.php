@@ -41,10 +41,7 @@ class Affiliate_model extends CI_Model{
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             $this->db->order_by("transactions.status_id", "desc");
             $this->db->order_by("transactions.id", "asc");
-            $result_full = $this->db->get()->result_array();
-            //obtaining the real search//
-            //$result = array_slice($result_full, $page*$amount_by_page, $amount_by_page);
-            $result = $result_full;
+            $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
                 $result[$i]['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
@@ -68,7 +65,7 @@ class Affiliate_model extends CI_Model{
                 $i++;
             }
             $has_next_page=false;
-            if(count($result) <= $amount_by_page){
+            if(count($result) > $amount_by_page){
                 $has_next_page=true;
                 unset($result[$i-1]);
             }
