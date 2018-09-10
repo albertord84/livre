@@ -1499,6 +1499,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $result['success'] = false;
         $datas = $this->input->post();
+        $id_send = $this->Crypt->decrypt($datas['trid']);
+        if(!$id_send){
+            header('Location: '.base_url());
+            return;
+        }
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
             $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0)[0];
