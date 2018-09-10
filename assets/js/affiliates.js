@@ -13,7 +13,7 @@ $(document).ready(function () {
       });
     
     $("#save_transaction_status").click(function () {
-        val = parseInt($("#sel_admin_actions").val());        
+        var val = parseInt($("#sel_admin_actions").val());        
         if(val && confirm("Tem certeza que deseja realizar essa operação na transação")){            
             var fn;
             switch (val){

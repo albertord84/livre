@@ -36,9 +36,9 @@ class Welcome extends CI_Controller {
         }/**/
         var_dump($resp);
     }
+
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
-        //$this->test3();   
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -60,6 +60,7 @@ class Welcome extends CI_Controller {
     public function checkout() {
         //die('This functionalities is under development :-)');
         if(session_id()=='')header('Location: '.base_url());
+        if(!$_SESSION['transaction_values']['amount_months'])header('Location: '.base_url());
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -80,12 +81,19 @@ class Welcome extends CI_Controller {
     }
     
     public function suceso_compra(){
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params = $this->input->get();        
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $this->load->view('sucesso-compra',$params);
-        $this->load->view('inc/footer');
+        if($_SESSION['buy'] == true){
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params = $this->input->get();        
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            session_destroy();
+            $this->load->view('sucesso-compra',$params);
+            $this->load->view('inc/footer');
+        }
+        else{
+            session_destroy();
+            header('Location: '.base_url());
+        }
     }
     
     public function afhome() {
@@ -195,20 +203,53 @@ class Welcome extends CI_Controller {
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $params['view'] = 'resumo';            
-            $params['total_CET'] = $this->affiliate_model->total_CET($datas);
-            $params['loan_value'] = $this->affiliate_model->loan_value($datas);
-            $params['average_ticket'] = $this->affiliate_model->average_ticket($datas);
-            $params['average_amount_months'] = $this->affiliate_model->average_amount_months($datas);            
-            $this->load->view('resumo');
+            $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
+            $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+            $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
+            $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
+            $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+            $this->load->view('resumo', $params);
+        }
+    }
+    
+    public function filter_resume() {
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            if(count($_POST)){
+                $datas=$_POST;
+                if($datas['abstract_end_date'] != '')
+                    $datas['abstract_end_date'] = (string)($datas['abstract_end_date'] + 23*60*60+59*60);
+            }
+            else{
+                $datas['abstract_init_date']='';
+                $datas['abstract_end_date']='';
+            }
+            $this->load->model('class/affiliate_model');
+            
+            $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
+            if($params['total_transactions']){
+                $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+                $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
+                $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
+                $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+            }
+            else{
+                $params['total_CET'] = "0.00";
+                $params['loan_value'] = "0.00";
+                $params['average_ticket'] = "0.00";
+                $params['average_amount_months'] = '0';            
+            }
+            echo json_encode($params);
         }
     }
     
     public function configuracoes() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='configuracoes';
-        $this->load->view('configuracoes');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['view']='configuracoes';
+            $this->load->view('configuracoes');
+        }
     }
         
     public function logout() {
@@ -384,8 +425,8 @@ class Welcome extends CI_Controller {
                 return $result;
             }
         }
-        if(count($clients)==1){
-            if($client[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+        if(count($clients)==1){            
+            if($clients[0]['purchase_counter']<=$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
                 if($_SESSION['client_datas']['sms_verificated'] === true){
                     $result['id'] = $clients[0]['id'];
                     $result['success']=true;
@@ -402,12 +443,19 @@ class Welcome extends CI_Controller {
             }else{
                 $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
                 $result['success']=false;
+                session_destroy();
                 return $result;
             }
         }
     }
     
-    public function insert_datas_steep_1(){
+    public function insert_datas_steep_1(){        
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');
@@ -554,13 +602,31 @@ class Welcome extends CI_Controller {
         }        
     }
     
-    public function insert_datas_steep_2() {
+    public function insert_datas_steep_2() {        
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        /*--------------analisis del nro de tentativas-------------------*/
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');            
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+        if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['success']=false;
+            echo json_encode($result);
+            session_destroy();
+            return;
+        }
+        /*---------------------------------*/
         $datas = $this->input->post();
         if(!$_SESSION['is_possible_steep_1'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
             $result['success']=false;
-        }else{
-            $this->load->model('class/transaction_model');            
+        }else{            
             $datas['pk'] = $_SESSION['pk'];
             if(!$this->validate_all_credit_card_datas($datas)){
                 $result['success'] = false;
@@ -669,6 +735,12 @@ class Welcome extends CI_Controller {
     }
     
     public function insert_datas_steep_3() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $datas = $this->input->post();
         if(!$_SESSION['is_possible_steep_1'] || !$_SESSION['is_possible_steep_2'] || $datas['key']!==$_SESSION['key']){
             $result['message']='Autorização negada. Violação de acesso';
@@ -712,6 +784,12 @@ class Welcome extends CI_Controller {
     }
     
     public function sign_contract() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -719,6 +797,16 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        
+        /*------------analisar nro de tentativas----------------*/
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+        if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['success']=false;
+            echo json_encode($result);
+            session_destroy();
+            return;
+        }
         $datas = $this->input->post();
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
@@ -731,9 +819,20 @@ class Welcome extends CI_Controller {
                 if($datas['ucpf'] == 'true')
                     $value_ucpf = 1;
                 $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                //incrementar numero de tentativas para evitar teste de cartão                                        
+                $purchase_counter = $transaction['purchase_counter'] + 1;
+                $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['pk'],
+                    'purchase_counter', $purchase_counter);
+                /*-----------------------------------------*/
                 //1. pasar cartão de crédito na IUGU                
-                $response = $this->do_payment_iugu($_SESSION['pk']);
-                if($response['success']){                    
+                $response = $this->do_payment_iugu($_SESSION['pk']);                                
+                if($response['success']){
+                    $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['pk'],
+                        'pay_date', time());                                
                     $string_param = "transactionId=".$_SESSION['pk']
                                 . "&transactionAffiliation=site"
                                 . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
@@ -785,15 +884,40 @@ class Welcome extends CI_Controller {
                                                     transactions_status::PENDING);                        
                     }
                     //sucesso de contrato se foi cobrado
+                    $_SESSION['buy'] = true;
                     $result['success'] = true;
                     $result['params'] = $string_param;                                
-                    session_destroy();
+                    //session_destroy(); se mata na no carga
                 }else{
                     $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
                     $useremail = $_SESSION['client_datas']['email'];
                     $this->Gmail->credit_card_recused($name,$useremail);
-                    $result['success'] = false;
-                    $result['message'] = $response['message'];  
+                    //analisar erro da transação
+                    if($response['LR'] && $response['LR'] != '00')
+                    {
+                        $report_iugu = $this->iugu_report(
+                                                        $response['LR'], 
+                                                        $_SESSION['transaction_values']['total_cust_value'],
+                                                        $_SESSION['transaction_values']['amount_months']
+                                                        );                    
+                        if($report_iugu['known']){
+                            $result['message'] = $report_iugu['message'];                    
+                            //enviar email com passos
+                            $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
+                            if($report_iugu['destroy'])
+                                session_destroy();
+                        }
+                        else{
+                            $result['message'] = "Transação foi negada. Operação cancelada";                    
+                            session_destroy();
+                        }
+                    }       
+                    else{
+                        $result['message'] = $response['message'].' Operação cancelada';                    
+                        session_destroy();
+                    }
+                    
+                    $result['success'] = false;                                        
                 }
             }
             else{                
@@ -1375,6 +1499,11 @@ class Welcome extends CI_Controller {
         $this->load->model('class/Crypt');
         $result['success'] = false;
         $datas = $this->input->post();
+        $id_send = $this->Crypt->decrypt($datas['trid']);
+        if(!$id_send){
+            header('Location: '.base_url());
+            return;
+        }
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
             $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0)[0];
@@ -2290,7 +2419,7 @@ class Welcome extends CI_Controller {
         }        
         */
     }
-
+    
     public function do_payment_iugu($id){
         if($id !== $_SESSION['pk'])   //segurança
             return;
@@ -2343,8 +2472,24 @@ class Welcome extends CI_Controller {
             $response['message'] = $parsed_response->message;
         }
         else {
+            $error = "";
+            if($parsed_response->message){
+                $error = $parsed_response->message;
+                if($parsed_response->LR){
+                    $response['LR'] = $parsed_response->LR;
+                }
+            }
+            else{
+                if(is_object($parsed_response->errors)){
+                    $array_error = (array)($parsed_response->errors);                    
+                    $error_keys = array_keys($array_error);
+                    $error = $error_keys[0].": ".$array_error[$error_keys[0]][0];
+                }
+                else
+                    $error = $parsed_response->errors;
+            }            
             $response['success'] = false;
-            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito";//$parsed_response->message;
+            $response['message'] = "Erro no pagamento, verifique os dados fornecidos de seu cartão de crédito. Motivo: (".$error.")";
         }
         return $response;
     }
@@ -2518,7 +2663,7 @@ class Welcome extends CI_Controller {
         $name = $client["name"];
         $cep = (int)$client["cep"];
         $street = $client["street_address"]." ".$client["number_address"];
-        $number = $client["complement_number_address"];
+        $number = substr($client["complement_number_address"],0,10);
         $district = "_"; //"";
         $city = $client["city_address"];
         $state = $client["state_address"];
@@ -3439,46 +3584,48 @@ class Welcome extends CI_Controller {
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
                     $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
-                    switch ($transaction->statusCode) {
-                        case 2000: //TOPAZIO - "EM PROCESSAMENTO"
-                            /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                            echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
-                            break;
-                         case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
-                            /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                             echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2100: //TOPAZIO - "CANCELADA"
-                            //1. enviar para PENDING
-                            $this->load->model('class/transactions_status');
-                            $this->load->model('class/transaction_model');
-                            $this->transaction_model->update_transaction_status(
-                                $livre_tr['client_id'],
-                                transactions_status::PENDING);
-                            echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
-                            break;
-                        case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                            //1. pedir nova conta
-                            $account_bank_reasonCodes = array(
-                                1 /*Conta Destinatária do Crédito Encerrada*/,
-                                2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
-                                3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
-                                5 /*Divergência na Titularidade*/
-                            );
-                            if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
-                                $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
-                                $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
-                                $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                if($this->request_new_account())
-                                    echo "<br><br>Nova conta pedida automaticamente com sucesso";
-                            } else{
-                                echo "<br><br>NEW REASON CODE TO 2300 ERROR";
-                            }
-                            break;
-                        case 2500: //TOPAZIO - "PAGA CONFIRMADA"
-                            //TODO: email com dinheiro enviado
-                            echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
-                            break;
+                    if($livre_tr['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. pedir nova conta
+                                $account_bank_reasonCodes = array(
+                                    1 /*Conta Destinatária do Crédito Encerrada*/,
+                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                    5 /*Divergência na Titularidade*/
+                                );
+                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                    if($this->request_new_account())
+                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                } else{
+                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                }
+                                break;
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
+                                break;
+                        }
                     }
                 }
             }
@@ -3491,7 +3638,84 @@ class Welcome extends CI_Controller {
         echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
-    
+    /*Vamos resolver con dos funciones separadas*/
+    public function robot_conciliation2() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $_SESSION['logged_role'] = 'ADMIN';
+        $date = date("Y-m-d",time());
+        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        $transactions = $this->topazio_conciliations($date);
+        echo "<br> Number of loans: ".count($transactions);
+        if($transactions->success){
+            foreach ($transactions->data as $transaction) {
+                if($transaction->ccbNumber){
+                    $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
+                    if($livre_tr['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. pedir nova conta
+                                $account_bank_reasonCodes = array(
+                                    1 /*Conta Destinatária do Crédito Encerrada*/,
+                                    2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
+                                    3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
+                                    5 /*Divergência na Titularidade*/
+                                );
+                                if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
+                                    $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
+                                    $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
+                                    $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
+                                    if($this->request_new_account())
+                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                } else{
+                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                }
+                                break;
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                //1. enviar para TOPAZIO_APROVED
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::TOPAZIO_APROVED);
+                                $name = explode(' ', $livre_tr['name']); $name = $name[0];                
+                                $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
+                                echo "<br><br>PAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
+                                break;
+                        }
+                    }
+                }
+            }
+        }else{
+            /*$administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+            foreach ($administrators_emails as $useremail) {
+                $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
+            }*/
+        }
+        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+    }
     /* 
         Status dos documentos na D4Sign
         ID 1 - Processando
@@ -3663,5 +3887,83 @@ class Welcome extends CI_Controller {
             );
         return $result;
     }
+    
+    public function iugu_report($LR, $CET, $parcelas) {
+        $report = [
+                    [
+                        'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
+                        'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
+                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                        <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
+                        'subject' => 'Falta pouco! - Livre.digital',
+                        'destroy' => true
+                        
+                    ],
+                    [
+                        'LR' => ['51','70'],
+                        'message' => 'Não há limite suficiente em seu cartão de crédito. Que tal escolher um valor menor? Solicite metade do valor agora e o restante em 24h, assim a aprovação será mais fácil.',
+                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br><br>
+                                    Experimente solicitar metade do valor primeiro e amanhã solicitar o restante. 
+                                    Lembre que o <b>valor total</b> do crédito <b>(CET)</b> deve ser menor que o limite que você tem. 
+                                    Por exemplo, se você tem <b>R$ 3.000,00</b> de limite, você deve solicitar ao Livre um valor que seja menor que o <b>Custo Total (CET)</b> e que caiba nesse limite.',
+                        'subject' => 'Saldo insuficiente - Livre.digital',
+                        'destroy' => true
+                    ],
+                    [
+                        'LR' => ['91','AA','AE','19'],
+                        'message' => 'Não foi possível aprovar sua solicitação devido a falta de comunicação com o banco emissor do cartão de crédito. Espere alguns minutos, depois volte a tela com os dados de seu cartão para serem novamente validados e tente novamente.',
+                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br><br> Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
+                        'subject' => 'Tente novamente - Livre.digital',
+                        'destroy' => false
+                    ],
+                    [
+                        'LR' => ['BV'],
+                        'message' => 'Utilize outro cartão de crédito, o cartão utilizado não tem validade.',
+                        'email' => 'Identificamos que seu cartão está vencido e por isso o valor solicitado não pode ser aprovado. Mas não tem problema, você pode utilizar outro cartão de crédito para solicitar um novo valor. Ele só precisa ser da mesma titularidade da conta bancária.',
+                        'subject' => 'Cartão vencido - Livre.digital',
+                        'destroy' => false
+                    ],
+                    [
+                        'LR' => ['KA','KE','12'],
+                        'message' => 'O valor não pode ser aprovado devido aos dados do cartão de crédito não estarem corretos.
+                                      Volte e atualize seus dados do cartão com atenção. Não utilize espaço ou caracteres especiais.',
+                        'email' => 'O banco não autorizou a transação pois os dados do cartão estão incorretos, você só precisa refazer o pedido e preencher os dados corretamente. Atente-se para não adicionar espaços ou caracteres em locais que não são permitidos como no número do cartão, no seu nome e no CVV (Código de verificação de 3 dígitos que fica atrás do seu cartão)',
+                        'subject' => 'Dados incorretos - Livre.digital',
+                        'destroy' => false
+                    ],
+                    [
+                        'LR' => ['N7'],
+                        'message' => 'Volte e corrija seu o CVV (Código de verificação - Número de 3 dígitos na parte de trás do cartão, ou se for American Express, 4 digitos localizados na frente do cartão). Lembre-se de não utilizar espaços ou caracteres especiais.',
+                        'email' => 'O valor solicitado não pode ser aprovado pois o Código de Verificação do seu cartão foi preenchido incorretamente. Você precisa utilizar o CVV código de verificação que fica atrás do cartão. Esse código tem 3 dígitos (ou 4, se for American Express). Se precisar de ajuda é só nos comunicar!',
+                        'subject' => 'Seu CVV está incorreto - Livre.digital',
+                        'destroy' => false
+                    ],
+                    [
+                        'LR' => ['AC'],
+                        'message' => 'Você utilizou seu cartão de DÉBITO. Para que seu pedido seja aprovado, volte e atualize os dados com seu cartão de CRÉDITO.',
+                        'email' => 'Você utilizou seu cartão de <b>Débito</b>. Para que o pedido seja aprovado, é necessário utilizar seu cartão de <b>Crédito</b>. É importante lembrar que o valor final (Custo Total - CET) deve caber no seu limite de crédito, ou seja, ele deve ser menor que o limite do seu cartão de crédito.',
+                        'subject' => 'Utilize seu cartão de CRÉDITO - Livre.digital',
+                        'destroy' => false
+                    ]
+                ];
+        
+        $result = [];
+        $result['known'] = false;
+        foreach ($report as $type) {
+            if(in_array($LR, $type['LR'])){
+                $result = $type;
+                $result['known'] = true;
+                break;
+            }
+        }
+        
+        $email91 = 'O valor solicitado não pode ser aprovado pois não conseguimos a resposta do banco emissor do cartão de crédito.
+                      Mas não se preocupe, é só você tentar novamente em alguns minutos. Lembre validar novamente os dados de seu cartão!<br><br> 
+                      Aproveite e faça contato com seu banco para informar que você aprova a transação feita pela iugu*livre.digital, assim o empréstimo será liberado com muito mais facilidade!';
+        if($LR == '91')
+            $result['email'] = $email91;
+        return $result;
+    }   
     
 }

@@ -17,7 +17,7 @@
                                                 ao Banco Topázio S/A, pessoa jurídica inscrita no Cadastro Nacional de Pessoa Jurídica (CNPJ) sob
                                                 o nº. 07.679.404/0001-00 (<?php echo $_GET["ccb"]?>), passando, portanto, a ser o novo Credor da CCB ou
                                                 Contrato, nos termos das normas acima mencionadas. Esta mudança não altera as condições do
-                                                empréstimo contratado nem altera as condições para o pagamento do empréstimo. A partir desta
+                                                crédito contratado nem altera as condições para o pagamento do crédito. A partir desta
                                                 data, toda e qualquer questão relativa à sua Cédula de Crédito Bancário deverá ser tratada por meio
                                                 do e-mail: seja@livre.digital.
 						<br>						

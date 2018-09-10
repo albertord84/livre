@@ -32,6 +32,20 @@
     <?php include_once "pixel_ecomerce_analytics.php";?>
     <?php include_once "pixel_adwords.php";?>
     
+    <!-- Global site tag (gtag.js) - Google Ads: 789597034 --> 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-789597034"></script> 
+    <script> 
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);} 
+        gtag('js', new Date()); 
+        gtag('config', 'AW-789597034'); 
+    </script>
+    
+    <!-- Event snippet for Empréstimos conversion page --> 
+    <script> 
+        gtag('event', 'conversion', { 'send_to': 'AW-789597034/H8OyCI6S6IgBEOqWwfgC', 'value': 1.0, 'currency': 'BRL', 'transaction_id': '' }); 
+    </script> 
+    
 </head>
 <body id="bcheck">
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">

@@ -241,7 +241,7 @@
 		<div class="i i-block fnone pd-tb15 col-md-10">
 			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
-				<h5>IMPORTANTE:</h5> Para solicitar crédito o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar crédito. Em caso de titulares diferentes o empréstimo não será efetivado, sendo negado na hora.
+				<h5>IMPORTANTE:</h5> Para solicitar crédito o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora.
 			</div>
 		</div>
 	</div>

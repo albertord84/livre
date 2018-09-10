@@ -252,8 +252,39 @@ class Affiliate_model extends CI_Model{
         }
     }
     
+    public function total_transactions($datas){
+        try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('COUNT(transactions.id) as total_transactions');
+            $this->db->from('transactions');            
+            $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
+            $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
+            if($datas['abstract_init_date']!='')
+                $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
+            return $this->db->get()->row_array()['total_transactions'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }        
+    }
+    
     public function total_CET($datas){
         try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(total_effective_cost) as total_effective_cost');
+            $this->db->from('transactions');            
+            $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
+            $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
+            if($datas['abstract_init_date']!='')
+                $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
+            return $this->db->get()->row_array()['total_effective_cost'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+        /*try {    
             $this->load->model('class/transactions_status');
             $this->db->select('SUM(total_effective_cost) as total_effective_cost');
             $this->db->from('transactions');
@@ -266,11 +297,25 @@ class Affiliate_model extends CI_Model{
             return $this->db->get()->row_array()['total_effective_cost'];
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
-        }   
+        }*/
     }
     
-    public function loan_value(){
+    public function loan_value($datas){
         try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(amount_solicited) as amount_solicited');
+            $this->db->from('transactions');            
+            $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
+            $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
+            if($datas['abstract_init_date']!='')
+                $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
+            return $this->db->get()->row_array()['amount_solicited'];
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }  
+        /*try {    
             $this->load->model('class/transactions_status');
             $this->db->select('SUM(amount_solicited) as amount_solicited');
             $this->db->from('transactions');
@@ -283,15 +328,29 @@ class Affiliate_model extends CI_Model{
             return $this->db->get()->row_array()['amount_solicited'];
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
-        }  
+        }*/  
     }
     
     public function average_ticket(){
         
     }
     
-    public function average_amount_months(){
+    public function average_amount_months($datas){
         try {    
+            $this->load->model('class/transactions_status');
+            $this->db->select('SUM(number_plots) as number_plots');
+            $this->db->from('transactions');            
+            $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
+            $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
+            if($datas['abstract_init_date']!='')
+                $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
+            return $this->db->get()->row_array()['number_plots'];            
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+        /*try {    
             $this->load->model('class/transactions_status');
             $this->db->select('SUM(number_plots) as sum,COUNT(number_plots) as cnt');
             $this->db->from('transactions');
@@ -305,7 +364,7 @@ class Affiliate_model extends CI_Model{
             return $resp['sum']/$resp['cnt'];
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
-        } 
+        }*/
     }
     
     public function get_transaction_way_to_spend($way_to_spend){

@@ -97,7 +97,7 @@
         <div class="container">
             <div class="col-md-10 col-sm-10 col-xs-12 pull-right">
                 <h1 class="ft-size45 cl-fff">QUER GANHAR UMA <br>RENDA EXTRA?</h1>
-                <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do empréstimo!</h2>
+                <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do crédito!</h2>
             </div>
         </div>
     </section>
@@ -222,7 +222,7 @@
                                                     <img src="<?php echo base_url().'assets/'?>img/icones/rd.png" alt="">
                                             </div>
                                             <div class="col-md-10 col-sm-10 col-xs-10">
-                                                    Empréstimo através do limite disponível no cartão de crédito
+                                                    Crédito através do limite disponível no cartão de crédito
                                             </div>
                                     </div>
                             </div>			
@@ -272,14 +272,14 @@
                                             <br><br>
                                             A verificação de crédito é feita na mesma hora e a resposta é imediata.
                                             <br><br>
-                                            O papel do afiliado é recepcionar o cliente e recomendar o empréstimo do livre.digital. 
+                                            O papel do afiliado é recepcionar o cliente e recomendar o crédito do livre.digital. 
                                             <br><br>
                                             
                                     </p>
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12 m-top80">
                                     <p class="ft-size17">
-                                            Para realizar a operação, o afiliado precisa apenas contratar o empréstimo em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
+                                            Para realizar a operação, o afiliado precisa apenas contratar o crédito em nosso site na companhia do seu cliente, através de um link específico, recebido por e-mail após o preenchimento do cadastro abaixo. Simples e fácil, sem burocracia e leva apenas 2 minutos para realizar cada operação de crédito!
                                             <br><br>
                                             Traga seus clientes para o livre.digital! 
                                             Receba até 10 vezes mais do que a sua comissão atual, diariamente, sem burocracia, sem custos operacionais para o seu negócio e com muito mais benefícios para seus clientes!
@@ -343,6 +343,11 @@
                             <fieldset class="col-md-8 col-sm-8 col-xs-12 pd-lr10">
                                 <select id="bank" required style="max-height: 70px">
                                     <option value="default" selected="true">BANCO...</option>
+                                    <option value="341">ITAÚ UNIBANCO BM S.A.</option>
+                                    <option value="237">BCO BRADESCO S.A.</option>
+                                    <option value="033">BCO SANTANDER (BRASIL) S.A.</option>
+                                    <option value="001">BCO DO BRASIL S.A.</option>
+                                    <option value="104">CAIXA ECONOMICA FEDERAL</option>
                                     <option value="117">ADVANCED CC LTDA</option>
                                     <option value="172">ALBATROSS CCV S.A</option>
                                     <option value="188">ATIVA S.A. INVESTIMENTOS CCTVM</option>
@@ -382,8 +387,7 @@
                                     <option value="107">BCO BOCOM BBM S.A.</option>
                                     <option value="122">BCO BRADESCO BERJ S.A.</option>
                                     <option value="204">BCO BRADESCO CARTOES S.A.</option>
-                                    <option value="394">BCO BRADESCO FINANC. S.A.</option>
-                                    <option value="237">BCO BRADESCO S.A.</option>
+                                    <option value="394">BCO BRADESCO FINANC. S.A.</option>                                    
                                     <option value="218">BCO BS2 S.A.</option>
                                     <option value="473">BCO CAIXA GERAL BRASIL S.A.</option>
                                     <option value="412">BCO CAPITAL S.A.</option>
@@ -400,8 +404,7 @@
                                     <option value="069">BCO CREFISA S.A.</option>
                                     <option value="003">BCO DA AMAZONIA S.A.</option>
                                     <option value="083">BCO DA CHINA BRASIL S.A.</option>
-                                    <option value="707">BCO DAYCOVAL S.A</option>
-                                    <option value="001">BCO DO BRASIL S.A.</option>
+                                    <option value="707">BCO DAYCOVAL S.A</option>                                    
                                     <option value="047">BCO DO EST. DE SE S.A.</option>
                                     <option value="037">BCO DO EST. DO PA S.A.</option>
                                     <option value="041">BCO DO ESTADO DO RS S.A.</option>
@@ -437,8 +440,7 @@
                                     <option value="494">BCO REP ORIENTAL URUGUAY BCE</option>
                                     <option value="741">BCO RIBEIRAO PRETO S.A.</option>
                                     <option value="120">BCO RODOBENS S.A.</option>
-                                    <option value="422">BCO SAFRA S.A.</option>
-                                    <option value="033">BCO SANTANDER (BRASIL) S.A.</option>
+                                    <option value="422">BCO SAFRA S.A.</option>                                    
                                     <option value="366">BCO SOCIETE GENERALE BRASIL</option>
                                     <option value="637">BCO SOFISA S.A.</option>
                                     <option value="464">BCO SUMITOMO MITSUI BRASIL S.A.</option>
@@ -462,8 +464,7 @@
                                     <option value="092">BRK S.A. CFI</option>
                                     <option value="173">BRL TRUST DTVM SA</option>
                                     <option value="142">BROKER BRASIL CC LTDA.</option>
-                                    <option value="011">C.SUISSE HEDGING-GRIFFO CV S/A</option>
-                                    <option value="104">CAIXA ECONOMICA FEDERAL</option>
+                                    <option value="011">C.SUISSE HEDGING-GRIFFO CV S/A</option>                                    
                                     <option value="288">CAROL DTVM LTDA.</option>
                                     <option value="130">CARUANA SCFI</option>
                                     <option value="159">CASA CREDITO S.A. SCM</option>
@@ -502,8 +503,7 @@
                                     <option value="157">ICAP DO BRASIL CTVM LTDA.</option>
                                     <option value="132">ICBC DO BRASIL BM S.A.</option>
                                     <option value="492">ING BANK N.V.</option>
-                                    <option value="139">INTESA SANPAOLO BRASIL S.A. BM</option>
-                                    <option value="341">ITAÚ UNIBANCO BM S.A.</option>
+                                    <option value="139">INTESA SANPAOLO BRASIL S.A. BM</option>                                    
                                     <option value="652">ITAÚ UNIBANCO HOLDING BM S.A.</option>
                                     <option value="488">JPMORGAN CHASE BANK</option>
                                     <option value="399">KIRTON BANK</option>
