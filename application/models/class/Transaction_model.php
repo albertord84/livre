@@ -101,7 +101,7 @@
             $datas1['account']= $this->Crypt->crypt($datas['account']);
             $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
-            $datas1['titular_cpf']=$datas['titular_cpf'];            
+            $datas1['titular_cpf']=$datas['titular_cpf'];
             $this->db->where('id',$id);
 
             $a = $this->db->update('account_banks',$datas1);  
