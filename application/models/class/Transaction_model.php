@@ -105,11 +105,12 @@
             $datas1['account']= $this->Crypt->crypt($datas['account']);
             $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
             $datas1['titular_name']=$datas['titular_name'];
-            $datas1['titular_cpf']=$datas['titular_cpf'];            
+            $datas1['titular_cpf']=$datas['titular_cpf'];
             $this->db->where('id',$id);
+            $this->db->update('account_banks',$datas1); 
             $this->db->trans_complete();
             return $this->db->trans_status();
-            /*$a = $this->db->update('account_banks',$datas1);  
+            /*$a = $this->db->update('account_banks',$datas1); 
             $b =  $this->db->affected_rows();
             return $b;*/
         }
