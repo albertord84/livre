@@ -7,23 +7,23 @@ class Affiliate_model extends CI_Model{
     }
     
     public function load_afiliate_information($affiliate_id){
-            try {
-                $this->db->select('*');
-                $this->db->from('affiliates');
-                $this->db->join('account_banks', 'account_banks.client_id = affiliates.id');
-                $this->db->where('affiliates.id',$affiliate_id);
-                $this->db->where('account_banks.propietary_type','1');
-                $result= $this->db->get()->row_array();                
-                $result['bank'] = $this->Crypt->decrypt($result['bank']);
-                $result['agency'] = $this->Crypt->decrypt($result['agency']);
-                $result['account_type'] = $this->Crypt->decrypt($result['account_type']);
-                $result['account'] = $this->Crypt->decrypt($result['account']);
-                $result['dig'] = $this->Crypt->decrypt($result['dig']);                
-                return $result;
-            } catch (Exception $exc) {
-                echo $exc->getTraceAsString();
-            }
+        try {
+            $this->db->select('*');
+            $this->db->from('affiliates');
+            $this->db->join('account_banks', 'account_banks.client_id = affiliates.id');
+            $this->db->where('affiliates.id',$affiliate_id);
+            $this->db->where('account_banks.propietary_type','1');
+            $result= $this->db->get()->row_array();                
+            $result['bank'] = $this->Crypt->decrypt($result['bank']);
+            $result['agency'] = $this->Crypt->decrypt($result['agency']);
+            $result['account_type'] = $this->Crypt->decrypt($result['account_type']);
+            $result['account'] = $this->Crypt->decrypt($result['account']);
+            $result['dig'] = $this->Crypt->decrypt($result['dig']);                
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
         }
+    }
         
     public function load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page){
         try {
@@ -109,7 +109,7 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
-            $this->db->where('transactions.ccb_number',$transaction_ccbNumber);                
+            $this->db->where('transactions.ccb_number',$transaction_ccbNumber);
             $result = $this->db->get()->row_array();
             if(count($result)){
                 $result['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);

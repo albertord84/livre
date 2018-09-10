@@ -3577,9 +3577,9 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
-        echo "<br> Number of loans: ".count($transactions);
+        echo "<br>\n Number of loans: ".count($transactions);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3588,11 +3588,11 @@ class Welcome extends CI_Controller {
                         switch ($transaction->statusCode) {
                             case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                                 /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nEM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                                 break;
                              case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                                 /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                 echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                                 break;
                             case 2100: //TOPAZIO - "CANCELADA"
                                 //1. enviar para PENDING
@@ -3601,7 +3601,7 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
-                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
@@ -3616,14 +3616,14 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                     if($this->request_new_account())
-                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                        echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
                                 } else{
-                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                    echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
                                 }
                                 break;
                             case 2500: //TOPAZIO - "PAGA CONFIRMADA"
                                 //TODO: email com dinheiro enviado
-                                echo "<br><br>PAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nPAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
                                 break;
                         }
                     }
@@ -3635,7 +3635,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     
     /*Vamos resolver con dos funciones separadas*/
@@ -3648,9 +3648,9 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br><br>----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
-        echo "<br> Number of loans: ".count($transactions);
+        echo "<br>\n Number of loans: ".count($transactions);
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3659,11 +3659,11 @@ class Welcome extends CI_Controller {
                         switch ($transaction->statusCode) {
                             case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                                 /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
-                                echo "<br><br>EM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nEM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                                 break;
                              case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                                 /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                                 echo "<br><br>AGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                 echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                                 break;
                             case 2100: //TOPAZIO - "CANCELADA"
                                 //1. enviar para PENDING
@@ -3672,7 +3672,7 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
-                                echo "<br><br>CANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
@@ -3687,9 +3687,9 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                     if($this->request_new_account())
-                                        echo "<br><br>Nova conta pedida automaticamente com sucesso";
+                                        echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
                                 } else{
-                                    echo "<br><br>NEW REASON CODE TO 2300 ERROR";
+                                    echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
                                 }
                                 break;
                             case 2500: //TOPAZIO - "PAGA CONFIRMADA"
@@ -3702,7 +3702,7 @@ class Welcome extends CI_Controller {
                                     transactions_status::TOPAZIO_APROVED);
                                 $name = explode(' ', $livre_tr['name']); $name = $name[0];                
                                 $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
-                                echo "<br><br>PAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nPAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
                                 break;
                         }
                     }
@@ -3714,7 +3714,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        echo "<br><br>----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
     }
     /* 
         Status dos documentos na D4Sign
@@ -3735,7 +3735,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br><br>----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
        
         do{
             //transactions waiting signature
@@ -3748,7 +3748,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    echo "<br><br>Contrato assinado por ".$transaction[email];
+                    echo "<br>\n<br>\nContrato assinado por ".$transaction[email];
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
@@ -3764,7 +3764,7 @@ class Welcome extends CI_Controller {
             sleep(5*60);
         }while(true);
         
-        //print_r("<br><br>----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
     }
     
     public function ARRED ($value){
@@ -3893,8 +3893,8 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
                         'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
-                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br>\n<br>\n 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br>\n Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br>\n<br>\n 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
@@ -3903,7 +3903,7 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['51','70'],
                         'message' => 'Não há limite suficiente em seu cartão de crédito. Que tal escolher um valor menor? Solicite metade do valor agora e o restante em 24h, assim a aprovação será mais fácil.',
-                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br><br>
+                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br>\n<br>\n
                                     Experimente solicitar metade do valor primeiro e amanhã solicitar o restante. 
                                     Lembre que o <b>valor total</b> do crédito <b>(CET)</b> deve ser menor que o limite que você tem. 
                                     Por exemplo, se você tem <b>R$ 3.000,00</b> de limite, você deve solicitar ao Livre um valor que seja menor que o <b>Custo Total (CET)</b> e que caiba nesse limite.',
@@ -3913,7 +3913,7 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['91','AA','AE','19'],
                         'message' => 'Não foi possível aprovar sua solicitação devido a falta de comunicação com o banco emissor do cartão de crédito. Espere alguns minutos, depois volte a tela com os dados de seu cartão para serem novamente validados e tente novamente.',
-                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br><br> Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
+                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br>\n<br>\n Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
                         'subject' => 'Tente novamente - Livre.digital',
                         'destroy' => false
                     ],
@@ -3959,7 +3959,7 @@ class Welcome extends CI_Controller {
         }
         
         $email91 = 'O valor solicitado não pode ser aprovado pois não conseguimos a resposta do banco emissor do cartão de crédito.
-                      Mas não se preocupe, é só você tentar novamente em alguns minutos. Lembre validar novamente os dados de seu cartão!<br><br> 
+                      Mas não se preocupe, é só você tentar novamente em alguns minutos. Lembre validar novamente os dados de seu cartão!<br>\n<br>\n 
                       Aproveite e faça contato com seu banco para informar que você aprova a transação feita pela iugu*livre.digital, assim o empréstimo será liberado com muito mais facilidade!';
         if($LR == '91')
             $result['email'] = $email91;
