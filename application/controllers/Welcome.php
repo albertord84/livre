@@ -243,11 +243,13 @@ class Welcome extends CI_Controller {
     }
     
     public function configuracoes() {
-        $this->load->model('class/system_config');
-        $GLOBALS['sistem_config'] = $this->system_config->load();
-        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
-        $params['view']='configuracoes';
-        $this->load->view('configuracoes');
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            $params['view']='configuracoes';
+            $this->load->view('configuracoes');
+        }
     }
         
     public function logout() {
