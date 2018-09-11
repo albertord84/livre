@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-08-20");
+        $trasactions = $this->topazio_conciliations("2018-09-10");
         foreach ($trasactions as $t) {
             var_dump($t);
         }
@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
     }
 
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {                
+    public function index() {           
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -3617,6 +3617,7 @@ class Welcome extends CI_Controller {
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
                                 echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
@@ -3630,9 +3631,13 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                    if($this->request_new_account())
+                                    if($this->request_new_account()){
+                                        echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
+                                        echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                         echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
+                                    }
                                 } else{
+                                    echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
                                     echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
                                 }
                                 break;
@@ -3688,6 +3693,7 @@ class Welcome extends CI_Controller {
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
                                 echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
@@ -3701,9 +3707,13 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
-                                    if($this->request_new_account())
+                                    if($this->request_new_account()){
+                                        echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
+                                        echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                         echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
+                                    }
                                 } else{
+                                    echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
                                     echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
                                 }
                                 break;
