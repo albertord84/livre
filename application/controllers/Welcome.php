@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-09-10");
+        $trasactions = $this->topazio_conciliations("2018-09-11");
         foreach ($trasactions as $t) {
             var_dump($t);
         }
@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
     }
 
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {           
+    public function index() {                   
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -3594,7 +3594,8 @@ class Welcome extends CI_Controller {
         $date = date("Y-m-d",time());
         echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
-        echo "<br>\n Number of loans: ".count($transactions);
+        echo "<br>\n Number of loans: ".count($transactions->data);
+        echo "<br>\n----------------------------------------------<br>\n";
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3603,11 +3604,17 @@ class Welcome extends CI_Controller {
                         switch ($transaction->statusCode) {
                             case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                                 /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
                                 echo "<br>\n<br>\nEM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
                                 break;
                              case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                                 /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                                 echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
                                 break;
                             case 2100: //TOPAZIO - "CANCELADA"
                                 //1. enviar para PENDING
@@ -3616,6 +3623,9 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
                                 echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
                                 echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                 break;
@@ -3632,17 +3642,26 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                     if($this->request_new_account()){
+                                        echo "<br>\nID: ".$livre_tr['client_id'];
+                                        echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                        echo "<br>\nEMAIL: ".$livre_tr['email'];
                                         echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
                                         echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                         echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
                                     }
                                 } else{
+                                    echo "<br>\nID: ".$livre_tr['client_id'];
+                                    echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                    echo "<br>\nEMAIL: ".$livre_tr['email'];
                                     echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
                                     echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
                                 }
                                 break;
                             case 2500: //TOPAZIO - "PAGA CONFIRMADA"
                                 //TODO: email com dinheiro enviado
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
                                 echo "<br>\n<br>\nPAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
                                 break;
                         }
@@ -3670,7 +3689,8 @@ class Welcome extends CI_Controller {
         $date = date("Y-m-d",time());
         echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
         $transactions = $this->topazio_conciliations($date);
-        echo "<br>\n Number of loans: ".count($transactions);
+        echo "<br>\n Number of loans: ".count($transactions->data);
+        echo "<br>\n----------------------------------------------<br>\n";
         if($transactions->success){
             foreach ($transactions->data as $transaction) {
                 if($transaction->ccbNumber){
@@ -3679,11 +3699,19 @@ class Welcome extends CI_Controller {
                         switch ($transaction->statusCode) {
                             case 2000: //TOPAZIO - "EM PROCESSAMENTO"
                                 /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
                                 echo "<br>\n<br>\nEM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
                                 break;
                              case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
                                 /* não devemos fazer nada, até esperar que a transação mude para outro status*/
-                                 echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
                                 break;
                             case 2100: //TOPAZIO - "CANCELADA"
                                 //1. enviar para PENDING
@@ -3692,8 +3720,12 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
-                                echo "<br>\n<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
-                                echo "<br>\n<br>\nREASON: ".$transaction->reason;
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\nREASON: ".$transaction->reason;
+                                echo "<br>\n----------------------------------------------<br>\n";
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
@@ -3708,13 +3740,21 @@ class Welcome extends CI_Controller {
                                     $_SESSION['transaction_requested_datas']['email']=$livre_tr['email'];
                                     $_SESSION['transaction_requested_id']=$livre_tr['client_id'];
                                     if($this->request_new_account()){
-                                        echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
-                                        echo "<br>\n<br>\nREASON: ".$transaction->reason;
-                                        echo "<br>\n<br>\nNova conta pedida automaticamente com sucesso";
+                                        echo "<br>\nID: ".$livre_tr['client_id'];
+                                        echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                        echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                        echo "<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
+                                        echo "<br>\nREASON: ".$transaction->reason;
+                                        echo "<br>\nNova conta pedida automaticamente com sucesso";
+                                        echo "<br>\n----------------------------------------------<br>\n";
                                     }
                                 } else{
-                                    echo "<br>\n<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
-                                    echo "<br>\n<br>\nNEW REASON CODE TO 2300 ERROR";
+                                    echo "<br>\nID: ".$livre_tr['client_id'];
+                                    echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                    echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                    echo "<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
+                                    echo "<br>\nNEW REASON CODE TO 2300 ERROR";
+                                    echo "<br>\n----------------------------------------------<br>\n";
                                 }
                                 break;
                             case 2500: //TOPAZIO - "PAGA CONFIRMADA"
@@ -3727,7 +3767,11 @@ class Welcome extends CI_Controller {
                                     transactions_status::TOPAZIO_APROVED);
                                 $name = explode(' ', $livre_tr['name']); $name = $name[0];                
                                 $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
-                                echo "<br>\n<br>\nPAGA CONFIRMADA: id - ".$livre_tr['client_id'].", ccb:".$transaction->ccbNumber;
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\nPAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
                                 break;
                         }
                     }
