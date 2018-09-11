@@ -3918,8 +3918,8 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
                         'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
-                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br>\n<br>\n 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br>\n Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br>\n<br>\n 
+                        'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
@@ -3928,7 +3928,7 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['51','70'],
                         'message' => 'Não há limite suficiente em seu cartão de crédito. Que tal escolher um valor menor? Solicite metade do valor agora e o restante em 24h, assim a aprovação será mais fácil.',
-                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br>\n<br>\n
+                        'email' => 'Recebemos a resposta do banco sobre o dinheiro solicitado. Não havia saldo suficiente para aprovar o valor escolhido por você, que tal um valor menor?<br><br>
                                     Experimente solicitar metade do valor primeiro e amanhã solicitar o restante. 
                                     Lembre que o <b>valor total</b> do crédito <b>(CET)</b> deve ser menor que o limite que você tem. 
                                     Por exemplo, se você tem <b>R$ 3.000,00</b> de limite, você deve solicitar ao Livre um valor que seja menor que o <b>Custo Total (CET)</b> e que caiba nesse limite.',
@@ -3938,7 +3938,7 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['91','AA','AE','19'],
                         'message' => 'Não foi possível aprovar sua solicitação devido a falta de comunicação com o banco emissor do cartão de crédito. Espere alguns minutos, depois volte a tela com os dados de seu cartão para serem novamente validados e tente novamente.',
-                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br>\n<br>\n Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
+                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br><br> Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
                         'subject' => 'Tente novamente - Livre.digital',
                         'destroy' => false
                     ],
