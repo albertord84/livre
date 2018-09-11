@@ -35,13 +35,12 @@ class Affiliate_model extends CI_Model{
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
             if($status==transactions_status::BEGINNER){
                 $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
+                $this->db->where('transactions_dates.status_id', $status);
                 if($start_period!=''){
-                    $this->db->where('transactions_dates.date >=', $start_period);                
-                    $this->db->where('transactions_dates.status_id', $status);
+                    $this->db->where('transactions_dates.date >=', $start_period);                                    
                 }
                 if( $end_period!=''){
-                    $this->db->where('transactions_dates.date <=', $end_period);                            
-                    $this->db->where('transactions_dates.status_id', $status);                            
+                    $this->db->where('transactions_dates.date <=', $end_period);                                                
                 }
             }
             else{
