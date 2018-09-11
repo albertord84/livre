@@ -325,6 +325,18 @@ $(document).ready(function () {
         return false;
     });
     
+    $('#go_page').click(function () {
+        if($('#page_pos').val()>=1 && $('#page_pos').val()<=last_page){
+            num_page = $('#page_pos').val();
+            $('#num_page').val(num_page);    
+            $('#btn_afiliate_search').click();                        
+        }
+        else{
+            modal_alert_message('Esse valor não está no intervalo de páginas');
+        }
+        return false;
+    });
+    
     if(num_page==1) 
         $('#prev_page').css({'color':'silver'});
     else

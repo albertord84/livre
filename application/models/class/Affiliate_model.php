@@ -106,6 +106,55 @@ class Affiliate_model extends CI_Model{
         }
     }
     
+    public function num_in_load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page, $status = 0){
+        try {
+            $this->load->model('class/Crypt');
+            $this->load->model('class/transactions_status');
+            $this->db->select('COUNT(cpf) as total_transactions');
+            $this->db->from('transactions');
+            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
+            $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
+            if($status==transactions_status::BEGINNER){
+                $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
+                $this->db->where('transactions_dates.status_id', $status);
+                if($start_period!=''){
+                    $this->db->where('transactions_dates.date >=', $start_period);                                    
+                }
+                if( $end_period!=''){
+                    $this->db->where('transactions_dates.date <=', $end_period);                                                
+                }
+            }
+            else{
+                if($start_period!='')
+                    $this->db->where('transactions.pay_date >=', $start_period);                
+                if( $end_period!='')
+                    $this->db->where('transactions.pay_date <=', $end_period);                            
+            }
+            $this->db->where('account_banks.propietary_type','0');
+            //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
+            if($affiliates_code)
+                $this->db->where('affiliate_code',$affiliates_code);            
+            if($status != 0)
+                $this->db->where('transactions.status_id',$status);            
+            if( $token!=''){                
+                if(is_numeric($token)){
+                    $this->db->like('transactions.cpf', $token);                            
+                }
+                else{
+                    if ( strpos($token, '@') !== false ) {
+                        $this->db->like('transactions.email', $token);                            
+                    }
+                    else{
+                        $this->db->like('transactions.name', $token);                            
+                    }
+                }
+            }
+            return $this->db->get()->row_array()['total_transactions'];                        
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+    
     public function load_transaction_datas_by_id($transaction_id){
         try {
             $this->load->model('class/Crypt');
