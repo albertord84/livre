@@ -202,6 +202,16 @@ class Welcome extends CI_Controller {
             $params['status']=$datas['status'];
             $params['has_next_page']=$has_next_page;
             $params['view']='transacoes';
+            $params['total_in_query']=$this->affiliate_model->num_in_load_transactions(
+                    $_SESSION['affiliate_logged_datas']['code'],
+                    $datas['num_page']-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $datas['token'],
+                    $start_date,
+                    $end_date,
+                    $has_next_page,
+                    $status);
+            $params['last_page'] = ceil(1.0*$params['total_in_query']/$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);
             $this->load->view('transacoes',$params);
         } else{
             header('Location: '.base_url().'index.php/welcome/afhome');

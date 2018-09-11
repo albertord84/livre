@@ -6,6 +6,7 @@
 
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
+    var last_page = '<?php echo $last_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';
     var reload = 0;
 </script>
@@ -180,10 +181,17 @@
 			</div>
                     </div>
                 </form>
-                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs text-left">
-                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados:</h4>                
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-left">
+                    <span>
+                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados: <?php echo $total_in_query;?></h4>                      
+                    </span>
                 </div>
-                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-center">
+                     <span>
+                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Página: <?php echo $num_page;?></h4>                      
+                    </span>
+                </div>
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
                      <button id="export_transactions">Exportar</button>
                 </div>
 		
@@ -252,9 +260,17 @@
 		</ul>
 		<ul class="pg text-right m-top20 fleft100">
                     <ul class="pg text-right m-top20 fleft100">
-                        <li><a id="prev_page" href=""><<</a></li>
-                        <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
-                        <li><a id="next_page" href="">>></a></li>
+                        <div class="col-md-6 col-sm-6 col-xs-12">                            
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12">                            
+                            <input id = "page_pos" type="text" size="5 px">
+                            <li><a id="go_page" href="">Ir a página</a></li> máx(<?php echo $last_page;?>)
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-12 m-top5">
+                            <li><a id="prev_page" href=""><<</a></li>
+                            <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
+                            <li><a id="next_page" href="">>></a></li>
+                        </div>
                     </ul>
 		</ul>
 	</div>
