@@ -212,6 +212,8 @@ class Welcome extends CI_Controller {
                     $has_next_page,
                     $status);
             $params['last_page'] = ceil(1.0*$params['total_in_query']/$GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE);
+            if($params['last_page'] == 0)
+                $params['last_page'] = 1;
             $this->load->view('transacoes',$params);
         } else{
             header('Location: '.base_url().'index.php/welcome/afhome');
