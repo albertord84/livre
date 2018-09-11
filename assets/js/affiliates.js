@@ -307,27 +307,11 @@ $(document).ready(function () {
         return false;
     });
     
-    $('#btn_afiliate_search').click(function () {
-        /*if($('#token').val()=='' ||$('#token').val().match('^[ ]{1,}$')){
-            $('#token').val('');
-            return false;
-        }else{*/
-            //num_page=1;
-            see_transactions();
-        //}
-    });
-        
-    function see_transactions(){
-        $('#num_page').val(num_page);            
-        $(location).attr('href',base_url+'index.php/welcome/transacoes?num_page='+num_page); 
-    }
-    
     $('#prev_page').click(function () {
         if(num_page>1){
             num_page--;
-            //$('#num_page').val(num_page);    
-            //$('#btn_afiliate_search').click();
-            see_transactions();
+            $('#num_page').val(num_page);    
+            $('#btn_afiliate_search').click();                        
         }
         return false;
     });
@@ -335,9 +319,8 @@ $(document).ready(function () {
     $('#next_page').click(function () {        
         if(has_next_page){
             num_page++;            
-            //$('#num_page').val(num_page);
-            //$('#btn_afiliate_search').click();
-            see_transactions();
+            $('#num_page').val(num_page);
+            $('#btn_afiliate_search').click();                        
         }
         return false;
     });
@@ -351,6 +334,22 @@ $(document).ready(function () {
         $('#next_page').css({'color':'silver'});
     else
         $('#next_page').css({'color':'black'});
+    
+    
+    $('#init_date').change(function (e) {
+        num_page = 1;            
+        $('#num_page').val(num_page);
+    });
+    
+    $('#end_date').change(function (e) {
+        num_page = 1;            
+        $('#num_page').val(num_page);
+    });
+    
+    $('#token').change(function (e) {
+        num_page = 1;            
+        $('#num_page').val(num_page);
+    });
     
     //----------------------SECUNDARY FUNCTIONS-------------------------------
        

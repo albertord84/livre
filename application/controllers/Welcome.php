@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
     }
 
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {        
+    public function index() {                
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -158,14 +158,24 @@ class Welcome extends CI_Controller {
     
     public function transacoes() {
         if($_SESSION['logged_role'] === 'ADMIN'){
-            if(count($_GET))
-                $datas=$_GET;
+            if(count($_POST))
+                $datas=$_POST;
             else{
                 $datas['num_page']=1;
                 $datas['token']='';
-                $datas['start_period']='';
-                $datas['end_period']='';
+                $datas['init_date']='';
+                $datas['end_date']='';
+                $datas['status']=0;
             }
+            $start_date = strtotime($datas['init_date']);
+            if($start_date === false){
+                $start_date = '';
+            }
+            $end_date = strtotime($datas['end_date']);
+            if($end_date === false){
+                $end_date = '';
+            }
+            $status = $datas['status'];
             $this->load->model('class/affiliate_model');
             $this->load->model('class/Crypt');
             $this->load->model('class/system_config');
@@ -177,11 +187,16 @@ class Welcome extends CI_Controller {
                     $datas['num_page']-1,
                     $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $datas['token'],
-                    $datas['start_period'],
-                    $datas['end_period'],
-                    $has_next_page);
+                    $start_date,
+                    $end_date,
+                    $has_next_page,
+                    $status);
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $params['num_page']=$datas['num_page'];
+            $params['start_period']=$datas['init_date'];
+            $params['end_period']=$datas['end_date'];
+            $params['token']=$datas['token'];
+            $params['status']=$datas['status'];
             $params['has_next_page']=$has_next_page;
             $params['view']='transacoes';
             $this->load->view('transacoes',$params);
