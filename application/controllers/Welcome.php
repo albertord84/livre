@@ -175,6 +175,9 @@ class Welcome extends CI_Controller {
             if($end_date === false){
                 $end_date = '';
             }
+            else{
+                $end_date += 23*60*60 + 59*60 + 59;
+            }
             $status = $datas['status'];
             $this->load->model('class/affiliate_model');
             $this->load->model('class/Crypt');

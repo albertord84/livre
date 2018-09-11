@@ -33,16 +33,29 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
+            if($status==transactions_status::BEGINNER){
+                $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
+                if($start_period!=''){
+                    $this->db->where('transactions_dates.date >=', $start_period);                
+                    $this->db->where('transactions_dates.status_id', $status);
+                }
+                if( $end_period!=''){
+                    $this->db->where('transactions_dates.date <=', $end_period);                            
+                    $this->db->where('transactions_dates.status_id', $status);                            
+                }
+            }
+            else{
+                if($start_period!='')
+                    $this->db->where('transactions.pay_date >=', $start_period);                
+                if( $end_period!='')
+                    $this->db->where('transactions.pay_date <=', $end_period);                            
+            }
             $this->db->where('account_banks.propietary_type','0');
             //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
             if($affiliates_code)
-                $this->db->where('affiliate_code',$affiliates_code);
-            if($start_period!='')
-                $this->db->where('transactions.pay_date >=', $start_period);                
-            if( $end_period!='')
-                $this->db->where('transactions.pay_date <=', $end_period);                            
+                $this->db->where('affiliate_code',$affiliates_code);            
             if($status != 0)
-                $this->db->where('transactions.status_id',$status);
+                $this->db->where('transactions.status_id',$status);            
             if( $token!=''){                
                 if(is_numeric($token)){
                     $this->db->like('transactions.cpf', $token);                            
@@ -59,7 +72,7 @@ class Affiliate_model extends CI_Model{
             //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             $this->db->order_by("transactions.status_id", "desc");
-            $this->db->order_by("transactions.id", "asc");
+            $this->db->order_by("transactions.id", "desc");
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
