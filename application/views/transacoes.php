@@ -167,7 +167,7 @@
                                     <option value="2" <?php if($status == 2) echo "selected='selected'";?>>WAIT_SIGNATURE</option>                                                                    
                                     <option value="4" <?php if($status == 4) echo "selected='selected'";?>>WAIT_PHOTO</option>                                
                                     <option value="5" <?php if($status == 5) echo "selected='selected'";?>>WAIT_ACCOUNT</option>                                                                    
-                                    <option value="5" <?php if($status == 6) echo "selected='selected'";?>>TOPAZIO_APPROVED</option>                                                                    
+                                    <option value="6" <?php if($status == 6) echo "selected='selected'";?>>TOPAZIO_APPROVED</option>                                                                    
                                     <option value="7" <?php if($status == 7) echo "selected='selected'";?>>TOPAZIO_IN_ANA.</option>                                                                              
                                     <option value="9" <?php if($status == 9) echo "selected='selected'";?>>REVERSE_MONEY</option>                                
                                     <option value="22" <?php if($status == 22) echo "selected='selected'";?>>PENDENT</option>                                
