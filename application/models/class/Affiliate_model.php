@@ -25,7 +25,7 @@ class Affiliate_model extends CI_Model{
         }
     }
         
-    public function load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page){
+    public function load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page, $status = 0){
         try {
             $this->load->model('class/Crypt');
             $this->load->model('class/transactions_status');
@@ -37,6 +37,25 @@ class Affiliate_model extends CI_Model{
             //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);
+            if($start_period!='')
+                $this->db->where('transactions.pay_date >=', $start_period);                
+            if( $end_period!='')
+                $this->db->where('transactions.pay_date <=', $end_period);                            
+            if($status != 0)
+                $this->db->where('transactions.status_id',$status);
+            if( $token!=''){                
+                if(is_numeric($token)){
+                    $this->db->like('transactions.cpf', $token);                            
+                }
+                else{
+                    if ( strpos($token, '@') !== false ) {
+                        $this->db->like('transactions.email', $token);                            
+                    }
+                    else{
+                        $this->db->like('transactions.name', $token);                            
+                    }
+                }
+            }            
             //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             $this->db->order_by("transactions.status_id", "desc");

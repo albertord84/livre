@@ -33,6 +33,8 @@
     <?php include_once "pixel_facebook.php";?>
     <?php include_once "pixel_gtags.php";?>
     <?php include_once "pixel_adwords.php";?>
+    <?php include_once "pixel_bing.php";?>
+    <?php include_once "pixel_linkedin.php";?>
 </head>
 
 <body>
