@@ -31,6 +31,9 @@
     <?php include_once "pixel_gtags.php";?>        
     <?php include_once "pixel_ecomerce_analytics.php";?>
     <?php include_once "pixel_adwords.php";?>
+    <?php include_once "pixel_bing.php";?>
+    <?php include_once "pixel_linkedin.php";?>
+    <?php include_once "pixel_crazy_egg.php";?>
     
     <!-- Global site tag (gtag.js) - Google Ads: 789597034 --> 
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-789597034"></script> 
