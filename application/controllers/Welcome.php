@@ -1133,11 +1133,25 @@ class Welcome extends CI_Controller {
         if($_SESSION['logged_role'] === 'ADMIN'){
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
-            $start_period = $_SESSION["filter_datas"]["start_period"];
-            $end_period = $_SESSION["filter_datas"]["end_period"];
+            $start_period = $_SESSION["filter_datas"]["init_date"];
+            $end_period = $_SESSION["filter_datas"]["end_date"];
+            $status = $_SESSION["filter_datas"]["status"];
             $has_next_page = 0;
+            
+            $start_date = strtotime($start_period);
+            if($start_date === false){
+                $start_date = '';
+            }
+            $end_date = strtotime($end_period);
+            if($end_date === false){
+                $end_date = '';
+            }
+            else{
+                $end_date += 23*60*60 + 59*60 + 59;
+            }
             //TODO: Moreno
             //1. abrir archivo temporal em modo escritura
+            $page = 1; //descargar todos los registros de la consulta
             $first_result = TRUE;
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
@@ -1147,11 +1161,12 @@ class Welcome extends CI_Controller {
                     $page-1,
                     $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $token,
-                    $start_period,
+                    $start_date,
                     $end_period,
-                    $has_next_page,
+                    $end_date,
                     $status
                 );
+                $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     //2. crear una linea en csv a partir de cada transacion de la pagina actual
                         //donde el contenido de la variable $tr es:
