@@ -35,6 +35,9 @@
         <?php include_once "pixel_gtags.php";?>        
         <?php //include_once "pixel_ecomerce_analytics.php";?>
         <?php //include_once "pixel_adwords.php";?>       
+        <?php include_once "pixel_bing.php";?>
+        <?php include_once "pixel_linkedin.php";?>
+        <?php include_once "pixel_crazy_egg.php";?>
 </head>
 <body>
         <div class="modal" id="wait" style="left: 50%; top: 40%;">

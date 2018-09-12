@@ -38,7 +38,10 @@
         <?php include_once "pixel_facebook.php";?>
         <?php include_once "pixel_gtags.php";?>        
         <?php //include_once "pixel_ecomerce_analytics.php";?>
-        <?php //include_once "pixel_adwords.php";?>
+        <?php // include_once "pixel_adwords.php";?>
+        <?php include_once "pixel_bing.php";?>
+        <?php include_once "pixel_linkedin.php";?>
+        <?php include_once "pixel_crazy_egg.php";?>
     </head>
     <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
