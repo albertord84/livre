@@ -96,6 +96,7 @@ class Affiliate_model extends CI_Model{
                 $i++;
             }
             $has_next_page=false;
+
             if(count($result) > $amount_by_page){
                 $has_next_page=true;
                 unset($result[$i-1]);

@@ -80,15 +80,15 @@
             //convert HTML into a basic plain-text alternative body
             $username = urlencode($username);
             $usermsg  = urlencode($usermsg);
-            $file = "https://".$_SERVER['SERVER_NAME'] . "/livre/resources/emails/contact_form.php?username=$username&useremail=$useremail&userphone=$userphone&usermsg=$usermsg";
+            $file = "http://".$_SERVER['SERVER_NAME'] . "/livre/resources/emails/contact_form.php?username=$username&useremail=$useremail&userphone=$userphone&usermsg=$usermsg";
             //echo $file;
             $this->mail->SMTPSecure = 'ssl';           
             $this->mail->Port = 465;
             $this->mail->isHTML(true);
             
             //$a=file_get_contents($file);
-            //$this->mail->msgHTML(file_get_contents($file), dirname(__FILE__));
-            $this->mail->Body = $this->curl_get_contents($file);
+            $this->mail->msgHTML(@file_get_contents($file), dirname(__FILE__));
+            //$this->mail->Body = $this->curl_get_contents($file);
             //Replace the plain text body with one created manually
             $this->mail->AltBody = "User Contact: $username";            
             if (!$this->mail->send()) {
@@ -204,7 +204,8 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
-            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
+            //$this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
+            $this->mail->Body = file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
