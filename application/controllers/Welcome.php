@@ -1130,6 +1130,12 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');
+        /*****************************/
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $this->Gmail = new Gmail();
+        $result = $this->Gmail->transaction_request_new_sing_us("Moreno","jorge85.mail@gmail.com","google.com");
+        return;
+        /*****************************/
         if($_SESSION['logged_role'] === 'ADMIN'){
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
@@ -1149,7 +1155,8 @@ class Welcome extends CI_Controller {
                     $token,
                     $start_period,
                     $end_period,
-                    $has_next_page
+                    $has_next_page,
+                    $status
                 );
                 foreach ($transactions as $tr) {
                     //2. crear una linea en csv a partir de cada transacion de la pagina actual
