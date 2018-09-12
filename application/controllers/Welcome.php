@@ -1134,6 +1134,16 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $this->Gmail = new Gmail();
         $result = $this->Gmail->transaction_request_new_sing_us("Moreno","jorge85.mail@gmail.com","google.com");
+//        $result = $this->Gmail->transaction_email_approved("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->transaction_request_new_photos("Moreno","jorge85.mail@gmail.com","google.com");
+//        $result = $this->Gmail->transaction_request_new_account_bank("Moreno","jorge85.mail@gmail.com","google.com");
+//        $result = $this->Gmail->transaction_request_recused("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->credit_card_recused("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->transaction_email_almost("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->transaction_email_trans_in_process("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->transaction_email_conclua("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->transaction_email_ainda_precisa("Moreno","jorge85.mail@gmail.com");
+//        $result = $this->Gmail->credor_ccb("Moreno","jorge85.mail@gmail.com","11111");
         return;
         /*****************************/
         if($_SESSION['logged_role'] === 'ADMIN'){
