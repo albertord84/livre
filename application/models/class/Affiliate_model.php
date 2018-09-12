@@ -31,8 +31,8 @@ class Affiliate_model extends CI_Model{
             $this->load->model('class/transactions_status');
             $this->db->select('*');
             $this->db->from('transactions');
-            $this->db->join('credit_card', 'credit_card.client_id = transactions.id or credit_card.client_id = -1');
-            $this->db->join('account_banks', 'account_banks.client_id = transactions.id or account_banks.client_id = -1');
+            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
+            $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
             if($status==transactions_status::BEGINNER){
                 $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
                 $this->db->where('transactions_dates.status_id', $status);
