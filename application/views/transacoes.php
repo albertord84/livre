@@ -1,11 +1,12 @@
 <?php include_once "inc/header-interno.php";?>
-<?php include_once "pixel_facebook.php";?>
-<?php include_once "pixel_gtags.php";?>        
+<?php // include_once "pixel_facebook.php";?>
+<?php // include_once "pixel_gtags.php";?>        
 <?php //include_once "pixel_ecomerce_analytics.php";?>
 <?php //include_once "pixel_adwords.php";?>
 
 <script type="text/javascript">
     var num_page = '<?php echo $num_page;?>';
+    var last_page = '<?php echo $last_page;?>';
     var has_next_page = '<?php echo $has_next_page;?>';
     var reload = 0;
 </script>
@@ -127,12 +128,12 @@
                 </div>
                 <form action="<?php echo base_url().'index.php/welcome/transacoes';?>" method="post">
                     <div class="trans cl-fff fleft100 pd-20">
-                        <div class="col-md-5 col-sm-5 col-xs-12">
+                        <div class="col-md-4 col-sm-4 col-xs-12">
                             <span class="fleft100">Digite sua busca aqui:</span>
-                            <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black">
+                            <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff b-none cl-black" value="<?php echo $token?>">
 			</div>
-			<div class="col-md-5 col-sm-5 col-xs-12 m-top10-xs">
-                            <span class="fleft100">Período de busca</span>
+			<div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
+                            <span class="fleft100">Período de cobrança no cartão</span>
                             <div class="col-md-5 col-sm-5 col-xs-6 pd-0">
 <!--                                <div class='input-group date m-top5' id='datetimepicker_init'>
                                     <input type='text' class="form-control" id="init_date" value="31/05/2018"/>
@@ -141,7 +142,7 @@
                                     </span>
                                 </div>-->
                                 <div class="input-group date m-top5">
-                                    <input type="date" id="init_date" placeholder="mm/dd/yyyy" class="form-control">
+                                    <input type="date" name="init_date" id="init_date" placeholder="mm/dd/yyyy" class="form-control" value="<?php echo $start_period;?>">
                                 </div>
                             </div>                           
                             <div class="col-md-1 col-sm-1 col-xs-6 pd-0" ></div>
@@ -153,22 +154,45 @@
                                     </span>
                                 </div>-->
                                 <div class="input-group date m-top5">
-                                    <input type="date" id="end_date" placeholder="mm/dd/yyyy" class="form-control">
+                                    <input type="date" name="end_date" id="end_date" placeholder="mm/dd/yyyy" class="form-control" value="<?php echo $end_period;?>">
                                 </div>
                             </div>
 			</div>
+                        <div class="col-md-2 col-sm-2 col-xs-12">                            
+                            <span class="fleft100">Estado</span>
+                            <div class="m-top25 m-top25-xs">
+                                <select name="status" id="status" required style="max-height: 70px; background-color:#293d3d;">
+                                    <option value="default" selected="0">ANY STATE</option>
+                                    <option value="1" <?php if($status == 1) echo "selected='selected'";?> >BEGINNER</option>
+                                    <option value="2" <?php if($status == 2) echo "selected='selected'";?>>WAIT_SIGNATURE</option>                                                                    
+                                    <option value="4" <?php if($status == 4) echo "selected='selected'";?>>WAIT_PHOTO</option>                                
+                                    <option value="5" <?php if($status == 5) echo "selected='selected'";?>>WAIT_ACCOUNT</option>                                                                    
+                                    <option value="6" <?php if($status == 6) echo "selected='selected'";?>>TOPAZIO_APPROVED</option>                                                                    
+                                    <option value="7" <?php if($status == 7) echo "selected='selected'";?>>TOPAZIO_IN_ANA.</option>                                                                              
+                                    <option value="9" <?php if($status == 9) echo "selected='selected'";?>>REVERSE_MONEY</option>                                
+                                    <option value="22" <?php if($status == 22) echo "selected='selected'";?>>PENDENT</option>                                
+                                </select>                            
+                            </div>
+			</div>
                         <div>
-                            <input name="num_page" type="text" style="visibility:hidden;display:none" value="0">
+                            <input name="num_page" id="num_page" type="text" style="visibility:hidden;display:none" value="<?php echo $num_page;?>">
                         </div>
 			<div class="col-md-2 col-sm-2 col-xs-12 text-center m-top20 m-top20-xs">
                             <input id="btn_afiliate_search" type="submit" class="cl-fff bk-blue pd-8 fleft100" value="Pesquisar">
 			</div>
                     </div>
                 </form>
-                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs text-left">
-                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados:</h4>                
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-left">
+                    <span>
+                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados: <?php echo $total_in_query;?></h4>                      
+                    </span>
                 </div>
-                 <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-center">
+                     <span>
+                    <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Página: <?php echo $num_page;?></h4>                      
+                    </span>
+                </div>
+                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
                      <button id="export_transactions">Exportar</button>
                 </div>
 		
@@ -237,9 +261,17 @@
 		</ul>
 		<ul class="pg text-right m-top20 fleft100">
                     <ul class="pg text-right m-top20 fleft100">
-                        <li><a id="prev_page" href=""><<</a></li>
-                        <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
-                        <li><a id="next_page" href="">>></a></li>
+                        <div class="col-md-6 col-sm-6 col-xs-12">                            
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-12">                            
+                            <input id = "page_pos" type="text" size="5 px">
+                            <li><a id="go_page" href="">Ir a página</a></li> máx(<?php echo $last_page;?>)
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-12 m-top5">
+                            <li><a id="prev_page" href=""><<</a></li>
+                            <li><a id="actual_page" href=""><?php echo $num_page;?></a></li>
+                            <li><a id="next_page" href="">>></a></li>
+                        </div>
                     </ul>
 		</ul>
 	</div>
