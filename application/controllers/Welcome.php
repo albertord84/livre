@@ -1161,9 +1161,9 @@ class Welcome extends CI_Controller {
                     $page-1,
                     $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $token,
-                    $start_date,
-                    $end_period,
+                    $start_date,                    
                     $end_date,
+                    $has_next_page,    
                     $status
                 );
                 $page++;//descargar todas las páginas
@@ -1565,7 +1565,7 @@ class Welcome extends CI_Controller {
                         if($result_send){
                             //4. cambiar el status de la transaccion
                             $this->transaction_model->update_transaction_status(
-                                    $_SESSION['transaction_requested_id'],
+                                    $_SESSION['pk'],
                                     transactions_status::WAIT_SIGNATURE);
                             $result['success']=true; //para mostrar el toggle2
                         }                    
