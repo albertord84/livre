@@ -1129,7 +1129,7 @@ class Welcome extends CI_Controller {
     public function export_transactions() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $this->load->model('class/affiliate_model');        
+        $this->load->model('class/affiliate_model');       
         if($_SESSION['logged_role'] === 'ADMIN'){
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
