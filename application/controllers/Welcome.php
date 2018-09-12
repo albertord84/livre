@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-09-10");
+        $trasactions = $this->topazio_conciliations("2018-09-11");
         foreach ($trasactions as $t) {
             var_dump($t);
         }
@@ -38,7 +38,7 @@ class Welcome extends CI_Controller {
     }
 
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {           
+    public function index() {                   
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
