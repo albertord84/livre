@@ -152,8 +152,8 @@
             
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;            
-            //$this->mail->msgHTML(@file_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));            
-            $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");            
+            $this->mail->msgHTML(@file_get_contents("http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link"), dirname(__FILE__));            
+            //$this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-fotos-recusadas.php?name=$name&link=$link");            
             if (!$this->mail->send()) {
                 $result['success'] = false;
                 $result['message'] = "Mailer Error: " . $this->mail->ErrorInfo;
@@ -204,6 +204,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-nova-assinatura_easy.php?name=$name&link=$link");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -229,6 +230,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-cancelada.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -254,6 +256,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-negado.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -279,6 +282,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-almost.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -304,6 +308,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-in_process.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -329,6 +334,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-conclua.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -354,6 +360,7 @@
             $this->mail->isHTML(true);
             $name = urlencode($name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-ainda_precisa.php?name=$name");
             if (!$this->mail->send()) {
                 $result['success'] = false;
@@ -380,6 +387,7 @@
             $name = urlencode($name);
             $ccb = urlencode($ccb);
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
+            //TODO: hacer con @file_get_contents
             $this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/credor-ccb.php?name=$name&ccb=$ccb");
             if (!$this->mail->send()) {
                 $result['success'] = false;
