@@ -484,47 +484,12 @@ $(document).ready(function () {
         }
     }   
     
-    $("#export_transactions").on("click", function(){                
-        /*var initDate = $('#init_date').val();
-        initDate = initDate.split("/");        
-        var init_date = toTimestamp(initDate[1]+"/"+initDate[0]+"/"+initDate[2]);
-        
-        var endDate = $('#end_date').val();
-        endDate = endDate.split("/");        
-        var end_date = toTimestamp(endDate[1]+"/"+endDate[0]+"/"+endDate[2]);
-                
-        if(init_date && end_date){
-            if(init_date <= end_date){*/
-            $(location).attr('href',base_url+'index.php/welcome/export_transactions');                                                            
-            /*    $.ajax({
-                type: "POST",
-                url: base_url + 'index.php/welcome/export_transactions', //calling method in controller
-                data: {                
-                    init_date: init_date,
-                    end_date: end_date                
-                },
-                dataType:'json',
-                success: function (response) {
-                    if (response['success']) {
-                        $(location).attr('href',base_url+'index.php/welcome/export_transactions');                                                            
-                    }
-                    else{
-                        modal_alert_message(response['message']);
-                    }
-                },
-                error: function (xhr, status) {
-                    modal_alert_message('Ooops ... problema no servidor'); 
-                }
-            });*/
-        /*    }
-            else
-            {
-                modal_alert_message(T("A data incial deve ser anterior à data final",language));
-            }  
-        }
-        else
-            modal_alert_message(T("Deve fornecer o intervalo válido de datas para a extração",language));
-        */
+    $("#export_transactions").on("click", function(){                        
+        $(location).attr('href',base_url+'index.php/welcome/export_transactions');                                                                      
+    });
+    
+    $("#export_leads").on("click", function(){                
+        $(location).attr('href',base_url+'index.php/welcome/export_leads');
     });
     
     function toDate(number){    
