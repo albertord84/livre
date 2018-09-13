@@ -1289,6 +1289,118 @@ class Welcome extends CI_Controller {
             exit;                                    }
     }
     
+    public function export_leads() {
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');       
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $page = $_SESSION["filter_datas"]["num_page"];
+            $token = $_SESSION["filter_datas"]["token"];
+            $start_period = $_SESSION["filter_datas"]["init_date"];
+            $end_period = $_SESSION["filter_datas"]["end_date"];
+            $status = $_SESSION["filter_datas"]["status"];
+            $has_next_page = 0;
+            
+            $start_date = strtotime($start_period);
+            if($start_date === false){
+                $start_date = '';
+            }
+            $end_date = strtotime($end_period);
+            if($end_date === false){
+                $end_date = '';
+            }
+            else{
+                $end_date += 23*60*60 + 59*60 + 59;
+            }
+            //TODO: Moreno
+            //1. abrir archivo temporal em modo escritura
+            $page = 1; //descargar todos los registros de la consulta
+            $first_result = TRUE;
+            do{
+                //lee pagina de transacciones segun la configuracion de la consulta actual 
+                //guardada en la variable de seccion
+                $transactions = $this->affiliate_model->load_leads(
+                    NULL,
+                    $page-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
+                    $token,
+                    $start_date,                    
+                    $end_date,
+                    $has_next_page,    
+                    $status
+                );
+                $page++;//descargar todas las páginas
+                foreach ($transactions as $tr) {
+                    //2. crear una linea en csv a partir de cada transacion de la pagina actual
+                        //donde el contenido de la variable $tr es:
+                    
+                    //ATENNCION: en el caso del campo dates, exportar la fecha en que fue creada
+                    //la transaccion, que la de la posicion N-1 del array dates 
+                    $status_text = [
+                        '1' => 'BEGGINER',
+                        '2' => 'WAIT_SIGNATURE',
+                        '3' => 'APPROVED',                        
+                        '4' => 'WAIT_PHOTO',
+                        '5' => 'WAIT_ACCOUNT',
+                        '6' => 'TOPAZIO_APROVED',
+                        '7' => 'TOPAZIO_IN_ANALISYS',
+                        '8' => 'TOPAZIO_DENIED',
+                        '9' => 'REVERSE_MONEY',
+                        '22' => 'PENDING'
+                    ];
+                    
+                    $way_to_spend = [
+                        '00' => 'Selecione',
+                        '01' => 'Compras',
+                        '02' => 'Quitar dívida do cartão de crédito',
+                        '03' => 'Quitar cheque especial',
+                        '04' => 'Quitar outras dívidas',
+                        '05' => 'Investir em negócio próprio',
+                        '06' => 'Educação',
+                        '07' => 'Viagem',
+                        '08' => 'Saúde',
+                        '09' => 'Outros ...'
+                    ];
+                    $tr_reduce['id_trans'] = $tr['id'];
+                    $tr_reduce['status'] = $status_text[$tr['status_id']];
+                    $tr_reduce['cpf'] = $tr['cpf'];
+                    $tr_reduce['name'] = $tr['name'];
+                    $tr_reduce['email'] = $tr['email'];
+                    $tr_reduce['phone_number'] = $tr['phone_ddd'].$tr['phone_number'];
+                    $tr_reduce['cep'] = $tr['cep'];
+                    $tr_reduce['number_address'] = $tr['number_address'];
+                    $tr_reduce['street'] = $tr['street_address'];
+                    $tr_reduce['complement_number'] = $tr['complement_number_address'];
+                    $tr_reduce['city'] = $tr['city_address'];
+                    $tr_reduce['state'] = $tr['state_address'];
+                    $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
+                    $tr_reduce['months'] = $tr['number_plots'];
+                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                                        
+                    
+                    if($first_result && $tr_reduce){
+                        $first_result = FALSE;
+                        $filename = 'leads'.date('Ymd', time()).'.csv'; 
+                        header("Content-Description: File Transfer"); 
+                        header("Content-Disposition: attachment; filename=$filename"); 
+                        header("Content-Type: application/csv; ");
+
+                        // file creation 
+                        $file = fopen('php://output', 'w');
+
+                        fputcsv($file, array_keys($tr_reduce));                            
+                    }
+
+                    //foreach ($tr as $key=>$line){ 
+                      fputcsv($file,$tr_reduce);                          
+                    //}
+                }                
+            }while($has_next_page > 0);
+            //3. cerrar fichero y dar la posibilidad de descargarlo, igual que en leads                
+            if(!$first_result)
+                fclose($file); 
+            exit;                                    }
+    }
+    
     public function file_transactions(){        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();

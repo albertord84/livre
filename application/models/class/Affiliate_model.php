@@ -107,6 +107,47 @@ class Affiliate_model extends CI_Model{
         }
     }
     
+    public function load_leads($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page, $status = 0){
+        try {
+            $this->load->model('class/Crypt');
+            $this->load->model('class/transactions_status');
+            $this->db->select('*');
+            $this->db->from('transactions');
+            
+            if($status != 0)
+                $this->db->where('transactions.status_id',$status);            
+            if( $token!=''){                
+                if(is_numeric($token)){
+                    $this->db->like('transactions.cpf', $token);                            
+                }
+                else{
+                    if ( strpos($token, '@') !== false ) {
+                        $this->db->like('transactions.email', $token);                            
+                    }
+                    else{
+                        $this->db->like('transactions.name', $token);                            
+                    }
+                }
+            }            
+            //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
+            $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
+            $this->db->order_by("transactions.status_id", "desc");
+            $this->db->order_by("transactions.id", "desc");
+            //$this->db->group_by("transactions.email", "desc");
+            
+            $result = $this->db->get()->result_array();
+            $N=count($result);            
+            $has_next_page=false;
+            if(count($result) > $amount_by_page){
+                $has_next_page=true;
+                unset($result[$N-1]);
+            }
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+    
     public function num_in_load_transactions($affiliates_code, $page=0, $amount_by_page=20, $token=NULL, $start_period=NULL, $end_period=NULL, &$has_next_page, $status = 0){
         try {
             $this->load->model('class/Crypt');
