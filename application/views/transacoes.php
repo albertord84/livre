@@ -192,7 +192,10 @@
                     <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Página: <?php echo $num_page;?></h4>                      
                     </span>
                 </div>
-                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
+                 <div class="col-md-3 col-sm-3 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
+                     <button id="export_leads">Leads</button>
+                </div>
+                 <div class="col-md-1 col-sm-1 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
                      <button id="export_transactions">Exportar</button>
                 </div>
 		
