@@ -933,6 +933,7 @@ class Welcome extends CI_Controller {
                         if($report_iugu['known']){
                             $result['message'] = $report_iugu['message'];                    
                             //enviar email com passos
+                            $this->Gmail = new Gmail();
                             $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
                             if($report_iugu['destroy'])
                                 session_destroy();
@@ -1129,7 +1130,7 @@ class Welcome extends CI_Controller {
     public function export_transactions() {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
-        $this->load->model('class/affiliate_model');       
+        $this->load->model('class/affiliate_model');          
         if($_SESSION['logged_role'] === 'ADMIN'){
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
@@ -3909,6 +3910,7 @@ class Welcome extends CI_Controller {
                                     $livre_tr['client_id'],
                                     transactions_status::TOPAZIO_APROVED);
                                 $name = explode(' ', $livre_tr['name']); $name = $name[0];                
+                                $this->Gmail = new Gmail();
                                 $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
                                 echo "<br>\nID: ".$livre_tr['client_id'];
                                 echo "<br>\nCLIENTE: ".$livre_tr['name'];
