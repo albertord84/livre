@@ -33,34 +33,47 @@
                         </div>
                     </form>
                 </div>
-		<div class="col-md-6 col-sm-6 col-xs-12">
+		<div class="col-md-8 col-sm-8 col-xs-12">
 			<h4 class="pd-lr15 m-b10">
                             <!--<em>Geral</em>--> 
                         </h4>
                     <h5 class="pd-lr15 m-b10">TRANSAÇÕES COBRADAS: <span id ='num_transactions'><?php echo $total_transactions; ?></span>
                         </h5>
-			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
+			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">VALOR TOTAL (CET)</span>
                                         <h4 class="fw-600 cl-blue"><span id ='total_cet'>R$ <?php echo $total_CET; ?></span></h4>
 				</div>
 			</div>
-			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
+			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">VALOR TOMADO</span>
                                         <h4 class="fw-600 cl-blue"><span id ='total_tomado'>R$ <?php echo $loan_value; ?></span></h4>
 				</div>
 			</div>
-			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
+			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">TIKET MÉDIO</span>
                                         <h4 class="fw-600 cl-blue"><span id ='ave_ticket'>R$ <?php echo $average_ticket; ?></span></h4>
 				</div>
 			</div>
-			<div class="col-md-6 col-sm-6 col-xs-12 pd-lr10 m-b20 gr">
+			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">NÚMERO MÉDIO DE PARCELAS</span>
                                         <h4 class="fw-600 cl-blue"><span id ='ave_plot'><?php echo $average_amount_months; ?> X</span></h4>
+				</div>
+			</div>
+                    
+                        <div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
+				<div class="fleft100 bk-fff pd-20">
+					<span class="ft-size12 fw-600 cl-black">IOF MÉDIO</span>
+                                        <h4 class="fw-600 cl-blue"><span id ='ave_iof'>R$ <?php echo $average_iof; ?></span></h4>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
+				<div class="fleft100 bk-fff pd-20">
+					<span class="ft-size12 fw-600 cl-black">MÉDIA DE JUROS</span>
+                                        <h4 class="fw-600 cl-blue"><span id ='ave_tax'><?php echo $average_tax; ?> %</span></h4>
 				</div>
 			</div>
 			

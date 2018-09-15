@@ -238,6 +238,21 @@ class Welcome extends CI_Controller {
             $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
             $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
             $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+            /*--- TAX e IOF -----*/
+            $sum_tax = 0; $sum_iof = 0;
+            $has_next_page = true; $amount_by_page = 2; $page = 0;
+            while($has_next_page){
+                $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
+                foreach($result as $transaction){
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+                    $sum_iof += $financials['IOF'];
+                    $sum_tax += $financials['tax'];
+                }                
+                $page++;
+            }
+            $params['average_iof'] = number_format(($sum_iof)/$params['total_transactions'], 2, '.', '');
+            $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
+            /*--------------*/
             $this->load->view('resumo', $params);
         }
     }
@@ -261,12 +276,28 @@ class Welcome extends CI_Controller {
                 $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
                 $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
                 $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
+                /*--- TAX e IOF -----*/
+            $sum_tax = 0; $sum_iof = 0;
+            $has_next_page = true; $amount_by_page = 2; $page = 0;
+            while($has_next_page){
+                $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
+                foreach($result as $transaction){
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+                    $sum_iof += $financials['IOF'];
+                    $sum_tax += $financials['tax'];
+                }                
+                $page++;
+            }
+            $params['average_iof'] = number_format(($sum_iof)/$params['total_transactions'], 2, '.', '');
+            $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             }
             else{
                 $params['total_CET'] = "0.00";
                 $params['loan_value'] = "0.00";
                 $params['average_ticket'] = "0.00";
                 $params['average_amount_months'] = '0';            
+                $params['average_iof'] = "0.00";
+                $params['average_tax'] = "0.00";
             }
             echo json_encode($params);
         }
