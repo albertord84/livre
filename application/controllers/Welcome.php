@@ -1897,6 +1897,17 @@ class Welcome extends CI_Controller {
         }
     }
 
+    public function track_init() {
+        $this->load->model('class/track_money_model');        
+        $datas = $this->input->post();                
+        $data_track['solicited_value']=(float)$datas['solicited_value']*100;
+        $data_track['ip']= $_SERVER['REMOTE_ADDR'];
+        $id_row = $this->track_money_model->insert_required_money($data_track);
+        $result['success'] = false;
+        $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
+        echo json_encode($result);       
+    }
+    
     public function verify_simulation($datas=NULL) {
         $flag=false;
         if(!$datas){
