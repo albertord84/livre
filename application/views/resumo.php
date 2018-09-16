@@ -66,7 +66,7 @@
                     
                         <div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
-					<span class="ft-size12 fw-600 cl-black">IOF MÉDIO</span>
+					<span class="ft-size12 fw-600 cl-black">TOTAL IOF</span>
                                         <h4 class="fw-600 cl-blue"><span id ='ave_iof'>R$ <?php echo $average_iof; ?></span></h4>
 				</div>
 			</div>
