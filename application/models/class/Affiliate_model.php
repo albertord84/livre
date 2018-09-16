@@ -517,6 +517,30 @@ class Affiliate_model extends CI_Model{
         }*/
     }
     
+    public function ave_track_money($lower, $upper){
+        try{
+            $this->db->select('COUNT(solicited_value) as count_money');
+            $this->db->from('track_money');            
+            $this->db->where('solicited_value >',$lower);
+            $this->db->where('solicited_value <=',$upper);
+            $result['count_money'] = $this->db->get()->row_array()['count_money']; 
+            
+            if(!$result['count_money']){
+                $result['count_money'] = 1;
+            }
+            
+            $this->db->select('SUM(solicited_value) as sum_money');
+            $this->db->from('track_money');            
+            $this->db->where('solicited_value >',$lower);
+            $this->db->where('solicited_value <=',$upper);
+            $result['ave_money'] = $this->db->get()->row_array()['sum_money']/$result['count_money']; 
+            
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+
     public function get_transaction_way_to_spend($way_to_spend){
         switch ($way_to_spend) {
             case "01":

@@ -253,6 +253,14 @@ class Welcome extends CI_Controller {
             $params['average_iof'] = number_format(($sum_iof)/$params['total_transactions'], 2, '.', '');
             $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             /*--------------*/
+            $result_500 = $this->affiliate_model->ave_track_money(9999, 50000);
+            $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, '.', '');
+            $params['count_track_money_500'] = $result_500['count_money'];
+            
+            $result_3000 = $this->affiliate_model->ave_track_money(300000, 10000000);
+            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
+            $params['count_track_money_3000'] = $result_3000['count_money'];
+            
             $this->load->view('resumo', $params);
         }
     }
