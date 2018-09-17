@@ -58,6 +58,7 @@ class Welcome extends CI_Controller {
     }
     
     public function checkout() {
+        $this->load->model('class/track_money_model');
         //die('This functionalities is under development :-)');
         if(session_id()=='')header('Location: '.base_url());
         if(!$_SESSION['transaction_values']['amount_months'])header('Location: '.base_url());
@@ -76,6 +77,11 @@ class Welcome extends CI_Controller {
         $params['IOF']  = str_replace('.', ',', $_SESSION['transaction_values']['IOF']); 
         $params['CET_PERC']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_PERC']); 
         $params['CET_YEAR']  = str_replace('.', ',', $_SESSION['transaction_values']['CET_YEAR']); 
+        //save value
+        $data_track['solicited_value'] = $_SESSION['transaction_values']['solicited_value']*100;
+        $data_track['ip']= $_SERVER['REMOTE_ADDR'];
+        $id_row = $this->track_money_model->insert_required_money($data_track);
+                
         $this->load->view('checkout',$params);
         $this->load->view('inc/footer');
     }
@@ -253,13 +259,17 @@ class Welcome extends CI_Controller {
             $params['average_iof'] = number_format(($sum_iof), 2, '.', '');
             $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             /*--------------*/
-            $result_500 = $this->affiliate_model->ave_track_money(9999, 50000);
+            $result_500 = $this->affiliate_model->ave_track_money(9999, 49999);
             $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, '.', '');
             $params['count_track_money_500'] = $result_500['count_money'];
             
-            $result_3000 = $this->affiliate_model->ave_track_money(300000, 10000000);
+            $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000);
             $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
             $params['count_track_money_3000'] = $result_3000['count_money'];
+            
+            $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000);
+            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, '.', '');            
+            $params['count_track_money_100000'] = $result_100000['count_money'];
             
             $this->load->view('resumo', $params);
         }
@@ -1916,7 +1926,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);       
     }
     
-    public function verify_simulation($datas=NULL) {
+    public function verify_simulation($datas=NULL) {        
         $flag=false;
         if(!$datas){
             $datas = $this->input->post();
@@ -1937,7 +1947,7 @@ class Welcome extends CI_Controller {
                 $result['CET_PERC'] =$financials['CET_PERC'];
                 $result['CET_YEAR'] =$financials['CET_YEAR'];
                 $result['success'] = true;                
-                $_SESSION['transaction_values']=$result;
+                $_SESSION['transaction_values']=$result;                
             } else{
                 $result['success'] = false;
                 $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
