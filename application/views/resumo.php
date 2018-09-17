@@ -94,7 +94,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">VALOR MÉDIO ENTRE R$ 3001 e R$ 100000</span>
-                                        <h4 class="fw-600 cl-blue"><span id ='ave_track_100000'>R$ <?php echo $ave_track_money_100000; ?> (<?php echo $count_track_money_3000;?>)</span></h4>
+                                        <h4 class="fw-600 cl-blue"><span id ='ave_track_100000'>R$ <?php echo $ave_track_money_100000; ?> (<?php echo $count_track_money_100000;?>)</span></h4>
 				</div>
 			</div>
 			
