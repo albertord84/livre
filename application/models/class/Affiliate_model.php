@@ -452,6 +452,35 @@ class Affiliate_model extends CI_Model{
         }*/  
     }
     
+    public function iof_tax_value($datas, $page = 0, $amount_by_page = 1000, &$has_next_page){
+        try {                
+            $this->load->model('class/transactions_status');                        
+            
+            $this->db->select('amount_solicited, number_plots');
+            $this->db->from('transactions');            
+            $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
+            $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);
+            if($datas['abstract_init_date']!='')
+                $this->db->where('transactions.pay_date >=', $datas['abstract_init_date']);                
+            if( $datas['abstract_end_date']!='')
+                $this->db->where('transactions.pay_date <=', $datas['abstract_end_date']);                            
+            $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
+            $result = $this->db->get()->result_array();
+            
+            $has_next_page=false;
+            $N = count($result);
+            if($N > $amount_by_page){
+                $has_next_page=true;
+                unset($result[$N-1]);
+            }
+            
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }  
+    }
+    
+    
     public function average_ticket(){
         
     }
@@ -488,6 +517,30 @@ class Affiliate_model extends CI_Model{
         }*/
     }
     
+    public function ave_track_money($lower, $upper){
+        try{
+            $this->db->select('COUNT(solicited_value) as count_money');
+            $this->db->from('track_money');            
+            $this->db->where('solicited_value >',$lower);
+            $this->db->where('solicited_value <=',$upper);
+            $result['count_money'] = $this->db->get()->row_array()['count_money']; 
+            
+            if(!$result['count_money']){
+                $result['count_money'] = 1;
+            }
+            
+            $this->db->select('SUM(solicited_value) as sum_money');
+            $this->db->from('track_money');            
+            $this->db->where('solicited_value >',$lower);
+            $this->db->where('solicited_value <=',$upper);
+            $result['ave_money'] = $this->db->get()->row_array()['sum_money']/$result['count_money']; 
+            
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+
     public function get_transaction_way_to_spend($way_to_spend){
         switch ($way_to_spend) {
             case "01":

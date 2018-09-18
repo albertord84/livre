@@ -37,7 +37,9 @@ $(document).ready(function () {
                 $("#total_cet").html('R$ '+response['total_CET']);
                 $("#total_tomado").html('R$ '+response['loan_value']);
                 $("#ave_ticket").html('R$ '+response['average_ticket']);
-                $("#ave_plot").html(response['average_amount_months']);                
+                $("#ave_plot").html(response['average_amount_months'] + ' X');                
+                $("#ave_iof").html('R$ '+response['average_iof']);                
+                $("#ave_tax").html(response['average_tax']+' %');                
             }
         });        
     });

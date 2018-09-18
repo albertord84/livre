@@ -88,8 +88,27 @@ $(document).ready(function () {
                         modal_alert_message('Internal error Verify value');
                     }
                 });                
-            } else{
-                modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');
+            } else{                
+                if(!error){
+                    error = true;
+                    $.ajax({
+                        url: base_url + 'index.php/welcome/track_init',
+                        data:{
+                            'solicited_value': solicited_value                       
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (response) {                                                                                    
+                            modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');                            
+                        },
+                        error: function (xhr, status) {
+                            modal_alert_message('Internal error Verify value');
+                        }
+                    }); 
+                }
+                else{                    
+                    modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');
+                }
             }
         }
     }
