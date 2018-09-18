@@ -10,6 +10,11 @@ class Welcome extends CI_Controller {
         parent::__construct();
     }
 
+    public function test_cr(){
+        $this->load->model('class/Crypt');
+        echo $this->Crypt->crypt('1');
+    }
+    
     public function test5(){
         //$hoje = strtotime("now");        
         //$d = getdate($hoje);
