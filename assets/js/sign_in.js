@@ -10,16 +10,16 @@ $(document).ready(function () {
     $("#btn_steep_1").click(function () {
         var cpf_value=$('#cpf').val();
         cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('.',''); cpf_value = cpf_value.replace('-','');
-        name  = validate_element('#name', '^[a-zA-Z ]{6,150}$');
+        name  = validate_element('#name', '^[a-zA-Záéíóúàãẽõ ]{6,150}$');
         email = validate_element('#email', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,10}$');
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{8,9}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
         cep = validate_element('#cep', '^[0-9]{8}$');
-        street_address = validate_element('#street_address', '^[a-zA-Z áéíóúàãẽõ]{5,}$');
+        street_address = validate_element('#street_address', '^[a-zA-Z0-9 áéíóúàãẽõ]{1,}$');
         number_address = validate_element('#number_address', '^[0-9]{1,10}$');
         complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
-        city = validate_element('#city_address', '^[a-zA-Z áéíóúàãẽõ]{1,50}$');
+        city = validate_element('#city_address', '^[a-zA-Z0-9 áéíóúàãẽõ]{1,50}$');
         state = validate_element('#state_address', '^[a-zA-Z]{2}$'); 
         var upper_name = $('#name').val(); upper_name = upper_name.toUpperCase();
         if(name!=="false" && email && phone_ddd && phone_number && cpf && cep && street_address && number_address && city && state && complement){                                

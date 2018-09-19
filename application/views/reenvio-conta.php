@@ -109,6 +109,7 @@
                                         <option value="001">BCO DO BRASIL S.A.</option>
                                         <option value="104">CAIXA ECONOMICA FEDERAL</option>
                                         <option value="117">ADVANCED CC LTDA</option>
+                                        <option value="748">BANCO COOPERATIVO SICREDI S.A.</option>
                                         <option value="172">ALBATROSS CCV S.A</option>
                                         <option value="188">ATIVA S.A. INVESTIMENTOS CCTVM</option>
                                         <option value="280">AVISTA S.A. CFI</option>

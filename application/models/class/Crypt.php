@@ -37,6 +37,7 @@
                 '280'=>'AVISTA S.A. CFI',
                 '080'=>'B&T CC LTDA.',
                 '063'=>'BANCO BRADESCARD',
+                '748'=>'BANCO COOPERATIVO SICREDI S.A.',
                 '208'=>'BANCO BTG PACTUAL S.A.',
                 '233'=>'BANCO CIFRA',
                 '094'=>'BANCO FINAXIS',
