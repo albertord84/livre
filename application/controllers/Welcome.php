@@ -10,6 +10,11 @@ class Welcome extends CI_Controller {
         parent::__construct();
     }
 
+    public function test_cr(){
+        $this->load->model('class/Crypt');
+        echo $this->Crypt->crypt('1');
+    }
+    
     public function test5(){
         //$hoje = strtotime("now");        
         //$d = getdate($hoje);
@@ -3126,7 +3131,7 @@ class Welcome extends CI_Controller {
         return $next_date->format('Y-m-d');
     }
 
-    public function get_field($money_str){
+    /*public function get_field($money_str){
         $money = (float)($money_str);
         if($money == 500)
             return "500";
@@ -3140,6 +3145,23 @@ class Welcome extends CI_Controller {
             return "2001_2500";
         if($money > 2500 && $money <= 3000)
             return "2501_3000";
+        return "2501_3000";
+    }*/
+    
+    public function get_field($money_str){
+        $money = (float)($money_str);        
+        if($money >=100 && $money <= 500)
+            return "100_500";        
+        if($money > 500 && $money <= 1000)
+            return "501_1000";        
+        if($money > 1000 && $money <= 1500)
+            return "1001_1500";        
+        if($money > 1500 && $money <= 2000)
+            return "1501_2000";        
+        if($money > 2000 && $money <= 2500)
+            return "2001_2500";        
+        if($money > 2500 && $money <= 3000)
+            return "2501_3000";        
         return "2501_3000";
     }
 
