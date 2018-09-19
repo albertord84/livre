@@ -436,7 +436,7 @@ class Welcome extends CI_Controller {
         }        
                 
         //4. Analisar coerencia dos dados, exemplo:
-            //4.1 mesmo cpf com nome diferentes        
+        //4.1 mesmo cpf com nome diferentes        
         /*$nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
@@ -447,11 +447,11 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if($N > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Este CPF foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
+            $result['message']="Este CPF foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
             $result['success']=false;
             return $result;
         }
-            //4.2 mesmo telefone com nome diferentes
+        //4.2 mesmo telefone com nome diferentes
         $clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
         /*$nomes=array();
         foreach ($clients as $client) {
@@ -462,12 +462,12 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Este telefone foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
+            $result['message']="Este telefone foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
         }
-            //4.3 mesmo telefone com diferentes cpf
+        //4.3 mesmo telefone com diferentes cpf
         /*$cpfs=array();
         foreach($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
@@ -477,7 +477,7 @@ class Welcome extends CI_Controller {
         }
         if(count($cpfs)>1){*/
         if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro cpf. Por favor, contate nosso atendimento';
+            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
