@@ -60,7 +60,7 @@ $(document).ready(function () {
             solicited_value = solicited_value.replace('.','');
             solicited_value = solicited_value.replace(',','.');
             solicited_value = parseFloat(solicited_value);
-            if(solicited_value>=500 && solicited_value<=3000){
+            if(solicited_value>=100 && solicited_value<=3000){
                 $.ajax({
                     url: base_url + 'index.php/welcome/verify_simulation',
                     data:{
@@ -99,7 +99,7 @@ $(document).ready(function () {
                         type: 'POST',
                         dataType: 'json',
                         success: function (response) {                                                                                    
-                            modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');                            
+                            modal_alert_message('Só pode solicitar um valor entre R$100 e R$3000');                            
                         },
                         error: function (xhr, status) {
                             modal_alert_message('Internal error Verify value');
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     }); 
                 }
                 else{                    
-                    modal_alert_message('Só pode solicitar um valor entre R$500 e R$3000');
+                    modal_alert_message('Só pode solicitar um valor entre R$100 e R$3000');
                 }
             }
         }

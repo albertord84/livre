@@ -1940,7 +1940,7 @@ class Welcome extends CI_Controller {
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
         if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){                
+            if($datas['solicited_value']>=100 && $datas['solicited_value']<=3000){                
                 $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
                 $result['solicited_value']=$financials['solicited_value'];  
                 $result['amount_months']=$financials['amount_months'];
@@ -1955,7 +1955,7 @@ class Welcome extends CI_Controller {
                 $_SESSION['transaction_values']=$result;                
             } else{
                 $result['success'] = false;
-                $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
+                $result['message'] = 'Só pode solicitar um valor entre R$100 e R$3000';
             }
         }else{
             $result['success'] = false;
