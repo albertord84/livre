@@ -27,7 +27,7 @@ class Welcome extends CI_Controller {
     }
    
     public function test3(){
-        $resp = $this->topazio_emprestimo(4); 
+        $resp = $this->topazio_emprestimo(1388); //4
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
@@ -3050,7 +3050,8 @@ class Welcome extends CI_Controller {
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
+        var_dump($ch);
+        die();
         $num_tentativas = 0;
         while($num_tentativas < 10){
             
