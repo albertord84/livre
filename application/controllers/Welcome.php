@@ -27,7 +27,8 @@ class Welcome extends CI_Controller {
     }
    
     public function test3(){
-        $resp = $this->topazio_emprestimo(1388); //4
+        $_SESSION['logged_role']= 'ADMIN';
+        $resp = $this->topazio_emprestimo(4); //1388,1542
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
@@ -384,7 +385,7 @@ class Welcome extends CI_Controller {
         $_SESSION['is_possible_steep_1']=false;
         
         //1. Analisar se IP tem sido marcado como hacker
-        $this->is_ip_hacker();
+        $this->is_ip_hacker();        
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
@@ -533,7 +534,9 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function insert_datas_steep_1(){        
+    public function insert_datas_steep_1(){       
+        //1. Analisar se IP tem sido marcado como hacker
+        $this->is_ip_hacker();
         if(!$_SESSION['transaction_values']['amount_months']){
             $result['message']='Sessão expirou';
             $result['success']=false;
@@ -1906,6 +1909,7 @@ class Welcome extends CI_Controller {
     }
 
     public function is_ip_hacker(){
+        $this->is_nome_hacker();
         $IP_hackers= array(
             '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
             '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
@@ -1913,9 +1917,18 @@ class Welcome extends CI_Controller {
             '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
             '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
             '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
-            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207'
+            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207',
+            '177.95.148.2'
             );
         if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){            
+            header('Location: '.base_url());
+        }
+    }
+    public function is_nome_hacker(){
+        $nome_hackers= array(
+            'RENATA JUSTINIANO RIBEIRO'
+            );
+        if(in_array($_SERVER['REMOTE_ADDR'],$nome_hackers)){            
             header('Location: '.base_url());
         }
     }
@@ -2961,6 +2974,7 @@ class Welcome extends CI_Controller {
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
             return;            
         }
+        
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         //$this->load->model('class/transactions_status');
@@ -3049,9 +3063,8 @@ class Welcome extends CI_Controller {
         $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        var_dump($ch);
-        die();
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);         
+        //var_dump($fields); die(); //para imprimir el json de los datos sin que se ejecute el pedido al banco desde el test3
         $num_tentativas = 0;
         while($num_tentativas < 10){
             
@@ -3166,13 +3179,13 @@ class Welcome extends CI_Controller {
         return "2501_3000";
     }
 
-    public function topazio_emprestimo($id) {// recebe id da transacao        
+    public function topazio_emprestimo($id) {// recebe id da transacao           
         if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }
         $API_token = $this->get_topazio_API_token();
         if($API_token){
-            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);            
             if($result_basic['success']){
                 $response = $this->topazio_loans($id, $API_token);                
                 if($response['success']){
