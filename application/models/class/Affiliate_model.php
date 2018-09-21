@@ -69,11 +69,10 @@ class Affiliate_model extends CI_Model{
                     }
                 }
             }
-            //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             //$this->db->order_by("transactions.status_id", "desc");
             $this->db->order_by("transactions_status.false_id", "desc");
-            $this->db->order_by("transactions.id", "desc");
+            $this->db->order_by("transactions.id", "asc");
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
