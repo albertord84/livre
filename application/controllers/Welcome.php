@@ -3233,7 +3233,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
                 if($transactions['client_id'] == $datas['id']){
-                    //adicionar datos da transacao
+                    //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
                     $transactions['month_value'] =$financials['month_value'];
