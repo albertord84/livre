@@ -20,7 +20,7 @@ class Welcome extends CI_Controller {
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-09-11");
+        $trasactions = $this->topazio_conciliations("2018-09-20");
         foreach ($trasactions as $t) {
             var_dump($t);
         }
@@ -42,7 +42,13 @@ class Welcome extends CI_Controller {
         }/**/
         var_dump($resp);
     }
-
+    
+    public function conciliation_by_partnerId(){ 
+        $partnerId = $_GET['partnerId'];
+        $trasactions = $this->topazio_conciliations_by_partnerId($partnerId);
+        var_dump($trasactions);
+    }
+    
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {                   
         $this->set_session(); 
@@ -3227,7 +3233,7 @@ class Welcome extends CI_Controller {
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
                 if($transactions['client_id'] == $datas['id']){
-                    //adicionar datos da transacao
+                    //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
                     $transactions['month_value'] =$financials['month_value'];
@@ -3250,13 +3256,46 @@ class Welcome extends CI_Controller {
         echo json_encode($result);        
     }
 
-    public function topazio_conciliations($date){
+    public function topazio_conciliations($date=NULL){
+        $method=NULL;
+        if(!$date){
+            $date =$_GET['date'];
+            $method='GET';
+        }
+        if(!$date)
+            return;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
         $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        $parsed_response = json_decode($result);
+        if($method==='GET')
+            var_dump ($parsed_response);
+        else
+            return $parsed_response;
+    }
+    
+    public function topazio_conciliations_by_partnerId($partnerId){ //11537381919
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        $API_token = $this->get_topazio_API_token();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/loans/".$partnerId);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
