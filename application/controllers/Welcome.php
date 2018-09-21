@@ -2972,7 +2972,7 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
-            return;            
+            return;
         }
         
         $this->load->model('class/system_config');
