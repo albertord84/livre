@@ -31,6 +31,11 @@
 					CPF: <span id="trans_cpf"></span> <br>
 					Cel.: (<span id="trans_phone_ddd"></span>) <span id="trans_phone_number"></span> 
                                     </p>
+                                    <small class="fleft100 cl-silver">Dados da transação</small>
+                                    <p>                                        
+                                        PartnerId: <span id="trans_partnerId"></span><br>
+                                        CCB_numb: <span id="trans_trans_ccb_number"></span><br>
+                                    </p>
 				</div>
                                 <div class="w20 fw-500 text-left m-top10-xs center-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
