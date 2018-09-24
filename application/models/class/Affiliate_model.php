@@ -57,11 +57,14 @@ class Affiliate_model extends CI_Model{
             if($status != 0)
                 $this->db->where('transactions.status_id',$status);            
             if( $token!=''){
-                if(is_numeric($token)){
-                    $this->db->like('transactions.cpf', $token ||  strpos($token, 'cpf:') !== false);                            
+                $a=strpos($token, 'cpf: ');
+                if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
+                    $token = str_replace("cpf: ", '', $token);
+                    $this->db->like('transactions.cpf', $token);                            
                 }
                 else{
-                    if ( strpos($token, '@') !== false ||  strpos($token, '.') !== false ||  strpos($token, '_') !== false ||  strpos($token, 'email:') !== false) {
+                    if ( strpos($token, '@') !== false ||  strpos($token, '.') !== false ||  strpos($token, '_') !== false ||  strpos($token, 'email: ') !== false) {
+                        $token = str_replace("email: ", '', $token);
                         $this->db->like('transactions.email', $token);
                     }
                     else{
