@@ -68,9 +68,9 @@ class Affiliate_model extends CI_Model{
                         $this->db->like('transactions.name', $token);                            
                     }
                 }
+
                 //$this->my_filter_like($token);
             } 
-            //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             //$this->db->order_by("transactions.status_id", "desc");
             $this->db->order_by("transactions_status.false_id", "desc");

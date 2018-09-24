@@ -1951,6 +1951,7 @@ class Welcome extends CI_Controller {
             header('Location: '.base_url());
         }
     }
+    
     public function is_nome_hacker(){
         $nome_hackers= array(
             'RENATA JUSTINIANO RIBEIRO'
