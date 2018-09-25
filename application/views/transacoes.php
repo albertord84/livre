@@ -383,7 +383,7 @@
             </div>
         </div>                                                        
     </div>
-    
+    <?php include_once "pixel_adroll.php";?>
 </body>
  <!--[if lt IE 9]>
         <script src="js/jquery-1.9.1.js"></script>

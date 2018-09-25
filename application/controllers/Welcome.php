@@ -43,6 +43,27 @@ class Welcome extends CI_Controller {
         var_dump($resp);
     }
     
+    public function update_acount_bank_by_user_id() {        
+        $this->load->model('class/Transaction_model');    
+        $this->load->model('class/Crypt');  
+        $datas['pk']=198;
+        $datas['bank']=341;
+        $datas['agency']=1412;
+        $datas['account_type']='CC';
+        $datas['account']=50021;
+        $datas['dig']=5;  
+        
+        $datas1['client_id']=$datas['pk'];
+        $datas1['bank']= $this->Crypt->crypt($datas['bank']);
+        $datas1['agency']= $this->Crypt->crypt($datas['agency']);
+        $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
+        $datas1['account']= $this->Crypt->crypt($datas['account']);
+        $datas1['dig']= $this->Crypt->crypt($datas['dig']); 
+        
+        var_dump($datas1);
+    }
+    
+    
     public function conciliation_by_partnerId(){ 
         $partnerId = $_GET['partnerId'];
         $trasactions = $this->topazio_conciliations_by_partnerId($partnerId);
@@ -2993,7 +3014,7 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
-            return;            
+            return;
         }
         
         $this->load->model('class/system_config');
