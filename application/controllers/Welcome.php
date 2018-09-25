@@ -718,7 +718,7 @@ class Welcome extends CI_Controller {
         $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
             $result['action']='update_credit_card';
-            $result['id']=$credit_cards[0]['id'];
+            $result['client_id']=$credit_cards[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_2']=true;
             return $result;            
@@ -776,7 +776,7 @@ class Welcome extends CI_Controller {
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
                     }
                     else
-                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['client_id']);
                     if($id_row){
                         $response['success'] = TRUE; 
                         $response['message'] = "Cartão adicionado";
@@ -850,7 +850,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
-            $result['id']=$account_bank[0]['id'];
+            $result['client_id']=$account_bank[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_3']=true;
             return $result;
@@ -894,7 +894,7 @@ class Welcome extends CI_Controller {
                     if($possible['action']==='insert_account_bank')
                         $id_row = $this->transaction_model->insert_db_steep_3($datas);                    
                     else
-                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['client_id']);
                     if($id_row){                        
                         $result['success'] = true;
                     }
@@ -1938,8 +1938,63 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-
-        //-------AUXILIAR FUNCTIONS------------------------------------    
+    
+    public function update_transaction_datas_by_id() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $result['success'] = false;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $id = $_SESSION['transaction_requested_id'];
+            $datas =  $this->input->post();            
+            $personal_datas=array(
+                'name'=>$datas['edit_trans_name'],
+                'email'=>$datas['edit_trans_email'],
+                'phone_ddd'=>$datas['edit_trans_phone_ddd'],
+                'phone_number'=>$datas['edit_trans_phone_number'],
+                'cep'=>$datas['edit_trans_cep'],
+                'street_address'=>$datas['edit_trans_street_address'],
+                'number_address'=>$datas['edit_trans_number_address'],
+                'complement_number_address'=>$datas['edit_trans_complement_address'],
+                'city_address'=>$datas['edit_trans_city_address'],
+                'state_address'=>$datas['edit_trans_state_address']
+            );
+            $a = $this->transaction_model->update_db_steep_1($personal_datas,$id);
+            
+            $credit_card_datas = array(
+                'credit_card_name'=>$datas['edit_trans_credit_card_name']                
+            );
+            $b = $this->transaction_model->update_db_steep_2($credit_card_datas,$id);
+            
+            $bank_datas = array(
+                'bank'=>$datas['edit_trans_bank_code'],
+                'agency'=>$datas['edit_trans_agency'],
+                'account'=>$datas['edit_trans_account'],
+                'dig'=>$datas['edit_trans_dig'],
+                'account_type'=>$datas['edit_account_type']
+            );
+            $c = $this->transaction_model->update_db_steep_3($bank_datas,$id);
+            
+            $result['message']="";
+            if(!$a)
+                $result['message'].="Erro armazenando dados pessoais ---";
+            else
+                $result['message'].="Dados pessoais armazenandos corretamente---";
+            if(!$b)
+                $result['message'].="Erro armazenando dados do cartão ---";
+            else
+                $result['message'].="Dados do cartão armazenandos corretamente ---";
+            if(!$c)
+                $result['message'].="Erro armazenando dados da conta";
+            else
+                $result['message'].="Dados da conta armazenandos corretamente";
+            $result['message']=true;
+        }
+        echo json_encode($result);
+    }
+    
+    //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();

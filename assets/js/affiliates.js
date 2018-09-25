@@ -249,8 +249,77 @@ $(document).ready(function () {
         });         
     });
     
+    $('#edit_save_transaction').click(function () {
+        if(confirm("Tem certeza que deseja salvar os dados?")){
+            $.ajax({
+                url: base_url + 'index.php/welcome/update_transaction_datas_by_id',
+                data:{
+                    'edit_trans_name':$("#edit_trans_name").val(),
+                    'edit_trans_email':$("#edit_trans_email").val(),
+                    'edit_trans_phone_ddd':$("#edit_trans_phone_ddd").val(),
+                    'edit_trans_phone_number':$("#edit_trans_phone_number").val(),
+                    'edit_trans_credit_card_name':$("#edit_trans_credit_card_name").val(),
+                    'edit_trans_bank_code':$("#edit_trans_bank_code").val(),
+                    'edit_trans_agency':$("#edit_trans_agency").val(),
+                    'edit_trans_account':$("#edit_trans_account").val(),
+                    'edit_trans_dig':$("#edit_trans_dig").val(),
+                    'edit_account_type':$("#edit_trans_account_type").val(),
+                    'edit_trans_street_address':$("#edit_trans_street_address").val(),
+                    'edit_trans_number_address':$("#edit_trans_number_address").val(),
+                    'edit_trans_complement_address':$("#edit_trans_complement_address").val(),
+                    'edit_trans_city_address':$("#edit_trans_city_address").val(),
+                    'edit_trans_state_address':$("#edit_trans_state_address").val(),
+                    'edit_trans_cep':$("#edit_trans_cep").val(),  
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']) {
+                        alert("Dados atualizados com sucesso");
+                        $('#trans_edit').modal('hide');
+                    }
+                    else{
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error');
+                }
+            }); 
+        }else{
+            $('#trans_edit').modal('hide');
+        }
+    });
+    
+    $('#btn_edit_trans_cep').click(function () {
+        if(validate_element("#edit_trans_cep",'^[0-9]{8}$')){
+            $.ajax({
+                url: base_url+'index.php/welcome/get_cep_datas',                
+                data: {
+                    'cep': $('#edit_trans_cep').val(),
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']){
+                        response = response['datas'];
+                        $('#edit_trans_number_address').val("");
+                        $('#edit_trans_complement_address').val("");
+                        $('#edit_trans_street_address').val(response['logradouro']);
+                        $('#edit_trans_city_address').val(response['localidade']);
+                        $('#edit_trans_state_address').val(response['uf']);                        
+                        $('#edit_trans_address_container').css({"visibility":"visible", "display":"block"}); 
+                    } else
+                        modal_alert_message('CEP inválido');
+                }
+            });
+        } else{
+            modal_alert_message('CEP inválido');
+        }
+    });
+    
     $('.btn_edit_trnsaction').click(function () {
-        transaction_id = this.id.replace("edit", "");;
+        transaction_id = this.id.replace("edit", "");
         $.ajax({
             url: base_url + 'index.php/welcome/get_transaction_datas_by_id',
             data:{
@@ -260,29 +329,34 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if(response['success']) {               
-                    $("#edit_trans_id").text(response['message']['client_id']);
-                    $("#edit_trans_name").text(response['message']['name']);
-                    $("#edit_trans_email").text(response['message']['email']);
-                    $("#edit_trans_partnerId").text(response['message']['contract_id']);
-                    $("#edit_trans_trans_ccb_number").text(response['message']['ccb_number']);
-                    $("#edit_trans_cpf").text(response['message']['cpf']);
-                    $("#edit_trans_phone_ddd").text(response['message']['phone_ddd']);
-                    $("#edit_trans_phone_number").text(response['message']['phone_number']);
+                    $("#edit_trans_id").val('#'+response['message']['client_id']);
+                    $("#edit_trans_name").val(response['message']['name']);
+                    $("#edit_trans_email").val(response['message']['email']);
+                    $("#edit_trans_cpf").val(response['message']['cpf']);
+                    $("#edit_trans_phone_ddd").val(response['message']['phone_ddd']);
+                    $("#edit_trans_phone_number").val(response['message']['phone_number']);
+                    
+                    $("#edit_trans_partnerId").val('PartnerId: '+response['message']['contract_id']);
+                    $("#edit_trans_trans_ccb_number").val('CCB_numb: '+response['message']['ccb_number']);                    
                     $("#edit_trans_date").text(response['message']['solicited_date']);
                     $("#edit_trans_solicited_value").text((response['message']['amount_solicited']/100).toString().replace('.',','));
-                    $("#edit_trans_credit_card_name").text(response['message']['credit_card_name']);
-                    $("#edit_trans_credit_card_final").text(response['message']['credit_card_final']);
-                    $("#edit_trans_bank_name").text(response['message']['bank_name']);
-                    $("#edit_trans_bank_code").text(response['message']['bank']);
-                    $("#edit_trans_agency").text(response['message']['agency']);
-                    $("#edit_trans_account").text(response['message']['account']);
-                    $("#edit_trans_dig").text(response['message']['dig']);
-                    $("#edit_trans_street_address").text(response['message']['street_address']);
-                    $("#edit_trans_number_address").text(response['message']['number_address']);
-                    $("#edit_trans_city_address").text(response['message']['city_address']);
-                    $("#edit_trans_state_address").text(response['message']['state_address']);
-                    $("#edit_trans_cep").text(response['message']['cep']);                                        
-                    $("#edit_way_to_spend_name").text(response['message']['way_to_spend_name']);    
+                    
+                    $("#edit_trans_credit_card_name").val(response['message']['credit_card_name']);
+                    $("#edit_trans_credit_card_final").val('Final '+response['message']['credit_card_final']);
+                    
+                    $("#edit_trans_bank_code").val(response['message']['bank']);
+                    $("#edit_trans_agency").val(response['message']['agency']);
+                    $("#edit_trans_account").val(response['message']['account']);
+                    $("#edit_trans_dig").val(response['message']['dig']);
+                    $("#edit_trans_account_type").val(response['message']['account_type']);
+                    
+                    $("#edit_trans_street_address").val(response['message']['street_address']);
+                    $("#edit_trans_number_address").val(response['message']['number_address']);
+                    $("#edit_trans_complement_address").val(response['message']['complement_number_address']);
+                    $("#edit_trans_city_address").val(response['message']['city_address']);
+                    $("#edit_trans_state_address").val(response['message']['state_address']);
+                    $("#edit_trans_cep").val(response['message']['cep']);                                        
+
                     //financials values
                     $("#edit_trans_numb_plots").text(response['message']['number_plots']);    
                     $("#edit_trans_value_plots").text(response['message']['month_value']);    
