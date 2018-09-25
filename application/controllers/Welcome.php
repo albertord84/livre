@@ -50,17 +50,27 @@ class Welcome extends CI_Controller {
     }
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {                   
+    public function index() {
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
             $_SESSION['affiliate_code'] = $datas['afiliado'];
         else
             $_SESSION['affiliate_code'] = '';
-        if(isset($datas['utm_source']))
+        if(isset($datas['utm_source']) && $datas['utm_source']!=NULL)
             $_SESSION['utm_source'] = $datas['utm_source'];
         else
             $_SESSION['utm_source'] = '';
+        
+//        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
+//            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
+//        else
+//            $_SESSION['utm_campaign'] = '';
+//        
+//        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
+//            $_SESSION['utm_content'] = $datas['utm_content'];
+//        else
+//            $_SESSION['utm_content'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -80,6 +90,8 @@ class Welcome extends CI_Controller {
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
+        $_SESSION['transaction_values']['utm_campaign']=$this->input->get()['utm_campaign'];
+        $_SESSION['transaction_values']['utm_content']=$this->input->get()['utm_content'];
         
         $params['month_value']  = str_replace('.', ',',$_SESSION['transaction_values']['month_value']); 
         $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
@@ -454,7 +466,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if($N > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']="Este CPF foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
+            $result['message']="Este CPF foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             return $result;
         }
@@ -469,7 +481,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']="Este telefone foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
+            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
@@ -562,6 +574,8 @@ class Welcome extends CI_Controller {
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
             $datas['utm_source'] = $_SESSION['utm_source'];        
+//            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
+//            $datas['utm_content'] = $_SESSION['utm_content'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';

@@ -2,6 +2,8 @@ $(document).ready(function () {
     var solicited_value=0;
     var amount_months=parseInt($("#range").val());    
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
+//    var utm_campaign= typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL';
+//    var utm_content= typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL';
     var slideToggle=1;
     
     

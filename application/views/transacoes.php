@@ -124,6 +124,79 @@
 			</div>	
 		</div>
 	</div>
+</div>
+
+<div class="modal fade" id="trans_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+	<div class="modal-dialog mxw-1100" role="document">
+		<div class="modal-content b-none">
+			<div class="fleft100 pd-20 bk-fff ft-size13"> 				                                
+				<div style="text-align:right;"><a data-dismiss="modal" style="cursor:pointer"><img src="<?php echo base_url().'assets/img/icones/close.png'?>" alt=""></a></div>
+                                <div class="w5 m-top15 m-top10-xs center-xs"><img style="width:20px; height:20px" id="edit_icon_trans" src="<?php echo base_url().'assets/img/icones/ck.png'?>" alt=""></div>
+                                <div class="w25 fw-500 m-top10-xs center-xs">
+                                    <small class="fleft100 cl-silver">Dados pessoais</small>
+                                    <p>
+                                        #<span id="edit_trans_id"></span>
+                                        <span id="edit_trans_name"></span> <br>
+					E-mail: <span id="edit_trans_email"></span> <br>
+					CPF: <span id="edit_trans_cpf"></span> <br>
+					Cel.: (<span id="edit_trans_phone_ddd"></span>) <span id="edit_trans_phone_number"></span> 
+                                    </p>
+                                    <small class="fleft100 cl-silver">Dados da transação</small>
+                                    <p>                                        
+                                        PartnerId: <span id="edit_trans_partnerId"></span><br>
+                                        CCB_numb: <span id="edit_trans_trans_ccb_number"></span><br>
+                                    </p>
+				</div>
+                                <div class="w20 fw-500 text-left m-top10-xs center-xs">
+					<small class="fleft100 cl-silver">Dados do cartão</small>
+					<span id="edit_trans_credit_card_name"></span> <br> 
+                                        Final <span id="edit_trans_credit_card_final"></span> <br>
+					<div class="fleft100">
+                                            <small class="fleft100 cl-silver m-top20">Uso do dinheiro:</small>
+                                            <span id="way_to_spend_name"></span> <br>
+					</div>
+				</div>
+				<div class="w20 fw-500 text-left center-xs m-top10-xs">
+					<small class="fleft100 cl-silver">Dados bancários</small>
+					(<span id="edit_trans_bank_code"></span>) <span id="edit_trans_bank_name"></span> <br>
+                                        AG. <span id="edit_trans_agency"></span> <br>
+                                        CC. <span id="edit_trans_account"></span>-<span id="edit_trans_dig"></span>
+					<div class="fleft100">
+						<small class="fleft100 cl-silver m-top20">Endereço</small>
+                                                <span id="edit_trans_street_address"></span>, <span id="edit_trans_number_address"></span> <br> 
+                                                <span id="edit_trans_city_address"></span>, <span id="edit_edit_trans_state_address"></span> 
+                                                <br> CEP. <span id="edit_edit_trans_cep"></span>
+					</div>
+				</div>
+                                <div class="w20 fw-500 text-left m-top10-xs center-xs">
+                                    <small class="fleft100 cl-silver">Dados da Solicitação</small>
+                                    <span id="edit_trans_date"></span><br>                                    
+                                    Valor solicitado: R$<span id="edit_trans_solicited_value"></span><br>
+                                    Prazo: <span id="edit_trans_numb_plots"></span> meses <br>
+                                    Parcelas: R$ <span id="edit_trans_value_plots"></span><br>                                    
+                                    CET: R$ <span id="edit_trans_cet"></span><br>                                    
+                                    IOF: R$ <span id="edit_trans_iof"></span><br>
+                                    Juros ao mes: <span id="edit_trans_tax"></span>%<br>                                    
+                                </div>				                                    
+                                <div class="w12 fw-500 text-left m-top40 center-xs">
+                                    <small class="fleft100 cl-silver"></small>                                                                        
+                                    CET MENSAL: <br>
+                                    <span id="edit_trans_cet_m"></span>%<br><br>
+                                    CET ANUAL: <br>
+                                    <span id="edit_trans_cet_a"></span>%                                    
+                                </div>	
+                                
+                                <div class="col-md-2 col-sm-2 col-xs-12 m-top10-xs">
+                                        <div class="fleft100 text-right center-xs">
+                                            <button id="edit_save_transaction" class="bt-green">Salvar</button>
+                                        </div>
+                                </div>
+                                
+                                
+                                
+			</div>	
+		</div>
+	</div>
 </div><!-- / -->
 
 <section class="fleft100 m-top40 m-b100">
@@ -252,12 +325,17 @@
                                     echo 'Final - '. $transaction['credit_card_final']; 
                                 ?>  
                             </div>
-                            <div class="w20 fw-500 text-left center-xs m-top10-xs">
+                            <div class="w15 fw-500 text-left center-xs m-top10-xs">
                                 <!--<small class="fleft100">Dados do cartão</small>-->
                                 <?php 
                                     echo $transaction['bank_name'].'<br>';
                                     echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                 ?>
+                            </div>
+                            <div class="w5 fw-500 m-top10">
+                                <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
+                                    <img id="edit<?php echo $transaction['client_id']; ?>" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/edit.jpg'?>" alt="">
+                                </a>
                             </div>
                             <div class="w5 fw-500 m-top10">
                                 <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
