@@ -31,11 +31,11 @@ class Affiliate_model extends CI_Model{
             $this->load->model('class/transactions_status');
             $this->db->select('*');
             $this->db->from('transactions');
-            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
-            $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
             $this->db->join('transactions_status', 'transactions.status_id = transactions_status.id');
+            $this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
+            $this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
             if($status==transactions_status::BEGINNER){
-                $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
+                $this->db->join('transactions_dates', 'transactions.id = transactions_dates.transaction_id');
                 $this->db->where('transactions_dates.status_id', $status);
                 if($start_period!=''){
                     $this->db->where('transactions_dates.date >=', $start_period);                                    
@@ -50,8 +50,7 @@ class Affiliate_model extends CI_Model{
                 if( $end_period!='')
                     $this->db->where('transactions.pay_date <=', $end_period);                            
             }
-            $this->db->where('account_banks.propietary_type','0');
-            //$this->db->where('transactions.status_id<>',transactions_status::BEGINNER);            
+            //$this->db->where('account_banks.propietary_type','0');
             if($affiliates_code)
                 $this->db->where('affiliate_code',$affiliates_code);            
             if($status != 0)
@@ -81,10 +80,8 @@ class Affiliate_model extends CI_Model{
                     }
                     
                 }
-                //$this->my_filter_like($token);
             } 
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
-            //$this->db->order_by("transactions.status_id", "desc");
             $this->db->order_by("transactions_status.false_id", "desc");
             $this->db->order_by("transactions.id", "desc");
             $result = $this->db->get()->result_array();
@@ -168,7 +165,61 @@ class Affiliate_model extends CI_Model{
             $this->load->model('class/transactions_status');
             $this->db->select('COUNT(cpf) as total_transactions');
             $this->db->from('transactions');
-            $this->db->join('credit_card', 'credit_card.client_id = transactions.id');
+            
+            //-------INICIO CODIGO DE JR---------------------------------------
+            $this->db->join('transactions_status', 'transactions.status_id = transactions_status.id');
+            $this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
+            $this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
+            if($status==transactions_status::BEGINNER){
+                $this->db->join('transactions_dates', 'transactions.id = transactions_dates.transaction_id');
+                $this->db->where('transactions_dates.status_id', $status);
+                if($start_period!=''){
+                    $this->db->where('transactions_dates.date >=', $start_period);                                    
+                }
+                if( $end_period!=''){
+                    $this->db->where('transactions_dates.date <=', $end_period);                                                
+                }
+            }
+            else{
+                if($start_period!='')
+                    $this->db->where('transactions.pay_date >=', $start_period);                
+                if( $end_period!='')
+                    $this->db->where('transactions.pay_date <=', $end_period);                            
+            }
+            //$this->db->where('account_banks.propietary_type','0');
+            if($affiliates_code)
+                $this->db->where('affiliate_code',$affiliates_code);            
+            if($status != 0)
+                $this->db->where('transactions.status_id',$status);            
+            if( $token!=''){
+                if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
+                    $token = str_replace("cpf: ", '', $token);
+                    $this->db->like('transactions.cpf', $token);                            
+                }
+                else{
+                    if ( strpos($token, '@') !== false ||  strpos($token, '.') !== false ||  strpos($token, '_') !== false ||  strpos($token, 'email: ') !== false) {
+                        $token = str_replace("email: ", '', $token);
+                        $this->db->like('transactions.email', $token);
+                    }else{
+                        if ( strpos($token, 'partnerId: ') !== false) {
+                            $token = str_replace("partnerId: ", '', $token);
+                            $this->db->like('transactions.contract_id', $token);
+                        }else{
+                            if ( strpos($token, 'ccbNumber: ') !== false) {
+                                $token = str_replace("ccbNumber: ", '', $token);
+                                $this->db->like('transactions.ccb_number', $token);
+                            }
+                            else{
+                                $this->db->like('transactions.name', $token);                            
+                            }                            
+                        }
+                    }
+                    
+                }
+            }
+            //-------FIN CODIGO DE JR---------------------------------------
+            //-------INICIO CODIGO DE MORENO---------------------------------------
+            /*$this->db->join('credit_card', 'credit_card.client_id = transactions.id');
             $this->db->join('account_banks', 'account_banks.client_id = transactions.id');
             if($status==transactions_status::BEGINNER){
                 $this->db->join('transactions_dates', 'transactions_dates.transaction_id = transactions.id');
@@ -204,7 +255,9 @@ class Affiliate_model extends CI_Model{
                         $this->db->like('transactions.name', $token);                            
                     }
                 }
-            }
+            }*/
+            //-------FIN CODIGO DE MORENO---------------------------------------
+            
             return $this->db->get()->row_array()['total_transactions'];                        
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
