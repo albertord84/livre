@@ -31,23 +31,28 @@
             $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
             $datas1['credit_card_exp_year'] =  $this->Crypt->crypt($datas['credit_card_exp_year']);
             $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);
-            
             $this->db->insert('credit_card',$datas1);
             $id_row=$this->db->insert_id();
             return $id_row;
         }
         
-        public function update_db_steep_2($datas,$id){
+        public function update_db_steep_2($datas,$client_id){
             $this->load->model('class/Crypt');             
-            $datas1['token']=$datas['token'];
-            $datas1['credit_card_name'] =   $this->Crypt->crypt($datas['credit_card_name']);
-            $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
-            $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
-            $datas1['credit_card_exp_year'] =  $this->Crypt->crypt($datas['credit_card_exp_year']);
-            $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);                        
-            $this->db->where('id',$id);
-            $this->db->update('credit_card',$datas1);
-            return $id;
+            if(isset($datas['token'])) 
+                $datas1['token']=$datas['token'];
+            if(isset($datas['credit_card_name']))
+                $datas1['credit_card_name'] =   $this->Crypt->crypt($datas['credit_card_name']);
+            if(isset($datas['credit_card_number'])) 
+                $datas1['credit_card_number'] =  $this->Crypt->crypt($datas['credit_card_number']);
+            if(isset($datas['credit_card_exp_month'])) 
+                $datas1['credit_card_exp_month'] =  $this->Crypt->crypt($datas['credit_card_exp_month']);
+            if(isset($datas['credit_card_exp_year'])) 
+                $datas1['credit_card_exp_year'] =  $this->Crypt->crypt($datas['credit_card_exp_year']);
+            if(isset($datas['credit_card_cvv'])) 
+                $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);                        
+            $this->db->where('client_id',$client_id);
+            $result =$this->db->update('credit_card',$datas1);
+            return $result;
         }
         
         public function save_generated_bill($id, $invoice_id){    
@@ -95,18 +100,27 @@
             return $id_row;
         }
         
-        public function update_db_steep_3($datas,$id){
+        public function update_db_steep_3($datas,$client_id){
             $this->db->trans_start();
-            $this->load->model('class/Crypt');             
-            $datas1['client_id']=$datas['pk'];
-            $datas1['bank']= $this->Crypt->crypt($datas['bank']);
-            $datas1['agency']= $this->Crypt->crypt($datas['agency']);
-            $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
-            $datas1['account']= $this->Crypt->crypt($datas['account']);
-            $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
-            $datas1['titular_name']=$datas['titular_name'];
-            $datas1['titular_cpf']=$datas['titular_cpf'];
-            $this->db->where('id',$id);
+            $this->load->model('class/Crypt');
+            if(isset($datas['pk'])) 
+                $datas1['client_id']=$datas['pk'];
+            if(isset($datas['bank'])) 
+                $datas1['bank']= $this->Crypt->crypt($datas['bank']);
+            if(isset($datas['agency'])) 
+                $datas1['agency']= $this->Crypt->crypt($datas['agency']);
+            if(isset($datas['account_type'])) 
+                $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
+            if(isset($datas['account'])) 
+                $datas1['account']= $this->Crypt->crypt($datas['account']);
+            if(isset($datas['dig'])) 
+                $datas1['dig']= $this->Crypt->crypt($datas['dig']);            
+            if(isset($datas['titular_name'])) 
+                $datas1['titular_name']=$datas['titular_name'];
+            if(isset($datas['titular_cpf'])) 
+                $datas1['titular_cpf']=$datas['titular_cpf'];
+            $this->db->where('client_id',$client_id);
+            $this->db->where('propietary_type',0);
             $this->db->update('account_banks',$datas1); 
             $this->db->trans_complete();
             return $this->db->trans_status();

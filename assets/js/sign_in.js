@@ -1,6 +1,8 @@
 $(document).ready(function () {
     var pk='';
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
+//    var utm_campaign= typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL';
+//    var utm_content= typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL';
     var solicited_value= typeof getUrlVars()["solicited_value"] !== 'undefined' ? getUrlVars()["solicited_value"] : 'NULL';
     var amount_months= typeof getUrlVars()["amount_months"] !== 'undefined' ? getUrlVars()["amount_months"] : 'NULL';
     init_values();
@@ -38,6 +40,8 @@ $(document).ready(function () {
                     'city_address': $('#city_address').val(),
                     'state_address': $('#state_address').val(),
                     'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',                   
+//                    'utm_campaign': typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL',                   
+//                    'utm_content': typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL',                   
                     'key':key,
                 },
                 type: 'POST',
@@ -118,7 +122,7 @@ $(document).ready(function () {
             number = validate_element('#credit_card_number', "^(?:(606282[0-9]{10}([0-9]{3})?)|(3841[0-9]{15}))$");
         }}}}}}}
             
-        var name = validate_element('#credit_card_name', "^[a-zA-Z ]{4,150}$");
+        var name = validate_element('#credit_card_name', "^[a-zA-Zñçâêôûîáéíóúàãẽõ ]{4,150}$");
         var cvv = validate_element('#credit_card_cvv', "^[0-9]{3,4}$");
         var month = validate_month('#credit_card_exp_month', "^[0-10-9]{2,2}$");
         var year = validate_year('#credit_card_exp_year', "^[2-20-01-20-9]{4,4}$");            
@@ -206,7 +210,7 @@ $(document).ready(function () {
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
         var dig = validate_element('#dig', "^[0-9]{1}$");            
-        var titular_name = validate_element('#titular_name','^[a-zA-Z ]{6,150}$');            
+        var titular_name = validate_element('#titular_name','^[a-zA-Zñçâêôûîáéíóúàãẽõ ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
         if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {
             datas={
@@ -259,7 +263,7 @@ $(document).ready(function () {
         var account_type = validate_element('#account_type', "^[A-Z]{2,2}$");        
         var account = validate_element('#account', "^[0-9]{4,12}$");
         var dig = validate_element('#dig', "^[0-9]{1}$");            
-        var titular_name = validate_element('#titular_name','^[a-zA-Z ]{6,150}$');            
+        var titular_name = validate_element('#titular_name','^[a-zA-Zñçâêôûîáéíóúàãẽõ ]{6,150}$');            
         var titular_cpf = validate_cpf(cpf_value, '#titular_cpf', '^[0-9]{11}$');
         if(bank && agency && account_type && account && dig && titular_name && titular_cpf) {            
             datas={
@@ -909,6 +913,79 @@ $(document).ready(function () {
             e.preventDefault();            
         }        
     });
+    
+    $("#name").change(function (e) {
+        var a = $("#name").val().toUpperCase();        
+        a = a.replace(/Á/g, "A");
+        a = a.replace(/É/g, "E");
+        a = a.replace(/Í/g, "I");
+        a = a.replace(/Ó/g, "O");
+        a = a.replace(/Ú/g, "U");        
+        a = a.replace(/À/g, "A");
+        a = a.replace(/È/g, "E");
+        a = a.replace(/Ì/g, "I");
+        a = a.replace(/Ò/g, "O");
+        a = a.replace(/Ù/g, "U");        
+        a = a.replace(/Â/g, "A");
+        a = a.replace(/Ê/g, "E");
+        a = a.replace(/Î/g, "I");
+        a = a.replace(/Ô/g, "O");
+        a = a.replace(/Û/g, "U");        
+        a = a.replace(/Ç/g, "C");
+        a = a.replace(/Ñ/g, "N");        
+        $("#name").val(a);
+        //ñ ç âêôûî áéíóú àãẽõ
+    });
+    
+    $("#credit_card_name").change(function (e) {
+        var a = $("#credit_card_name").val().toUpperCase();        
+        a = a.replace(/Á/g, "A");
+        a = a.replace(/É/g, "E");
+        a = a.replace(/Í/g, "I");
+        a = a.replace(/Ó/g, "O");
+        a = a.replace(/Ú/g, "U");        
+        a = a.replace(/À/g, "A");
+        a = a.replace(/È/g, "E");
+        a = a.replace(/Ì/g, "I");
+        a = a.replace(/Ò/g, "O");
+        a = a.replace(/Ù/g, "U");        
+        a = a.replace(/Â/g, "A");
+        a = a.replace(/Ê/g, "E");
+        a = a.replace(/Î/g, "I");
+        a = a.replace(/Ô/g, "O");
+        a = a.replace(/Û/g, "U");        
+        a = a.replace(/Ç/g, "C");
+        a = a.replace(/Ñ/g, "N");        
+        $("#credit_card_name").val(a);
+        //ñ ç âêôûî áéíóú àãẽõ
+    });
+    
+    $("#titular_name").change(function (e) {
+        var a = $("#titular_name").val().toUpperCase();        
+        a = a.replace(/Á/g, "A");
+        a = a.replace(/É/g, "E");
+        a = a.replace(/Í/g, "I");
+        a = a.replace(/Ó/g, "O");
+        a = a.replace(/Ú/g, "U");        
+        a = a.replace(/À/g, "A");
+        a = a.replace(/È/g, "E");
+        a = a.replace(/Ì/g, "I");
+        a = a.replace(/Ò/g, "O");
+        a = a.replace(/Ù/g, "U");        
+        a = a.replace(/Â/g, "A");
+        a = a.replace(/Ê/g, "E");
+        a = a.replace(/Î/g, "I");
+        a = a.replace(/Ô/g, "O");
+        a = a.replace(/Û/g, "U");        
+        a = a.replace(/Ç/g, "C");
+        a = a.replace(/Ñ/g, "N");        
+        $("#titular_name").val(a);
+        //ñ ç âêôûî áéíóú àãẽõ
+    });
+    
+    
+    
+    
     
     //init();    
 }); 

@@ -78,10 +78,20 @@ class Welcome extends CI_Controller {
             $_SESSION['affiliate_code'] = $datas['afiliado'];
         else
             $_SESSION['affiliate_code'] = '';
-        if(isset($datas['utm_source']))
+        if(isset($datas['utm_source']) && $datas['utm_source']!=NULL)
             $_SESSION['utm_source'] = $datas['utm_source'];
         else
             $_SESSION['utm_source'] = '';
+        
+//        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
+//            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
+//        else
+//            $_SESSION['utm_campaign'] = '';
+//        
+//        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
+//            $_SESSION['utm_content'] = $datas['utm_content'];
+//        else
+//            $_SESSION['utm_content'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -101,6 +111,8 @@ class Welcome extends CI_Controller {
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
+        $_SESSION['transaction_values']['utm_campaign']=$this->input->get()['utm_campaign'];
+        $_SESSION['transaction_values']['utm_content']=$this->input->get()['utm_content'];
         
         $params['month_value']  = str_replace('.', ',',$_SESSION['transaction_values']['month_value']); 
         $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
@@ -475,7 +487,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if($N > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']="Este CPF foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
+            $result['message']="Este CPF foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             return $result;
         }
@@ -490,7 +502,7 @@ class Welcome extends CI_Controller {
         }
         if(count($nomes)>1){*/
         if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']="Este telefone foi usado anteriormente com o nome de ".$clients[0]['name'].". Para solicitar o crédito entre em contato com a nossa equipe de atendimento.";
+            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
@@ -583,6 +595,8 @@ class Welcome extends CI_Controller {
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
             $datas['utm_source'] = $_SESSION['utm_source'];        
+//            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
+//            $datas['utm_content'] = $_SESSION['utm_content'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -704,7 +718,7 @@ class Welcome extends CI_Controller {
         $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
             $result['action']='update_credit_card';
-            $result['id']=$credit_cards[0]['id'];
+            $result['client_id']=$credit_cards[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_2']=true;
             return $result;            
@@ -762,7 +776,7 @@ class Welcome extends CI_Controller {
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
                     }
                     else
-                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['client_id']);
                     if($id_row){
                         $response['success'] = TRUE; 
                         $response['message'] = "Cartão adicionado";
@@ -836,7 +850,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
-            $result['id']=$account_bank[0]['id'];
+            $result['client_id']=$account_bank[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_3']=true;
             return $result;
@@ -880,7 +894,7 @@ class Welcome extends CI_Controller {
                     if($possible['action']==='insert_account_bank')
                         $id_row = $this->transaction_model->insert_db_steep_3($datas);                    
                     else
-                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['client_id']);
                     if($id_row){                        
                         $result['success'] = true;
                     }
@@ -1924,8 +1938,63 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-
-        //-------AUXILIAR FUNCTIONS------------------------------------    
+    
+    public function update_transaction_datas_by_id() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $result['success'] = false;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $id = $_SESSION['transaction_requested_id'];
+            $datas =  $this->input->post();            
+            $personal_datas=array(
+                'name'=>$datas['edit_trans_name'],
+                'email'=>$datas['edit_trans_email'],
+                'phone_ddd'=>$datas['edit_trans_phone_ddd'],
+                'phone_number'=>$datas['edit_trans_phone_number'],
+                'cep'=>$datas['edit_trans_cep'],
+                'street_address'=>$datas['edit_trans_street_address'],
+                'number_address'=>$datas['edit_trans_number_address'],
+                'complement_number_address'=>$datas['edit_trans_complement_address'],
+                'city_address'=>$datas['edit_trans_city_address'],
+                'state_address'=>$datas['edit_trans_state_address']
+            );
+            $a = $this->transaction_model->update_db_steep_1($personal_datas,$id);
+            
+            $credit_card_datas = array(
+                'credit_card_name'=>$datas['edit_trans_credit_card_name']                
+            );
+            $b = $this->transaction_model->update_db_steep_2($credit_card_datas,$id);
+            
+            $bank_datas = array(
+                'bank'=>$datas['edit_trans_bank_code'],
+                'agency'=>$datas['edit_trans_agency'],
+                'account'=>$datas['edit_trans_account'],
+                'dig'=>$datas['edit_trans_dig'],
+                'account_type'=>$datas['edit_account_type']
+            );
+            $c = $this->transaction_model->update_db_steep_3($bank_datas,$id);
+            
+            $result['message']="";
+            if(!$a)
+                $result['message'].="Erro armazenando dados pessoais ---";
+            else
+                $result['message'].="Dados pessoais armazenandos corretamente---";
+            if(!$b)
+                $result['message'].="Erro armazenando dados do cartão ---";
+            else
+                $result['message'].="Dados do cartão armazenandos corretamente ---";
+            if(!$c)
+                $result['message'].="Erro armazenando dados da conta";
+            else
+                $result['message'].="Dados da conta armazenandos corretamente";
+            $result['message']=true;
+        }
+        echo json_encode($result);
+    }
+    
+    //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
