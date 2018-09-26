@@ -1948,32 +1948,27 @@ class Welcome extends CI_Controller {
         if($_SESSION['logged_role'] === 'ADMIN'){
             $id = $_SESSION['transaction_requested_id'];
             $datas =  $this->input->post();            
-            $personal_datas=array(
-                'name'=>$datas['edit_trans_name'],
-                'email'=>$datas['edit_trans_email'],
-                'phone_ddd'=>$datas['edit_trans_phone_ddd'],
-                'phone_number'=>$datas['edit_trans_phone_number'],
-                'cep'=>$datas['edit_trans_cep'],
-                'street_address'=>$datas['edit_trans_street_address'],
-                'number_address'=>$datas['edit_trans_number_address'],
-                'complement_number_address'=>$datas['edit_trans_complement_address'],
-                'city_address'=>$datas['edit_trans_city_address'],
-                'state_address'=>$datas['edit_trans_state_address']
-            );
+            $personal_datas=array();
+            if(isset($datas['edit_trans_name'])) $personal_datas['name']=$datas['edit_trans_name'];
+            if(isset($datas['edit_trans_email'])) $personal_datas['email']=$datas['edit_trans_email'];
+            if(isset($datas['edit_trans_phone_ddd'])) $personal_datas['phone_ddd']=$datas['edit_trans_phone_ddd'];
+            if(isset($datas['edit_trans_phone_number'])) $personal_datas['phone_number']=$datas['edit_trans_phone_number'];
+            if(isset($datas['edit_trans_cep'])) $personal_datas['cep']=$datas['edit_trans_cep'];
+            if(isset($datas['edit_trans_street_address'])) $personal_datas['street_address']=$datas['edit_trans_street_address'];
+            if(isset($datas['edit_trans_number_address'])) $personal_datas['number_address']=$datas['edit_trans_number_address'];
+            if(isset($datas['edit_trans_complement_address'])) $personal_datas['complement_number_address']=$datas['edit_trans_complement_address'];
+            if(isset($datas['edit_trans_city_address'])) $personal_datas['city_address']=$datas['edit_trans_city_address'];
+            if(isset($datas['edit_trans_state_address'])) $personal_datas['state_address']=$datas['edit_trans_state_address'];            
             $a = $this->transaction_model->update_db_steep_1($personal_datas,$id);
             
-            $credit_card_datas = array(
-                'credit_card_name'=>$datas['edit_trans_credit_card_name']                
-            );
+            if(isset($datas['edit_trans_state_address'])) $credit_card_datas['credit_card_name']=$datas['edit_trans_state_address'];
             $b = $this->transaction_model->update_db_steep_2($credit_card_datas,$id);
             
-            $bank_datas = array(
-                'bank'=>$datas['edit_trans_bank_code'],
-                'agency'=>$datas['edit_trans_agency'],
-                'account'=>$datas['edit_trans_account'],
-                'dig'=>$datas['edit_trans_dig'],
-                'account_type'=>$datas['edit_account_type']
-            );
+            if(isset($datas['edit_trans_bank_code'])) $credit_card_datas['bank']=$datas['edit_trans_bank_code'];
+            if(isset($datas['edit_trans_agency'])) $credit_card_datas['agency']=$datas['edit_trans_agency'];
+            if(isset($datas['edit_trans_account'])) $credit_card_datas['account']=$datas['edit_trans_account'];
+            if(isset($datas['edit_trans_dig'])) $credit_card_datas['dig']=$datas['edit_trans_dig'];
+            if(isset($datas['edit_account_type'])) $credit_card_datas['account_type']=$datas['edit_account_type'];
             $c = $this->transaction_model->update_db_steep_3($bank_datas,$id);
             
             $result['message']="";
@@ -1989,7 +1984,7 @@ class Welcome extends CI_Controller {
                 $result['message'].="Erro armazenando dados da conta";
             else
                 $result['message'].="Dados da conta armazenandos corretamente";
-            $result['message']=true;
+            $result['success']=true;
         }
         echo json_encode($result);
     }
@@ -3323,7 +3318,7 @@ class Welcome extends CI_Controller {
             $result['message'] = 'Transação não encontrada';
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-                if($transactions['client_id'] == $datas['id']){
+                if($transactions['tr_id'] == $datas['id']){
                     //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
@@ -3334,6 +3329,7 @@ class Welcome extends CI_Controller {
                     $transactions['CET_YEAR'] =$financials['CET_YEAR'];
                     //////
                     $_SESSION['transaction_requested_id'] = $datas['id'];
+                    $aaa = $_SESSION['transaction_requested_id'] ;
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
                     $result['success']=true;
