@@ -500,12 +500,12 @@ class Welcome extends CI_Controller {
                 $nomes[$client['name']]=1;
         }
         if(count($nomes)>1){*/
-        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
-            $result['success']=false;
-            $_SESSION['client_datas']['sms_verificated'] = false;
-            return $result;
-        }
+//        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
+//            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
+//            $result['success']=false;
+//            $_SESSION['client_datas']['sms_verificated'] = false;
+//            return $result;
+//        }
         //4.3 mesmo telefone com diferentes cpf
         /*$cpfs=array();
         foreach($clients as $client) {
