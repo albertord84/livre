@@ -515,12 +515,12 @@ class Welcome extends CI_Controller {
                 $cpfs[$client['cpf']]=1;
         }
         if(count($cpfs)>1){*/
-        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
-            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
-            $result['success']=false;
-            $_SESSION['client_datas']['sms_verificated'] = false;
-            return $result;
-        }         
+//        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
+//            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
+//            $result['success']=false;
+//            $_SESSION['client_datas']['sms_verificated'] = false;
+//            return $result;
+//        }         
         
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->transaction_model->get_client('cpf', $datas['cpf'], transactions_status::BEGINNER);
