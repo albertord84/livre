@@ -537,7 +537,7 @@
                             <div class="w5 fw-500 m-top10">
                                 <?php if($transaction['status_id']!=7 && $transaction['status_id']!=9 && $transaction['status_id']!=6){ ?>
                                     <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
-                                        <img id="edit<?php echo $transaction['client_id']; ?>" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/edit.jpg'?>" alt="">
+                                        <img id="edit<?php echo $transaction['tr_id']; ?>" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/edit.jpg'?>" alt="">
                                     </a>
                                 <?php } ?>
                             </div>

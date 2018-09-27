@@ -1961,14 +1961,14 @@ class Welcome extends CI_Controller {
             if(isset($datas['edit_trans_state_address'])) $personal_datas['state_address']=$datas['edit_trans_state_address'];            
             $a = $this->transaction_model->update_db_steep_1($personal_datas,$id);
             
-            if(isset($datas['edit_trans_state_address'])) $credit_card_datas['credit_card_name']=$datas['edit_trans_state_address'];
+            if(isset($datas['edit_trans_credit_card_name'])) $credit_card_datas['credit_card_name']=$datas['edit_trans_credit_card_name'];
             $b = $this->transaction_model->update_db_steep_2($credit_card_datas,$id);
             
-            if(isset($datas['edit_trans_bank_code'])) $credit_card_datas['bank']=$datas['edit_trans_bank_code'];
-            if(isset($datas['edit_trans_agency'])) $credit_card_datas['agency']=$datas['edit_trans_agency'];
-            if(isset($datas['edit_trans_account'])) $credit_card_datas['account']=$datas['edit_trans_account'];
-            if(isset($datas['edit_trans_dig'])) $credit_card_datas['dig']=$datas['edit_trans_dig'];
-            if(isset($datas['edit_account_type'])) $credit_card_datas['account_type']=$datas['edit_account_type'];
+            if(isset($datas['edit_trans_bank_code'])) $bank_datas['bank']=$datas['edit_trans_bank_code'];
+            if(isset($datas['edit_trans_agency'])) $bank_datas['agency']=$datas['edit_trans_agency'];
+            if(isset($datas['edit_trans_account'])) $bank_datas['account']=$datas['edit_trans_account'];
+            if(isset($datas['edit_trans_dig'])) $bank_datas['dig']=$datas['edit_trans_dig'];
+            if(isset($datas['edit_account_type'])) $bank_datas['account_type']=$datas['edit_account_type'];
             $c = $this->transaction_model->update_db_steep_3($bank_datas,$id);
             
             $result['message']="";
@@ -3328,7 +3328,7 @@ class Welcome extends CI_Controller {
                     $transactions['CET_PERC'] =$financials['CET_PERC'];
                     $transactions['CET_YEAR'] =$financials['CET_YEAR'];
                     //////
-                    $_SESSION['transaction_requested_id'] = $datas['id'];
+                    $_SESSION['transaction_requested_id'] = $transactions['tr_id'];
                     $aaa = $_SESSION['transaction_requested_id'] ;
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;

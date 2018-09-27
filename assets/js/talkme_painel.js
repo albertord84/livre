@@ -70,7 +70,7 @@ $(document).ready(function(){
         }
     } 
     
-     function validate_empty(element_selector){
+    function validate_empty(element_selector){
         if($(element_selector).val()===''){
             $(element_selector).css("border", "1px solid red");
             return false;

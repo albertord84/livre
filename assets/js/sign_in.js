@@ -18,7 +18,7 @@ $(document).ready(function () {
         phone_number = validate_element('#phone_number', '^[0-9]{8,9}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
         cep = validate_element('#cep', '^[0-9]{8}$');
-        street_address = validate_element('#street_address', '^[a-zA-Z0-9 ñçâêôûîáéíóúàãẽõ]{1,}$');
+        street_address = validate_empty('#street_address');
         number_address = validate_element('#number_address', '^[0-9]{1,10}$');
         complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
         city = validate_element('#city_address', '^[a-zA-Z0-9 ñçâêôûîáéíóúàãẽõ]{1,50}$');
@@ -474,6 +474,16 @@ $(document).ready(function () {
         } else {
             $(element_selector).css("border", "solid 1px black");
             $(element_selector).css("color", "black");
+            return true;
+        }
+    }
+    
+    function validate_empty(element_selector){
+        if($(element_selector).val()===''){
+            $(element_selector).css("border", "1px solid red");
+            return false;
+        } else{
+            $(element_selector).css("border", "1px solid gray");
             return true;
         }
     }

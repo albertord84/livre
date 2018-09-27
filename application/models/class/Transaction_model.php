@@ -16,9 +16,11 @@
         
         public function update_db_steep_1($datas,$id){
             $datas_tmp=$datas;
-            unset($datas_tmp['key']);
+            if(isset($datas_tmp['key']))
+                unset($datas_tmp['key']);
             $this->db->where('id',$id);
-            $result = $this->db->update('transactions',$datas_tmp);            
+            if(count($datas_tmp))
+                $result = $this->db->update('transactions',$datas_tmp);            
             return $result;
         }
         
@@ -51,7 +53,8 @@
             if(isset($datas['credit_card_cvv'])) 
                 $datas1['credit_card_cvv'] =  $this->Crypt->crypt($datas['credit_card_cvv']);                        
             $this->db->where('client_id',$client_id);
-            $result =$this->db->update('credit_card',$datas1);
+            if(count($datas1))
+                $result =$this->db->update('credit_card',$datas1);
             return $result;
         }
         
@@ -121,9 +124,12 @@
                 $datas1['titular_cpf']=$datas['titular_cpf'];
             $this->db->where('client_id',$client_id);
             $this->db->where('propietary_type',0);
-            $this->db->update('account_banks',$datas1); 
-            $this->db->trans_complete();
-            return $this->db->trans_status();
+            if(count($datas1)){
+                $this->db->update('account_banks',$datas1); 
+                $this->db->trans_complete();
+                return $this->db->trans_status();                
+            }
+            return false;
             /*$a = $this->db->update('account_banks',$datas1); 
             $b =  $this->db->affected_rows();
             return $b;*/
