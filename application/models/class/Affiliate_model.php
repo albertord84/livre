@@ -29,7 +29,7 @@ class Affiliate_model extends CI_Model{
         try {
             $this->load->model('class/Crypt');
             $this->load->model('class/transactions_status');
-            $this->db->select('*');
+            $this->db->select('*,transactions.id as tr_id');
             $this->db->from('transactions');
             $this->db->join('transactions_status', 'transactions.status_id = transactions_status.id');
             $this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
@@ -143,7 +143,7 @@ class Affiliate_model extends CI_Model{
             //$this->db->limit($page*(int)$amount_by_page, (int)$amount_by_page+1);
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             $this->db->order_by("transactions.status_id", "desc");
-            $this->db->order_by("transactions.id", "desc");
+            $this->db->order_by("tr_id", "desc");
             //$this->db->group_by("transactions.email", "desc");
             
             $result = $this->db->get()->result_array();

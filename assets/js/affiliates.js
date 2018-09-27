@@ -193,7 +193,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if(response['success']) {               
-                    $("#trans_id").text(response['message']['client_id']);
+                    $("#trans_id").text(response['message']['tr_id']);
                     $("#trans_name").text(response['message']['name']);
                     $("#trans_email").text(response['message']['email']);
                     $("#trans_partnerId").text(response['message']['contract_id']);
@@ -329,7 +329,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 if(response['success']) {               
-                    $("#edit_trans_id").val('#'+response['message']['client_id']);
+                    $("#edit_trans_id").val('#'+response['message']['tr_id']);
                     $("#edit_trans_name").val(response['message']['name']);
                     $("#edit_trans_email").val(response['message']['email']);
                     $("#edit_trans_cpf").val(response['message']['cpf']);
