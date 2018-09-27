@@ -482,7 +482,6 @@ class Welcome extends CI_Controller {
                     $result['message']='O seu anterior pedido foi aprovado por nosso sistema e está sendo gestionada a transferência.';                    
                     return $result;
                 }
-                
             }
         }        
                 
@@ -496,28 +495,30 @@ class Welcome extends CI_Controller {
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){*/
+        if(count($nomes)>1){
         if($N > 0 && $clients[0]['name'] != $datas['name']){
             $result['message']="Este CPF foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             return $result;
-        }
+        }*/
+        
         //4.2 mesmo telefone com nome diferentes
-        $clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
-        /*$nomes=array();
+        /*$clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
+        $nomes=array();
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
                 $nomes[$client['name']]+=1;
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){*/
-//        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-//            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
-//            $result['success']=false;
-//            $_SESSION['client_datas']['sms_verificated'] = false;
-//            return $result;
-//        }
+        if(count($nomes)>1){
+        if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
+            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
+            $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
+            return $result;
+        }*/
+        
         //4.3 mesmo telefone com diferentes cpf
         /*$cpfs=array();
         foreach($clients as $client) {
@@ -526,13 +527,13 @@ class Welcome extends CI_Controller {
             else
                 $cpfs[$client['cpf']]=1;
         }
-        if(count($cpfs)>1){*/
-//        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
-//            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
-//            $result['success']=false;
-//            $_SESSION['client_datas']['sms_verificated'] = false;
-//            return $result;
-//        }         
+        if(count($cpfs)>1){
+        if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
+            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
+            $result['success']=false;
+            $_SESSION['client_datas']['sms_verificated'] = false;
+            return $result;
+        }*/
         
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->transaction_model->get_client('cpf', $datas['cpf'], transactions_status::BEGINNER);
