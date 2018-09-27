@@ -64,10 +64,10 @@
                         </div>
                     </div>
 		</div>
-		<div class="fleft100 pd-20 bk-fff">
+                <div class="fleft100 ">
 			<div class="trans cl-fff fleft100 pd-20">
                             <form action="<?php echo base_url().'index.php/welcome/afiliados';?>" method="post">
-                                <div class="bk-green cl-black fleft100 pd-20">
+                                <div class=" cl-black fleft100 pd-20">
                                     <div class="col-md-4 col-sm-4 col-xs-12">
                                         <span class="fleft100">Digite sua busca aqui:</span>
                                         <input id="token" name="token" type="text" class="pd-5 m-top5 fleft100 bk-fff cl-black" value="<?php echo $token?>">
@@ -86,7 +86,7 @@
                                             </div>
                                         </div>
                                     </div>
-            <!--                        <div class="col-md-2 col-sm-2 col-xs-12">                            
+                                    <div class="col-md-2 col-sm-2 col-xs-12">                            
                                         <span class="fleft100">Estado</span>
                                         <div class="m-top25 m-top25-xs">
                                             <select name="status" id="status" required style="max-height: 70px; background-color:#293d3d;">
@@ -101,7 +101,7 @@
                                                 <option value="22" <?php if($status == 22) echo "selected='selected'";?>>PENDENT</option>                                
                                             </select>                            
                                         </div>
-                                    </div>-->
+                                    </div>
                                     <div>
                                         <input name="num_page" id="num_page" type="text" style="visibility:hidden;display:none" value="<?php echo $num_page;?>">
                                     </div>
@@ -111,7 +111,33 @@
                                 </div>
                             </form>
 			</div>
+                </div>
+		<div class="fleft100 pd-20 bk-fff">		
 			<ul class="zebra fleft100 ft-size12 cl-black">
+                            <li>
+                                <div class="w5 m-top15 m-top10-xs">                                                                
+                                    <img style="width:20px; height:20px" title="<?php echo $transaction['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$transaction['icon_by_status'];?>" alt="">
+                                </div>
+                                <div class="w10 fw-500 m-top15 m-top10-xs">
+                                    Trans - ID
+                                </div>
+                                <div class="w15 fw-500 m-top15 m-top10-xs">
+                                    CPF
+                                </div>
+                                <div class="w15 fw-500 m-top15 m-top10-xs">
+                                    Change status
+                                </div>
+                                <div class="w10 m-top15 m-top10-xs fw-500">
+                                   Value
+                                </div>
+                                <div class="w15 m-top15 m-top10-xs fw-500">
+                                     Dados do cartão                        
+                                </div>
+                                <div class="w15 m-top15 m-top10-xs fw-500">
+                                    Account bank
+                                </div>
+
+                            </li>
                             <?php foreach($_SESSION['affiliate_logged_transactions'] as $transaction) { ?>
 				<li>
                                     <div class="w5 m-top15 m-top10-xs">
@@ -142,7 +168,7 @@
                                             echo $transaction['bank_name'].'<br>';
                                             echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                         ?>
-                                    </div>
+                                    </div>                                    
 				</li>
                             <?php }?>
 			</ul>

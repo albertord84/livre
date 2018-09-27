@@ -67,16 +67,7 @@
                      <span>
                     <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Página: <?php echo $num_page;?></h4>                      
                     </span>
-                </div>
-                <!--                
-                <div class="col-md-3 col-sm-3 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
-                     <button id="export_leads">Leads</button>
-                </div>
-                 <div class="col-md-1 col-sm-1 col-xs-12 m-top10-xs m-top10 m-b10 text-right">
-                     <button id="export_transactions">Exportar</button>
-                </div>
-                -->
-		
+                </div>		
 		<ul class="zebra fleft100 ft-size12 cl-black">
 			<li class="text-left">
                             <div class="w5 text-left m-top15 m-top10-xs"> 
@@ -101,14 +92,15 @@
                     <?php foreach($_SESSION['affiliates'] as $afiliate) { ?>
                         <li class="text-left">
                             <div class="w5 text-left m-top15 m-top10-xs">                                                                
-                                1<!--<img style="width:20px; height:20px" title="<?php echo $afiliate['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$afiliate['icon_by_status'];?>" alt="">-->
+                                <?php echo $afiliate['status_id']; ?><!--<img style="width:20px; height:20px" title="<?php echo $afiliate['hint_by_status']?>" src="<?php echo base_url().'assets/img/icones/'.$afiliate['icon_by_status'];?>" alt="">-->
                             </div>
                             <div class="w10 text-left fw-500 m-top15 m-top10-xs">
                                 <?php echo $afiliate['client_id']; ?>
                             </div>
                             <div class="w25 text-left fw-500 m-top15 m-top10-xs">
                                 <?php echo $afiliate['complete_name']; ?><br>
-                                CPF: <?php echo substr($afiliate['titular_cpf'], 0, 3).'.'.substr($afiliate['titular_cpf'], 3, 3).'.'.substr($afiliate['titular_cpf'], 6, 3).'-'.substr($afiliate['titular_cpf'], 9, 2); ?>
+                                <?php echo $afiliate['email']; ?><br>
+                                <?php echo substr($afiliate['titular_cpf'], 0, 3).'.'.substr($afiliate['titular_cpf'], 3, 3).'.'.substr($afiliate['titular_cpf'], 6, 3).'-'.substr($afiliate['titular_cpf'], 9, 2); ?>
                             </div>
                             <div class="w10 text-left fw-500 m-top15 m-top10-xs">
                                 <?php echo $afiliate['code']; ?>
@@ -122,18 +114,25 @@
                                     echo 'AG. '.$afiliate['agency'].' - CC. '.$afiliate['account'];
                                 ?>
                             </div>
-<!--                            <div class="w5 fw-500 m-top10">
-                                <?php if($afiliate['status_id']!=7 && $afiliate['status_id']!=9 && $afiliate['status_id']!=6){ ?>
+                            <?php if($afiliate['status_id']==1){ ?>
+                                <div class="w5 fw-500 m-top10">
                                     <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
-                                        <img id="edit<?php echo $afiliate['tr_id']; ?>" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/edit.jpg'?>" alt="">
+                                        <img id="approve<?php echo $afiliate['tr_id']; ?>" title="APROVAR ASSINATURA" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/approve_sign.jpeg'?>" alt="">
                                     </a>
-                                <?php } ?>
-                            </div>
-                            <div class="w5 fw-500 m-top10">
-                                <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
-                                    <img id="<?php echo $afiliate['tr_id']; ?>" class="btn_see_trnsaction" src="<?php echo base_url().'assets/img/icones/add.png'?>" alt="">
-                                </a>
-                            </div>-->
+                                </div>
+                            <?php }?>
+                            <?php if($afiliate['status_id']==2){ ?>
+                                <div class="w5 fw-500 m-top10">
+                                    <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
+                                        <img id="see<?php echo $afiliate['tr_id']; ?>" title="VER AFILIADO" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/see_afiliate.png'?>" alt="">
+                                    </a>
+                                </div>
+                                <div class="w5 fw-500 m-top10">
+                                    <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
+                                        <img id="cancel<?php echo $afiliate['tr_id']; ?>" title="CANCELAR ASSINATURA" class="btn_edit_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/cancel_sign.jpeg'?>" alt="">
+                                    </a>
+                                </div>
+                            <?php }?>
 			</li>
                     <?php }?> 
 		</ul>
