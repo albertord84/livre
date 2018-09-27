@@ -277,6 +277,7 @@ $(document).ready(function () {
                     if(response['success']) {
                         alert("Dados atualizados com sucesso");
                         $('#trans_edit').modal('hide');
+                         location.reload(); 
                     }
                     else{
                         modal_alert_message(response['message']);
@@ -377,6 +378,32 @@ $(document).ready(function () {
                 modal_alert_message('Internal error');
             }
         });         
+    });
+    
+    $('.btn_delete_trnsaction').click(function () {
+        transaction_id = this.id.replace("edit", "");
+        if(confirm("Confirma eliminar essa transação do banco de dados?")){
+            $.ajax({
+                url: base_url + 'index.php/welcome/delete_transaction_datas_by_id',
+                data:{
+                    'id': transaction_id
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if(response['success']) {               
+                        alert('Transação e dependencias eliminadas corretamente');
+                         location.reload(); 
+                    }
+                    else{
+                        modal_alert_message(response['message']);
+                    }
+                },
+                error: function (xhr, status) {
+                    modal_alert_message('Internal error');
+                }
+            });         
+        }
     });
     
     function get_icon_by_status($status_id) {

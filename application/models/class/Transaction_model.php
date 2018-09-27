@@ -135,6 +135,62 @@
             return $b;*/
         }
         
+        public function delete_transaction_by_id_transaction($id){
+            try {
+                $this->db->where('id', $id);
+                $resp = $this->db->delete('transactions');
+                return $resp;            
+            } catch (Exception $ex) {
+                echo $exc->getTraceAsString();
+                return false; 
+            }
+        }
+
+        public function delete_credit_card_by_id_transaction($id){
+            try {
+                $this->db->where('client_id', $id);
+                $resp = $this->db->delete('credit_card');
+                return $resp;
+            } catch (Exception $ex) {
+                echo $exc->getTraceAsString();
+                return false;
+            }
+        }
+
+        public function delete_account_bank_by_id_transaction($id){
+            try {
+                $this->db->where('client_id', $id);
+                $this->db->where('propietary_type', '0');
+                $resp = $this->db->delete('account_banks');
+                return $resp;            
+            } catch (Exception $ex) {
+                echo $exc->getTraceAsString();
+                return false; 
+            }
+        }
+
+        public function delete_transactions_dates_by_id_transaction($id){
+            try {
+                $this->db->where('transaction_id', $id);
+                $resp = $this->db->delete('transactions_dates');
+                return $resp;
+            } catch (Exception $ex) {
+                echo $exc->getTraceAsString();
+                return false; 
+            }
+        }
+
+        public function delete_washdog_by_id_transaction($id){
+            try {
+                $this->db->where('user_id', $id);
+                $resp = $this->db->delete('washdog');
+                return $resp;            
+            } catch (Exception $ex) {
+                echo $exc->getTraceAsString();
+                return false; 
+            }
+        }
+        
         public function get_client($key, $value, $status=NULL){
             $this->db->select('*');
             $this->db->from('transactions'); 

@@ -5,7 +5,7 @@ ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 8024);
 
 class Welcome extends CI_Controller {
-            
+          
     function __construct() {
         parent::__construct();
     }
@@ -143,6 +143,18 @@ class Welcome extends CI_Controller {
         else{
             session_destroy();
             header('Location: '.base_url());
+        }
+    }
+    
+    public function list_afiliados() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/Crypt');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $_SESSION['affiliates'] = $this->affiliate_model->load_afiliates();
+            $this->load->view('list_afiliados',$params);
         }
     }
     
@@ -1125,7 +1137,7 @@ class Welcome extends CI_Controller {
             }else{
                 $action = 'insert_afiliate';
             }
-            if($action != 'not_action'){                
+            if($action != 'not_action'){
                 $datas['status_id'] = affiliate_status::BEGINNER;
                 $t = time();
                 $datas['init_date'] = $t;
@@ -1984,6 +1996,37 @@ class Welcome extends CI_Controller {
             else
                 $result['message'].="Dados da conta armazenandos corretamente";
             $result['success']=true;
+        }
+        echo json_encode($result);
+    }
+    
+    public function delete_transaction_datas_by_id() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $datas = $this->input->post();
+            $tr = $this->get_transaction_datas_by_id($datas);
+            if($tr['success']){
+                if($tr['message']['status_id']==transactions_status::BEGINNER){
+                    $a=$this->transaction_model->delete_transaction_by_id_transaction($datas['id']);
+                    $b=$this->transaction_model->delete_credit_card_by_id_transaction($datas['id']);
+                    $c=$this->transaction_model->delete_account_bank_by_id_transaction($datas['id']);
+                    $d=$this->transaction_model->delete_transactions_dates_by_id_transaction($datas['id']);
+                    $d=$this->transaction_model->delete_washdog_by_id_transaction($datas['id']);
+                    $result['success'] = true;                    
+                } else{
+                    $result['success'] = false;
+                    $result['message'] = 'O status da transação não permite essa operação';
+                }
+            }else{
+                $result['success'] = false;
+                $result['message'] = 'Transação não encontrada';
+            }
+        }else{
+            $result['success'] = false;
+            $result['message'] = 'Operação não permitida para esse usuário';
         }
         echo json_encode($result);
     }
@@ -3309,14 +3352,20 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
-    public function get_transaction_datas_by_id(){
+    public function get_transaction_datas_by_id($datas=NULL){
         $this->load->model('class/affiliate_model');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
-            $datas = $this->input->post();
+            $datas_by_post=false;
+            if(!$datas){
+                $datas = $this->input->post();
+                $datas_by_post=true;
+            }
             $result['message'] = 'Transação não encontrada';
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
+                $aaaa=$transactions['tr_id'];
+                $bbbb=$datas['id'];
                 if($transactions['tr_id'] == $datas['id']){
                     //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
@@ -3339,7 +3388,10 @@ class Welcome extends CI_Controller {
                 }
             }
         }
-        echo json_encode($result);        
+        if($datas_by_post)
+            echo json_encode($result);
+        else
+            return $result;
     }
 
     public function topazio_conciliations($date=NULL){
@@ -4400,5 +4452,32 @@ class Welcome extends CI_Controller {
             $result['email'] = $email91;
         return $result;
     }   
+    
+    
+    
+    //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
+    
+    public function BRASPAG_Autorization($param) { /*ou pré-autorização, apenas sensibiliza o limite do cliente, mas ainda não gera cobrança na fatura para o consumidor. Desta forma, é necessário uma segunda operação, chamada ‘captura’.*/
+        
+    }
+    
+    public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
+        
+    }
+    
+    public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        
+    }
+    
+    public function BRASPAG_Cancel($param) { /*não se quer mais efetivar uma venda. No caso de uma pré-autorização, o cancelamento irá liberar o limite do cartão que foi sensibilizado em uma pré-autorização. Quando a transação já estiver sido capturada, o cancelamento irá desfazer a venda, mas deve ser executado até às 23:59:59 da data da autorização/captura.*/
+        
+    }
+    
+    public function BRASPAG_Devolution($param) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
+        
+    }
+    
+    
+    
     
 }

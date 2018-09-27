@@ -10,7 +10,7 @@ class Affiliate_model extends CI_Model{
         try {
             $this->db->select('*');
             $this->db->from('affiliates');
-            $this->db->join('account_banks', 'account_banks.client_id = affiliates.id');
+            $this->db->join('account_banks', 'account_banks.client_id = affiliates.id','left outer');
             $this->db->where('affiliates.id',$affiliate_id);
             $this->db->where('account_banks.propietary_type','1');
             $result= $this->db->get()->row_array();                
@@ -19,6 +19,30 @@ class Affiliate_model extends CI_Model{
             $result['account_type'] = $this->Crypt->decrypt($result['account_type']);
             $result['account'] = $this->Crypt->decrypt($result['account']);
             $result['dig'] = $this->Crypt->decrypt($result['dig']);                
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+    
+    public function load_afiliates(){
+        try {
+            $this->db->select('*');
+            $this->db->from('affiliates');
+            $this->db->join('account_banks', 'account_banks.client_id = affiliates.id','left outer');
+            $this->db->where('account_banks.propietary_type','1');
+            $this->db->where('affiliates.role','AFFIL');
+            $this->db->order_by("affiliates.id", "desc");
+            $this->db->order_by("affiliates.status_id", "desc");
+            $result= $this->db->get()->result_array();
+            $i=0;
+            foreach ($result as $afiliate) {
+                $result[$i]['bank'] = $this->Crypt->decrypt($afiliate['bank']);
+                $result[$i]['agency'] = $this->Crypt->decrypt($afiliate['agency']);
+                $result[$i]['account_type'] = $this->Crypt->decrypt($afiliate['account_type']);
+                $resul[$i]['account'] = $this->Crypt->decrypt($afiliate['account']);
+                $result[$i++]['dig'] = $this->Crypt->decrypt($afiliate['dig']);
+            }
             return $result;
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
@@ -333,6 +357,7 @@ class Affiliate_model extends CI_Model{
         try {
             $datas_tmp=$datas;
             unset($datas_tmp['key']);
+            $datas_tmp['code']=$datas_tmp['phone_number'];
             $this->db->insert('affiliates',$datas_tmp);
             $id_row=$this->db->insert_id();
             return $id_row;            
@@ -345,6 +370,7 @@ class Affiliate_model extends CI_Model{
         try {
             $datas_tmp=$datas;
             unset($datas_tmp['key']);
+            $datas_tmp['code']=$datas_tmp['phone_number'];
             $this->db->where('id',$id);
             $result = $this->db->update('affiliates',$datas_tmp);            
             return $result;

@@ -462,7 +462,7 @@
 			</div>
                     </div>
                 </form>
-                 <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-left">
+                <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs text-left">
                     <span>
                     <h4 class="pd-lr15 m-b10 m-top20 fw-300 fleft100">Resultados: <?php echo $total_in_query;?></h4>                      
                     </span>
@@ -497,10 +497,10 @@
                                Value
                             </div>
                             <div class="w15 m-top15 m-top10-xs fw-500">
-                                Account bank 
+                                 Dados do cartão                        
                             </div>
-                            <div class="w20 m-top15 m-top10-xs fw-500">
-                                Dados do cartão                        
+                            <div class="w15 m-top15 m-top10-xs fw-500">
+                                Account bank
                             </div>
                             
 			</li>
@@ -521,7 +521,7 @@
                             <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
                                R$ <?php echo str_replace('.', ',', $transaction['amount_solicited']/100).' ('.$transaction['number_plots'].')'; ?>                               
                             </div>
-                            <div class="w20 fw-500 text-left center-xs m-top10-xs">
+                            <div class="w15 fw-500 text-left center-xs m-top10-xs">
                                 <?php 
                                     echo $transaction['credit_card_name'].'<br>';
                                     echo 'Final - '. $transaction['credit_card_final']; 
@@ -533,6 +533,13 @@
                                     echo $transaction['bank_name'].'<br>';
                                     echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                 ?>
+                            </div>
+                            <div class="w5 fw-500 m-top10">
+                                <?php if($transaction['status_id']==1){ ?>
+                                    <a href="" data-toggle="modal" data-target="" data-whatever="@mdo">
+                                        <img id="edit<?php echo $transaction['tr_id']; ?>" class="btn_delete_trnsaction" style="width:30px" src="<?php echo base_url().'assets/img/icones/icon_delete.png'?>" alt="">
+                                    </a>
+                                <?php } ?>
                             </div>
                             <div class="w5 fw-500 m-top10">
                                 <?php if($transaction['status_id']!=7 && $transaction['status_id']!=9 && $transaction['status_id']!=6){ ?>
