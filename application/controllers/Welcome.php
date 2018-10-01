@@ -5,24 +5,30 @@ ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 8024);
 
 class Welcome extends CI_Controller {
-            
+          
     function __construct() {
         parent::__construct();
     }
 
+    public function test_cr(){
+        $this->load->model('class/Crypt');
+        echo $this->Crypt->crypt('1');
+    }
+    
     public function test5(){
         //$hoje = strtotime("now");        
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-09-10");
+        $trasactions = $this->topazio_conciliations("2018-09-20");
         foreach ($trasactions as $t) {
             var_dump($t);
         }
     }
    
     public function test3(){
-        $resp = $this->topazio_emprestimo(4); 
+        $_SESSION['logged_role']= 'ADMIN';
+        $resp = $this->topazio_emprestimo(4); //1388,1542
         if($resp['success']){
             $this->transaction_model->save_in_db(
                     'transactions',
@@ -36,19 +42,55 @@ class Welcome extends CI_Controller {
         }/**/
         var_dump($resp);
     }
-
+    
+    public function update_acount_bank_by_user_id() {//para trabajar manual
+        $this->load->model('class/Transaction_model');    
+        $this->load->model('class/Crypt');  
+        $datas['pk']=198;
+        $datas['bank']=341;
+        $datas['agency']=1412;
+        $datas['account_type']='CC';
+        $datas['account']=50021;
+        $datas['dig']=5;  
+        
+        $datas1['client_id']=$datas['pk'];
+        $datas1['bank']= $this->Crypt->crypt($datas['bank']);
+        $datas1['agency']= $this->Crypt->crypt($datas['agency']);
+        $datas1['account_type']= $this->Crypt->crypt($datas['account_type']);
+        $datas1['account']= $this->Crypt->crypt($datas['account']);
+        $datas1['dig']= $this->Crypt->crypt($datas['dig']); 
+        
+        var_dump($datas1);
+    }
+    
+    public function conciliation_by_partnerId(){ 
+        $partnerId = $_GET['partnerId'];
+        $trasactions = $this->topazio_conciliations_by_partnerId($partnerId);
+        var_dump($trasactions);
+    }
+    
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {           
+    public function index() {
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
             $_SESSION['affiliate_code'] = $datas['afiliado'];
         else
             $_SESSION['affiliate_code'] = '';
-        if(isset($datas['utm_source']))
+        if(isset($datas['utm_source']) && $datas['utm_source']!=NULL)
             $_SESSION['utm_source'] = $datas['utm_source'];
         else
             $_SESSION['utm_source'] = '';
+        
+//        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
+//            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
+//        else
+//            $_SESSION['utm_campaign'] = '';
+//        
+//        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
+//            $_SESSION['utm_content'] = $datas['utm_content'];
+//        else
+//            $_SESSION['utm_content'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -68,6 +110,8 @@ class Welcome extends CI_Controller {
         $params['key']=$_SESSION['key'];
         $_SESSION['transaction_values']['frm_money_use_form']=$this->input->get()['frm_money_use_form'];
         $_SESSION['transaction_values']['utm_source']=$this->input->get()['utm_source'];
+        $_SESSION['transaction_values']['utm_campaign']=$this->input->get()['utm_campaign'];
+        $_SESSION['transaction_values']['utm_content']=$this->input->get()['utm_content'];
         
         $params['month_value']  = str_replace('.', ',',$_SESSION['transaction_values']['month_value']); 
         $params['solicited_value']  = str_replace('.', ',', $_SESSION['transaction_values']['solicited_value']); 
@@ -99,6 +143,18 @@ class Welcome extends CI_Controller {
         else{
             session_destroy();
             header('Location: '.base_url());
+        }
+    }
+    
+    public function list_afiliados() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/Crypt');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $_SESSION['affiliates'] = $this->affiliate_model->load_afiliates();
+            $this->load->view('list_afiliados',$params);
         }
     }
     
@@ -379,7 +435,7 @@ class Welcome extends CI_Controller {
         $_SESSION['is_possible_steep_1']=false;
         
         //1. Analisar se IP tem sido marcado como hacker
-        $this->is_ip_hacker();
+        $this->is_ip_hacker();        
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
@@ -426,12 +482,11 @@ class Welcome extends CI_Controller {
                     $result['message']='O seu anterior pedido foi aprovado por nosso sistema e está sendo gestionada a transferência.';                    
                     return $result;
                 }
-                
             }
         }        
                 
         //4. Analisar coerencia dos dados, exemplo:
-            //4.1 mesmo cpf com nome diferentes        
+        //4.1 mesmo cpf com nome diferentes        
         /*$nomes=array();
         $nomes[$datas['name']]=1;
         foreach ($clients as $client) {
@@ -440,29 +495,31 @@ class Welcome extends CI_Controller {
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){*/
+        if(count($nomes)>1){
         if($N > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Este CPF foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
+            $result['message']="Este CPF foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             return $result;
-        }
-            //4.2 mesmo telefone com nome diferentes
-        $clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
-        /*$nomes=array();
+        }*/
+        
+        //4.2 mesmo telefone com nome diferentes
+        /*$clients = $this->transaction_model->get_client('phone_number',$datas['phone_number']);
+        $nomes=array();
         foreach ($clients as $client) {
             if(isset($nomes[$client['name']]))
                 $nomes[$client['name']]+=1;
             else
                 $nomes[$client['name']]=1;
         }
-        if(count($nomes)>1){*/
+        if(count($nomes)>1){
         if(count($clients) > 0 && $clients[0]['name'] != $datas['name']){
-            $result['message']='Este telefone foi usado anteriormente com outro nome. Para solicitar o crédito entre em contato com a nossa equipe de atendimento.';
+            $result['message']="Este telefone foi usado anteriormente com um nome diferente, pode ter sido apenas uma variação, como um acento, por exemplo. Para mais informações entre em contato através de seja@livre.digital para resolvermos isso para você. ";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
-        }
-            //4.3 mesmo telefone com diferentes cpf
+        }*/
+        
+        //4.3 mesmo telefone com diferentes cpf
         /*$cpfs=array();
         foreach($clients as $client) {
             if(isset($cpfs[$client['cpf']]))
@@ -470,13 +527,13 @@ class Welcome extends CI_Controller {
             else
                 $cpfs[$client['cpf']]=1;
         }
-        if(count($cpfs)>1){*/
+        if(count($cpfs)>1){
         if(count($clients) > 0 && $clients[0]['cpf'] != $datas['cpf']){
-            $result['message']='Sua solicitação foi negada devido a que seu telefone tem sido usado com outro cpf. Por favor, contate nosso atendimento';
+            $result['message']="Sua solicitação foi negada devido a que esse telefone tem sido usado com o cpf ".$clients[0]['cpf'].". Por favor, contate nosso atendimento";
             $result['success']=false;
             $_SESSION['client_datas']['sms_verificated'] = false;
             return $result;
-        }         
+        }*/
         
         //5. Analisar BEGINNER purchase_counter pelo cpf
         $clients = $this->transaction_model->get_client('cpf', $datas['cpf'], transactions_status::BEGINNER);
@@ -528,7 +585,9 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function insert_datas_steep_1(){        
+    public function insert_datas_steep_1(){       
+        //1. Analisar se IP tem sido marcado como hacker
+        $this->is_ip_hacker();
         if(!$_SESSION['transaction_values']['amount_months']){
             $result['message']='Sessão expirou';
             $result['success']=false;
@@ -548,6 +607,8 @@ class Welcome extends CI_Controller {
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
             $datas['utm_source'] = $_SESSION['utm_source'];        
+//            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
+//            $datas['utm_content'] = $_SESSION['utm_content'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -669,7 +730,7 @@ class Welcome extends CI_Controller {
         $credit_cards = $this->transaction_model->get_credit_card('client_id', $datas['pk']);
         if(count($credit_cards)){
             $result['action']='update_credit_card';
-            $result['id']=$credit_cards[0]['id'];
+            $result['client_id']=$credit_cards[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_2']=true;
             return $result;            
@@ -727,7 +788,7 @@ class Welcome extends CI_Controller {
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
                     }
                     else
-                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_2($datas,$possible['client_id']);
                     if($id_row){
                         $response['success'] = TRUE; 
                         $response['message'] = "Cartão adicionado";
@@ -801,7 +862,7 @@ class Welcome extends CI_Controller {
         $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0);
         if(count($account_bank)===1){
             $result['action']='update_account_bank';
-            $result['id']=$account_bank[0]['id'];
+            $result['client_id']=$account_bank[0]['client_id'];
             $result['success']=true;
             $_SESSION['is_possible_steep_3']=true;
             return $result;
@@ -845,7 +906,7 @@ class Welcome extends CI_Controller {
                     if($possible['action']==='insert_account_bank')
                         $id_row = $this->transaction_model->insert_db_steep_3($datas);                    
                     else
-                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['id']);
+                        $id_row = $this->transaction_model->update_db_steep_3($datas,$possible['client_id']);
                     if($id_row){                        
                         $result['success'] = true;
                     }
@@ -1077,7 +1138,7 @@ class Welcome extends CI_Controller {
             }else{
                 $action = 'insert_afiliate';
             }
-            if($action != 'not_action'){                
+            if($action != 'not_action'){
                 $datas['status_id'] = affiliate_status::BEGINNER;
                 $t = time();
                 $datas['init_date'] = $t;
@@ -1889,8 +1950,89 @@ class Welcome extends CI_Controller {
         }
         echo json_encode($result);
     }
-
-        //-------AUXILIAR FUNCTIONS------------------------------------    
+    
+    public function update_transaction_datas_by_id() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $result['success'] = false;
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $id = $_SESSION['transaction_requested_id'];
+            $datas =  $this->input->post();            
+            $personal_datas=array();
+            if(isset($datas['edit_trans_name'])) $personal_datas['name']=$datas['edit_trans_name'];
+            if(isset($datas['edit_trans_email'])) $personal_datas['email']=$datas['edit_trans_email'];
+            if(isset($datas['edit_trans_phone_ddd'])) $personal_datas['phone_ddd']=$datas['edit_trans_phone_ddd'];
+            if(isset($datas['edit_trans_phone_number'])) $personal_datas['phone_number']=$datas['edit_trans_phone_number'];
+            if(isset($datas['edit_trans_cep'])) $personal_datas['cep']=$datas['edit_trans_cep'];
+            if(isset($datas['edit_trans_street_address'])) $personal_datas['street_address']=$datas['edit_trans_street_address'];
+            if(isset($datas['edit_trans_number_address'])) $personal_datas['number_address']=$datas['edit_trans_number_address'];
+            if(isset($datas['edit_trans_complement_address'])) $personal_datas['complement_number_address']=$datas['edit_trans_complement_address'];
+            if(isset($datas['edit_trans_city_address'])) $personal_datas['city_address']=$datas['edit_trans_city_address'];
+            if(isset($datas['edit_trans_state_address'])) $personal_datas['state_address']=$datas['edit_trans_state_address'];            
+            $a = $this->transaction_model->update_db_steep_1($personal_datas,$id);
+            
+            if(isset($datas['edit_trans_credit_card_name'])) $credit_card_datas['credit_card_name']=$datas['edit_trans_credit_card_name'];
+            $b = $this->transaction_model->update_db_steep_2($credit_card_datas,$id);
+            
+            if(isset($datas['edit_trans_bank_code'])) $bank_datas['bank']=$datas['edit_trans_bank_code'];
+            if(isset($datas['edit_trans_agency'])) $bank_datas['agency']=$datas['edit_trans_agency'];
+            if(isset($datas['edit_trans_account'])) $bank_datas['account']=$datas['edit_trans_account'];
+            if(isset($datas['edit_trans_dig'])) $bank_datas['dig']=$datas['edit_trans_dig'];
+            if(isset($datas['edit_account_type'])) $bank_datas['account_type']=$datas['edit_account_type'];
+            $c = $this->transaction_model->update_db_steep_3($bank_datas,$id);
+            
+            $result['message']="";
+            if(!$a)
+                $result['message'].="Erro armazenando dados pessoais ---";
+            else
+                $result['message'].="Dados pessoais armazenandos corretamente---";
+            if(!$b)
+                $result['message'].="Erro armazenando dados do cartão ---";
+            else
+                $result['message'].="Dados do cartão armazenandos corretamente ---";
+            if(!$c)
+                $result['message'].="Erro armazenando dados da conta";
+            else
+                $result['message'].="Dados da conta armazenandos corretamente";
+            $result['success']=true;
+        }
+        echo json_encode($result);
+    }
+    
+    public function delete_transaction_datas_by_id() {
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        if($_SESSION['logged_role'] === 'ADMIN'){
+            $datas = $this->input->post();
+            $tr = $this->get_transaction_datas_by_id($datas);
+            if($tr['success']){
+                if($tr['message']['status_id']==transactions_status::BEGINNER){
+                    $a=$this->transaction_model->delete_transaction_by_id_transaction($datas['id']);
+                    $b=$this->transaction_model->delete_credit_card_by_id_transaction($datas['id']);
+                    $c=$this->transaction_model->delete_account_bank_by_id_transaction($datas['id']);
+                    $d=$this->transaction_model->delete_transactions_dates_by_id_transaction($datas['id']);
+                    $d=$this->transaction_model->delete_washdog_by_id_transaction($datas['id']);
+                    $result['success'] = true;                    
+                } else{
+                    $result['success'] = false;
+                    $result['message'] = 'O status da transação não permite essa operação';
+                }
+            }else{
+                $result['success'] = false;
+                $result['message'] = 'Transação não encontrada';
+            }
+        }else{
+            $result['success'] = false;
+            $result['message'] = 'Operação não permitida para esse usuário';
+        }
+        echo json_encode($result);
+    }
+    
+    //-------AUXILIAR FUNCTIONS------------------------------------    
     public function set_session(){
         session_start();
         $_SESSION = array();
@@ -1901,6 +2043,7 @@ class Welcome extends CI_Controller {
     }
 
     public function is_ip_hacker(){
+        $this->is_nome_hacker();
         $IP_hackers= array(
             '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
             '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
@@ -1908,9 +2051,19 @@ class Welcome extends CI_Controller {
             '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
             '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
             '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
-            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207'
+            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207',
+            '177.95.148.2'
             );
         if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){            
+            header('Location: '.base_url());
+        }
+    }
+    
+    public function is_nome_hacker(){
+        $nome_hackers= array(
+            'RENATA JUSTINIANO RIBEIRO'
+            );
+        if(in_array($_SERVER['REMOTE_ADDR'],$nome_hackers)){            
             header('Location: '.base_url());
         }
     }
@@ -1935,7 +2088,7 @@ class Welcome extends CI_Controller {
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
         if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=500 && $datas['solicited_value']<=3000){                
+            if($datas['solicited_value']>=100 && $datas['solicited_value']<=3000){                
                 $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
                 $result['solicited_value']=$financials['solicited_value'];  
                 $result['amount_months']=$financials['amount_months'];
@@ -1950,7 +2103,7 @@ class Welcome extends CI_Controller {
                 $_SESSION['transaction_values']=$result;                
             } else{
                 $result['success'] = false;
-                $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
+                $result['message'] = 'Só pode solicitar um valor entre R$100 e R$3000';
             }
         }else{
             $result['success'] = false;
@@ -2954,8 +3107,9 @@ class Welcome extends CI_Controller {
     
     public function topazio_loans($id, $API_token){
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
-            return;            
+            return;
         }
+        
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         //$this->load->model('class/transactions_status');
@@ -3044,8 +3198,8 @@ class Welcome extends CI_Controller {
         $headers[] = "client_id: ".$client_id;
         $headers[] = "access_token: ".$API_token;
         $headers[] = "Accept: text/plain";
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);         
+        //var_dump($fields); die(); //para imprimir el json de los datos sin que se ejecute el pedido al banco desde el test3
         $num_tentativas = 0;
         while($num_tentativas < 10){
             
@@ -3126,7 +3280,7 @@ class Welcome extends CI_Controller {
         return $next_date->format('Y-m-d');
     }
 
-    public function get_field($money_str){
+    /*public function get_field($money_str){
         $money = (float)($money_str);
         if($money == 500)
             return "500";
@@ -3141,15 +3295,32 @@ class Welcome extends CI_Controller {
         if($money > 2500 && $money <= 3000)
             return "2501_3000";
         return "2501_3000";
+    }*/
+    
+    public function get_field($money_str){
+        $money = (float)($money_str);        
+        if($money >=100 && $money <= 500)
+            return "100_500";        
+        if($money > 500 && $money <= 1000)
+            return "501_1000";        
+        if($money > 1000 && $money <= 1500)
+            return "1001_1500";        
+        if($money > 1500 && $money <= 2000)
+            return "1501_2000";        
+        if($money > 2000 && $money <= 2500)
+            return "2001_2500";        
+        if($money > 2500 && $money <= 3000)
+            return "2501_3000";        
+        return "2501_3000";
     }
 
-    public function topazio_emprestimo($id) {// recebe id da transacao        
+    public function topazio_emprestimo($id) {// recebe id da transacao           
         if($_SESSION['logged_role'] !== 'ADMIN'){
             return;            
         }
         $API_token = $this->get_topazio_API_token();
         if($API_token){
-            $result_basic = $this->basicCustomerTopazio($id, $API_token);
+            $result_basic = $this->basicCustomerTopazio($id, $API_token);            
             if($result_basic['success']){
                 $response = $this->topazio_loans($id, $API_token);                
                 if($response['success']){
@@ -3182,16 +3353,22 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
-    public function get_transaction_datas_by_id(){
+    public function get_transaction_datas_by_id($datas=NULL){
         $this->load->model('class/affiliate_model');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
-            $datas = $this->input->post();
+            $datas_by_post=false;
+            if(!$datas){
+                $datas = $this->input->post();
+                $datas_by_post=true;
+            }
             $result['message'] = 'Transação não encontrada';
             $result['success']=false;
             foreach ($_SESSION['affiliate_logged_transactions'] as $transactions){
-                if($transactions['client_id'] == $datas['id']){
-                    //adicionar datos da transacao
+                $aaaa=$transactions['tr_id'];
+                $bbbb=$datas['id'];
+                if($transactions['tr_id'] == $datas['id']){
+                    //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
                     $transactions['month_value'] =$financials['month_value'];
@@ -3200,7 +3377,8 @@ class Welcome extends CI_Controller {
                     $transactions['CET_PERC'] =$financials['CET_PERC'];
                     $transactions['CET_YEAR'] =$financials['CET_YEAR'];
                     //////
-                    $_SESSION['transaction_requested_id'] = $datas['id'];
+                    $_SESSION['transaction_requested_id'] = $transactions['tr_id'];
+                    $aaa = $_SESSION['transaction_requested_id'] ;
                     $_SESSION['transaction_requested_datas'] = $transactions;
                     $result['message'] = $transactions;
                     $result['success']=true;
@@ -3211,16 +3389,52 @@ class Welcome extends CI_Controller {
                 }
             }
         }
-        echo json_encode($result);        
+        if($datas_by_post)
+            echo json_encode($result);
+        else
+            return $result;
     }
 
-    public function topazio_conciliations($date){
+    public function topazio_conciliations($date=NULL){
+        $method=NULL;
+        if(!$date){
+            $date =$_GET['date'];
+            $method='GET';
+        }
+        if(!$date)
+            return;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
         $API_token = $this->get_topazio_API_token();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/conciliations/".$date);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        $headers = array();
+        $headers[] = "Accept: text/plain";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        /*if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }*/
+        curl_close ($ch);
+        $parsed_response = json_decode($result);
+        if($method==='GET')
+            var_dump ($parsed_response);
+        else
+            return $parsed_response;
+    }
+    
+    public function topazio_conciliations_by_partnerId($partnerId){ //11537381919
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
+        $API_token = $this->get_topazio_API_token();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/loans/".$partnerId);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         //curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         $headers = array();
@@ -4239,5 +4453,32 @@ class Welcome extends CI_Controller {
             $result['email'] = $email91;
         return $result;
     }   
+    
+    
+    
+    //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
+    
+    public function BRASPAG_Autorization($param) { /*ou pré-autorização, apenas sensibiliza o limite do cliente, mas ainda não gera cobrança na fatura para o consumidor. Desta forma, é necessário uma segunda operação, chamada ‘captura’.*/
+        
+    }
+    
+    public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
+        
+    }
+    
+    public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        
+    }
+    
+    public function BRASPAG_Cancel($param) { /*não se quer mais efetivar uma venda. No caso de uma pré-autorização, o cancelamento irá liberar o limite do cartão que foi sensibilizado em uma pré-autorização. Quando a transação já estiver sido capturada, o cancelamento irá desfazer a venda, mas deve ser executado até às 23:59:59 da data da autorização/captura.*/
+        
+    }
+    
+    public function BRASPAG_Devolution($param) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
+        
+    }
+    
+    
+    
     
 }

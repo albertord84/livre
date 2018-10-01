@@ -49,7 +49,7 @@
                                             <li><a href="resumo">RESUMO</a></li>
                                             <li><a href="transacoes">TRANSAÇÕES</a></li>
                                             <li><a href="configuracoes">CONFIGURAÇÕES</a></li>
-                                            <li><a href="afiliados">AFILIADOS</a></li>
+                                            <li><a href="list_afiliados">AFILIADOS</a></li>
                                     </ul>                                    
                                <?php }?>                            
 			</div>
