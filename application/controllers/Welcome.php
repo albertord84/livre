@@ -302,7 +302,7 @@ class Welcome extends CI_Controller {
             $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
             /*--- TAX e IOF -----*/
             $sum_tax = 0; $sum_iof = 0;
-            $has_next_page = true; $amount_by_page = 20; $page = 0;
+            $has_next_page = true; $amount_by_page = 1000; $page = 0;
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
@@ -352,7 +352,7 @@ class Welcome extends CI_Controller {
                 $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
                 /*--- TAX e IOF -----*/
             $sum_tax = 0; $sum_iof = 0;
-            $has_next_page = true; $amount_by_page = 2; $page = 0;
+            $has_next_page = true; $amount_by_page = 1000; $page = 0;
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
@@ -362,7 +362,7 @@ class Welcome extends CI_Controller {
                 }                
                 $page++;
             }
-            $params['average_iof'] = number_format(($sum_iof)/$params['total_transactions'], 2, '.', '');
+            $params['average_iof'] = number_format(($sum_iof), 2, '.', '');
             $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             }
             else{
