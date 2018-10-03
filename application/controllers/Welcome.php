@@ -1375,6 +1375,7 @@ class Welcome extends CI_Controller {
                     $tr_reduce['solicited_date'] = $tr['solicited_date'];
                     $tr_reduce['partnerId'] = $tr['contract_id'];                    
                     $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
+                    $tr_reduce['utm_source'] = $tr['utm_source'];
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
@@ -1486,7 +1487,8 @@ class Welcome extends CI_Controller {
                     $tr_reduce['state'] = $tr['state_address'];
                     $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
                     $tr_reduce['months'] = $tr['number_plots'];
-                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                                        
+                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ]; 
+                    $tr_reduce['utm_source'] = $tr['utm_source'];
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
