@@ -97,15 +97,15 @@ class Welcome extends CI_Controller {
         else
             $_SESSION['utm_source'] = '';
         
-//        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
-//            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
-//        else
-//            $_SESSION['utm_campaign'] = '';
-//        
-//        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
-//            $_SESSION['utm_content'] = $datas['utm_content'];
-//        else
-//            $_SESSION['utm_content'] = '';
+        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
+            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
+        else
+            $_SESSION['utm_campaign'] = '';
+        
+        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
+            $_SESSION['utm_content'] = $datas['utm_content'];
+        else
+            $_SESSION['utm_content'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -622,8 +622,8 @@ class Welcome extends CI_Controller {
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
             $datas['utm_source'] = $_SESSION['utm_source'];        
-//            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
-//            $datas['utm_content'] = $_SESSION['utm_content'];        
+            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
+            $datas['utm_content'] = $_SESSION['utm_content'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -1391,6 +1391,8 @@ class Welcome extends CI_Controller {
                     $tr_reduce['partnerId'] = $tr['contract_id'];                    
                     $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
                     $tr_reduce['utm_source'] = $tr['utm_source'];
+                    $tr_reduce['utm_campaign'] = $tr['utm_campaign'];
+                    $tr_reduce['utm_content'] = $tr['utm_content'];                            
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
@@ -1504,6 +1506,8 @@ class Welcome extends CI_Controller {
                     $tr_reduce['months'] = $tr['number_plots'];
                     $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ]; 
                     $tr_reduce['utm_source'] = $tr['utm_source'];
+                    $tr_reduce['utm_campaign'] = $tr['utm_campaign'];
+                    $tr_reduce['utm_content'] = $tr['utm_content'];
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
