@@ -85,8 +85,7 @@ class Welcome extends CI_Controller {
     }
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
-        $this->test1();
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
