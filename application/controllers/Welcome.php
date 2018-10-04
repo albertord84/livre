@@ -43,6 +43,21 @@ class Welcome extends CI_Controller {
         var_dump($resp);
     }
     
+    public function test1(){
+        $param = [
+            'name' => 'Jorge Moreno',
+            'amount' => 10000,
+            'plots' => 7,
+            'card_name' => 'Jorge R. Moreno',
+            'card_number' => '0000000000000001',
+            'card_cvc' => '241',
+            'card_month' => '03',
+            'card_year' => '2018',
+            'card_brand' => 'VISA',
+        ];
+        $this->BRASPAG_Authomatic_Capture($param);
+    }
+    
     public function update_acount_bank_by_user_id() {//para trabajar manual
         $this->load->model('class/Transaction_model');    
         $this->load->model('class/Crypt');  
@@ -71,6 +86,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
     public function index() {
+        $this->test1();
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4469,7 +4485,54 @@ class Welcome extends CI_Controller {
     }
     
     public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        $ch = curl_init();
+        $post_fields = "{\n   \"MerchantOrderId\":\"2017051002\",\n ".
+                        "  \"Customer\":{\n   ".
+                        "   \"Name\":\"".$param['name']."\"\n   },\n ".
+                        "  \"Payment\":{\n   ".
+                        "  \"Provider\":\"Simulado\",\n  ".
+                        "   \"Type\":\"CreditCard\",\n   ".
+                        "  \"Amount\":".$param['amount'].",\n   ".
+                        "  \"Capture\":true,\n  ".
+                        "   \"Installments\":".$param['plots'].",\n  ".
+                        "   \"CreditCard\":{\n     ".
+                        "    \"CardNumber\":\"".$param['card_number']." \",\n    ".
+                        "     \"Holder\":\"".$param['card_name']."\",\n   ".
+                        "      \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
+                        "      \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
+                        "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
+        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
         
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
+        curl_close ($ch);
+        
+        if(is_array($parsed_response)){
+            $result['success'] = false;
+            $result['code'] = $parsed_response[0]->Code;
+            $result['message'] = $parsed_response[0]->Message;
+        }
+        else{
+            if(is_object($parsed_response)){
+                $result['success'] = true;
+                $result['status'] = $parsed_response->Payment->Status;
+                $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
+                $result['payment_id'] = $parsed_response->Payment->PaymentId;
+            }
+        }
+
+        return $result;
     }
     
     public function BRASPAG_Cancel($param) { /*não se quer mais efetivar uma venda. No caso de uma pré-autorização, o cancelamento irá liberar o limite do cartão que foi sensibilizado em uma pré-autorização. Quando a transação já estiver sido capturada, o cancelamento irá desfazer a venda, mas deve ser executado até às 23:59:59 da data da autorização/captura.*/
