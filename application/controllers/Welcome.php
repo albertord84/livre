@@ -85,8 +85,8 @@ class Welcome extends CI_Controller {
     }
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
-        $this->test1();
+
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4517,7 +4517,7 @@ class Welcome extends CI_Controller {
         $parsed_response = json_decode($result_curl);
         
         curl_close ($ch);
-        
+
         if(is_array($parsed_response)){
             $result['success'] = false;
             $result['code'] = $parsed_response[0]->Code;
