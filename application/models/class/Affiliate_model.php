@@ -98,12 +98,24 @@ class Affiliate_model extends CI_Model{
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
-                                if ( strpos($token, 'utm: ') !== false) {
-                                    $token = str_replace("utm: ", '', $token);
+                                if ( strpos($token, 'utm_source: ') !== false) {
+                                    $token = str_replace("utm_source: ", '', $token);
                                     $this->db->like('transactions.utm_source', $token);
                                 }
                                 else{
-                                    $this->db->like('transactions.name', $token);                            
+                                    if ( strpos($token, 'utm_campaign: ') !== false) {
+                                        $token = str_replace("utm_campaign: ", '', $token);
+                                        $this->db->like('transactions.utm_campaign', $token);
+                                    }
+                                    else{
+                                        if ( strpos($token, 'utm_content: ') !== false) {
+                                            $token = str_replace("utm_content: ", '', $token);
+                                            $this->db->like('transactions.utm_content', $token);
+                                        }
+                                        else{
+                                            $this->db->like('transactions.name', $token);                            
+                                        }
+                                    }
                                 }
                             }                            
                         }
@@ -176,12 +188,24 @@ class Affiliate_model extends CI_Model{
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
-                                if ( strpos($token, 'utm: ') !== false) {
-                                    $token = str_replace("utm: ", '', $token);
+                                if ( strpos($token, 'utm_source: ') !== false) {
+                                    $token = str_replace("utm_source: ", '', $token);
                                     $this->db->like('transactions.utm_source', $token);
                                 }
                                 else{
-                                    $this->db->like('transactions.name', $token);                            
+                                    if ( strpos($token, 'utm_campaign: ') !== false) {
+                                        $token = str_replace("utm_campaign: ", '', $token);
+                                        $this->db->like('transactions.utm_campaign', $token);
+                                    }
+                                    else{
+                                        if ( strpos($token, 'utm_content: ') !== false) {
+                                            $token = str_replace("utm_content: ", '', $token);
+                                            $this->db->like('transactions.utm_content', $token);
+                                        }
+                                        else{
+                                            $this->db->like('transactions.name', $token);                            
+                                        }
+                                    }
                                 }
                             }                            
                         }
@@ -259,12 +283,24 @@ class Affiliate_model extends CI_Model{
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
-                                if ( strpos($token, 'utm: ') !== false) {
-                                    $token = str_replace("utm: ", '', $token);
+                                if ( strpos($token, 'utm_source: ') !== false) {
+                                    $token = str_replace("utm_source: ", '', $token);
                                     $this->db->like('transactions.utm_source', $token);
                                 }
                                 else{
-                                    $this->db->like('transactions.name', $token);                            
+                                    if ( strpos($token, 'utm_campaign: ') !== false) {
+                                        $token = str_replace("utm_campaign: ", '', $token);
+                                        $this->db->like('transactions.utm_campaign', $token);
+                                    }
+                                    else{
+                                        if ( strpos($token, 'utm_content: ') !== false) {
+                                            $token = str_replace("utm_content: ", '', $token);
+                                            $this->db->like('transactions.utm_content', $token);
+                                        }
+                                        else{
+                                            $this->db->like('transactions.name', $token);                            
+                                        }
+                                    }
                                 }
                             }                            
                         }
