@@ -101,7 +101,7 @@
                         <a style="font-size:20px; position: absolute; right: 15px; cursor: pointer;" data-dismiss="modal" >&times;</a>
                         <img src="<?php echo base_url().'assets/'?>img/icones/lapis.png"> Utilize a mesma assinatura da sua identidade.                        
                     </div>
-                    <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:700px;"><iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/5f4a76f0ef046dd99a6ed09f1510153f" width="700"></iframe></div>
+                    <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:700px;"></div>
 <!--                    <div class="fleft100 m-top10 text-right center-sm">
                         <button class="bt-green" data-dismiss="modal">Pronto!</button>
                     </div>-->
@@ -808,7 +808,7 @@
             </div>
             <div class="modal-body">
                 <div style="display:block;margin:0;padding:0;border:0;outline:0;font-size:10px!important;color:#AAA!important;vertical-align:baseline;background:transparent;width:755px;">
-                    <iframe frameborder="0" height="500" scrolling="no" src="https://secure.rightsignature.com/templates/0ad1974f-9d3a-43d4-9cc6-b600a0512001/template-signer-link/f7619c51792d28daee0cb475964cf819" width="755"></iframe>
+                    
                 </div>
             </div>
             <div class="modal-footer text-center">
