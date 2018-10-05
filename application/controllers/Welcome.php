@@ -55,7 +55,8 @@ class Welcome extends CI_Controller {
             'card_year' => '2018',
             'card_brand' => 'VISA',
         ];
-        $this->BRASPAG_Authomatic_Capture($param);
+        $result = $this->BRASPAG_Authomatic_Capture($param);
+        $result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
     }
     
     public function update_acount_bank_by_user_id() {//para trabajar manual
@@ -85,7 +86,7 @@ class Welcome extends CI_Controller {
     }
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {        
+    public function index() {                
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4479,14 +4480,6 @@ class Welcome extends CI_Controller {
     
     //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
     
-    public function BRASPAG_Autorization($param) { /*ou pré-autorização, apenas sensibiliza o limite do cliente, mas ainda não gera cobrança na fatura para o consumidor. Desta forma, é necessário uma segunda operação, chamada ‘captura’.*/
-        
-    }
-    
-    public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
-        
-    }
-    
     public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $ch = curl_init();
         $post_fields = "{\n   \"MerchantOrderId\":\"2017051002\",\n ".
@@ -4538,12 +4531,27 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
-    public function BRASPAG_Cancel($param) { /*não se quer mais efetivar uma venda. No caso de uma pré-autorização, o cancelamento irá liberar o limite do cartão que foi sensibilizado em uma pré-autorização. Quando a transação já estiver sido capturada, o cancelamento irá desfazer a venda, mas deve ser executado até às 23:59:59 da data da autorização/captura.*/
+    public function BRASPAG_Devolution($payment_id, $amount) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/void?amount=".$amount);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array()));
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
         
-    }
-    
-    public function BRASPAG_Devolution($param) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
-        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close ($ch);
     }
     
     
