@@ -1798,7 +1798,8 @@ class Welcome extends CI_Controller {
         if($_SESSION['pk'] == $this->Crypt->decrypt($datas['trid'])){
             $datas['pk'] = $_SESSION['pk'];
             $account_bank = $this->transaction_model->get_account_bank_by_client_id($datas['pk'],0)[0];
-            if($this->transaction_model->update_db_steep_3($datas,$account_bank['id'])){                
+            //if($this->transaction_model->update_db_steep_3($datas,$account_bank['id'])){    //errado, deve ser o id do cliente
+            if($this->transaction_model->update_db_steep_3($datas, $_SESSION['pk'])){                
                 //1. generar PDF del contrato nuevamente con los datos de la nueva cuenta
                 $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
                 if($uudid_doc){
