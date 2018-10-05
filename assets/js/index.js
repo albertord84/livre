@@ -2,8 +2,8 @@ $(document).ready(function () {
     var solicited_value=0;
     var amount_months=parseInt($("#range").val());    
     var utm_source= typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL';
-//    var utm_campaign= typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL';
-//    var utm_content= typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL';
+    var utm_campaign= typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL';
+    var utm_content= typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL';
     var slideToggle=1;
     
     
@@ -129,7 +129,7 @@ $(document).ready(function () {
                 solicited_value = solicited_value.replace('R$ ','');
                 solicited_value = solicited_value.replace(',','.');
                 solicited_value = parseFloat(solicited_value);
-                params="utm_source="+utm_source+"&frm_money_use_form="+$('#money_use_form').val();
+                params="utm_source="+utm_source+"&frm_money_use_form="+$('#money_use_form').val()+"&utm_content="+utm_content+"&utm_campaign="+utm_campaign;
                 url=base_url+"index.php/welcome/checkout?"+params;
                 $(location).attr('href',url);
             }

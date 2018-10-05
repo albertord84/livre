@@ -43,6 +43,21 @@ class Welcome extends CI_Controller {
         var_dump($resp);
     }
     
+    public function test1(){
+        $param = [
+            'name' => 'Jorge Moreno',
+            'amount' => 10000,
+            'plots' => 7,
+            'card_name' => 'Jorge R. Moreno',
+            'card_number' => '0000000000000001',
+            'card_cvc' => '241',
+            'card_month' => '03',
+            'card_year' => '2018',
+            'card_brand' => 'VISA',
+        ];
+        $this->BRASPAG_Authomatic_Capture($param);
+    }
+    
     public function update_acount_bank_by_user_id() {//para trabajar manual
         $this->load->model('class/Transaction_model');    
         $this->load->model('class/Crypt');  
@@ -70,7 +85,8 @@ class Welcome extends CI_Controller {
     }
     
     //-------VIEWS FUNCTIONS--------------------------------    
-    public function index() {
+
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -82,15 +98,15 @@ class Welcome extends CI_Controller {
         else
             $_SESSION['utm_source'] = '';
         
-//        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
-//            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
-//        else
-//            $_SESSION['utm_campaign'] = '';
-//        
-//        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
-//            $_SESSION['utm_content'] = $datas['utm_content'];
-//        else
-//            $_SESSION['utm_content'] = '';
+        if(isset($datas['utm_campaign']) && $datas['utm_campaign']!=NULL)
+            $_SESSION['utm_campaign'] = $datas['utm_campaign'];
+        else
+            $_SESSION['utm_campaign'] = '';
+        
+        if(isset($datas['utm_content']) && $datas['utm_content']!=NULL)
+            $_SESSION['utm_content'] = $datas['utm_content'];
+        else
+            $_SESSION['utm_content'] = '';
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
@@ -302,7 +318,7 @@ class Welcome extends CI_Controller {
             $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
             /*--- TAX e IOF -----*/
             $sum_tax = 0; $sum_iof = 0;
-            $has_next_page = true; $amount_by_page = 2; $page = 0;
+            $has_next_page = true; $amount_by_page = 1000; $page = 0;
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
@@ -352,7 +368,7 @@ class Welcome extends CI_Controller {
                 $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
                 /*--- TAX e IOF -----*/
             $sum_tax = 0; $sum_iof = 0;
-            $has_next_page = true; $amount_by_page = 2; $page = 0;
+            $has_next_page = true; $amount_by_page = 1000; $page = 0;
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
@@ -362,7 +378,7 @@ class Welcome extends CI_Controller {
                 }                
                 $page++;
             }
-            $params['average_iof'] = number_format(($sum_iof)/$params['total_transactions'], 2, '.', '');
+            $params['average_iof'] = number_format(($sum_iof), 2, '.', '');
             $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             }
             else{
@@ -607,8 +623,8 @@ class Welcome extends CI_Controller {
             $datas['HTTP_SERVER_VARS'] = json_encode($_SERVER);        
             $datas['affiliate_code'] = $_SESSION['affiliate_code'];        
             $datas['utm_source'] = $_SESSION['utm_source'];        
-//            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
-//            $datas['utm_content'] = $_SESSION['utm_content'];        
+            $datas['utm_campaign'] = $_SESSION['utm_campaign'];        
+            $datas['utm_content'] = $_SESSION['utm_content'];        
             if(!$this->validate_all_general_user_datas($datas)){
                 $result['success'] = false;
                 $result['message'] = 'Erro nos dados fornecidos';
@@ -1375,6 +1391,9 @@ class Welcome extends CI_Controller {
                     $tr_reduce['solicited_date'] = $tr['solicited_date'];
                     $tr_reduce['partnerId'] = $tr['contract_id'];                    
                     $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
+                    $tr_reduce['utm_source'] = $tr['utm_source'];
+                    $tr_reduce['utm_campaign'] = $tr['utm_campaign'];
+                    $tr_reduce['utm_content'] = $tr['utm_content'];                            
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
@@ -1486,7 +1505,10 @@ class Welcome extends CI_Controller {
                     $tr_reduce['state'] = $tr['state_address'];
                     $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
                     $tr_reduce['months'] = $tr['number_plots'];
-                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                                        
+                    $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ]; 
+                    $tr_reduce['utm_source'] = $tr['utm_source'];
+                    $tr_reduce['utm_campaign'] = $tr['utm_campaign'];
+                    $tr_reduce['utm_content'] = $tr['utm_content'];
                     
                     if($first_result && $tr_reduce){
                         $first_result = FALSE;
@@ -4459,7 +4481,7 @@ class Welcome extends CI_Controller {
     //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
     
     public function BRASPAG_Autorization($param) { /*ou pré-autorização, apenas sensibiliza o limite do cliente, mas ainda não gera cobrança na fatura para o consumidor. Desta forma, é necessário uma segunda operação, chamada ‘captura’.*/
-        
+      
     }
     
     public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
@@ -4467,7 +4489,54 @@ class Welcome extends CI_Controller {
     }
     
     public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        $ch = curl_init();
+        $post_fields = "{\n   \"MerchantOrderId\":\"2017051002\",\n ".
+                        "  \"Customer\":{\n   ".
+                        "   \"Name\":\"".$param['name']."\"\n   },\n ".
+                        "  \"Payment\":{\n   ".
+                        "  \"Provider\":\"Simulado\",\n  ".
+                        "   \"Type\":\"CreditCard\",\n   ".
+                        "  \"Amount\":".$param['amount'].",\n   ".
+                        "  \"Capture\":true,\n  ".
+                        "   \"Installments\":".$param['plots'].",\n  ".
+                        "   \"CreditCard\":{\n     ".
+                        "    \"CardNumber\":\"".$param['card_number']." \",\n    ".
+                        "     \"Holder\":\"".$param['card_name']."\",\n   ".
+                        "      \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
+                        "      \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
+                        "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
+        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
         
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
+        curl_close ($ch);
+
+        if(is_array($parsed_response)){
+            $result['success'] = false;
+            $result['code'] = $parsed_response[0]->Code;
+            $result['message'] = $parsed_response[0]->Message;
+        }
+        else{
+            if(is_object($parsed_response)){
+                $result['success'] = true;
+                $result['status'] = $parsed_response->Payment->Status;
+                $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
+                $result['payment_id'] = $parsed_response->Payment->PaymentId;
+            }
+        }
+
+        return $result;
     }
     
     public function BRASPAG_Cancel($param) { /*não se quer mais efetivar uma venda. No caso de uma pré-autorização, o cancelamento irá liberar o limite do cartão que foi sensibilizado em uma pré-autorização. Quando a transação já estiver sido capturada, o cancelamento irá desfazer a venda, mas deve ser executado até às 23:59:59 da data da autorização/captura.*/
