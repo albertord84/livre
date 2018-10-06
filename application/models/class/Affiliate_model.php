@@ -79,6 +79,8 @@ class Affiliate_model extends CI_Model{
                 $this->db->where('affiliate_code',$affiliates_code);            
             if($status != 0)
                 $this->db->where('transactions.status_id',$status);            
+            else
+                $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);            
             if( $token!=''){
                 if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
@@ -264,6 +266,8 @@ class Affiliate_model extends CI_Model{
                 $this->db->where('affiliate_code',$affiliates_code);            
             if($status != 0)
                 $this->db->where('transactions.status_id',$status);            
+            else
+                $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);            
             if( $token!=''){
                 if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
