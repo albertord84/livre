@@ -442,7 +442,7 @@
                             <span class="fleft100">Estado</span>
                             <div class="m-top25 m-top25-xs">
                                 <select name="status" id="status" required style="max-height: 70px; background-color:#293d3d;">
-                                    <option value="default" selected="0">ANY STATE</option>
+                                    <option value="default" selected="0">NON BEGGINER</option>
                                     <option value="1" <?php if($status == 1) echo "selected='selected'";?> >BEGINNER</option>
                                     <option value="2" <?php if($status == 2) echo "selected='selected'";?>>WAIT_SIGNATURE</option>                                                                    
                                     <option value="4" <?php if($status == 4) echo "selected='selected'";?>>WAIT_PHOTO</option>                                
