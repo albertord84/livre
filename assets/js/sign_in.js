@@ -993,6 +993,12 @@ $(document).ready(function () {
         //ñ ç âêôûî áéíóú àãẽõ
     });
     
+    $("#credit_card_number").change(function (e) {
+        var a = $("#credit_card_number").val().toUpperCase();        
+        a = a.replace(/ /g, "");
+        $("#credit_card_number").val(a);
+    });
+    
     
     
     

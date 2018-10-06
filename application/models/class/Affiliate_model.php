@@ -115,7 +115,18 @@ class Affiliate_model extends CI_Model{
                                             $this->db->like('transactions.utm_content', $token);
                                         }
                                         else{
-                                            $this->db->like('transactions.name', $token);                            
+                                            if ( strpos($token, 'tel: ') !== false) {
+                                                $token = str_replace("tel: ", '', $token);
+                                                $this->db->like('transactions.phone_number', $token);
+                                            }else{
+                                                if ( strpos($token, 'uf: ') !== false) {
+                                                    $token = str_replace("uf: ", '', $token);
+                                                    $this->db->like('transactions.state_address', $token);
+                                                }
+                                                else{
+                                                    $this->db->like('transactions.name', $token);                            
+                                                }                                        
+                                            }
                                         }
                                     }
                                 }
@@ -124,7 +135,7 @@ class Affiliate_model extends CI_Model{
                     }
                     
                 }
-            } 
+            }
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);
             $this->db->order_by("transactions_status.false_id", "desc");
             $this->db->order_by("transactions.id", "desc");
@@ -167,10 +178,10 @@ class Affiliate_model extends CI_Model{
             $this->load->model('class/Crypt');
             $this->load->model('class/transactions_status');
             $this->db->select('*');
-            $this->db->from('transactions');
-            
+            $this->db->from('transactions');            
             if($status != 0)
-                $this->db->where('transactions.status_id',$status);            
+                $this->db->where('transactions.status_id',$status);   
+            
             if( $token!=''){
                 if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
@@ -302,7 +313,18 @@ class Affiliate_model extends CI_Model{
                                             $this->db->like('transactions.utm_content', $token);
                                         }
                                         else{
-                                            $this->db->like('transactions.name', $token);                            
+                                            if ( strpos($token, 'tel: ') !== false) {
+                                                $token = str_replace("tel: ", '', $token);
+                                                $this->db->like('transactions.phone_number', $token);
+                                            }else{
+                                                if ( strpos($token, 'uf: ') !== false) {
+                                                    $token = str_replace("uf: ", '', $token);
+                                                    $this->db->like('transactions.state_address', $token);
+                                                }
+                                                else{
+                                                    $this->db->like('transactions.name', $token);                            
+                                                }                                        
+                                            }
                                         }
                                     }
                                 }
