@@ -36,6 +36,12 @@
                                         PartnerId: <span id="trans_partnerId"></span><br>
                                         CCB_numb: <span id="trans_trans_ccb_number"></span><br>
                                     </p>
+                                    <small class="fleft100 cl-silver">Dados da procedência</small>
+                                    <p>                                        
+                                        utm_source: <font color="green"><span id="trans_utm_source"></span></font><br>
+                                        utm_campaign: <font color="green"><span id="trans_utm_campaign"></span></font><br>
+                                        utm_content: <font color="green"><span id="trans_utm_content"></span></font><br>
+                                    </p>
 				</div>
                                 <div class="w20 fw-500 text-left m-top10-xs center-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>

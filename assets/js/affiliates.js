@@ -200,6 +200,9 @@ $(document).ready(function () {
                     $("#trans_email").text(response['message']['email']);
                     $("#trans_partnerId").text(response['message']['contract_id']);
                     $("#trans_trans_ccb_number").text(response['message']['ccb_number']);
+                    $("#trans_utm_source").text(response['message']['utm_source']);
+                    $("#trans_utm_campaign").text(response['message']['utm_campaign']);
+                    $("#trans_utm_content").text(response['message']['utm_content']);
                     $("#trans_cpf").text(response['message']['cpf']);
                     $("#trans_phone_ddd").text(response['message']['phone_ddd']);
                     $("#trans_phone_number").text(response['message']['phone_number']);
