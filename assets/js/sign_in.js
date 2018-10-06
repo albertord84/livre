@@ -769,7 +769,7 @@ $(document).ready(function () {
             success: function (response) {
                 // your callback here
                 if(response['success']){
-                    modal_alert_message('Arquivo subido com sucesso!');
+                    modal_alert_message('Arquivo enviado com sucesso!');
                     switch (id) {
                         case 0:
                             $('#check_front_credit_card').removeClass('uplred');
