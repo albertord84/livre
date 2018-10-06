@@ -4481,11 +4481,11 @@ class Welcome extends CI_Controller {
     
     
     //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
-    
+  
     public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
         
     }
-    
+                        
     public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $ch = curl_init();
         $post_fields = "{\n   \"MerchantOrderId\":\"2017051002\",\n ".
