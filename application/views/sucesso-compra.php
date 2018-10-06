@@ -82,7 +82,7 @@
 				<h2 class="bk-green5 text-center pd-tb15 fw-800">
                                     <img src="<?php echo base_url().'assets/'?>img/icones/SELFIE-ID.png" alt=""> Falta pouco!</h2>
 				<div class="fleft100 pd-30 bk-fff ">
-					<div class="fleft100 pd-lr60 m-top40 m-b40">
+					<div class="fleft100 m-top40 m-b40">
 						<h4 class="cl-blue m-b10">Parabéns <?php echo $name;?>!</h4>
 						<p>
 							Agora falta muito pouco para seu crédito ser liberado.
@@ -96,7 +96,7 @@
                                                         solicitaremos novas fotos por email. 
 						</p>
 						<p>
-                                                        <img src="<?php echo base_url().'assets/'?>img/icones/PASSOS pagina final PNG.png" alt="">
+                                                    <img class="img-responsive" src="<?php echo base_url().'assets/'?>img/icones/PASSOS pagina final PNG.png" alt="">
 						</p>
 						<div class="fleft100 text-center m-top30">
 							<h4 class="cl-blue m-b10">Está com dúvidas?</h4>
