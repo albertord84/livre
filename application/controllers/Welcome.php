@@ -49,11 +49,12 @@ class Welcome extends CI_Controller {
             'amount' => 10000,
             'plots' => 7,
             'card_name' => 'Jorge R. Moreno',
-            'card_number' => '0000000000000001',
+            'card_number' => '0000000000000007',
             'card_cvc' => '241',
             'card_month' => '03',
             'card_year' => '2018',
             'card_brand' => 'VISA',
+            'provider' => 'Simulado',
         ];
         $result = $this->BRASPAG_Authomatic_Capture($param);
         $result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
@@ -87,7 +88,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4492,7 +4493,7 @@ class Welcome extends CI_Controller {
                         "  \"Customer\":{\n   ".
                         "   \"Name\":\"".$param['name']."\"\n   },\n ".
                         "  \"Payment\":{\n   ".
-                        "  \"Provider\":\"Simulado\",\n  ".
+                        "  \"Provider\":\"".$param['provider']."\",\n  ".
                         "   \"Type\":\"CreditCard\",\n   ".
                         "  \"Amount\":".$param['amount'].",\n   ".
                         "  \"Capture\":true,\n  ".
@@ -4527,10 +4528,15 @@ class Welcome extends CI_Controller {
         }
         else{
             if(is_object($parsed_response)){
-                $result['success'] = true;
+                $result['success'] = false;                
                 $result['status'] = $parsed_response->Payment->Status;
+                $result['reason_code'] = $parsed_response->Payment->ReasonCode;
+                $result['provider_code'] = $parsed_response->Payment->ProviderReturnCode;
                 $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
                 $result['payment_id'] = $parsed_response->Payment->PaymentId;
+                if($result['reason_code'] == 0 && $result['status'] == 2){
+                    $result['success'] = true;    //operacao com sucesso e paga confirmada            
+                }
             }
         }
 
