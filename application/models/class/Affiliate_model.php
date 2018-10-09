@@ -82,7 +82,7 @@ class Affiliate_model extends CI_Model{
             else
                 $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);            
             if( $token!=''){
-                if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
+                if( strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
                     $this->db->like('transactions.cpf', $token);                            
                 }
@@ -91,12 +91,12 @@ class Affiliate_model extends CI_Model{
                         $token = str_replace("email: ", '', $token);
                         $this->db->like('transactions.email', $token);
                     }else{
-                        if ( strpos($token, 'partnerId: ') !== false) {
-                            $token = str_replace("partnerId: ", '', $token);
+                        if (is_numeric($token) && strlen($token) === 11) {
+                            //$token = str_replace("partnerId: ", '', $token);
                             $this->db->like('transactions.contract_id', $token);
                         }else{
-                            if ( strpos($token, 'ccbNumber: ') !== false) {
-                                $token = str_replace("ccbNumber: ", '', $token);
+                            if (is_numeric($token) && strlen($token) < 11) {
+                                //$token = str_replace("ccbNumber: ", '', $token);
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
@@ -183,7 +183,7 @@ class Affiliate_model extends CI_Model{
                 $this->db->where('transactions.status_id',$status);   
             
             if( $token!=''){
-                if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
+                if( strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
                     $this->db->like('transactions.cpf', $token);                            
                 }
@@ -192,12 +192,12 @@ class Affiliate_model extends CI_Model{
                         $token = str_replace("email: ", '', $token);
                         $this->db->like('transactions.email', $token);
                     }else{
-                        if ( strpos($token, 'partnerId: ') !== false) {
-                            $token = str_replace("partnerId: ", '', $token);
+                        if (is_numeric($token) && strlen($token) === 11) {
+                            //$token = str_replace("partnerId: ", '', $token);
                             $this->db->like('transactions.contract_id', $token);
                         }else{
-                            if ( strpos($token, 'ccbNumber: ') !== false) {
-                                $token = str_replace("ccbNumber: ", '', $token);
+                            if (is_numeric($token) && strlen($token) < 11) {
+                                //$token = str_replace("ccbNumber: ", '', $token);
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
@@ -280,7 +280,7 @@ class Affiliate_model extends CI_Model{
             else
                 $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);            
             if( $token!=''){
-                if(is_numeric($token) || strpos($token, 'cpf: ')!== false ){
+                if( strpos($token, 'cpf: ')!== false ){
                     $token = str_replace("cpf: ", '', $token);
                     $this->db->like('transactions.cpf', $token);                            
                 }
@@ -289,12 +289,12 @@ class Affiliate_model extends CI_Model{
                         $token = str_replace("email: ", '', $token);
                         $this->db->like('transactions.email', $token);
                     }else{
-                        if ( strpos($token, 'partnerId: ') !== false) {
-                            $token = str_replace("partnerId: ", '', $token);
+                        if (is_numeric($token) && strlen($token) === 11) {
+                            //$token = str_replace("partnerId: ", '', $token);
                             $this->db->like('transactions.contract_id', $token);
                         }else{
-                            if ( strpos($token, 'ccbNumber: ') !== false) {
-                                $token = str_replace("ccbNumber: ", '', $token);
+                            if (is_numeric($token) && strlen($token) < 11) {
+                                //$token = str_replace("ccbNumber: ", '', $token);
                                 $this->db->like('transactions.ccb_number', $token);
                             }
                             else{
