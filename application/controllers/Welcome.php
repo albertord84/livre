@@ -1426,8 +1426,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
-        if($_SESSION['logged_role'] === 'ADMIN'){
-            $this->update_old_tax();
+        if($_SESSION['logged_role'] === 'ADMIN'){            
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
             $start_period = $_SESSION["filter_datas"]["init_date"];
@@ -1550,7 +1549,7 @@ class Welcome extends CI_Controller {
             $page = 1; //descargar todos los registros de la consulta
             $has_next_page = 0;
             $init_date = NULL;
-            $cut_date = 1537228801;
+            $cut_date = 1537228801; //18/09/2018
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
                 //guardada en la variable de seccion
