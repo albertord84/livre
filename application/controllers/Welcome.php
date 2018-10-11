@@ -1549,8 +1549,8 @@ class Welcome extends CI_Controller {
             //1. abrir archivo temporal em modo escritura
             $page = 1; //descargar todos los registros de la consulta
             $has_next_page = 0;
-            $init_date = 1537228801;
-            $cut_date = NULL;
+            $init_date = NULL;
+            $cut_date = 1537228801;
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
                 //guardada en la variable de seccion
@@ -1568,8 +1568,8 @@ class Welcome extends CI_Controller {
                     $num_parcelas = $tr['number_plots'];
                     $B11 = number_format($valor_solicitado, 2, '.', '');
                     $B16 = $num_parcelas;
-                    //$tax = $this->tax_model->get_tax_row_old($B16)[$this->get_field_old($B11)];
-                    $tax = $this->tax_model->get_tax_row($B16)[$this->get_field($B11)];
+                    $tax = $this->tax_model->get_tax_row_old($B16)[$this->get_field_old($B11)];
+                    //$tax = $this->tax_model->get_tax_row($B16)[$this->get_field($B11)];
                     $this->transaction_model->save_in_db('transactions','id',$id,'tax',$tax);
                 }                
             }while($has_next_page > 0);
