@@ -1564,7 +1564,7 @@ class Welcome extends CI_Controller {
                 $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     $id = $tr['id'];
-                    $valor_solicitado = $tr['amount_solicited'];
+                    $valor_solicitado = $tr['amount_solicited']/100;
                     $num_parcelas = $tr['number_plots'];
                     $B11 = number_format($valor_solicitado, 2, '.', '');
                     $B16 = $num_parcelas;
