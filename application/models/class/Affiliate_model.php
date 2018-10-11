@@ -433,6 +433,31 @@ class Affiliate_model extends CI_Model{
         return NULL;
     }
     
+    public function load_transaction_cutdate($page=0, $amount_by_page=20, &$has_next_page, $cut_date = NULL){
+        try {
+            
+            $this->db->select('*');
+            $this->db->from('transactions');
+            $this->db->where('transactions.pay_date <=', $cut_date);                            
+            $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);            
+            $this->db->order_by("transactions.id", "desc");
+            
+            $result = $this->db->get()->result_array();
+            $i=0;
+            foreach ($result as $transaction){                
+                $i++;
+            }
+            $has_next_page=false;
+            if(count($result) > $amount_by_page){
+                $has_next_page=true;
+                unset($result[$i-1]);
+            }
+            return $result;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+    
     public function load_transaction_dates($transaction_id){
         try {
             $this->db->select('*');
@@ -642,7 +667,7 @@ class Affiliate_model extends CI_Model{
         try {                
             $this->load->model('class/transactions_status');                        
             
-            $this->db->select('amount_solicited, number_plots');
+            $this->db->select('amount_solicited, number_plots, tax');
             $this->db->from('transactions');            
             $this->db->where('transactions.status_id <>',transactions_status::BEGINNER);
             $this->db->where('transactions.status_id <>',transactions_status::REVERSE_MONEY);

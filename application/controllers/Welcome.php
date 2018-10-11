@@ -46,18 +46,18 @@ class Welcome extends CI_Controller {
     public function test1(){
         $param = [
             'name' => 'Jorge Moreno',
-            'amount' => 10000,
-            'plots' => 7,
+            'amount' => 23000,
+            'plots' => 8,
             'card_name' => 'Jorge R. Moreno',
-            'card_number' => '0000000000000007',
-            'card_cvc' => '241',
-            'card_month' => '03',
-            'card_year' => '2018',
+            'card_number' => '12341234123412317',
+            'card_cvc' => '123',
+            'card_month' => '12',
+            'card_year' => '2021',
             'card_brand' => 'VISA',
             'provider' => 'Simulado',
         ];
         $result = $this->BRASPAG_Authomatic_Capture($param);
-        $result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
+        //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
     }
     
     public function update_acount_bank_by_user_id() {//para trabajar manual
@@ -88,7 +88,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {        
+    public function index() {          
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -324,7 +324,7 @@ class Welcome extends CI_Controller {
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
-                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
                     $sum_iof += $financials['IOF'];
                     $sum_tax += $financials['tax'];
                 }                
@@ -374,7 +374,7 @@ class Welcome extends CI_Controller {
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
-                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
                     $sum_iof += $financials['IOF'];
                     $sum_tax += $financials['tax'];
                 }                
@@ -640,6 +640,7 @@ class Welcome extends CI_Controller {
                     $datas['number_plots'] = $_SESSION['transaction_values']['amount_months'];
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
+                    $datas['tax'] = $_SESSION['transaction_values']['tax'];
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
                     $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
@@ -1421,11 +1422,12 @@ class Welcome extends CI_Controller {
             exit;                                    }
     }
     
-    public function export_leads() {
+    public function export_leads() {        
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $this->update_old_tax();
             $page = $_SESSION["filter_datas"]["num_page"];
             $token = $_SESSION["filter_datas"]["token"];
             $start_period = $_SESSION["filter_datas"]["init_date"];
@@ -1534,6 +1536,41 @@ class Welcome extends CI_Controller {
             if(!$first_result)
                 fclose($file); 
             exit;                                    }
+    }
+    
+    public function update_old_tax() {        
+        $this->load->model('class/transaction_model');        
+        $this->load->model('class/system_config');
+        $this->load->model('class/tax_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');       
+        if($_SESSION['logged_role'] === 'ADMIN'){            
+            //TODO: Moreno
+            //1. abrir archivo temporal em modo escritura
+            $page = 1; //descargar todos los registros de la consulta
+            $has_next_page = 0;
+            $cut_date = 1537228801;
+            do{
+                //lee pagina de transacciones segun la configuracion de la consulta actual 
+                //guardada en la variable de seccion
+                $transactions = $this->affiliate_model->load_transaction_cutdate(                    
+                    $page-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,                    
+                    $has_next_page,
+                    $cut_date
+                );
+                $page++;//descargar todas las páginas
+                foreach ($transactions as $tr) {
+                    $id = $tr['id'];
+                    $valor_solicitado = $tr['amount_solicited'];
+                    $num_parcelas = $tr['number_plots'];
+                    $B11 = number_format($valor_solicitado, 2, '.', '');
+                    $B16 = $num_parcelas;
+                    $tax = $this->tax_model->get_tax_row($B16)[$this->get_field_old($B11)];
+                    $this->transaction_model->save_in_db('transactions','id',$id,'tax',$tax);
+                }                
+            }while($has_next_page > 0);
+        }
     }
     
     public function file_transactions(){        
@@ -2299,7 +2336,7 @@ class Welcome extends CI_Controller {
             $phone_country_code = '+55';            
             $phone_ddd = $datas['phone_ddd'];
             $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); //$random_code = 123;
+            $random_code = rand(100000,999999); $random_code = 123;
             $message = $random_code;
             $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
             if($response['success']){
@@ -2372,8 +2409,8 @@ class Welcome extends CI_Controller {
     //-------SMS KAIO API---------------------------------------
     public function send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message){        
         //com kaio_api
-        //$response['success'] = TRUE;    //remover essas dos lineas
-        //return $response;
+        $response['success'] = TRUE;    //remover essas dos lineas
+        return $response;
         
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -2837,7 +2874,7 @@ class Welcome extends CI_Controller {
             return $response;
         }
         
-        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"]);
+        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"], $client["tax"]);
         
         $token = $response_client['token'];
         $postData = array(
@@ -3147,7 +3184,7 @@ class Welcome extends CI_Controller {
         {
             return ['success' => false, 'code_error' => 3001,'message' => 'Contrato ainda não passou pelo estado de esperar assinatura'];
         }
-        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
         
         //********************************
         $num_plots = $financials["amount_months"];
@@ -3305,7 +3342,7 @@ class Welcome extends CI_Controller {
         return $next_date->format('Y-m-d');
     }
 
-    /*public function get_field($money_str){
+    public function get_field_old($money_str){
         $money = (float)($money_str);
         if($money == 500)
             return "500";
@@ -3320,7 +3357,7 @@ class Welcome extends CI_Controller {
         if($money > 2500 && $money <= 3000)
             return "2501_3000";
         return "2501_3000";
-    }*/
+    }
     
     public function get_field($money_str){
         $money = (float)($money_str);        
@@ -3394,7 +3431,7 @@ class Welcome extends CI_Controller {
                 $bbbb=$datas['id'];
                 if($transactions['tr_id'] == $datas['id']){
                     //adicionar datos da transacao                    
-                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"]);
+                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"], $transactions["tax"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
                     $transactions['month_value'] =$financials['month_value'];
                     $transactions['tax'] =$financials['tax'];
@@ -3824,7 +3861,7 @@ class Welcome extends CI_Controller {
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
-        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"]);
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
         
         $address = $transaction['street_address']." ".$transaction['number_address'].", ".$transaction['city_address'].", ".$transaction['state_address'];
         $tomorrow = $this->topazio_util_day($this->next_available_day());
@@ -4308,11 +4345,14 @@ class Welcome extends CI_Controller {
         return number_format(-1*($remainingBalanceAtEnd - $remainingBalanceAtStart), 2, '.', '');
     }
     
-    public function calculating_enconomical_values($valor_solicitado, $num_parcelas){
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas, $tax = NULL){
         $this->load->model('class/tax_model');
         $B11 = number_format($valor_solicitado, 2, '.', '');
         $B16 = $num_parcelas;
-        $B10 = ( $this->tax_model->get_tax_row($B16)[$this->get_field($B11)] )/100;
+        if(!$tax)
+            $B10 = ( $this->tax_model->get_tax_row($B16)[$this->get_field($B11)] )/100;
+        else
+            $B10 = $tax/100;
         $num_days = 30*($num_parcelas-1) + 10;
         $B20 = 0.1;
         $B21 = number_format($B20*$B11, 2, '.', ''); //TAC
@@ -4407,7 +4447,7 @@ class Welcome extends CI_Controller {
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
                         'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
                         'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja fazer a compra no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja aprovação para a cobrança da empresa IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
@@ -4489,21 +4529,39 @@ class Welcome extends CI_Controller {
                         
     public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $ch = curl_init();
-        $post_fields = "{\n   \"MerchantOrderId\":\"2017051002\",\n ".
+        $post_fields = "{\n   \"MerchantOrderId\":\"1308242\",\n ".
                         "  \"Customer\":{\n   ".
                         "   \"Name\":\"".$param['name']."\"\n   },\n ".
                         "  \"Payment\":{\n   ".
                         "  \"Provider\":\"".$param['provider']."\",\n  ".
                         "   \"Type\":\"CreditCard\",\n   ".
                         "  \"Amount\":".$param['amount'].",\n   ".
-                        "  \"Capture\":true,\n  ".
+                        "  \"Capture\":false,\n  ".
                         "   \"Installments\":".$param['plots'].",\n  ".
                         "   \"CreditCard\":{\n     ".
-                        "    \"CardNumber\":\"".$param['card_number']." \",\n    ".
+                        "    \"CardNumber\":\"".$param['card_number']."\",\n    ".
                         "     \"Holder\":\"".$param['card_name']."\",\n   ".
                         "      \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
                         "      \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
                         "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
+        
+        /*$post_fields = "{\n   \"MerchantOrderId\":\"1308242\",\n ".
+                        "  \"Customer\":{\n   ".
+                        "   \"Name\":\"Comprador Teste\"\n   },\n ".
+                        "  \"Payment\":{\n   ".
+                        "  \"Provider\":\"Simulado\",\n  ".
+                        "   \"Type\":\"CreditCard\",\n   ".
+                        "  \"Amount\":157,\n   ".
+                        "  \"Capture\":false,\n  ".
+                        "  \"SaveCard\":true,\n  ".
+                        "   \"Installments\":1,\n  ".
+                        "   \"CreditCard\":{\n     ".
+                        "    \"CardNumber\":\"12341234123412347\",\n    ".
+                        "     \"Holder\":\"Teste Holder\",\n   ".
+                        "      \"ExpirationDate\":\"12/2021\",\n   ".
+                        "      \"SecurityCode\":\"123\",\n    ".
+                        "     \"Brand\":\"Visa\"\n     }\n   }\n}";
+        */
         curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
@@ -4530,6 +4588,7 @@ class Welcome extends CI_Controller {
             if(is_object($parsed_response)){
                 $result['success'] = false;                
                 $result['status'] = $parsed_response->Payment->Status;
+                $result['provider_message'] = $parsed_response->Payment->ProviderReturnMessage;
                 $result['reason_code'] = $parsed_response->Payment->ReasonCode;
                 $result['provider_code'] = $parsed_response->Payment->ProviderReturnCode;
                 $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
