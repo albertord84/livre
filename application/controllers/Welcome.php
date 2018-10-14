@@ -44,19 +44,31 @@ class Welcome extends CI_Controller {
     }
     
     public function test1(){
+        /*
+            Autorizado 	0000.0000.0000.0001 / 0000.0000.0000.0004 	4 	Operação realizada com sucesso
+            Não Autorizado 	0000.0000.0000.0002 	2 	Não Autorizada
+            Autorização Aleatória 	0000.0000.0000.0009 	4 / 99 	Operation Successful / Time Out
+            Não Autorizado 	0000.0000.0000.0007 	77 	Cartão Cancelado
+            Não Autorizado 	0000.0000.0000.0008 	70 	Problemas com o Cartão de Crédito
+            Não Autorizado 	0000.0000.0000.0005 	78 	Cartão Bloqueado
+            Não Autorizado 	0000.0000.0000.0003 	57 	Cartão Expirado
+            Não Autorizado 	0000.0000.0000.0006 	99 	Time Out
+         */
         $param = [
             'name' => 'Jorge Moreno',
             'amount' => 23000,
             'plots' => 8,
             'card_name' => 'Jorge R. Moreno',
-            'card_number' => '12341234123412317',
+            'card_number' => '12341234123412316',
             'card_cvc' => '123',
             'card_month' => '12',
             'card_year' => '2021',
             'card_brand' => 'VISA',
             'provider' => 'Simulado',
         ];
-        $result = $this->BRASPAG_Authomatic_Capture($param);
+        $result = $this->BRASPAG_Authorize($param);
+        if($result['success'])
+            $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
         //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
     }
     
@@ -88,7 +100,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {          
+    public function index() {                  
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4524,12 +4536,8 @@ class Welcome extends CI_Controller {
     
     
     //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
-  
-    public function BRASPAG_Capture($param) { /*Ao realizar uma pré-autorização, é necessário confirmá-la para que a cobrança seja efetivada.*/
-        
-    }
-                        
-    public function BRASPAG_Authomatic_Capture($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+                    
+    public function BRASPAG_Authorize($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $ch = curl_init();
         $post_fields = "{\n   \"MerchantOrderId\":\"1308242\",\n ".
                         "  \"Customer\":{\n   ".
@@ -4546,24 +4554,7 @@ class Welcome extends CI_Controller {
                         "      \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
                         "      \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
                         "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
-        
-        /*$post_fields = "{\n   \"MerchantOrderId\":\"1308242\",\n ".
-                        "  \"Customer\":{\n   ".
-                        "   \"Name\":\"Comprador Teste\"\n   },\n ".
-                        "  \"Payment\":{\n   ".
-                        "  \"Provider\":\"Simulado\",\n  ".
-                        "   \"Type\":\"CreditCard\",\n   ".
-                        "  \"Amount\":157,\n   ".
-                        "  \"Capture\":false,\n  ".
-                        "  \"SaveCard\":true,\n  ".
-                        "   \"Installments\":1,\n  ".
-                        "   \"CreditCard\":{\n     ".
-                        "    \"CardNumber\":\"12341234123412347\",\n    ".
-                        "     \"Holder\":\"Teste Holder\",\n   ".
-                        "      \"ExpirationDate\":\"12/2021\",\n   ".
-                        "      \"SecurityCode\":\"123\",\n    ".
-                        "     \"Brand\":\"Visa\"\n     }\n   }\n}";
-        */
+
         curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
@@ -4589,19 +4580,64 @@ class Welcome extends CI_Controller {
         else{
             if(is_object($parsed_response)){
                 $result['success'] = false;                
+                $result['try_again'] = false;                
                 $result['status'] = $parsed_response->Payment->Status;
                 $result['provider_message'] = $parsed_response->Payment->ProviderReturnMessage;
                 $result['reason_code'] = $parsed_response->Payment->ReasonCode;
                 $result['provider_code'] = $parsed_response->Payment->ProviderReturnCode;
                 $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
                 $result['payment_id'] = $parsed_response->Payment->PaymentId;
-                if($result['reason_code'] == 0 && $result['status'] == 2){
-                    $result['success'] = true;    //operacao com sucesso e paga confirmada            
+                if($result['reason_code'] == 0 && $result['status'] == 1){
+                    $result['success'] = true;    //operacao com sucesso e paga autorizada            
+                }
+                if($result['provider_code'] == 99){
+                    $result['try_again'] = true;    //pode tentar de novo
                 }
             }
         }
 
         return $result;
+    }
+    
+    public function BRASPAG_Capture($payment_id, $amount) { /*Captura uma transacao previamente autorizada*/
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
+        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/capture?amount=".$amount);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array()));
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
+        curl_close ($ch);
+
+        if(is_array($parsed_response)){
+            $result['success'] = false;
+            $result['code'] = $parsed_response[0]->Code;
+            $result['message'] = $parsed_response[0]->Message;
+        }
+        else{
+            if(is_object($parsed_response)){
+                $result['success'] = false;                
+                $result['status'] = $parsed_response->Status;
+                $result['provider_message'] = $parsed_response->ProviderReturnMessage;
+                $result['reason_code'] = $parsed_response->ReasonCode;
+                $result['provider_code'] = $parsed_response->ProviderReturnCode;
+                
+                if($result['reason_code'] == 0 && $result['status'] == 2){
+                    $result['success'] = true;    //operacao com sucesso e paga autorizada            
+                }
+            }
+        }
     }
     
     public function BRASPAG_Devolution($payment_id, $amount) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
