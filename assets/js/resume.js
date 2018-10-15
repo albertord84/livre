@@ -40,6 +40,11 @@ $(document).ready(function () {
                 $("#ave_plot").html(response['average_amount_months'] + ' X');                
                 $("#ave_iof").html('R$ '+response['average_iof']);                
                 $("#ave_tax").html(response['average_tax']+' %');                
+                
+                $("#ave_track_500").html('R$ '+response['ave_track_money_500']+' ('+response['count_track_money_500']+')');                
+                $("#ave_track_3000").html('R$ '+response['ave_track_money_3000']+' ('+response['count_track_money_3000']+')');                
+                $("#ave_track_100000").html('R$ '+response['ave_track_money_100000']+' ('+response['count_track_money_100000']+')');                                                
+                $("#ave_track_100_100000").html('R$ '+response['ave_track_money_100_100000']+' ('+response['count_track_money_100_100000']+')');                                                
             }
         });        
     });

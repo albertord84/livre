@@ -364,17 +364,26 @@ class Welcome extends CI_Controller {
             $params['average_iof'] = number_format(($sum_iof), 2, '.', '');
             $params['average_tax'] = number_format($sum_tax/$params['total_transactions'], 2, '.', '');
             /*--------------*/
-            $result_500 = $this->affiliate_model->ave_track_money(9999, 49999);
+            $init_date_track = $datas['abstract_init_date'];//1539640062;
+            $end_date_track = $datas['abstract_end_date'];//1539640062;
+            
+            $result_500 = $this->affiliate_model->ave_track_money(9999, 49999, $init_date_track, $end_date_track);
             $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, '.', '');
             $params['count_track_money_500'] = $result_500['count_money'];
             
-            $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000);
+            $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000, $init_date_track, $end_date_track);
             $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
             $params['count_track_money_3000'] = $result_3000['count_money'];
             
-            $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000);
+            $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000, $init_date_track, $end_date_track);
             $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, '.', '');            
             $params['count_track_money_100000'] = $result_100000['count_money'];
+            
+            $params['count_track_money_100_100000'] = $params['count_track_money_500'] + $params['count_track_money_3000'] + $params['count_track_money_100000'];
+            if($params['count_track_money_100_100000'] != 0)
+                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, '.', '');           
+            else
+                $params['ave_track_money_100_100000'] = 0;
             
             $this->load->view('resumo', $params);
         }
@@ -422,6 +431,28 @@ class Welcome extends CI_Controller {
                 $params['average_iof'] = "0.00";
                 $params['average_tax'] = "0.00";
             }
+            /*--------------*/
+            $init_date_track = $datas['abstract_init_date'];//1539640062;
+            $end_date_track = $datas['abstract_end_date'];//1539640062;
+            
+            $result_500 = $this->affiliate_model->ave_track_money(9999, 49999, $init_date_track, $end_date_track);
+            $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, '.', '');
+            $params['count_track_money_500'] = $result_500['count_money'];
+            
+            $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000, $init_date_track, $end_date_track);
+            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
+            $params['count_track_money_3000'] = $result_3000['count_money'];
+            
+            $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000, $init_date_track, $end_date_track);
+            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, '.', '');            
+            $params['count_track_money_100000'] = $result_100000['count_money'];
+            
+            $params['count_track_money_100_100000'] = $params['count_track_money_500'] + $params['count_track_money_3000'] + $params['count_track_money_100000'];
+            if($params['count_track_money_100_100000'] != 0)
+                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, '.', '');           
+            else
+                $params['ave_track_money_100_100000'] = 0;
+            
             echo json_encode($params);
         }
     }
@@ -2166,8 +2197,9 @@ class Welcome extends CI_Controller {
     public function track_init() {
         $this->load->model('class/track_money_model');        
         $datas = $this->input->post();                
-        $data_track['solicited_value']=(float)$datas['solicited_value']*100;
+        $data_track['solicited_value']=(float)$datas['solicited_value']*100;                
         $data_track['ip']= $_SERVER['REMOTE_ADDR'];
+        $data_track['track_date']=time();
         $id_row = $this->track_money_model->insert_required_money($data_track);
         $result['success'] = false;
         $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
