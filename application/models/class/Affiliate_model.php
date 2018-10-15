@@ -731,23 +731,32 @@ class Affiliate_model extends CI_Model{
         }*/
     }
     
-    public function ave_track_money($lower, $upper){
+    public function ave_track_money($lower, $upper, $init_date = NULL, $end_date = NULL){
         try{
             $this->db->select('COUNT(solicited_value) as count_money');
             $this->db->from('track_money');            
             $this->db->where('solicited_value >',$lower);
             $this->db->where('solicited_value <=',$upper);
-            $result['count_money'] = $this->db->get()->row_array()['count_money']; 
+            if($init_date)
+                $this->db->where('track_date >=',$init_date);
+            if($end_date)
+                $this->db->where('track_date <=',$end_date);
             
-            if(!$result['count_money']){
-                $result['count_money'] = 1;
-            }
+            $result['count_money'] = $this->db->get()->row_array()['count_money']; 
             
             $this->db->select('SUM(solicited_value) as sum_money');
             $this->db->from('track_money');            
             $this->db->where('solicited_value >',$lower);
             $this->db->where('solicited_value <=',$upper);
-            $result['ave_money'] = $this->db->get()->row_array()['sum_money']/$result['count_money']; 
+            if($init_date)
+                $this->db->where('track_date >=',$init_date);
+            if($end_date)
+                $this->db->where('track_date <=',$end_date);
+            $result['ave_money'] = $this->db->get()->row_array()['sum_money'];
+            if($result['count_money'])
+                $result['ave_money'] = $result['ave_money']/$result['count_money']; 
+            else
+                $result['ave_money'] = 0;
             
             return $result;
         } catch (Exception $exc) {
