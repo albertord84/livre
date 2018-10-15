@@ -199,7 +199,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 2,99% a.m.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros competitiva.</h4>
                         </div>
                     </div>
                 </div>
