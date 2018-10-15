@@ -20,14 +20,14 @@ class Welcome extends CI_Controller {
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
         //$this->robot_conciliation();
-        $trasactions = $this->topazio_conciliations("2018-09-20");
+        /*$trasactions = $this->topazio_conciliations("2018-09-20");
         foreach ($trasactions as $t) {
             var_dump($t);
-        }
+        }*/
     }
    
     public function test3(){
-        $_SESSION['logged_role']= 'ADMIN';
+        /*$_SESSION['logged_role']= 'ADMIN';
         $resp = $this->topazio_emprestimo(4); //1388,1542
         if($resp['success']){
             $this->transaction_model->save_in_db(
@@ -40,7 +40,7 @@ class Welcome extends CI_Controller {
                     'contract_id',$resp['contract_id']);                
             print_r("ok");
         }/**/
-        var_dump($resp);
+        //var_dump($resp);
     }
     
     public function test1(){
@@ -72,6 +72,25 @@ class Welcome extends CI_Controller {
         //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
     }
     
+    public function test_sig(){
+        /*$id = 4;
+        $uudid_doc = $this->upload_document_template_D4Sign($id);
+        if($uudid_doc){
+            //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+            $token_signer = $this->signer_for_doc_D4Sign($id);
+            if($token_signer){
+                //5.  mandar a assinar
+                $result_send = $this->send_for_sign_document_D4Sign($id);
+                if($result_send){
+                    //2. salvar el status para WAIT_SIGNATURE
+                    $this->transaction_model->update_transaction_status(
+                                        $_SESSION['pk'], 
+                                        transactions_status::WAIT_SIGNATURE);
+                }
+            }
+        }*/
+    }
+    
     public function update_acount_bank_by_user_id() {//para trabajar manual
         $this->load->model('class/Transaction_model');    
         $this->load->model('class/Crypt');  
@@ -100,7 +119,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {                  
+    public function index() {        
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -607,7 +626,7 @@ class Welcome extends CI_Controller {
                     return $result;
                 }
             }else{
-                $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+                $result['message']='Não autorizado. Quantidade máxima de tentativas alcançadas. Contate nosso atendimento';
                 $result['success']=false;
                 session_destroy();
                 return $result;
@@ -786,7 +805,7 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
         if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
-            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcançadas. Contate nosso atendimento';
             $result['success']=false;
             echo json_encode($result);
             session_destroy();
@@ -972,7 +991,7 @@ class Welcome extends CI_Controller {
         /*------------analisar nro de tentativas----------------*/
         $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
         if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
-            $result['message']='Não autorizado. Quantidade máxima de tentativas alcanzadas. Contate nosso atendimento';
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcançadas. Contate nosso atendimento';
             $result['success']=false;
             echo json_encode($result);
             session_destroy();
