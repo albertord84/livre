@@ -346,7 +346,7 @@ class Welcome extends CI_Controller {
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
             $params['view'] = 'resumo';            
             $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
-            $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+            $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, ',', '.');           
             $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
             $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
             $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
@@ -373,16 +373,16 @@ class Welcome extends CI_Controller {
             $params['count_track_money_500'] = $result_500['count_money'];
             
             $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000, $init_date_track, $end_date_track);
-            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
+            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, ',', '.');           
             $params['count_track_money_3000'] = $result_3000['count_money'];
             
             $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000, $init_date_track, $end_date_track);
-            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, '.', '');            
+            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, ',', '.');           
             $params['count_track_money_100000'] = $result_100000['count_money'];
             
             $params['count_track_money_100_100000'] = $params['count_track_money_500'] + $params['count_track_money_3000'] + $params['count_track_money_100000'];
             if($params['count_track_money_100_100000'] != 0)
-                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, '.', '');           
+                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, ',', '.');           
             else
                 $params['ave_track_money_100_100000'] = 0;
             
@@ -405,7 +405,7 @@ class Welcome extends CI_Controller {
             
             $params['total_transactions'] = $this->affiliate_model->total_transactions($datas);
             if($params['total_transactions']){
-                $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, '.', '');
+                $params['total_CET'] = number_format($this->affiliate_model->total_CET($datas)/100, 2, ',', '.');           
                 $params['loan_value'] = number_format($this->affiliate_model->loan_value($datas)/100, 2, '.', '');
                 $params['average_ticket'] = number_format($params['loan_value']/$params['total_transactions'], 2, '.', '');//$this->affiliate_model->average_ticket($datas);
                 $params['average_amount_months'] = number_format($this->affiliate_model->average_amount_months($datas)/$params['total_transactions'], 2, '.', '');            
@@ -437,20 +437,20 @@ class Welcome extends CI_Controller {
             $end_date_track = $datas['abstract_end_date'];//1539640062;
             
             $result_500 = $this->affiliate_model->ave_track_money(9999, 49999, $init_date_track, $end_date_track);
-            $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, '.', '');
+            $params['ave_track_money_500'] = number_format($result_500['ave_money']/100, 2, ',', '.');           
             $params['count_track_money_500'] = $result_500['count_money'];
             
             $result_3000 = $this->affiliate_model->ave_track_money(49999, 300000, $init_date_track, $end_date_track);
-            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, '.', '');            
+            $params['ave_track_money_3000'] = number_format($result_3000['ave_money']/100, 2, ',', '.');                       
             $params['count_track_money_3000'] = $result_3000['count_money'];
             
             $result_100000 = $this->affiliate_model->ave_track_money(300000, 10000000, $init_date_track, $end_date_track);
-            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, '.', '');            
+            $params['ave_track_money_100000'] = number_format($result_100000['ave_money']/100, 2, ',', '.');                       
             $params['count_track_money_100000'] = $result_100000['count_money'];
             
             $params['count_track_money_100_100000'] = $params['count_track_money_500'] + $params['count_track_money_3000'] + $params['count_track_money_100000'];
             if($params['count_track_money_100_100000'] != 0)
-                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, '.', '');           
+                $params['ave_track_money_100_100000'] = number_format(($params['ave_track_money_500']*$params['count_track_money_500'] + $params['ave_track_money_3000']*$params['count_track_money_3000'] + $params['ave_track_money_100000']*$params['count_track_money_100000'])/$params['count_track_money_100_100000'], 2, ',', '.');           
             else
                 $params['ave_track_money_100_100000'] = 0;
             
