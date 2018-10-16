@@ -173,6 +173,7 @@ class Welcome extends CI_Controller {
         //save value
         $data_track['solicited_value'] = $_SESSION['transaction_values']['solicited_value']*100;
         $data_track['ip']= $_SERVER['REMOTE_ADDR'];
+        $data_track['track_date']=time();
         $id_row = $this->track_money_model->insert_required_money($data_track);
                 
         $this->load->view('checkout',$params);
