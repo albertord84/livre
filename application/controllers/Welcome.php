@@ -2396,6 +2396,8 @@ class Welcome extends CI_Controller {
     
     public function get_cep_datas(){
         $cep = $this->input->post()['cep'];
+        $cep = str_replace(".","",$cep);
+        $cep = str_replace("-","",$cep);
         $datas = file_get_contents('https://viacep.com.br/ws/'.$cep.'/json/');
         if(strpos($datas,'erro')>0){
             $response['success']=false;

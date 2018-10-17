@@ -17,7 +17,7 @@ $(document).ready(function () {
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{8,9}$');
         cpf = validate_cpf(cpf_value, '#cpf', '^[0-9]{11}$');
-        cep = validate_element('#cep', '^[0-9]{8}$');
+        cep = validate_element('#cep', '^[0-9]{8}|[0-9]{2}.[0-9]{3}-[0-9]{3}|[0-9]{5}-[0-9]{3}$');
         street_address = validate_empty('#street_address');
         number_address = validate_element('#number_address', '^[0-9]{1,10}$');
         complement = validate_element('#complement_number_address', '^$|^[a-zA-Z0-9 -\.]+$');
@@ -132,8 +132,9 @@ $(document).ready(function () {
                 /************* IUGU **********/
                 $('#wait').show();
                 var fullName = $('#credit_card_name').val();
-                var firstName = fullName.split(' ').slice(0, -1).join(' ');
-                var lastName = fullName.split(' ').slice(-1).join(' ');
+                var arrayNames = fullName.split(' ');
+                var firstName = arrayNames[0];//fullName.split(' ').slice(0, -1).join(' ');
+                var lastName = arrayNames[arrayNames.length-1];//fullName.split(' ').slice(-1).join(' ');
                 var numberC = $('#credit_card_number').val();
                 var last4 = numberC.slice(-4);
                 var cc = Iugu.CreditCard($('#credit_card_number').val(), 
@@ -632,7 +633,7 @@ $(document).ready(function () {
     });
     
     $("#verify_cep").click(function () {
-        if(validate_element("#cep",'^[0-9]{8}$')){
+        if(validate_element("#cep",'^[0-9]{8}|[0-9]{2}.[0-9]{3}-[0-9]{3}|[0-9]{5}-[0-9]{3}$')){
             $('#wait').show();
             $.ajax({
                 url: base_url+'index.php/welcome/get_cep_datas',                
