@@ -3536,6 +3536,11 @@ class Welcome extends CI_Controller {
     }
 
     public function topazio_conciliations($date=NULL){
+        if($_SESSION['logged_role'] !== 'ADMIN')
+        {
+            echo 'Forbbiden access';
+            return;
+        }
         $method=NULL;
         if(!$date){
             $date =$_GET['date'];
