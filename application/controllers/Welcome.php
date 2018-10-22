@@ -4374,7 +4374,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    echo "<br>\n<br>\nContrato assinado por ".$transaction[email];
+                    echo "<br>\n<br>\nContrato assinado por ".$transaction[email]." às".date('Y-m-d H:i:s'),time();
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
