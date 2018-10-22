@@ -59,10 +59,27 @@
         }
         
         public function save_generated_bill($id, $invoice_id){    
+            $this->load->model('class/payment_manager');
             $result = NULL;
             try{
+                $now = time();
                 $this->db->where('id', $id);
-                $this->db->update('transactions',['invoice_id' => $invoice_id]);
+                $this->db->update('transactions',['invoice_id' => $invoice_id, 'pay_date' => $now, 'payment_source' => payment_manager::IUGU]);
+                $result =  $this->db->affected_rows();
+            } catch (Exception $exception) {
+               echo 'Error accediendo a la base de datos';
+            } finally {
+               return $result;
+            }
+        }
+        
+        public function save_generated_bill_BRASPAG($id, $braspag_id){    
+            $this->load->model('class/payment_manager');
+            $result = NULL;
+            try{
+                $now = time();
+                $this->db->where('id', $id);
+                $this->db->update('transactions',['braspag_id' => $braspag_id, 'pay_date' => $now, 'payment_source' => payment_manager::BRASPAG]);
                 $result =  $this->db->affected_rows();
             } catch (Exception $exception) {
                echo 'Error accediendo a la base de datos';

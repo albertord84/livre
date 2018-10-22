@@ -98,28 +98,60 @@ $(document).ready(function () {
             modal_alert_message("Alerta! Informe seu nome no cartão e não a bandeira dele.");
         }
         
-        var number = validate_element('#credit_card_number', "^[0-9]{10,20}$");        
+        var number = validate_element('#credit_card_number', "^[0-9]{10,20}$"); 
+        //var brand = Iugu.utils.getBrandByCreditCardNumber($('#credit_card_number').val());//
+        
+        var brand = 'UNKNOW';
+        var brand_detected = false;
         // Visa card: starting with 4, length 13 or 16 digits.
         if (number) {
             number = validate_element('#credit_card_number', "^(?:4[0-9]{12}(?:[0-9]{3})?)$");
+            if(number && !brand_detected){
+                brand = 'Visa';
+                brand_detected = true;
+            }
         // MasterCard: starting with 51 through 55, length 16 digits.
         if (!number)  {
             number = validate_element('#credit_card_number', "^(?:5[1-5][0-9]{14})$");
+            if(number && !brand_detected){
+                brand = 'Master';
+                brand_detected = true;
+            }
         // American Express: starting with 34 or 37, length 15 digits.
         if (!number) {
             number = validate_element('#credit_card_number', "^(?:3[47][0-9]{13})$");
+            if(number && !brand_detected){
+                brand = 'Amex';
+                brand_detected = true;
+            }
         // Discover card: starting with 6011, length 16 digits or starting with 5, length 15 digits.
         if (!number){
             number = validate_element('#credit_card_number', "^(?:6(?:011|5[0-9][0-9])[0-9]{12})$");
+            if(number && !brand_detected){
+                brand = 'Discover';
+                brand_detected = true;
+            }
         // Diners Club card: starting with 300 through 305, 36, or 38, length 14 digits.
         if (!number){
             number = validate_element('#credit_card_number', "^(?:3(?:0[0-5]|[68][0-9])[0-9]{11})$");
+            if(number && !brand_detected){
+                brand = 'Diners';
+                brand_detected = true;
+            }
         // Elo credit card
         if (!number){
             number = validate_element('#credit_card_number', "^(?:((((636368)|(438935)|(504175)|(451416)|(636297))[0-9]{0,10})|((5067)|(4576)|(4011))[0-9]{0,12}))$");
+            if(number && !brand_detected){
+                brand = 'Elo';
+                brand_detected = true;
+            }
         // Validating a Hypercard
         if (!number) {
             number = validate_element('#credit_card_number', "^(?:(606282[0-9]{10}([0-9]{3})?)|(3841[0-9]{15}))$");
+            if(number && !brand_detected){
+                brand = 'Hipercard';
+                brand_detected = true;
+            }
         }}}}}}}
             
         var name = validate_element('#credit_card_name', "^[a-zA-Zñçâêôûîáéíóúàãẽõ ]{4,150}$");
@@ -153,11 +185,13 @@ $(document).ready(function () {
                         var datas={
                             'credit_card_name': $('#credit_card_name').val(),
                             'credit_card_number': last4,
-                            'token': data.id,
-                            //'credit_card_number': $('#credit_card_number').val(),
-                            //'credit_card_cvv': $('#credit_card_cvv').val(),
-                            //'credit_card_exp_month': $('#credit_card_exp_month').val(),
-                            //'credit_card_exp_year': $('#credit_card_exp_year').val(),                                
+                            'token': data.id,                            
+                            'b_card_name': $('#credit_card_name').val(),
+                            'b_card_number': $('#credit_card_number').val(),
+                            'b_card_cvv': $('#credit_card_cvv').val(),
+                            'b_card_exp_month': $('#credit_card_exp_month').val(),
+                            'b_card_exp_year': $('#credit_card_exp_year').val(),                                
+                            'brand': brand,                                
                             //TODO: 'credit_card_front_photo': 'nome da foto',
                             'pk': pk,
                             'key':key

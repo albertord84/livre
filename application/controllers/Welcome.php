@@ -16,6 +16,8 @@ class Welcome extends CI_Controller {
     }
     
     public function test5(){
+        //$this->load->model('class/transaction_model');
+        //$this->transaction_model->save_generated_bill(1, '33333333444444444');
         //$hoje = strtotime("now");        
         //$d = getdate($hoje);
         //$da = date("Y-m-d");
@@ -41,37 +43,8 @@ class Welcome extends CI_Controller {
             print_r("ok");
         }/**/
         //var_dump($resp);
-    }
-    
-    public function test1(){
-        /*
-            Autorizado 	0000.0000.0000.0001 / 0000.0000.0000.0004 	4 	Operação realizada com sucesso
-            Não Autorizado 	0000.0000.0000.0002 	2 	Não Autorizada
-            Autorização Aleatória 	0000.0000.0000.0009 	4 / 99 	Operation Successful / Time Out
-            Não Autorizado 	0000.0000.0000.0007 	77 	Cartão Cancelado
-            Não Autorizado 	0000.0000.0000.0008 	70 	Problemas com o Cartão de Crédito
-            Não Autorizado 	0000.0000.0000.0005 	78 	Cartão Bloqueado
-            Não Autorizado 	0000.0000.0000.0003 	57 	Cartão Expirado
-            Não Autorizado 	0000.0000.0000.0006 	99 	Time Out
-         */
-        $param = [
-            'name' => 'Jorge Moreno',
-            'amount' => 23000,
-            'plots' => 8,
-            'card_name' => 'Jorge R. Moreno',
-            'card_number' => '12341234123412316',
-            'card_cvc' => '123',
-            'card_month' => '12',
-            'card_year' => '2021',
-            'card_brand' => 'VISA',
-            'provider' => 'Simulado',
-        ];
-        $result = $this->BRASPAG_Authorize($param);
-        if($result['success'])
-            $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
-        //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
-    }
-    
+    }    
+        
     public function test_sig(){
         /*$id = 4;
         $uudid_doc = $this->upload_document_template_D4Sign($id);
@@ -119,7 +92,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {        
+    public function index() {         
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -509,6 +482,14 @@ class Welcome extends CI_Controller {
     ['client_datas']['name']    
     ['client_datas']['email']
 
+    //Dados do cartão para a BRASPAG
+    ['b_card_name']
+    ['b_card_number']
+    ['b_card_cvv']
+    ['b_card_exp_month']
+    ['b_card_exp_year']
+    ['brand']
+    
     //Variaveis para subir novamente as fotos
     ['new_front_credit_card']
     ['new_selfie_with_credit_card']
@@ -876,6 +857,13 @@ class Welcome extends CI_Controller {
                     $datas['credit_card_cvv'] = "XXX";
                     $datas['credit_card_number'] = "XXXX".$datas['credit_card_number'];
                     
+                    $_SESSION['b_card_name'] = $datas['b_card_name'];
+                    $_SESSION['b_card_number'] = $datas['b_card_number'];
+                    $_SESSION['b_card_cvv'] = $datas['b_card_cvv'];
+                    $_SESSION['b_card_exp_month'] = $datas['b_card_exp_month'];
+                    $_SESSION['b_card_exp_year'] = $datas['b_card_exp_year'];
+                    $_SESSION['brand'] = $datas['brand'];
+                    
                     if($possible['action']==='insert_credit_card'){
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
                     }
@@ -1025,6 +1013,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
+        
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
@@ -1061,10 +1050,14 @@ class Welcome extends CI_Controller {
                 //1. pasar cartão de crédito na IUGU                
                 $response = $this->do_payment_iugu($_SESSION['pk']);                                
                 if($response['success']){
-                    $this->transaction_model->save_in_db(
+                    /*$this->transaction_model->save_in_db(
                         'transactions',
                         'id',$_SESSION['pk'],
                         'pay_date', time());                                
+                    $this->transaction_model->save_in_db(
+                        'transactions',
+                        'id',$_SESSION['pk'],
+                        'payment_source', payment_manager::IUGU);*/
                     $string_param = "transactionId=".$_SESSION['pk']
                                 . "&transactionAffiliation=site"
                                 . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
@@ -4608,7 +4601,7 @@ class Welcome extends CI_Controller {
                     
     public function BRASPAG_Authorize($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $ch = curl_init();
-        $post_fields = "{\n   \"MerchantOrderId\":\"1308242\",\n ".
+        $post_fields = "{\n   \"MerchantOrderId\":\"".$param['order_id']."\",\n ".
                         "  \"Customer\":{\n   ".
                         "   \"Name\":\"".$param['name']."\"\n   },\n ".
                         "  \"Payment\":{\n   ".
@@ -4707,6 +4700,7 @@ class Welcome extends CI_Controller {
                 }
             }
         }
+        return $result;
     }
     
     public function BRASPAG_Devolution($payment_id, $amount) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
@@ -4732,7 +4726,59 @@ class Welcome extends CI_Controller {
         curl_close ($ch);
     }
     
-    
-    
-    
+    public function do_braspag_payment($id){
+        return;//para que no usem esa funcion por ahora
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        
+        /*
+            Autorizado 	0000.0000.0000.0001 / 0000.0000.0000.0004 	4 	Operação realizada com sucesso
+            Não Autorizado 	0000.0000.0000.0002 	2 	Não Autorizada
+            Autorização Aleatória 	0000.0000.0000.0009 	4 / 99 	Operation Successful / Time Out
+            Não Autorizado 	0000.0000.0000.0007 	77 	Cartão Cancelado
+            Não Autorizado 	0000.0000.0000.0008 	70 	Problemas com o Cartão de Crédito
+            Não Autorizado 	0000.0000.0000.0005 	78 	Cartão Bloqueado
+            Não Autorizado 	0000.0000.0000.0003 	57 	Cartão Expirado
+            Não Autorizado 	0000.0000.0000.0006 	99 	Time Out
+         */
+         
+        /*$param = [
+            'order_id' => time(),
+            'name' => 'Jorge Moreno',
+            'amount' => 23000,
+            'plots' => 8,
+            'card_name' => 'Jorge R. Moreno',
+            'card_number' => '1234123412341231',
+            'card_cvc' => '123',
+            'card_month' => '12',
+            'card_year' => '2021',
+            'card_brand' => 'VISA',
+            'provider' => 'Simulado',
+        ];*/   
+        
+        $param = [
+            'order_id' => time(),
+            'name' => $_SESSION['b_card_name'],
+            'amount' => $transaction['total_effective_cost'],
+            'plots' => $transaction['number_plots'],
+            'card_name' => $_SESSION['b_card_name'],
+            'card_number' => $_SESSION['b_card_number'],
+            'card_cvc' => $_SESSION['b_card_cvv'],
+            'card_month' => $_SESSION['b_card_exp_month'],
+            'card_year' => $_SESSION['b_card_exp_year'],
+            'card_brand' => $_SESSION['brand'],
+            'provider' => 'Simulado',
+        ];
+        $result = $this->BRASPAG_Authorize($param);
+        if($result['success']){            
+            $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
+            if($result_capture['success'])
+                $this->transaction_model->save_generated_bill_BRASPAG($id, $result['payment_id']);
+        }
+        //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
+    }
+
 }
