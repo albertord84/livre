@@ -4,6 +4,8 @@ ini_set('xdebug.var_display_max_depth', 17);
 ini_set('xdebug.var_display_max_children', 256);
 ini_set('xdebug.var_display_max_data', 8024);
 
+date_default_timezone_set('America/Sao_Paulo'); 
+
 class Welcome extends CI_Controller {
           
     function __construct() {
@@ -4148,7 +4150,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s',time());
         $transactions = $this->topazio_conciliations($date);
         echo "<br>\n Number of loans: ".count($transactions->data);
         echo "<br>\n----------------------------------------------<br>\n";
@@ -4230,7 +4232,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());
     }
     
     /*Vamos resolver con dos funciones separadas*/
@@ -4243,7 +4245,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s',time());
         $transactions = $this->topazio_conciliations($date);
         echo "<br>\n Number of loans: ".count($transactions->data);
         echo "<br>\n----------------------------------------------<br>\n";
@@ -4340,7 +4342,7 @@ class Welcome extends CI_Controller {
                 $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
             }*/
         }
-        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());
     }
     /* 
         Status dos documentos na D4Sign
@@ -4361,7 +4363,7 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time();
+        echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
        
         do{
             //transactions waiting signature
