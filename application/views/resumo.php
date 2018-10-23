@@ -37,8 +37,8 @@
 			<h4 class="pd-lr15 m-b10">
                             <!--<em>Geral</em>--> 
                         </h4>
-                    <h5 class="pd-lr15 m-b10">TRANSAÇÕES COBRADAS: <span id ='num_transactions'><?php echo $total_transactions; ?></span>
-                        </h5>
+                    <h5 class="pd-lr15 m-b10">TRANSAÇÕES COBRADAS: <span id ='num_transactions'><?php echo $total_transactions;?></span> <span style="padding: 50px;"> HORA: <?php echo date('H:i:s',time());?></span>
+                    </h5>
 			<div class="col-md-4 col-sm-4 col-xs-12 pd-lr10 m-b20 gr">
 				<div class="fleft100 bk-fff pd-20">
 					<span class="ft-size12 fw-600 cl-black">VALOR TOTAL (CET)</span>

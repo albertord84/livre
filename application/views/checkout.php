@@ -42,6 +42,7 @@
         <?php include_once "pixel_bing.php";?>
         <?php include_once "pixel_linkedin.php";?>
         <?php include_once "pixel_crazy_egg.php";?>
+        <?php date_default_timezone_set('America/Sao_Paulo'); ?>
     </head>
     <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
