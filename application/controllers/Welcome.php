@@ -94,7 +94,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {         
+    public function index() {           
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -4602,6 +4602,11 @@ class Welcome extends CI_Controller {
     //------------BRASPAG---COBRANÇA PARCELADA NO CARTÃO DE CRÉDITO-------------------------
                     
     public function BRASPAG_Authorize($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        $this->load->model('class/system_config');                
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $merchant_id = $GLOBALS['sistem_config']->MERCHANT_ID_BRASPAG;        
+        $merchant_key = $GLOBALS['sistem_config']->MERCHANT_KEY_BRASPAG;        
+        
         $ch = curl_init();
         $post_fields = "{\n   \"MerchantOrderId\":\"".$param['order_id']."\",\n ".
                         "  \"Customer\":{\n   ".
@@ -4619,15 +4624,18 @@ class Welcome extends CI_Controller {
                         "      \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
                         "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
 
-        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        //curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_URL, "https://api.braspag.com.br/v2/sales/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
         curl_setopt($ch, CURLOPT_POST, 1);
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
-        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        //$headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        //$headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        $headers[] = "Merchantid: ".$merchant_id;
+        $headers[] = "Merchantkey: ".$merchant_key;
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -4664,18 +4672,26 @@ class Welcome extends CI_Controller {
     }
     
     public function BRASPAG_Capture($payment_id, $amount) { /*Captura uma transacao previamente autorizada*/
+        $this->load->model('class/system_config');                
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $merchant_id = $GLOBALS['sistem_config']->MERCHANT_ID_BRASPAG;        
+        $merchant_key = $GLOBALS['sistem_config']->MERCHANT_KEY_BRASPAG;        
+        
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
-        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/capture?amount=".$amount);
+        //curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/capture?amount=".$amount);
+        curl_setopt($ch, CURLOPT_URL, "https://api.braspag.com.br/v2/sales/".$payment_id."/capture?amount=".$amount);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array()));
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
-        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        //$headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        //$headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        $headers[] = "Merchantid: ".$merchant_id;
+        $headers[] = "Merchantkey: ".$merchant_key;
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -4706,26 +4722,40 @@ class Welcome extends CI_Controller {
     }
     
     public function BRASPAG_Devolution($payment_id, $amount) { /*O estorno é aplicável quando uma transação criada no dia anterior ou antes já estiver capturada. Neste caso, a transação será submetida no processo de ‘chargeback’ pela adquirente.*/
+        $this->load->model('class/system_config');                
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $merchant_id = $GLOBALS['sistem_config']->MERCHANT_ID_BRASPAG;        
+        $merchant_key = $GLOBALS['sistem_config']->MERCHANT_KEY_BRASPAG;        
+        
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Length: 0'));
-        curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/void?amount=".$amount);
+        //curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/".$payment_id."/void?amount=".$amount);
+        curl_setopt($ch, CURLOPT_URL, "https://api.braspag.com.br/v2/sales/".$payment_id."/void?amount=".$amount);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array()));
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
-        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        //$headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        //$headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        $headers[] = "Merchantid: ".$merchant_id;
+        $headers[] = "Merchantkey: ".$merchant_key;
         
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
         curl_close ($ch);
+        
+        $result['success'] = false;
+        if($parsed_response->ReasonCode == 0 && ($parsed_response->Status == 10 || $parsed_response->Status == 11) )
+            $result['success'] = true;        
+        $result['message'] = $parsed_response->ProviderReturnMessage;
+        
+        return $result;
     }
     
     public function do_braspag_payment($id){
@@ -4735,32 +4765,34 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-        
-        /*
-            Autorizado 	0000.0000.0000.0001 / 0000.0000.0000.0004 	4 	Operação realizada com sucesso
-            Não Autorizado 	0000.0000.0000.0002 	2 	Não Autorizada
-            Autorização Aleatória 	0000.0000.0000.0009 	4 / 99 	Operation Successful / Time Out
-            Não Autorizado 	0000.0000.0000.0007 	77 	Cartão Cancelado
-            Não Autorizado 	0000.0000.0000.0008 	70 	Problemas com o Cartão de Crédito
-            Não Autorizado 	0000.0000.0000.0005 	78 	Cartão Bloqueado
-            Não Autorizado 	0000.0000.0000.0003 	57 	Cartão Expirado
-            Não Autorizado 	0000.0000.0000.0006 	99 	Time Out
-         */
-         
+    
         /*$param = [
             'order_id' => time(),
             'name' => 'Jorge Moreno',
-            'amount' => 23000,
+            'amount' => 10000,
             'plots' => 8,
-            'card_name' => 'Jorge R. Moreno',
-            'card_number' => '1234123412341231',
-            'card_cvc' => '123',
-            'card_month' => '12',
+            'card_name' => 'PEDRO BASTOS PETTI',
+            'card_number' => '5162202091174685',
+            'card_cvc' => '302',
+            'card_month' => '04',
             'card_year' => '2021',
-            'card_brand' => 'VISA',
-            'provider' => 'Simulado',
-        ];*/   
-        
+            'card_brand' => 'Master',
+            'provider' => 'Cielo30',
+        ];*/
+        $param = [
+            'order_id' => time(),
+            'name' => 'Pedro Petti',
+            'amount' => 10500,
+            'plots' => 10,
+            'card_name' => 'PEDRO PETTI',
+            'card_number' => '377169742854001',
+            'card_cvc' => '9489',
+            'card_month' => '05',
+            'card_year' => '2023',
+            'card_brand' => 'Amex',
+            'provider' => 'Cielo30',
+        ];
+        /*
         $param = [
             'order_id' => time(),
             'name' => $_SESSION['b_card_name'],
@@ -4773,14 +4805,14 @@ class Welcome extends CI_Controller {
             'card_year' => $_SESSION['b_card_exp_year'],
             'card_brand' => $_SESSION['brand'],
             'provider' => 'Simulado',
-        ];
-        $result = $this->BRASPAG_Authorize($param);
+        ];/**/
+        /*$result = $this->BRASPAG_Authorize($param);
         if($result['success']){            
             $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
             if($result_capture['success'])
                 $this->transaction_model->save_generated_bill_BRASPAG($id, $result['payment_id']);
-        }
-        //$result2 = $this->BRASPAG_Devolution($result['payment_id'], $param['amount']);
+        }*/
+        //$result2 = $this->BRASPAG_Devolution($transaction['braspag_id'], $param['amount']);
     }
 
 }
