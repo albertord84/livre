@@ -440,18 +440,16 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             if($status)
                 $this->db->where('transactions.status_id', $status);
-            if($init_date)
+            $this->db->where('transactions.id <=', '12600');
+            /*if($init_date)
                 $this->db->where('transactions.pay_date >=', $init_date);                            
             if($cut_date)
-                $this->db->where('transactions.pay_date <', $cut_date);                            
+                $this->db->where('transactions.pay_date <', $cut_date);                            */
             $this->db->limit((int)$amount_by_page+1, $page*(int)$amount_by_page);            
             $this->db->order_by("transactions.id", "desc");
             
             $result = $this->db->get()->result_array();
-            $i=0;
-            foreach ($result as $transaction){                
-                $i++;
-            }
+            $i=count($result);
             $has_next_page=false;
             if(count($result) > $amount_by_page){
                 $has_next_page=true;
