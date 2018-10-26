@@ -1491,8 +1491,6 @@ class Welcome extends CI_Controller {
     }
     
     public function export_leads() {   
-        //return;
-        //$this->clean_begginer_images(); return;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
@@ -1671,7 +1669,7 @@ class Welcome extends CI_Controller {
                 $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     $id = $tr['id'];
-                    $path_name = "assets/data_users/".$tr['folder_in_server'];             
+                    $path_name = "/opt/lampp/htdocs/livre/assets/data_users/".$tr['folder_in_server'];             
 
                     if($tr['folder_in_server']){
                         if(is_dir($path_name)){            
