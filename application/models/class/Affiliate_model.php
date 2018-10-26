@@ -433,11 +433,13 @@ class Affiliate_model extends CI_Model{
         return NULL;
     }
     
-    public function load_transaction_cutdate($page=0, $amount_by_page=20, &$has_next_page, $init_date = NULL, $cut_date = NULL){
+    public function load_transaction_cutdate($page=0, $amount_by_page=20, &$has_next_page, $init_date = NULL, $cut_date = NULL, $status = NULL){
         try {
             
             $this->db->select('*');
             $this->db->from('transactions');
+            if($status)
+                $this->db->where('transactions.status_id', $status);
             if($init_date)
                 $this->db->where('transactions.pay_date >=', $init_date);                            
             if($cut_date)
