@@ -1491,7 +1491,7 @@ class Welcome extends CI_Controller {
     }
     
     public function export_leads() {   
-        $this->clean_begginer_images(); return;
+        //$this->clean_begginer_images(); return;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
@@ -1678,6 +1678,7 @@ class Welcome extends CI_Controller {
 
                             foreach ($file_names as $photo) {
                                 if (file_exists($path_name."/". $photo)) {                                    
+                                    chmod($path_name."/".$photo, 0777);
                                     unlink($path_name."/".$photo);                            
                                 }
                             }
