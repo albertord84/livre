@@ -1643,13 +1643,14 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function clean_begginer_images() {        
+    public function clean_begginer_images() {   
+        die('Access forbidden');
         $this->load->model('class/transaction_model'); 
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');        
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
-        if($_SESSION['logged_role'] === 'ADMIN'){            
+        //if($_SESSION['logged_role'] === 'ADMIN'){            
             
             $page = 1; //descargar todos los registros de la consulta
             $has_next_page = 0;
@@ -1658,34 +1659,37 @@ class Welcome extends CI_Controller {
             do{
                 //lee pagina de transacciones segun la configuracion de la consulta actual 
                 //guardada en la variable de seccion
-                $transactions = $this->affiliate_model->load_transaction_cutdate(                    
+                $transactions = $this->affiliate_model->load_transaction_cutdate(
                     $page-1,
-                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,                    
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,
                     $has_next_page,
                     $init_date,
                     $cut_date,
                     transactions_status::BEGINNER
                 );
+                var_dump(count($transactions));
+                die('aas');
                 $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     $id = $tr['id'];
-                    $path_name = "/opt/lampp/htdocs/livre/assets/data_users/".$tr['folder_in_server'];             
+                    var_dump($id);
+                    $path_name = "/opt/lampp/htdocs/livre/assets/data_users/".$tr['folder_in_server'];
 
                     if($tr['folder_in_server']){
-                        if(is_dir($path_name)){            
+                        if(is_dir($path_name)){ 
                             $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
 
                             foreach ($file_names as $photo) {
-                                if (file_exists($path_name."/". $photo)) {                                    
+                                if (file_exists($path_name."/". $photo)) {
                                     chmod($path_name."/".$photo, 0777);
-                                    unlink($path_name."/".$photo);                            
+                                    unlink($path_name."/".$photo);     
                                 }
                             }
                         }
                     }
-                }                
+                }    
             }while($has_next_page > 0);
-        }
+        //}
     }
     
     public function file_transactions(){        
