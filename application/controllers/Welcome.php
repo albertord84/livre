@@ -1490,7 +1490,8 @@ class Welcome extends CI_Controller {
             exit;                                    }
     }
     
-    public function export_leads() {        
+    public function export_leads() {   
+        $this->clean_begginer_images(); return;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
@@ -1638,6 +1639,50 @@ class Welcome extends CI_Controller {
                     $tax = $this->tax_model->get_tax_row_old($B16)[$this->get_field_old($B11)];
                     //$tax = $this->tax_model->get_tax_row($B16)[$this->get_field($B11)];
                     $this->transaction_model->save_in_db('transactions','id',$id,'tax',$tax);
+                }                
+            }while($has_next_page > 0);
+        }
+    }
+    
+    public function clean_begginer_images() {        
+        $this->load->model('class/transaction_model'); 
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->load->model('class/affiliate_model');       
+        if($_SESSION['logged_role'] === 'ADMIN'){            
+            
+            $page = 1; //descargar todos los registros de la consulta
+            $has_next_page = 0;
+            $init_date = NULL;
+            $cut_date = time()-24*60*60; //ontem
+            do{
+                //lee pagina de transacciones segun la configuracion de la consulta actual 
+                //guardada en la variable de seccion
+                $transactions = $this->affiliate_model->load_transaction_cutdate(                    
+                    $page-1,
+                    $GLOBALS['sistem_config']->TRANSACTIONS_BY_PAGE,                    
+                    $has_next_page,
+                    $init_date,
+                    $cut_date,
+                    transactions_status::BEGINNER
+                );
+                $page++;//descargar todas las páginas
+                foreach ($transactions as $tr) {
+                    $id = $tr['id'];
+                    $path_name = "assets/data_users/".$tr['folder_in_server'];             
+
+                    if($tr['folder_in_server']){
+                        if(is_dir($path_name)){            
+                            $file_names = ["front_credit_card","selfie_with_credit_card","open_identity","selfie_with_identity","cpf_card"];
+
+                            foreach ($file_names as $photo) {
+                                if (file_exists($path_name."/". $photo)) {                                    
+                                    unlink($path_name."/".$photo);                            
+                                }
+                            }
+                        }
+                    }
                 }                
             }while($has_next_page > 0);
         }
