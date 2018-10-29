@@ -94,7 +94,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {           
+    public function index() {          
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -1757,7 +1757,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
-            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);
+            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);            
             if($resp['success']){
                 $this->transaction_model->save_in_db(
                         'transactions',
@@ -1765,7 +1765,9 @@ class Welcome extends CI_Controller {
                         'ccb_number',$resp['ccb']);                                
                 $this->transaction_model->update_transaction_status(
                         $_SESSION['transaction_requested_id'], 
-                        transactions_status::TOPAZIO_IN_ANALISYS);
+                        transactions_status::TOPAZIO_IN_ANALISYS,
+                        true,
+                        $resp['ccb']);
                 //email de bem sucedido
                 $GLOBALS['sistem_config'] = $this->system_config->load();
                 require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");

@@ -327,14 +327,14 @@
             }
         }
         
-        public function update_transaction_status($transaction_id, $status_id,$new_beginner_date=true){
+        public function update_transaction_status($transaction_id, $status_id,$new_beginner_date=true,$additional_data=NULL){
             try {
                 $this->load->model('class/transactions_status');
                 if($new_beginner_date){
-                    $this->db->insert('transactions_dates',array('transaction_id'=>$transaction_id, 'status_id'=>$status_id, 'date'=>time()));
+                    $this->db->insert('transactions_dates',array('transaction_id'=>$transaction_id, 'status_id'=>$status_id, 'date'=>time(), 'additional_data'=>$additional_data));
                     $a = $this->db->insert_id();                    
                 } else{
-                    $this->db->where('id',$transaction_id);
+                    $this->db->where('transaction_id',$transaction_id);
                     $this->db->where('status_id',$status_id);
                     $a = $this->db->update('transactions_dates',array('date'=>time()));
                 }
