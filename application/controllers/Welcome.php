@@ -94,7 +94,11 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {          
+    public function index() { 
+        if($this->is_ip_hacker_response()){
+            die('Sitio atualmente inacessível');
+            return;
+        }
         $this->set_session(); 
         $datas = $this->input->get();
         if(isset($datas['afiliado']))
@@ -510,6 +514,11 @@ class Welcome extends CI_Controller {
         
         //1. Analisar se IP tem sido marcado como hacker
         $this->is_ip_hacker();        
+        $data_hack = $this->is_data_hacker($datas);        
+        if(!$data_hack['success']){
+            $result = $data_hack;
+            return $result;
+        }
         $clients = $this->transaction_model->get_client('cpf',$datas['cpf']);
         //2. analisar CPF del pedido por los posibles status
         if($N=count($clients)){
@@ -2219,14 +2228,33 @@ class Welcome extends CI_Controller {
     public function set_session(){
         session_start();
         $_SESSION = array();
-        $ip=$_SERVER['REMOTE_ADDR'];
+        //$ip=$_SERVER['REMOTE_ADDR'];
+        $ip = $this->getUserIP();
         $key=md5($ip.time());
         $_SESSION['ip']=$ip;
         $_SESSION['key']=$key;
     }
 
-    public function is_ip_hacker(){
-        $this->is_nome_hacker();
+    public function is_ip_hacker(){                
+        /*$IP_hackers= array(
+            '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
+            '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
+            '138.0.21.188', '168.228.84.1', '138.36.2.18', '201.35.210.135', '189.71.42.124', '138.121.232.245', '151.64.57.146', '191.17.52.46', '189.59.112.125',
+            '177.33.7.122', '189.5.107.81', '186.214.241.146', '177.207.99.29', '170.246.230.138', '201.33.40.202', '191.53.19.210', '179.212.90.46', '177.79.7.202',
+            '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
+            '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
+            '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207',
+            '177.95.148.2','189.40.95.207','177.42.228.212','189.40.93.235','138.97.87.6'
+            );
+        $ip = $this->getUserIP();($ip, $IP_hackers)*/
+        if($this->is_ip_hacker_response()){            
+            session_destroy();
+            header('Location: '.base_url());
+            exit();
+        }
+    }
+    
+    public function is_ip_hacker_response(){                
         $IP_hackers= array(
             '191.176.169.242', '138.0.85.75', '138.0.85.95', '177.235.130.16', '191.176.171.14', '200.149.30.108', '177.235.130.212', '66.85.185.69',
             '177.235.131.104', '189.92.238.28', '168.228.88.10', '201.86.36.209', '177.37.205.210', '187.66.56.220', '201.34.223.8', '187.19.167.94',
@@ -2235,11 +2263,13 @@ class Welcome extends CI_Controller {
             '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
             '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
             '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207',
-            '177.95.148.2'
+            '177.95.148.2','189.40.95.207','177.42.228.212','189.40.93.235','138.97.87.6'
             );
-        if(in_array($_SERVER['REMOTE_ADDR'],$IP_hackers)){            
-            header('Location: '.base_url());
+        $ip = $this->getUserIP();
+        if(in_array($ip, $IP_hackers)){            
+            return true;
         }
+        return false;
     }
     
     public function is_nome_hacker(){
@@ -2248,6 +2278,50 @@ class Welcome extends CI_Controller {
             );
         if(in_array($_SERVER['REMOTE_ADDR'],$nome_hackers)){            
             header('Location: '.base_url());
+        }
+    }
+    
+    public function is_phone_hacker($datas){
+        $phone = '000000000';
+        if(array_key_exists("phone_ddd", $datas) && array_key_exists("phone_number", $datas))
+            $phone = $datas['phone_ddd'].$datas['phone_number'];
+        
+        $phone_hackers= array(
+            '000000000', '27997353520', '71991412687'
+            );
+        if(in_array($phone, $phone_hackers)){            
+            //header('Location: '.base_url());
+            return ['success'=>false, 'message'=>'Problemas enviando o codigo de SMS'];
+        }
+        return ['success'=>true, 'message'=>'OK'];
+    }
+    
+    public function is_data_hacker($datas){
+        $email = 'a@a';
+        if(array_key_exists("email", $datas))
+            $email = $datas['email'];
+        
+        $email_hackers= array(
+            'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com'
+            );
+        if(in_array($email, $email_hackers)){            
+            //header('Location: '.base_url());
+            return ['success'=>false, 'message'=>'Não foi possível continuar com a solicitude'];
+        }
+        return ['success'=>true, 'message'=>'OK'];
+    }
+    
+    public function getUserIP() {
+        if( array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ) {
+            if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')>0) {
+                $addr = explode(",",$_SERVER['HTTP_X_FORWARDED_FOR']);
+                return trim($addr[0]);
+            } else {
+                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+            }
+        }
+        else {
+            return $_SERVER['REMOTE_ADDR'];
         }
     }
 
@@ -2456,26 +2530,32 @@ class Welcome extends CI_Controller {
     
     public function request_sms_code(){
         $datas = $this->input->post();
-        if($datas['key']===$_SESSION['key']){
-            $phone_country_code = '+55';            
-            $phone_ddd = $datas['phone_ddd'];
-            $phone_number = $datas['phone_number'];
-            $random_code = rand(100000,999999); //$random_code = 123;
-            $message = $random_code;
-            $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
-            if($response['success']){
-                $_SESSION['client_datas']['phone_ddd'] = $phone_ddd;
-                $_SESSION['client_datas']['sms_verificated'] = $phone_number;
-                $_SESSION['client_datas']['random_sms_code'] = $random_code;
-                $result['success']=true;
+        $hack_result = $this->is_phone_hacker($datas);
+        if($hack_result['success']){
+            if($datas['key']===$_SESSION['key']){
+                $phone_country_code = '+55';            
+                $phone_ddd = $datas['phone_ddd'];
+                $phone_number = $datas['phone_number'];
+                $random_code = rand(100000,999999); //$random_code = 123;
+                $message = $random_code;
+                $response = $this->send_sms_kaio_api($phone_country_code, $phone_ddd, $phone_number, $message);
+                if($response['success']){
+                    $_SESSION['client_datas']['phone_ddd'] = $phone_ddd;
+                    $_SESSION['client_datas']['sms_verificated'] = $phone_number;
+                    $_SESSION['client_datas']['random_sms_code'] = $random_code;
+                    $result['success']=true;
+                }else{
+                    $result['success']=false;
+                    $result['message']=$response['message'];
+                }
             }else{
                 $result['success']=false;
-                $result['message']=$response['message'];
+                $result['message']='Access violation';
             }
         }else{
-            $result['success']=false;
-            $result['message']='Access violation';
+            $result = $hack_result;
         }
+        
         echo json_encode($result);
     }
     
