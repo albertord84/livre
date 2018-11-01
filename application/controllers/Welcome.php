@@ -94,8 +94,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() { 
-        //$result = $this->do_braspag_payment(17);
+    public function index() {         
         if($this->is_ip_hacker_response()){
             die('Sitio atualmente inacessível');
             return;
@@ -1129,10 +1128,10 @@ class Welcome extends CI_Controller {
                     $result['params'] = $string_param;                                
                     //session_destroy(); se mata na no carga
                 }else{
-                    if($payment_method == payment_manager::IUGU){
-                        $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
-                        $useremail = $_SESSION['client_datas']['email'];
-                        $this->Gmail->credit_card_recused($name,$useremail);
+                    $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                    $useremail = $_SESSION['client_datas']['email'];
+                    $this->Gmail->credit_card_recused($name,$useremail);
+                    if($payment_method == payment_manager::IUGU){                        
                         //analisar erro da transação
                         if($response['LR'] && $response['LR'] != '00')
                         {
@@ -1162,6 +1161,8 @@ class Welcome extends CI_Controller {
                         $result['success'] = false;                                        
                     }
                     else{
+                        if(!$response['try_again'])
+                            session_destroy();
                         $result['success'] = false;
                         $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
                                                 '(1-) Você utilizou seu cartão de DÉBITO. '.
