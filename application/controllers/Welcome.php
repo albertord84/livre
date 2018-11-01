@@ -95,6 +95,7 @@ class Welcome extends CI_Controller {
     //-------VIEWS FUNCTIONS--------------------------------    
 
     public function index() { 
+        //$result = $this->do_braspag_payment(17);
         if($this->is_ip_hacker_response()){
             die('Sitio atualmente inacessível');
             return;
@@ -1023,7 +1024,8 @@ class Welcome extends CI_Controller {
         }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
-        $this->load->model('class/transactions_status');
+        $this->load->model('class/transactions_status');        
+        $this->load->model('class/payment_manager');
         
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -1059,7 +1061,9 @@ class Welcome extends CI_Controller {
                     'purchase_counter', $purchase_counter);
                 /*-----------------------------------------*/
                 //1. pasar cartão de crédito na IUGU                
-                $response = $this->do_payment_iugu($_SESSION['pk']);                                
+                //$response = $this->do_payment_iugu($_SESSION['pk']);                                
+                $payment_method = $GLOBALS['sistem_config']->PAYMENT_METHOD;
+                $response = $this->do_payment($_SESSION['pk'], $payment_method);                                
                 if($response['success']){
                     /*$this->transaction_model->save_in_db(
                         'transactions',
@@ -1125,36 +1129,47 @@ class Welcome extends CI_Controller {
                     $result['params'] = $string_param;                                
                     //session_destroy(); se mata na no carga
                 }else{
-                    $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
-                    $useremail = $_SESSION['client_datas']['email'];
-                    $this->Gmail->credit_card_recused($name,$useremail);
-                    //analisar erro da transação
-                    if($response['LR'] && $response['LR'] != '00')
-                    {
-                        $report_iugu = $this->iugu_report(
-                                                        $response['LR'], 
-                                                        $_SESSION['transaction_values']['total_cust_value'],
-                                                        $_SESSION['transaction_values']['amount_months']
-                                                        );                    
-                        if($report_iugu['known']){
-                            $result['message'] = $report_iugu['message'];                    
-                            //enviar email com passos
-                            $this->Gmail = new Gmail();
-                            $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
-                            if($report_iugu['destroy'])
+                    if($payment_method == payment_manager::IUGU){
+                        $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                        $useremail = $_SESSION['client_datas']['email'];
+                        $this->Gmail->credit_card_recused($name,$useremail);
+                        //analisar erro da transação
+                        if($response['LR'] && $response['LR'] != '00')
+                        {
+                            $report_iugu = $this->iugu_report(
+                                                            $response['LR'], 
+                                                            $_SESSION['transaction_values']['total_cust_value'],
+                                                            $_SESSION['transaction_values']['amount_months']
+                                                            );                    
+                            if($report_iugu['known']){
+                                $result['message'] = $report_iugu['message'];                    
+                                //enviar email com passos
+                                $this->Gmail = new Gmail();
+                                $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
+                                if($report_iugu['destroy'])
+                                    session_destroy();
+                            }
+                            else{
+                                $result['message'] = "Transação foi negada. Operação cancelada";                    
                                 session_destroy();
-                        }
+                            }
+                        }       
                         else{
-                            $result['message'] = "Transação foi negada. Operação cancelada";                    
+                            $result['message'] = $response['message'].' Operação cancelada';                    
                             session_destroy();
                         }
-                    }       
-                    else{
-                        $result['message'] = $response['message'].' Operação cancelada';                    
-                        session_destroy();
+
+                        $result['success'] = false;                                        
                     }
-                    
-                    $result['success'] = false;                                        
+                    else{
+                        $result['success'] = false;
+                        $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
+                                                '(1-) Você utilizou seu cartão de DÉBITO. '.
+                                                '(2-) Dados do cartão incorretos. '.
+                                                '(3-) Cartão utilizado não tem validade. '.
+                                                '(4-) Não há limite suficiente em seu cartão de crédito. '.
+                                                '(5-) Problema de comunicação com o banco emisor do cartão de crédito.';
+                    }
                 }
             }
             else{                
@@ -2087,7 +2102,8 @@ class Welcome extends CI_Controller {
         $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
             //1. estornar dinero
-            $resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
+            //$resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
+            $resp = $this->refund_transactions($_SESSION['transaction_requested_id']);
             if($resp['success']){
                 //2. mudar status de la transaccion
                 $this->transaction_model->update_transaction_status(
@@ -4890,7 +4906,8 @@ class Welcome extends CI_Controller {
     }
     
     public function do_braspag_payment($id){
-        return;//para que no usem esa funcion por ahora
+        if($id !== $_SESSION['pk'])   //segurança
+            return;
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');        
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -4900,7 +4917,7 @@ class Welcome extends CI_Controller {
         /*$param = [
             'order_id' => time(),
             'name' => 'Jorge Moreno',
-            'amount' => 10000,
+            'amount' => 100000000,
             'plots' => 8,
             'card_name' => 'PEDRO BASTOS PETTI',
             'card_number' => '5162202091174685',
@@ -4910,20 +4927,7 @@ class Welcome extends CI_Controller {
             'card_brand' => 'Master',
             'provider' => 'Cielo30',
         ];*/
-        $param = [
-            'order_id' => time(),
-            'name' => 'Pedro Petti',
-            'amount' => 10500,
-            'plots' => 10,
-            'card_name' => 'PEDRO PETTI',
-            'card_number' => '377169742854001',
-            'card_cvc' => '9489',
-            'card_month' => '05',
-            'card_year' => '2023',
-            'card_brand' => 'Amex',
-            'provider' => 'Cielo30',
-        ];
-        /*
+        
         $param = [
             'order_id' => time(),
             'name' => $_SESSION['b_card_name'],
@@ -4935,15 +4939,62 @@ class Welcome extends CI_Controller {
             'card_month' => $_SESSION['b_card_exp_month'],
             'card_year' => $_SESSION['b_card_exp_year'],
             'card_brand' => $_SESSION['brand'],
-            'provider' => 'Simulado',
+            'provider' => 'Cielo30',
         ];/**/
-        /*$result = $this->BRASPAG_Authorize($param);
+        $result = $this->BRASPAG_Authorize($param);
         if($result['success']){            
-            $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
-            if($result_capture['success'])
+            $result = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
+            if($result['success'])
                 $this->transaction_model->save_generated_bill_BRASPAG($id, $result['payment_id']);
-        }*/
-        //$result2 = $this->BRASPAG_Devolution($transaction['braspag_id'], $param['amount']);
+        }
+        return $result;
+    }
+    
+    public function do_braspag_devolution($id){
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        //$amount = 10500;
+        $amount = $transaction['total_effective_cost'];
+        
+        $result = $this->BRASPAG_Devolution($transaction['braspag_id'], $amount);
+        
+        return $result;
+    }
+    
+    public function refund_transactions($id){
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/payment_manager');
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        }
+        $result = ['success' => false, 'message' => 'Transação não pode ser estornada'];
+        $transaction = $this->transaction_model->get_client('id', $id)[0];
+        if($transaction['payment_source'] == payment_manager::IUGU)
+            $result = $this->refund_bill_iugu($id);
+        else
+            if($transaction['payment_source'] == payment_manager::BRASPAG)
+                $result = $this->do_braspag_devolution($id);            
+        
+        return $result;
+    }
+    
+    public function do_payment($id, $payment_method){        
+        $this->load->model('class/payment_manager');
+        $result = ['success' => false, 'message' => 'Erro tentando passar o cartão'];
+
+        if($payment_method == payment_manager::IUGU)
+            $result = $this->do_payment_iugu($id);
+        else
+            if($payment_method == payment_manager::BRASPAG)
+                $result = $this->do_braspag_payment($id);            
+        
+        return $result;
     }
 
 }
