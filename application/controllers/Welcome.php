@@ -1692,8 +1692,8 @@ class Welcome extends CI_Controller {
                     $cut_date,
                     transactions_status::BEGINNER
                 );
-                var_dump(count($transactions));
-                die('aas');
+                //var_dump(count($transactions));
+                //die('aas');
                 $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     $id = $tr['id'];
@@ -2319,7 +2319,7 @@ class Welcome extends CI_Controller {
             $email = $datas['email'];
         
         $email_hackers= array(
-            'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com'
+            'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com','paulogutembergamaral001@gmail.com','paulolindembergamaral@gmail.com'
             );
         if(in_array($email, $email_hackers)){            
             //header('Location: '.base_url());
