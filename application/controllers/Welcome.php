@@ -1168,8 +1168,8 @@ class Welcome extends CI_Controller {
                                                 '(1-) Você utilizou seu cartão de DÉBITO. '.
                                                 '(2-) Dados do cartão incorretos. '.
                                                 '(3-) Cartão utilizado não tem validade. '.
-                                                '(4-) Não há limite suficiente em seu cartão de crédito. '.
-                                                '(5-) Problema de comunicação com o banco emisor do cartão de crédito.';
+                                                '(4-) Não há limite suficiente em seu cartão de crédito. '.                                                
+                                                'Recomendamos entrar em contato com o banco emissor do seu cartão de crédito e informar que deseja aprovação para a cobrança da empresa Livre.Digital, no valor de R$ '.$_SESSION['transaction_values']['total_cust_value'].', parcelado em '.$_SESSION['transaction_values']['amount_months'].' vezes.';
                     }
                 }
             }
@@ -2304,7 +2304,7 @@ class Welcome extends CI_Controller {
             $phone = $datas['phone_ddd'].$datas['phone_number'];
         
         $phone_hackers= array(
-            '000000000', '27997353520', '71991412687'
+            '000000000', '27997353520', '71991412687', '88988681079'
             );
         if(in_array($phone, $phone_hackers)){            
             //header('Location: '.base_url());
@@ -2319,7 +2319,9 @@ class Welcome extends CI_Controller {
             $email = $datas['email'];
         
         $email_hackers= array(
-            'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com','paulogutembergamaral001@gmail.com','paulolindembergamaral@gmail.com'
+            'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com',
+            'paulogutembergamaral001@gmail.com','paulolindembergamaral@gmail.com',
+            'silvaeliomarp129@gmail.com'
             );
         if(in_array($email, $email_hackers)){            
             //header('Location: '.base_url());
