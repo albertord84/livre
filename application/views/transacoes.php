@@ -41,7 +41,7 @@
                                         utm_source: <font color="green"><span id="trans_utm_source"></span></font><br>
                                         utm_campaign: <font color="green"><span id="trans_utm_campaign"></span></font><br>
                                         utm_content: <font color="green"><span id="trans_utm_content"></span></font><br>
-                                    </p>
+                                    </p>                                    
 				</div>
                                 <div class="w20 fw-500 text-left m-top10-xs center-xs">
 					<small class="fleft100 cl-silver">Dados do cartão</small>
@@ -51,6 +51,10 @@
                                             <small class="fleft100 cl-silver m-top20">Uso do dinheiro:</small>
                                             <span id="way_to_spend_name"></span> <br>
 					</div>
+                                        <small class="fleft100 cl-silver m-top20">Cobrado por:</small>
+                                        <p>                                        
+                                            <span id="trans_payment_str"></span><br>                                        
+                                        </p>
 				</div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados bancários</small>
