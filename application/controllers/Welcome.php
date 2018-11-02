@@ -4697,7 +4697,7 @@ class Welcome extends CI_Controller {
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
                         'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital ou no Livre.Digital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
                         'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja aprovação para a cobrança da empresa IUGU*Livredigital ou no Livre.Digital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja aprovação para a cobrança da empresa IUGU*Livredigital ou Livre.Digital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
