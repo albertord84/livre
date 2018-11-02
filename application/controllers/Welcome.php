@@ -1692,8 +1692,8 @@ class Welcome extends CI_Controller {
                     $cut_date,
                     transactions_status::BEGINNER
                 );
-                var_dump(count($transactions));
-                die('aas');
+                //var_dump(count($transactions));
+                //die('aas');
                 $page++;//descargar todas las páginas
                 foreach ($transactions as $tr) {
                     $id = $tr['id'];
