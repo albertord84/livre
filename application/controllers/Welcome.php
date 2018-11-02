@@ -4980,10 +4980,11 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         if($transaction['payment_source'] == payment_manager::IUGU)
             $result = $this->refund_bill_iugu($id);
-        else
+        else{
+            $result = ['success' => false, 'message' => 'Transação não pode ser estornada T'];
             if($transaction['payment_source'] == payment_manager::BRASPAG)
                 $result = $this->do_braspag_devolution($id);            
-        
+            }
         return $result;
     }
     
