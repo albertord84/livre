@@ -3662,6 +3662,7 @@ class Welcome extends CI_Controller {
     
     public function get_transaction_datas_by_id($datas=NULL){
         $this->load->model('class/affiliate_model');
+        $this->load->model('class/payment_manager');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $datas_by_post=false;
@@ -3683,6 +3684,11 @@ class Welcome extends CI_Controller {
                     $transactions['IOF'] =$financials['IOF']; //valor a cobrar por IOF                    
                     $transactions['CET_PERC'] =$financials['CET_PERC'];
                     $transactions['CET_YEAR'] =$financials['CET_YEAR'];
+                    $transactions['payment_source_str'] = "---";
+                    if($transactions['payment_source'] == payment_manager::IUGU)
+                        $transactions['payment_source_str'] = "IUGU";
+                    if($transactions['payment_source'] == payment_manager::BRASPAG)
+                        $transactions['payment_source_str'] = "BRASPAG";
                     //////
                     $_SESSION['transaction_requested_id'] = $transactions['tr_id'];
                     $aaa = $_SESSION['transaction_requested_id'] ;
