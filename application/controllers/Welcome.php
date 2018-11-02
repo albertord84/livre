@@ -2327,6 +2327,18 @@ class Welcome extends CI_Controller {
             //header('Location: '.base_url());
             return ['success'=>false, 'message'=>'Não foi possível continuar com a solicitude'];
         }
+        
+        $cpf = '00000000000';
+        if(array_key_exists("cpf", $datas))
+            $cpf = $datas['cpf'];
+        
+        $cpf_hackers= array(
+            '00000000000', '05748580594','05073125380','72556846372'
+            );
+        if(in_array($cpf, $cpf_hackers)){            
+            //header('Location: '.base_url());
+            return ['success'=>false, 'message'=>'Não foi possível continuar com a solicitude'];
+        }
         return ['success'=>true, 'message'=>'OK'];
     }
     
