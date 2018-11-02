@@ -4898,7 +4898,7 @@ class Welcome extends CI_Controller {
         
         curl_close ($ch);
         
-        $result['success'] = false;
+        $result['success'] = false;$result['message'] = $result_curl; return $result;
         if($parsed_response->ReasonCode == 0 && ($parsed_response->Status == 10 || $parsed_response->Status == 11) )
             $result['success'] = true;        
         $result['message'] = $parsed_response->ProviderReturnMessage;
@@ -4964,7 +4964,7 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         //$amount = 10500;
         $amount = $transaction['total_effective_cost'];
-                    $result = ['success' => false, 'message' => 'Transação não pode ser estornada T'];return $result;
+        
         $result = $this->BRASPAG_Devolution($transaction['braspag_id'], $amount);
         
         return $result;
