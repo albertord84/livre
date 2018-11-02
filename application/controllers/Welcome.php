@@ -4898,7 +4898,7 @@ class Welcome extends CI_Controller {
         
         curl_close ($ch);
         
-        $result['success'] = false;$result['message'] = $result_curl." ".$payment_id."/void?amount=".$amount; return $result;
+        $result['success'] = false;
         if($parsed_response->ReasonCode == 0 && ($parsed_response->Status == 10 || $parsed_response->Status == 11) )
             $result['success'] = true;        
         $result['message'] = $parsed_response->ProviderReturnMessage;
@@ -4980,7 +4980,7 @@ class Welcome extends CI_Controller {
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         if($transaction['payment_source'] == payment_manager::IUGU)
             $result = $this->refund_bill_iugu($id);
-        else{
+        else{            
             if($transaction['payment_source'] == payment_manager::BRASPAG)
                 $result = $this->do_braspag_devolution($id);            
             }
