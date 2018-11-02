@@ -4898,7 +4898,7 @@ class Welcome extends CI_Controller {
         
         curl_close ($ch);
         
-        $result['success'] = false;$result['message'] = $result_curl; return $result;
+        $result['success'] = false;$result['message'] = $result_curl." ".$payment_id."/void?amount=".$amount; return $result;
         if($parsed_response->ReasonCode == 0 && ($parsed_response->Status == 10 || $parsed_response->Status == 11) )
             $result['success'] = true;        
         $result['message'] = $parsed_response->ProviderReturnMessage;
