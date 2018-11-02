@@ -4944,9 +4944,11 @@ class Welcome extends CI_Controller {
         ];/**/
         $result = $this->BRASPAG_Authorize($param);
         if($result['success']){            
-            $result = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
-            if($result['success'])
+            $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
+            if($result_capture['success'])
                 $this->transaction_model->save_generated_bill_BRASPAG($id, $result['payment_id']);
+            else
+                $result = $result_capture;
         }
         return $result;
     }
