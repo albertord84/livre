@@ -1060,118 +1060,125 @@ class Welcome extends CI_Controller {
                     'purchase_counter', $purchase_counter);
                 /*-----------------------------------------*/
                 //1. pasar cartão de crédito na IUGU                
-                //$response = $this->do_payment_iugu($_SESSION['pk']);                                
+                //$response = $this->do_payment_iugu($_SESSION['pk']);   
+                $num_temp_for_paym = 0;
                 $payment_method = $GLOBALS['sistem_config']->PAYMENT_METHOD;
-                $response = $this->do_payment($_SESSION['pk'], $payment_method);                                
-                if($response['success']){
-                    /*$this->transaction_model->save_in_db(
-                        'transactions',
-                        'id',$_SESSION['pk'],
-                        'pay_date', time());                                
-                    $this->transaction_model->save_in_db(
-                        'transactions',
-                        'id',$_SESSION['pk'],
-                        'payment_source', payment_manager::IUGU);*/
-                    $string_param = "transactionId=".$_SESSION['pk']
-                                . "&transactionAffiliation=site"
-                                . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
-                                . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
-                                . "&amount_months=".$_SESSION['transaction_values']['amount_months']
-                                . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
-                    //3. crear documento a partir de plantilla y guardar token del documento en la BD
-                    $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
-                    if($uudid_doc){
-                        //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
-                        $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
-                        if($token_signer){
-                            //5.  mandar a assinar
-                            $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
-                            if($result_send){
-                                //2. salvar el status para WAIT_SIGNATURE
-                                $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::WAIT_SIGNATURE);
-                                //6. matar session para evitar retroceder
-                                //session_destroy();
-                                //7. pagina de sucesso de compra con los tags de adwords y analitics
-                                /*Codigo antiguo no funcionava bien
-                                $params['transactionId']=$_SESSION['pk'];
-                                $params['transactionAffiliation']='site';
-                                $params['transactionTotal']=['transaction_values']['total_cust_value'];
-                                $params['solicited_value']=['transaction_values']['solicited_value'];
-                                $params['amount_months']=['transaction_values']['amount_months'] ;
-                                //$this->load->view('sucesso-compra',$params);
-                                //$this->load->view('inc/footer');
-                                $result['success'] = true;
-                                $result['params'] = $params;                                 
-                                 */                                
+                do{
+                    $response = $this->do_payment($_SESSION['pk'], $payment_method);                                
+                    if($response['success']){
+                        /*$this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$_SESSION['pk'],
+                            'pay_date', time());                                
+                        $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$_SESSION['pk'],
+                            'payment_source', payment_manager::IUGU);*/
+                        $string_param = "transactionId=".$_SESSION['pk']
+                                    . "&transactionAffiliation=site"
+                                    . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                                    . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                                    . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                                    . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
+                        //3. crear documento a partir de plantilla y guardar token del documento en la BD
+                        $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                        if($uudid_doc){
+                            //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                            $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                            if($token_signer){
+                                //5.  mandar a assinar
+                                $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
+                                if($result_send){
+                                    //2. salvar el status para WAIT_SIGNATURE
+                                    $this->transaction_model->update_transaction_status(
+                                                        $_SESSION['pk'], 
+                                                        transactions_status::WAIT_SIGNATURE);
+                                    //6. matar session para evitar retroceder
+                                    //session_destroy();
+                                    //7. pagina de sucesso de compra con los tags de adwords y analitics
+                                    /*Codigo antiguo no funcionava bien
+                                    $params['transactionId']=$_SESSION['pk'];
+                                    $params['transactionAffiliation']='site';
+                                    $params['transactionTotal']=['transaction_values']['total_cust_value'];
+                                    $params['solicited_value']=['transaction_values']['solicited_value'];
+                                    $params['amount_months']=['transaction_values']['amount_months'] ;
+                                    //$this->load->view('sucesso-compra',$params);
+                                    //$this->load->view('inc/footer');
+                                    $result['success'] = true;
+                                    $result['params'] = $params;                                 
+                                     */                                
+                                }
+                                else{
+                                    $this->transaction_model->update_transaction_status(
+                                                        $_SESSION['pk'], 
+                                                        transactions_status::PENDING);                        
+                                }
                             }
                             else{
                                 $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
+                                                        $_SESSION['pk'], 
+                                                        transactions_status::PENDING);                        
                             }
-                        }
-                        else{
+                        }else{
                             $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
+                                                        $_SESSION['pk'], 
+                                                        transactions_status::PENDING);                        
                         }
+                        //sucesso de contrato se foi cobrado
+                        $_SESSION['buy'] = true;
+                        $result['success'] = true;
+                        $result['params'] = $string_param;                                
+                        //session_destroy(); se mata na no carga
                     }else{
-                        $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
-                    }
-                    //sucesso de contrato se foi cobrado
-                    $_SESSION['buy'] = true;
-                    $result['success'] = true;
-                    $result['params'] = $string_param;                                
-                    //session_destroy(); se mata na no carga
-                }else{
-                    $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
-                    $useremail = $_SESSION['client_datas']['email'];
-                    $this->Gmail->credit_card_recused($name,$useremail);
-                    if($payment_method == payment_manager::IUGU){                        
-                        //analisar erro da transação
-                        if($response['LR'] && $response['LR'] != '00')
-                        {
-                            $report_iugu = $this->iugu_report(
-                                                            $response['LR'], 
-                                                            $_SESSION['transaction_values']['total_cust_value'],
-                                                            $_SESSION['transaction_values']['amount_months']
-                                                            );                    
-                            if($report_iugu['known']){
-                                $result['message'] = $report_iugu['message'];                    
-                                //enviar email com passos
-                                $this->Gmail = new Gmail();
-                                $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
-                                if($report_iugu['destroy'])
+                        $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                        $useremail = $_SESSION['client_datas']['email'];
+                        if($num_temp_for_paym == 1)
+                            $this->Gmail->credit_card_recused($name,$useremail);
+                        if($payment_method == payment_manager::IUGU){                        
+                            //analisar erro da transação
+                            if($response['LR'] && $response['LR'] != '00')
+                            {
+                                $report_iugu = $this->iugu_report(
+                                                                $response['LR'], 
+                                                                $_SESSION['transaction_values']['total_cust_value'],
+                                                                $_SESSION['transaction_values']['amount_months']
+                                                                );                    
+                                if($report_iugu['known']){
+                                    $result['message'] = $report_iugu['message'];                    
+                                    //enviar email com passos
+                                    $this->Gmail = new Gmail();
+                                    $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
+                                    if($report_iugu['destroy'])
+                                        session_destroy();
+                                }
+                                else{
+                                    $result['message'] = "Transação foi negada. Operação cancelada";                    
                                     session_destroy();
-                            }
+                                }
+                            }       
                             else{
-                                $result['message'] = "Transação foi negada. Operação cancelada";                    
+                                $result['message'] = $response['message'].' Operação cancelada';                    
                                 session_destroy();
                             }
-                        }       
-                        else{
-                            $result['message'] = $response['message'].' Operação cancelada';                    
-                            session_destroy();
-                        }
 
-                        $result['success'] = false;                                        
+                            $result['success'] = false;                                        
+                        }
+                        else{
+                            //if(!$response['try_again'])
+                            //    session_destroy();
+                            $result['success'] = false;
+                            $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
+                                                    '(1-) Você utilizou seu cartão de DÉBITO. '.
+                                                    '(2-) Dados do cartão incorretos. '.
+                                                    '(3-) Cartão utilizado não tem validade. '.
+                                                    '(4-) Não há limite suficiente em seu cartão de crédito. '.                                                
+                                                    'Recomendamos entrar em contato com o banco emissor do seu cartão de crédito e informar que deseja aprovação para a cobrança da empresa Livre.Digital, no valor de R$ '.$_SESSION['transaction_values']['total_cust_value'].', parcelado em '.$_SESSION['transaction_values']['amount_months'].' vezes.';
+                        }
                     }
-                    else{
-                        if(!$response['try_again'])
-                            session_destroy();
-                        $result['success'] = false;
-                        $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
-                                                '(1-) Você utilizou seu cartão de DÉBITO. '.
-                                                '(2-) Dados do cartão incorretos. '.
-                                                '(3-) Cartão utilizado não tem validade. '.
-                                                '(4-) Não há limite suficiente em seu cartão de crédito. '.                                                
-                                                'Recomendamos entrar em contato com o banco emissor do seu cartão de crédito e informar que deseja aprovação para a cobrança da empresa Livre.Digital, no valor de R$ '.$_SESSION['transaction_values']['total_cust_value'].', parcelado em '.$_SESSION['transaction_values']['amount_months'].' vezes.';
-                    }
-                }
+                    //ver si hacer la otra tentativa
+                    $payment_method = ($payment_method)%2 + 1;
+                    $num_temp_for_paym++;
+                }while ($num_temp_for_paym < 2);
             }
             else{                
                 $result['success'] = false;
@@ -4685,9 +4692,9 @@ class Welcome extends CI_Controller {
         $report = [
                     [
                         'LR' => ['01','02','04','05','07','15','39','57','24','60','62','63','65','75','88','92','BL','BM','CF','FC','GD'],
-                        'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
+                        'message' => 'Seu banco não autorizou a transação. Entre em contato com o banco emissor do seu cartão agora mesmo e informe que você permite a cobrança no estabelecimento IUGU*Livredigital ou no Livre.Digital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. Feito isso, basta solicitar novamente em nosso site, que seu empréstimo será aprovado com sucesso!',
                         'email' => 'O valor solicitado com o Livre.digital não foi liberado pelo banco emissor do seu cartão de crédito, pois você não está habituado a utilizar seu cartão em nossa plataforma. <br><br> 
-                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja aprovação para a cobrança da empresa IUGU*Livredigital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
+                         <b>PARA LIBERAR O DINHEIRO:</b><br> Você só precisa solicitar a aprovação, ligue para seu banco e informe que deseja aprovação para a cobrança da empresa IUGU*Livredigital ou no Livre.Digital, no valor de R$ '.$CET.', parcelado em '.$parcelas.' vezes. <br><br> 
                         <b>Depois disso, basta solicitar novamente em nosso site que ele será aprovado!</b>',
                         'subject' => 'Falta pouco! - Livre.digital',
                         'destroy' => true
@@ -4706,7 +4713,7 @@ class Welcome extends CI_Controller {
                     [
                         'LR' => ['91','AA','AE','19'],
                         'message' => 'Não foi possível aprovar sua solicitação devido a falta de comunicação com o banco emissor do cartão de crédito. Espere alguns minutos, depois volte a tela com os dados de seu cartão para serem novamente validados e tente novamente.',
-                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br><br> Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital.',
+                        'email' => 'O valor solicitado não foi aprovado pois não conseguimos contato com o banco. Mas não se preocupe, você só precisa aguardar alguns minutos e tentar de novo.  Lembre validar novamente os dados de seu cartão!<br><br> Antes, pedimos que faça contato com seu banco previamente para informa-lo que irá utilizar o cartão para a transação no valor R$ '.$CET.' para a empresa iugu*livre.digital ou Livre.Digital.',
                         'subject' => 'Tente novamente - Livre.digital',
                         'destroy' => false
                     ],
@@ -4753,7 +4760,7 @@ class Welcome extends CI_Controller {
         
         $email91 = 'O valor solicitado não pode ser aprovado pois não conseguimos a resposta do banco emissor do cartão de crédito.
                       Mas não se preocupe, é só você tentar novamente em alguns minutos. Lembre validar novamente os dados de seu cartão!<br>\n<br>\n 
-                      Aproveite e faça contato com seu banco para informar que você aprova a transação feita pela iugu*livre.digital, assim o empréstimo será liberado com muito mais facilidade!';
+                      Aproveite e faça contato com seu banco para informar que você aprova a transação feita pela iugu*livre.digital ou pela Livre.Digital, assim o empréstimo será liberado com muito mais facilidade!';
         if($LR == '91')
             $result['email'] = $email91;
         return $result;
