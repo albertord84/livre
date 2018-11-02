@@ -4955,7 +4955,7 @@ class Welcome extends CI_Controller {
     
     public function do_braspag_devolution($id){
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
-            return;            
+            return ['success' => false, 'message'=>'access denied bras'];            
         }
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');        
@@ -4974,7 +4974,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/transaction_model');
         $this->load->model('class/payment_manager');
         if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
-            return;            
+            return ['success' => false, 'message'=>'access denied refund'];            
         }
         $result = ['success' => false, 'message' => 'Transação não pode ser estornada'];
         $transaction = $this->transaction_model->get_client('id', $id)[0];
