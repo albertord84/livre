@@ -1128,6 +1128,7 @@ class Welcome extends CI_Controller {
                         $_SESSION['buy'] = true;
                         $result['success'] = true;
                         $result['params'] = $string_param;                                
+                        $num_temp_for_paym = 2;
                         //session_destroy(); se mata na no carga
                     }else{
                         $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
@@ -1176,8 +1177,10 @@ class Welcome extends CI_Controller {
                         }
                     }
                     //ver si hacer la otra tentativa
-                    $payment_method = ($payment_method)%2 + 1;
-                    $num_temp_for_paym++;
+                    if($num_temp_for_paym < 2){
+                        $payment_method = ($payment_method)%2 + 1;
+                        $num_temp_for_paym++;
+                    }
                 }while ($num_temp_for_paym < 2);
             }
             else{                
