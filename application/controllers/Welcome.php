@@ -1061,7 +1061,7 @@ class Welcome extends CI_Controller {
                 /*-----------------------------------------*/
                 //1. pasar cartão de crédito na IUGU                
                 //$response = $this->do_payment_iugu($_SESSION['pk']);   
-                $num_temp_for_paym = 0;
+                $num_temp_for_paym = 1;
                 $payment_method = $GLOBALS['sistem_config']->PAYMENT_METHOD;
                 do{
                     $response = $this->do_payment($_SESSION['pk'], $payment_method);                                
@@ -1165,8 +1165,8 @@ class Welcome extends CI_Controller {
                             $result['success'] = false;                                        
                         }
                         else{
-                            //if(!$response['try_again'])
-                            //    session_destroy();
+                            if(!$response['try_again'])
+                                session_destroy();
                             $result['success'] = false;
                             $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
                                                     '(1-) Você utilizou seu cartão de DÉBITO. '.
@@ -2314,7 +2314,7 @@ class Welcome extends CI_Controller {
             $phone = $datas['phone_ddd'].$datas['phone_number'];
         
         $phone_hackers= array(
-            '000000000', '27997353520', '71991412687', '88988681079'
+            '000000000', '27997353520', '71991412687', '88988681079','85998401261'
             );
         if(in_array($phone, $phone_hackers)){            
             //header('Location: '.base_url());
@@ -2331,7 +2331,7 @@ class Welcome extends CI_Controller {
         $email_hackers= array(
             'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com',
             'paulogutembergamaral001@gmail.com','paulolindembergamaral@gmail.com',
-            'silvaeliomarp129@gmail.com'
+            'silvaeliomarp129@gmail.com','nelvsj@gmail.com'
             );
         if(in_array($email, $email_hackers)){            
             //header('Location: '.base_url());
@@ -2343,7 +2343,7 @@ class Welcome extends CI_Controller {
             $cpf = $datas['cpf'];
         
         $cpf_hackers= array(
-            '00000000000', '05748580594','05073125380','72556846372'
+            '00000000000', '05748580594','05073125380','72556846372','31786862824'
             );
         if(in_array($cpf, $cpf_hackers)){            
             //header('Location: '.base_url());
@@ -2374,7 +2374,7 @@ class Welcome extends CI_Controller {
         $data_track['track_date']=time();
         $id_row = $this->track_money_model->insert_required_money($data_track);
         $result['success'] = false;
-        $result['message'] = 'Só pode solicitar um valor entre R$500 e R$3000';
+        $result['message'] = 'Só pode solicitar um valor entre R$100 e R$5000';
         echo json_encode($result);       
     }
     
@@ -2386,8 +2386,8 @@ class Welcome extends CI_Controller {
         }
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
-        if(($datas['amount_months']>=6 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=100 && $datas['solicited_value']<=3000){                
+        if(($datas['amount_months']>=4 && $datas['amount_months']<=12)){
+            if($datas['solicited_value']>=100 && $datas['solicited_value']<=5000){                
                 $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
                 $result['solicited_value']=$financials['solicited_value'];  
                 $result['amount_months']=$financials['amount_months'];
@@ -2402,7 +2402,7 @@ class Welcome extends CI_Controller {
                 $_SESSION['transaction_values']=$result;                
             } else{
                 $result['success'] = false;
-                $result['message'] = 'Só pode solicitar um valor entre R$100 e R$3000';
+                $result['message'] = 'Só pode solicitar um valor entre R$100 e R$5000';
             }
         }else{
             $result['success'] = false;
@@ -3604,7 +3604,7 @@ class Welcome extends CI_Controller {
         return "2501_3000";
     }
     
-    public function get_field($money_str){
+    public function get_field_2($money_str){
         $money = (float)($money_str);        
         if($money >=100 && $money <= 500)
             return "100_500";        
@@ -3619,6 +3619,23 @@ class Welcome extends CI_Controller {
         if($money > 2500 && $money <= 3000)
             return "2501_3000";        
         return "2501_3000";
+    }
+    
+    public function get_field($money_str){
+        $money = (float)($money_str);        
+        if($money >=100 && $money <= 500)
+            return "100_500";        
+        if($money > 500 && $money <= 1000)
+            return "501_1000";        
+        if($money > 1000 && $money <= 2000)
+            return "1001_2000";        
+        if($money > 2000 && $money <= 3000)
+            return "2001_3000";        
+        if($money > 3000 && $money <= 4000)
+            return "3001_4000";        
+        if($money > 4000 && $money <= 5000)
+            return "4001_5000";        
+        return "4001_5000";
     }
 
     public function topazio_emprestimo($id) {// recebe id da transacao           
@@ -4849,6 +4866,90 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
+    public function BRASPAG_Authorize_with_Issuer_DATA($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        $this->load->model('class/system_config');                
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $merchant_id = $GLOBALS['sistem_config']->MERCHANT_ID_BRASPAG;        
+        $merchant_key = $GLOBALS['sistem_config']->MERCHANT_KEY_BRASPAG;        
+        
+        $ch = curl_init();
+        $post_fields = "{\n   \"MerchantOrderId\":\"".$param['order_id']."\",\n ".
+                        "  \"Customer\":{\n   ".
+                        "   \"Name\":\"".$param['name']."\",\n ".
+                        "   \"Identity\":\"".$param['cpf']."\",\n ".
+                        "   \"IdentityType\":\"CPF\",\n ".
+                        "   \"Email\":\"".$param['email']."\",\n ".
+                        "   \"Address\":{\n     ".
+                        "    \"Street\":\"".$param['street_address']."\",\n    ".
+                        "     \"Number\":\"".$param['number_address']."\",\n   ".
+                        "     \"Complement\":\"".$param['complement_number_address']."\",\n   ".
+                        "     \"ZipCode\":\"".$param['cep']."\",\n    ".
+                        "     \"City\":\"".$param['city_address']."\",\n    ".
+                        "     \"State\":\"".$param['state_address']."\",\n    ".
+                        "     \"Country\":\"BRA\",\n    ".
+                        "     \"District\":\"Bairro\"\n     }\n   },\n".                        
+                        "  \"Payment\":{\n   ".
+                        "  \"Provider\":\"".$param['provider']."\",\n  ".
+                        "  \"Type\":\"CreditCard\",\n   ".                        
+                        "  \"Amount\":".$param['amount'].",\n   ".
+                        "  \"ServiceTaxAmount\":0,\n   ".                        
+                        "  \"Installments\":".$param['plots'].",\n  ".
+                        "  \"Interest\":\"ByIssuer\",\n   ".                                
+                        "  \"Capture\":false,\n  ".
+                        "   \"CreditCard\":{\n     ".
+                        "     \"CardNumber\":\"".$param['card_number']."\",\n    ".
+                        "     \"Holder\":\"".$param['card_name']."\",\n   ".
+                        "     \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
+                        "     \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
+                        "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
+
+        //curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_URL, "https://api.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        //$headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+        //$headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        $headers[] = "Merchantid: ".$merchant_id;
+        $headers[] = "Merchantkey: ".$merchant_key;
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
+        curl_close ($ch);
+
+        if(is_array($parsed_response)){
+            $result['success'] = false;
+            $result['code'] = $parsed_response[0]->Code;
+            $result['message'] = $parsed_response[0]->Message;
+        }
+        else{
+            if(is_object($parsed_response)){
+                $result['success'] = false;                
+                $result['try_again'] = false;                
+                $result['status'] = $parsed_response->Payment->Status;
+                $result['provider_message'] = $parsed_response->Payment->ProviderReturnMessage;
+                $result['reason_code'] = $parsed_response->Payment->ReasonCode;
+                $result['provider_code'] = $parsed_response->Payment->ProviderReturnCode;
+                $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
+                $result['payment_id'] = $parsed_response->Payment->PaymentId;
+                if($result['reason_code'] == 0 && $result['status'] == 1){
+                    $result['success'] = true;    //operacao com sucesso e paga autorizada            
+                }
+                if($result['provider_code'] == 99){
+                    $result['try_again'] = true;    //pode tentar de novo
+                }
+            }
+        }
+
+        return $result;
+    }
+    
     public function BRASPAG_Capture($payment_id, $amount) { /*Captura uma transacao previamente autorizada*/
         $this->load->model('class/system_config');                
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -4964,6 +5065,14 @@ class Welcome extends CI_Controller {
             'name' => $_SESSION['b_card_name'],
             'amount' => $transaction['total_effective_cost'],
             'plots' => $transaction['number_plots'],
+            'cpf' => $transaction['cpf'],
+            'cep' => $transaction['cep'],
+            'email' => $transaction['email'],
+            'street_address' => $transaction['street_address'],
+            'number_address' => $transaction['number_address'],
+            'complement_number_address' => $transaction['complement_number_address'],
+            'city_address' => $transaction['city_address'],
+            'state_address' => $transaction['state_address'],
             'card_name' => $_SESSION['b_card_name'],
             'card_number' => $_SESSION['b_card_number'],
             'card_cvc' => $_SESSION['b_card_cvv'],
@@ -4972,7 +5081,8 @@ class Welcome extends CI_Controller {
             'card_brand' => $_SESSION['brand'],
             'provider' => 'Cielo30',
         ];/**/
-        $result = $this->BRASPAG_Authorize($param);
+        //$result = $this->BRASPAG_Authorize($param);
+        $result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
         if($result['success']){            
             $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
             if($result_capture['success'])

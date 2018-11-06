@@ -110,7 +110,7 @@
                                         <div class="col-md-9 col-sm-9 col-xs-12 pd-0">
                                             <h2 id="month_value" class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
                                         </div>
-                                        <input value="12" min="6" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
+                                        <input value="12" min="4" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
                                     </div>
                                     <script>
                                         // RANGER
@@ -231,6 +231,9 @@
 				<div class="ft-size17">
 					<h3 class="ft-size30"><i><b>E melhor!</b></i></h3>
 					O envio dos documentos é totalmente digital.
+                                        <p>
+                                            A Livre.digital faz o parcelamento do seu empréstimo através do banco emissor do seu cartão de crédito (a taxa de juros varia de um banco para outro). A média de juros nessa modalidade é em torno de 2% a.m., além dos valores aplicados pela Livre.digital, na simulação feita aqui no site. Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.
+                                        </p>    
 				</div>
 			</div>
 		</div>
