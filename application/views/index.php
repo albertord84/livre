@@ -231,9 +231,9 @@
 				<div class="ft-size17">
 					<h3 class="ft-size30"><i><b>E melhor!</b></i></h3>
 					O envio dos documentos é totalmente digital.
-                                        <p>
+<!--                                        <p>
                                             A Livre.digital faz o parcelamento do seu empréstimo através do banco emissor do seu cartão de crédito (a taxa de juros varia de um banco para outro). A média de juros nessa modalidade é em torno de 2% a.m., além dos valores aplicados pela Livre.digital, na simulação feita aqui no site. Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.
-                                        </p>    
+                                        </p>    -->
 				</div>
 			</div>
 		</div>
