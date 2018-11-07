@@ -39,7 +39,9 @@
                 <p class="flef100 cl-fff text-justify m-top80">
                     Alameda Santos, 1767, CXPST 1069 EDIF 1767-1773, Cerqueira Cesar, São Paulo - SP, CEP: 01419-100.
                     <small class="fleft100"><br>A Livre.digital é uma plataforma de crédito on-line, atuando como correspondente bancário do Banco Topázio, sob o CNPJ 30.472.737/0001-78. Como correspondente bancário, seguimos as diretrizes do Banco Central do Brasil, nos termos da Resolução nº. 3.954, de 24 de fevereiro de 2011.  
-                        <br><br>*informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 6 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 65,21% a 164,04% ao ano, já incluindo a taxa de juros mensal que varia de 6,89% a 16,89% e a taxa de abertura de cadastro (TAC) de 10% sobre o valor tomado. Exemplo: Valor do crédito de R$ 3.000,00 para pagar em 12 (doze) meses. Total de 12 (doze) parcelas de R$ 422,37. Detalhes referentes às taxas do crédito: Valor total a pagar: R$ 5.068,44. CET: 68,95% na operação e 68,95% ao ano.</small>
+                        <br><br>*informações gerais. Prazo de pagamento: O período mínimo para pagamento é de 4 meses e o máximo de 12 meses. Custo Efetivo Total: O Custo Efetivo Total (CET) praticado varia de 27% a 43% ao ano, já incluindo a taxa de juros mensal que varia de 1,89% a 4,27% e a taxa de abertura de cadastro (TAC) de 10% sobre o valor tomado. Exemplo: Valor do crédito de R$ 5.000,00 para pagar em 4 (quatro) meses. Total de 4 (quatro) parcelas de R$ 1.455,38. Detalhes referentes às taxas do crédito: Valor total a pagar: R$ 5.821,52. CET: 16,43% na operação e 49,79% ao ano.
+                        <br><br> Além dos juros praticados acima, você também deve somar ao valor total da operação os juro de parcelamento praticado pelo emissor do cartão. A taxa média praticada é em torno de 2,5% a.m.
+                    </small>
                 </p>
             </div>
         </div>
