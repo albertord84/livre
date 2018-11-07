@@ -110,7 +110,8 @@
                                         <div class="col-md-9 col-sm-9 col-xs-12 pd-0">
                                             <h2 id="month_value" class="fleft100 text-center"><strong>R$ 518,75</strong></h2>
                                         </div>
-                                        <input value="12" min="4" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">
+                                        <input value="12" min="4" step="1" max="12" type="range" id="range" class="range fleft100 bk-none">                                        
+                                        <span style="font-weight: bold; font-size: 14px; color: #009933"> Quanto mais parcelas, menor os juros !</span>
                                     </div>
                                     <script>
                                         // RANGER
