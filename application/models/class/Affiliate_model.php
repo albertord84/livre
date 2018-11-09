@@ -254,8 +254,8 @@ class Affiliate_model extends CI_Model{
             
             //-------INICIO CODIGO DE JR---------------------------------------
             $this->db->join('transactions_status', 'transactions.status_id = transactions_status.id');
-            $this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
-            $this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
+            //$this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
+            //$this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
             if($status==transactions_status::BEGINNER){
                 $this->db->join('transactions_dates', 'transactions.id = transactions_dates.transaction_id');
                 $this->db->where('transactions_dates.status_id', $status);
