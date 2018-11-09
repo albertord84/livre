@@ -249,12 +249,18 @@ class Welcome extends CI_Controller {
     
     public function transacoes() {
         if($_SESSION['logged_role'] === 'ADMIN'){
+            
+            $this->load->model('class/affiliate_model');
+            $this->load->model('class/Crypt');
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            
             if(count($_POST))
                 $datas=$_POST;
             else{
                 $datas['num_page']=1;
                 $datas['token']='';
-                $datas['init_date']= date('Y-m-d', time()-7*24*60*60);
+                $datas['init_date']= date('Y-m-d', time()-$GLOBALS['sistem_config']->DAYS_AGO*24*60*60);
                 $datas['end_date']='';
                 $datas['status']=0;
             }
@@ -270,10 +276,7 @@ class Welcome extends CI_Controller {
                 $end_date += 23*60*60 + 59*60 + 59;
             }
             $status = $datas['status'];
-            $this->load->model('class/affiliate_model');
-            $this->load->model('class/Crypt');
-            $this->load->model('class/system_config');
-            $GLOBALS['sistem_config'] = $this->system_config->load();
+            
             $_SESSION["filter_datas"]=$datas;
             $_SESSION['affiliate_logged_datas'] = $this->affiliate_model->load_afiliate_information($_SESSION['logged_id']);
             $_SESSION['affiliate_logged_transactions'] = $this->affiliate_model->load_transactions(
