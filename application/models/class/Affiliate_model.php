@@ -56,8 +56,8 @@ class Affiliate_model extends CI_Model{
             $this->db->select('*,transactions.id as tr_id');
             $this->db->from('transactions');
             $this->db->join('transactions_status', 'transactions.status_id = transactions_status.id');
-            $this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
-            $this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
+            //$this->db->join('credit_card', 'transactions.id = credit_card.client_id','left outer');
+            //$this->db->join('account_banks', 'transactions.id = account_banks.client_id ','left outer');
             if($status==transactions_status::BEGINNER){
                 $this->db->join('transactions_dates', 'transactions.id = transactions_dates.transaction_id');
                 $this->db->where('transactions_dates.status_id', $status);
@@ -142,19 +142,19 @@ class Affiliate_model extends CI_Model{
             $result = $this->db->get()->result_array();
             $i=0;
             foreach ($result as $transaction){
-                $result[$i]['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
-                $result[$i]['credit_card_name'] = $this->Crypt->decrypt($transaction['credit_card_name']);
-                $N = strlen($result[$i]['credit_card_number']);
-                $result[$i]['credit_card_final'] = substr($result[$i]['credit_card_number'], $N-4, $N);
-                $result[$i]['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
-                $result[$i]['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
-                $result[$i]['bank'] = $this->Crypt->decrypt($transaction['bank']);
-                $result[$i]['bank_name'] = $this->Crypt->get_bank_by_code($result[$i]['bank']);
-                $result[$i]['agency'] = $this->Crypt->decrypt($transaction['agency']);
-                $result[$i]['account_type'] = $this->Crypt->decrypt($transaction['account_type']);
-                $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
-                $result[$i]['dig'] = $this->Crypt->decrypt($transaction['dig']);                
-                $result[$i]['dates'] = $this->load_transaction_dates($transaction['client_id']);//Moreno cambio. Estaba $transaction['id'] (id del banco)
+//                $result[$i]['credit_card_number'] = $this->Crypt->decrypt($transaction['credit_card_number']);
+//                $result[$i]['credit_card_name'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+//                $N = strlen($result[$i]['credit_card_number']);
+//                $result[$i]['credit_card_final'] = substr($result[$i]['credit_card_number'], $N-4, $N);
+//                $result[$i]['credit_card_cvv'] = $this->Crypt->decrypt($transaction['credit_card_cvv']);
+//                $result[$i]['credit_card_exp_month'] = $this->Crypt->decrypt($transaction['credit_card_name']);
+//                $result[$i]['bank'] = $this->Crypt->decrypt($transaction['bank']);
+//                $result[$i]['bank_name'] = $this->Crypt->get_bank_by_code($result[$i]['bank']);
+//                $result[$i]['agency'] = $this->Crypt->decrypt($transaction['agency']);
+//                $result[$i]['account_type'] = $this->Crypt->decrypt($transaction['account_type']);
+//                $result[$i]['account'] = $this->Crypt->decrypt($transaction['account']);
+//                $result[$i]['dig'] = $this->Crypt->decrypt($transaction['dig']);                
+                $result[$i]['dates'] = $this->load_transaction_dates($transaction['tr_id']);//Moreno cambio. Estaba $transaction['id'] (id del banco)
                 $img = $this->get_icon_by_status($transaction['status_id']);
                 $result[$i]['icon_by_status'] = $img['icon_by_status'];
                 $result[$i]['hint_by_status'] = $img['hint_by_status'];

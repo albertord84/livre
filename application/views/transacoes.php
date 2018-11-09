@@ -506,11 +506,11 @@
                             <div class="w10 m-top15 m-top10-xs fw-500">
                                Value
                             </div>
-                            <div class="w15 m-top15 m-top10-xs fw-500">
-                                 Dados do cartão                        
+                            <div class="w10 m-top15 m-top10-xs fw-500">
+                                 Nome                        
                             </div>
-                            <div class="w15 m-top15 m-top10-xs fw-500">
-                                Account bank
+                            <div class="w20 m-top15 m-top10-xs fw-500">
+                                Cidade e Estado
                             </div>
                             
 			</li>
@@ -531,17 +531,18 @@
                             <div class="w10 cl-blue m-top15 m-top10-xs fw-500">
                                R$ <?php echo str_replace('.', ',', $transaction['amount_solicited']/100).' ('.$transaction['number_plots'].')'; ?>                               
                             </div>
-                            <div class="w15 fw-500 text-left center-xs m-top10-xs">
+                            <div class="w15 fw-500 text-left center-xs m-top10-xs m-top15">
                                 <?php 
-                                    echo $transaction['credit_card_name'].'<br>';
-                                    echo 'Final - '. $transaction['credit_card_final']; 
+                                    echo $transaction['name'];
+                                    //echo 'Final - '. $transaction['credit_card_final']; 
                                 ?>  
                             </div>
-                            <div class="w15 fw-500 text-left center-xs m-top10-xs">
+                            <div class="w15 fw-500 text-left center-xs m-top10-xs m-top15">
                                 <!--<small class="fleft100">Dados do cartão</small>-->
                                 <?php 
-                                    echo $transaction['bank_name'].'<br>';
-                                    echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
+                                    echo $transaction['city_address'].", ".$transaction['state_address'];
+                                    //echo $transaction['bank_name'].'<br>';
+                                    //echo 'AG. '.$transaction['agency'].' - CC. '.$transaction['account'];
                                 ?>
                             </div>
                             <div class="w5 fw-500 m-top10">
