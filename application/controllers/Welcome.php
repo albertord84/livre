@@ -254,7 +254,7 @@ class Welcome extends CI_Controller {
             else{
                 $datas['num_page']=1;
                 $datas['token']='';
-                $datas['init_date']='';
+                $datas['init_date']="-1 week";
                 $datas['end_date']='';
                 $datas['status']=0;
             }
