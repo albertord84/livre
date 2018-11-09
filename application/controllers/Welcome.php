@@ -1364,6 +1364,8 @@ class Welcome extends CI_Controller {
         
     public function export_transactions() {
         $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');          
         if($_SESSION['logged_role'] === 'ADMIN'){
@@ -1495,8 +1497,17 @@ class Welcome extends CI_Controller {
                     $tr_reduce['amount_solicited'] = $tr['amount_solicited']/100;
                     $tr_reduce['months'] = $tr['number_plots'];
                     $tr_reduce['way_to_spend'] = $way_to_spend[ $tr['way_to_spend'] ];                    
-                    $tr_reduce['bank_name'] = $tr['bank_name'];
-                    $tr_reduce['credit_card_final'] = $tr['credit_card_final'];
+                    
+                    //adicionar datos bancarios e do cartao
+                    $account_bank = $this->transaction_model->get_account_bank_by_client_id($tr['tr_id'],0)[0];
+                    $tr_reduce['bank_name'] = $this->Crypt->get_bank_by_code($account_bank["bank"]);
+                    
+                    $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id', $tr['tr_id']);                    
+                    $tr_reduce["credit_card_final"] = substr($credit_card["credit_card_number"],-4);
+                    
+//                    $tr_reduce['bank_name'] = $tr['bank_name'];
+//                    $tr_reduce['credit_card_final'] = $tr['credit_card_final'];
+                    
                     $tr_reduce['solicited_date'] = $tr['solicited_date'];
                     $tr_reduce['partnerId'] = $tr['contract_id'];                    
                     $tr_reduce['status_date'] = date("Y-m-d\TH:i:s\Z",$tr['dates'][0]['date']);
@@ -3472,7 +3483,7 @@ class Welcome extends CI_Controller {
                         .",\n    \"quotaAmount\": ".$num_plots
                         .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"DBC\""
                         .",\n    \"productCode\": ".$product_code
-                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
+                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"Livre_".$id."\"".
                         ",\n    \"TAC\": \"".$tac."\",\n    "
                     ."\"payment\": {\n   "
                         ."   \"formSettlement\": \"ONL\""
@@ -3683,6 +3694,8 @@ class Welcome extends CI_Controller {
     public function get_transaction_datas_by_id($datas=NULL){
         $this->load->model('class/affiliate_model');
         $this->load->model('class/payment_manager');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/Crypt');
         $_SESSION['transaction_requested_id'] = -1;
         if($_SESSION['logged_role'] === 'ADMIN'){
             $datas_by_post=false;
@@ -3696,6 +3709,19 @@ class Welcome extends CI_Controller {
                 $aaaa=$transactions['tr_id'];
                 $bbbb=$datas['id'];
                 if($transactions['tr_id'] == $datas['id']){
+                    //adicionar datos bancarios e do cartao
+                    $account_bank = $this->transaction_model->get_account_bank_by_client_id($transactions['tr_id'],0)[0];
+                    $transactions["bank"] = $account_bank["bank"];
+                    $transactions["bank_name"] = $this->Crypt->get_bank_by_code($account_bank["bank"]);
+                    $transactions["agency"] = $account_bank["agency"];
+                    $transactions["account"] = $account_bank["account"];
+                    $transactions["dig"] = $account_bank["dig"];
+                    $transactions["account_type"] = $account_bank["account_type"];
+                    
+                    $credit_card = $this->transaction_model->get__decrypt_credit_card('client_id', $transactions['tr_id']);
+                    $transactions["credit_card_name"] = $credit_card["credit_card_name"];
+                    $transactions["credit_card_final"] = substr($credit_card["credit_card_number"],-4);
+                    
                     //adicionar datos da transacao                    
                     $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"], $transactions["tax"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
@@ -3767,6 +3793,11 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_conciliations_by_partnerId($partnerId){ //11537381919
+        if($_SESSION['logged_role'] !== 'ADMIN')
+        {
+            echo 'Forbbiden access';
+            return;
+        }
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
