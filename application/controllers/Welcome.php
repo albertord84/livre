@@ -92,6 +92,14 @@ class Welcome extends CI_Controller {
         var_dump($trasactions);
     }
     
+    public function test_crontab(){
+        echo "<br>\n<br>\n----------  INIT TEST CRONTAB AT ".date('Y-m-d H:i:s',time());
+    }
+    
+    public function test_crontab2(){
+        echo "<br>\n<br>\n----------  INIT TEST CRONTAB2 AT ".date('Y-m-d H:i:s',time());
+    }
+    
     //-------VIEWS FUNCTIONS--------------------------------    
 
     public function index() {         
