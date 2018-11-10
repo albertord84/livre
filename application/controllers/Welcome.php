@@ -3483,7 +3483,7 @@ class Welcome extends CI_Controller {
                         .",\n    \"quotaAmount\": ".$num_plots
                         .",\n    \"iofValue\": \"".$iof."\",\n    \"wayPaymentLoan\": \"DBC\""
                         .",\n    \"productCode\": ".$product_code
-                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"Livre_".$id."\"".
+                        .",\n    \"repurchaseDocument\": \"".$cnpj_livre."\",\n    \"guaranteeDescription\": \"\"".
                         ",\n    \"TAC\": \"".$tac."\",\n    "
                     ."\"payment\": {\n   "
                         ."   \"formSettlement\": \"ONL\""
