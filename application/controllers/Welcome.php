@@ -4613,7 +4613,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    echo "<br>\n<br>\nContrato assinado por ".$transaction['email']." às".date('Y-m-d H:i:s',time());
+                    echo "<br>\n<br>\nContrato assinado por ".$transaction['email']." às ".date('Y-m-d H:i:s',time());
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
@@ -4643,7 +4643,7 @@ class Welcome extends CI_Controller {
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
         //echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
-        $file = fopen("/robots/robot_signature.txt","a");
+        $file = fopen("robots/robot_signature.txt","a");
         
         //transactions waiting signature
         $transactions = $this->transaction_model->get_client('status_id', transactions_status::WAIT_SIGNATURE);
@@ -4655,7 +4655,7 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->update_transaction_status(
                     $transaction['id'],
                     transactions_status::PENDING);
-                $content = "<br>\n<br>\nContrato assinado por ".$transaction['email']." às".date('Y-m-d H:i:s',time());
+                $content = "<br>\n<br>\nContrato assinado por ".$transaction['email']." às ".date('Y-m-d H:i:s',time());
                 fwrite($file, $content);
                 //send e-mail for atendente?
                 /*$atendente_emails = array("pedro@livre.digital");
