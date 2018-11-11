@@ -4613,7 +4613,7 @@ class Welcome extends CI_Controller {
                     $this->transaction_model->update_transaction_status(
                         $transaction['id'],
                         transactions_status::PENDING);
-                    echo "<br>\n<br>\nContrato assinado por ".$transaction[email]." às".date('Y-m-d H:i:s'),time();
+                    echo "<br>\n<br>\nContrato assinado por ".$transaction['email']." às".date('Y-m-d H:i:s',time());
                     //send e-mail for atendente?
                     /*$atendente_emails = array("pedro@livre.digital");
                     foreach ($administrators_emails as $useremail) {
@@ -4630,6 +4630,47 @@ class Welcome extends CI_Controller {
         }while(true);
         
         //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+    }
+    
+    public function new_robot_checking_contracts() {
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/system_config');        
+        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
+        $_SESSION['logged_role'] = 'ADMIN';
+        $date = date("Y-m-d",time());
+        //echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
+        $file = fopen("/robots/robot_signature.txt","a");
+        
+        //transactions waiting signature
+        $transactions = $this->transaction_model->get_client('status_id', transactions_status::WAIT_SIGNATURE);
+
+        foreach ($transactions as $transaction) {
+            $signature_status = $this->get_document_D4Sign($transaction['id']);    
+            if($signature_status[0]->statusId == 4){
+               //documento assinado                
+                $this->transaction_model->update_transaction_status(
+                    $transaction['id'],
+                    transactions_status::PENDING);
+                $content = "<br>\n<br>\nContrato assinado por ".$transaction['email']." às".date('Y-m-d H:i:s',time());
+                fwrite($file, $content);
+                //send e-mail for atendente?
+                /*$atendente_emails = array("pedro@livre.digital");
+                foreach ($administrators_emails as $useremail) {
+                    $this->Gmail->send_mail($useremail, $useremail, 'Novo contrato assinado','Novo contrato assinado para o cliente: '.$transaction['email']);
+                }*/
+            }
+            else{
+                if($signature_status[0]->statusId == 6){
+                    //fazer o que neste caso?    
+                }
+            }
+        }        
+        //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        fclose($file);
     }
     
     public function ARRED ($value){
