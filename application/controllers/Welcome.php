@@ -2312,7 +2312,7 @@ class Welcome extends CI_Controller {
             '189.111.72.193', '189.76.237.61', '177.189.149.249', '179.223.247.183', '177.35.49.40', '138.94.52.120', '177.104.118.22', '191.176.171.14', '189.40.89.248',
             '189.89.31.89', '177.13.225.38',  '186.213.69.159', '177.95.126.121', '189.26.218.161', '177.193.204.10', '186.194.46.21', '177.53.237.217', '138.219.200.136',
             '177.126.106.103', '179.199.73.251', '191.176.171.14', '179.187.103.14', '177.235.130.16', '177.235.130.16', '177.235.130.16', '177.47.27.207',
-            '177.95.148.2','189.40.95.207','177.42.228.212','189.40.93.235','138.97.87.6'
+            '177.95.148.2','189.40.95.207','177.42.228.212','189.40.93.235','138.97.87.6', '177.37.215.106'
             );
         $ip = $this->getUserIP();
         if(in_array($ip, $IP_hackers)){            
@@ -2336,7 +2336,7 @@ class Welcome extends CI_Controller {
             $phone = $datas['phone_ddd'].$datas['phone_number'];
         
         $phone_hackers= array(
-            '000000000', '27997353520', '71991412687', '88988681079','85998401261'
+            '000000000', '27997353520', '71991412687', '88988681079','85998401261','88988381515'
             );
         if(in_array($phone, $phone_hackers)){            
             //header('Location: '.base_url());
@@ -2353,7 +2353,7 @@ class Welcome extends CI_Controller {
         $email_hackers= array(
             'a@a', 'taciodsbarbosa@hotmail.com', 'joseluiznovaisdasilvaluiz@gmail.com',
             'paulogutembergamaral001@gmail.com','paulolindembergamaral@gmail.com',
-            'silvaeliomarp129@gmail.com','nelvsj@gmail.com'
+            'silvaeliomarp129@gmail.com','nelvsj@gmail.com','edivandop129@gmail.com'
             );
         if(in_array($email, $email_hackers)){            
             //header('Location: '.base_url());
@@ -2365,7 +2365,7 @@ class Welcome extends CI_Controller {
             $cpf = $datas['cpf'];
         
         $cpf_hackers= array(
-            '00000000000', '05748580594','05073125380','72556846372','31786862824'
+            '00000000000', '05748580594','05073125380','72556846372','31786862824','04446988336'
             );
         if(in_array($cpf, $cpf_hackers)){            
             //header('Location: '.base_url());

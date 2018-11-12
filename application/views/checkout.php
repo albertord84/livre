@@ -210,6 +210,7 @@
                                 </fieldset>
                                 <fieldset class="col-md-4 col-sm-4 col-xs-4 pd-lr10">
                                     <input id="state_address" type="text" placeholder="UF">
+                                    <input id="district" type="hidden" value="">
                                 </fieldset>
                             </div>
                         </div>
