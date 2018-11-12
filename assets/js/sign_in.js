@@ -39,6 +39,7 @@ $(document).ready(function () {
                     'complement_number_address': $('#complement_number_address').val(),
                     'city_address': $('#city_address').val(),
                     'state_address': $('#state_address').val(),
+                    'district': $('#district').val(),
                     'utm_source': typeof getUrlVars()["utm_source"] !== 'undefined' ? getUrlVars()["utm_source"] : 'NULL',                   
 //                    'utm_campaign': typeof getUrlVars()["utm_campaign"] !== 'undefined' ? getUrlVars()["utm_campaign"] : 'NULL',                   
 //                    'utm_content': typeof getUrlVars()["utm_content"] !== 'undefined' ? getUrlVars()["utm_content"] : 'NULL',                   
@@ -684,7 +685,8 @@ $(document).ready(function () {
                         $('#city_address').val(response['localidade']);
                         $('#state_address').val(response['uf']);                        
                         $('#address_container').css({"visibility":"visible", "display":"block"}); 
-                        $('#btn_steep_1').removeAttr("disabled");                         
+                        $('#btn_steep_1').removeAttr("disabled");
+                        $('#district').val(response['bairro']);
                     } else
                         modal_alert_message('CEP inválido');
                     $('#wait').hide();
