@@ -3986,7 +3986,7 @@ class Welcome extends CI_Controller {
 
         } catch (Exception $e) {
                 //echo $e->getMessage();
-                return null;
+                return $e;
         } 
         return $docs;
     }
