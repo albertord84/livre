@@ -114,7 +114,7 @@
                                     <img src="<?php echo base_url().'assets/'?>img/icones/mercado.png" alt="">
                                 </div>
                                 <div class="col-md-10 col-sm-10 col-xs-10">
-                                    Comissão mais alta do mercado! <br>10% sobre o valor emprestado.
+                                    Comissão mais alta do mercado! <br>Até 10% sobre o valor emprestado.
                                 </div>
                             </div>
                         </div>
