@@ -4642,9 +4642,10 @@ class Welcome extends CI_Controller {
         
         $_SESSION['logged_role'] = 'ADMIN';
         $date = date("Y-m-d",time());
-        echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
-        $file = fopen("log/robot_signature_".$date.".txt","a");
         
+        $file = fopen("log/robot_signature_".$date.".txt","a");
+        $content = "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
+        fwrite($file, $content);
         //transactions waiting signature
         $transactions = $this->transaction_model->get_client('status_id', transactions_status::WAIT_SIGNATURE);
 
