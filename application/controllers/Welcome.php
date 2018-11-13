@@ -4644,11 +4644,13 @@ class Welcome extends CI_Controller {
         $date = date("Y-m-d",time());
         
         $file = fopen("log/robot_signature_".$date.".txt","a");
-        $content = "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
+        $content = "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time())." <br>\n";
         fwrite($file, $content);
         //transactions waiting signature
         $transactions = $this->transaction_model->get_client('status_id', transactions_status::WAIT_SIGNATURE);
-
+        $content = "<br>\n<br>\n Numero de transações esperando assinatura: ".count($transactions)." <br>\n";        
+        fwrite($file, $content);
+        
         foreach ($transactions as $transaction) {
             $signature_status = $this->get_document_D4Sign($transaction['id']);    
             if($signature_status[0]->statusId == 4){
@@ -4665,11 +4667,15 @@ class Welcome extends CI_Controller {
                 }*/
             }
             else{
+                $content = "<br>\n<br>\nStatus do contrato de ".$transaction['email']." : ".$signature_status[0]->statusId;
+                fwrite($file, $content);
                 if($signature_status[0]->statusId == 6){
                     //fazer o que neste caso?    
                 }
             }
-        }        
+        }
+        $content = "<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time())." <br>\n";        
+        fwrite($file, $content);
         //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
         fclose($file);
     }
