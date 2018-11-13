@@ -5033,6 +5033,98 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
+    public function BRASPAG_Authorize_with_Issuer_DATA_and_AVS($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
+        $this->load->model('class/system_config');                
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $merchant_id = $GLOBALS['sistem_config']->MERCHANT_ID_BRASPAG;        
+        $merchant_key = $GLOBALS['sistem_config']->MERCHANT_KEY_BRASPAG;        
+        
+        $ch = curl_init();
+        $post_fields = "{\n   \"MerchantOrderId\":\"".$param['order_id']."\",\n ".
+                        "  \"Customer\":{\n   ".
+                        "   \"Name\":\"".$param['name']."\",\n ".
+                        "   \"Identity\":\"".$param['cpf']."\",\n ".
+                        "   \"IdentityType\":\"CPF\",\n ".
+                        "   \"Email\":\"".$param['email']."\",\n ".
+                        "   \"Address\":{\n     ".
+                        "    \"Street\":\"".$param['street_address']."\",\n    ".
+                        "     \"Number\":\"".$param['number_address']."\",\n   ".
+                        "     \"Complement\":\"".$param['complement_number_address']."\",\n   ".
+                        "     \"ZipCode\":\"".$param['cep']."\",\n    ".
+                        "     \"City\":\"".$param['city_address']."\",\n    ".
+                        "     \"State\":\"".$param['state_address']."\",\n    ".
+                        "     \"Country\":\"BRA\",\n    ".
+                        "     \"District\":\"".$param['district']."\"\n     }\n   },\n".                        
+                        "  \"Payment\":{\n   ".
+                        "  \"Provider\":\"".$param['provider']."\",\n  ".
+                        "  \"Type\":\"CreditCard\",\n   ".                        
+                        "  \"Amount\":".$param['amount'].",\n   ".
+                        "  \"ServiceTaxAmount\":0,\n   ".                        
+                        "  \"Installments\":".$param['plots'].",\n  ".
+                        "  \"Interest\":\"ByIssuer\",\n   ".                                
+                        "  \"Capture\":false,\n  ".
+                        "   \"Avs\":{\n     ".
+                        "     \"Cpf\":\"".$param['cpf']."\",\n    ".
+                        "     \"ZipCode\":\"".$param['cep']."\",\n   ".
+                        "     \"Street\":\"".$param['street_address']."\",\n   ".
+                        "     \"Number\":\"".$param['number_address']."\",\n    ".
+                        "     \"Complement\":\"".$param['complement_number_address']."\",\n    ".
+                        "     \"District\":\"".$param['district']."\"\n     },\n ".
+                        "   \"CreditCard\":{\n     ".
+                        "     \"CardNumber\":\"".$param['card_number']."\",\n    ".
+                        "     \"Holder\":\"".$param['card_name']."\",\n   ".
+                        "     \"ExpirationDate\":\"".$param['card_month']."/".$param['card_year']."\",\n   ".
+                        "     \"SecurityCode\":\"".$param['card_cvc']."\",\n    ".
+                        "     \"Brand\":\"".$param['card_brand']."\"\n     }\n   }\n}";
+
+        //curl_setopt($ch, CURLOPT_URL, "https://apisandbox.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_URL, "https://api.braspag.com.br/v2/sales/");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+//        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+//        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+        $headers[] = "Merchantid: ".$merchant_id;
+        $headers[] = "Merchantkey: ".$merchant_key;
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result_curl = curl_exec($ch);
+        $parsed_response = json_decode($result_curl);
+        
+        curl_close ($ch);
+
+        if(is_array($parsed_response)){
+            $result['success'] = false;
+            $result['code'] = $parsed_response[0]->Code;
+            $result['message'] = $parsed_response[0]->Message;
+        }
+        else{
+            if(is_object($parsed_response)){
+                $result['success'] = false;                
+                $result['try_again'] = false;                
+                $result['status'] = $parsed_response->Payment->Status;
+                $result['provider_message'] = $parsed_response->Payment->ProviderReturnMessage;
+                $result['reason_code'] = $parsed_response->Payment->ReasonCode;
+                $result['provider_code'] = $parsed_response->Payment->ProviderReturnCode;
+                $result['transaction_id'] = $parsed_response->Payment->AcquirerTransactionId;
+                $result['payment_id'] = $parsed_response->Payment->PaymentId;
+                $result['avs_status'] = $parsed_response->Payment->AVS->Status;
+                if($result['reason_code'] == 0 && $result['status'] == 1){
+                    $result['success'] = true;    //operacao com sucesso e paga autorizada            
+                }
+                if($result['provider_code'] == 99){
+                    $result['try_again'] = true;    //pode tentar de novo
+                }
+            }
+        }
+
+        return $result;
+    }
+    
     public function BRASPAG_Capture($payment_id, $amount) { /*Captura uma transacao previamente autorizada*/
         $this->load->model('class/system_config');                
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -5050,8 +5142,8 @@ class Welcome extends CI_Controller {
 
         $headers = array();
         $headers[] = "Content-Type: application/json";
-        //$headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
-        //$headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
+//        $headers[] = "Merchantid: dabe7f53-fd8b-4e70-975b-9b3fcc9da8b7";
+//        $headers[] = "Merchantkey: NMQCBOXFCCRZJQBXMWTWAEYPHNZFFDZFOROFZELT";
         $headers[] = "Merchantid: ".$merchant_id;
         $headers[] = "Merchantkey: ".$merchant_key;
         
@@ -5128,17 +5220,26 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
-    
+
         /*$param = [
             'order_id' => time(),
-            'name' => 'Jorge Moreno',
-            'amount' => 100000000,
-            'plots' => 8,
-            'card_name' => 'PEDRO BASTOS PETTI',
-            'card_number' => '5162202091174685',
-            'card_cvc' => '302',
+            'name' => $_SESSION['b_card_name'],
+            'amount' => '1000',
+            'plots' => $transaction['number_plots'],
+            'cpf' => $transaction['cpf'],
+            'cep' => $transaction['cep'],
+            'email' => $transaction['email'],
+            'street_address' => $transaction['street_address'],
+            'number_address' => $transaction['number_address'],
+            'complement_number_address' => $transaction['complement_number_address'],
+            'city_address' => $transaction['city_address'],
+            'state_address' => $transaction['state_address'],
+            'district' => $transaction['district'],
+            'card_name' => 'PEDRO B PETTI',
+            'card_number' => '5115889296994814',
+            'card_cvc' => '116',
             'card_month' => '04',
-            'card_year' => '2021',
+            'card_year' => '2023',
             'card_brand' => 'Master',
             'provider' => 'Cielo30',
         ];*/
@@ -5156,6 +5257,7 @@ class Welcome extends CI_Controller {
             'complement_number_address' => $transaction['complement_number_address'],
             'city_address' => $transaction['city_address'],
             'state_address' => $transaction['state_address'],
+            'district' => $transaction['district'],
             'card_name' => $_SESSION['b_card_name'],
             'card_number' => $_SESSION['b_card_number'],
             'card_cvc' => $_SESSION['b_card_cvv'],
@@ -5166,6 +5268,7 @@ class Welcome extends CI_Controller {
         ];/**/
         //$result = $this->BRASPAG_Authorize($param);
         $result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
+        //$result = $this->BRASPAG_Authorize_with_Issuer_DATA_and_AVS($param);
         if($result['success']){            
             $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
             if($result_capture['success'])
