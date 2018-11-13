@@ -100,7 +100,7 @@
         <div class="container">
             <div class="col-md-10 col-sm-10 col-xs-12 pull-right">
                 <h1 class="ft-size45 cl-fff">QUER GANHAR UMA <br>RENDA EXTRA?</h1>
-                <h2>Traga clientes para o Livre.digital <br>e ganhe <span>10% de comissão</span> sobre <br>o valor do crédito!</h2>
+                <h2>Traga clientes para o Livre.digital <br>e ganhe até<span>10% de comissão</span> sobre <br>o valor do crédito!</h2>
             </div>
         </div>
     </section>
