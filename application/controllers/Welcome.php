@@ -4667,7 +4667,8 @@ class Welcome extends CI_Controller {
                 }*/
             }
             else{
-                $content = "<br>\n<br>\nStatus do contrato de ".$transaction['email']." : ".$signature_status[0]->statusId;
+                $content = "<br>\n".var_export($signature_status, true)."<br>\n";
+                //$content = "<br>\n<br>\nStatus do contrato de ".$transaction['email']." : ".$signature_status[0]->statusId;
                 fwrite($file, $content);
                 if($signature_status[0]->statusId == 6){
                     //fazer o que neste caso?    
