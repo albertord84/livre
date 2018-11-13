@@ -440,7 +440,7 @@ class Affiliate_model extends CI_Model{
             $this->db->from('transactions');
             if($status)
                 $this->db->where('transactions.status_id', $status);
-            $this->db->where('transactions.id <=', '13059');
+            $this->db->where('transactions.id <=', '18750');
             /*if($init_date)
                 $this->db->where('transactions.pay_date >=', $init_date);                            
             if($cut_date)
