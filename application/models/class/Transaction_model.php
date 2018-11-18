@@ -25,6 +25,16 @@
             return $result;
         }
         
+        public function update_financials($id, $datas){ //recibe valores en reales (no en centavos)        
+            $datas_tmp['amount_solicited'] = $datas['solicited_value']*100;
+            $datas_tmp['total_effective_cost'] = $datas['total_cust_value']*100;            
+            $datas_tmp['tax'] = $datas['tax'];
+            
+            $this->db->where('id',$id);
+            $result = $this->db->update('transactions',$datas_tmp);            
+            return $result;
+        }
+        
         public function insert_db_steep_2($datas){
             $this->load->model('class/Crypt');
             $datas1['client_id']=$datas['pk'];

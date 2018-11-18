@@ -94,6 +94,71 @@
             <img src="<?php echo base_url().'assets/img/icones/GIF SITE LIVRE.gif';?>">
         </div>
         
+        <div class="modal fade" id="modal_captured" tabindex="-1" role="dialog" aria-labelledby="ModalLabel2" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog mxw-700" role="document">
+                <div class="modal-content b-none">                    
+                     <!--<button type="button" class="close ft-roboto fw-100" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>--> 
+                    <div class="titlemodal tmgray">
+                        <!--<a style="color:black; font-size:15px; position: absolute; right: 15px; cursor: pointer;" data-dismiss="modal" >&times;</a>-->
+                        Limite Negado                        
+                    </div>
+                    <div class="pd-left25 text-center pd-30 m-top20-sm">
+                        <div class="col-md-12 col-sm-12 col-xs-12 fnone i-block rs">
+                            <div m-top20>
+                                O valor solicitado não foi aprovado pois precisa mais limite do que você tem disponível. <br><b>Mas temos boas noticias!</b>
+                                Conseguimos aprovar o valor abaixo, clique em contratar para confirmar.<br><br>
+                                <span style="border-radius: 10px; padding: 10px; border-style:solid; display: inline-block;" >Você pode solicitar <span id="re_captured"></span>% do valor anterior</span>
+                            </div>
+                            <div class="bverdeNEW">
+                                <span><h6>RESUMO DO CONTRATO:</h6></span>
+                                <div class="m-top20">                                    
+                                    <span class="m-top10 text-center">
+                                        <small>Valor das parcelas:</small>
+                                        <h3>R$ <span id="re_plot_value"></span> </h3>
+                                    </span>                      
+                                    <span class="col-md-6 col-sm-6 col-xs-6 m-top15 pd-left40">
+                                        <small>Prazo para pagamento:</small>
+                                        <h4><span id="re_num_plot"></span> meses</h4>
+                                    </span>
+                                    <span class="col-md-6 col-sm-6 col-xs-6 m-top15 text-left pd-left20">
+                                        <small>Valor solicitado:</small>
+                                        <h4>R$ <span id="re_solicited_value"></span></h4>
+                                    </span>                                        
+                                    <span class="col-md-6 col-sm-6 col-xs-6 m-top25 pd-left40">
+                                        <small>Taxa de juros ao mês:</small>
+                                        <h4><span id="re_tax"></span> %</h4>
+                                    </span>
+                                    <span class="col-md-4 col-sm-4 col-xs-4 m-top25 text-left pd-left20">
+                                        <small>Custo Efetivo Total:</small>
+                                        <h4>R$ <span id="re_total"></span></h4>
+                                    </span>                                    
+                                    <span class="col-md-4 col-sm-4 col-xs-4 m-top15 ">
+                                        <small class="ft-size11">IOF:</small>
+                                        <span class="ft-size10">R$ <span id="re_IOF"></span></span>
+                                    </span>
+                                    <span class="col-md-4 col-sm-4 col-xs-4 m-top15 ">
+                                        <small class="ft-size11">CET:</small>
+                                        <span class="ft-size10"><span id="re_CET"></span> %</span>
+                                    </span>
+                                    <span class="col-md-4 col-sm-4 col-xs-4 m-top15 ">
+                                        <small class="ft-size11">CET ANUAL:</small>
+                                        <span class="ft-size10"><span id="re_CET_ANUAL"></span> %</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="fleft100 text-right col-12">                            
+                                <div class="m-top10 text-right col-6">
+                                    <button id="btn_cancel_pre_contract" class="bt-green px2" style="background-color: #e1e1e1">Cancelar</button>
+                                    <button id="btn_accept_pre_contract" class="bt-green px2 m-top5">Contratar</button>                            
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div> 
+        <!--CAPTURED MODAL--> 
+        
         <div class="modal fade" id="modal_signature" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog mxw-700" role="document">
                 <div class="modal-content b-none">                    
