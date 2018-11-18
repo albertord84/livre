@@ -2634,7 +2634,7 @@ class Welcome extends CI_Controller {
         $data_track['track_date']=time();
         $id_row = $this->track_money_model->insert_required_money($data_track);
         $result['success'] = false;
-        $result['message'] = 'Só pode solicitar um valor entre R$100 e R$5000';
+        $result['message'] = 'Só pode solicitar um valor entre R$300 e R$5000';
         echo json_encode($result);       
     }
     
@@ -2647,7 +2647,7 @@ class Welcome extends CI_Controller {
         $datas['amount_months']=(int)$datas['amount_months'];
         $datas['solicited_value']=(float)$datas['solicited_value'];
         if(($datas['amount_months']>=4 && $datas['amount_months']<=12)){
-            if($datas['solicited_value']>=100 && $datas['solicited_value']<=5000){                
+            if($datas['solicited_value']>=300 && $datas['solicited_value']<=5000){                
                 $financials = $this->calculating_enconomical_values($datas["solicited_value"], $datas["amount_months"]);
                 $result['solicited_value']=$financials['solicited_value'];  
                 $result['amount_months']=$financials['amount_months'];
@@ -2662,7 +2662,7 @@ class Welcome extends CI_Controller {
                 $_SESSION['transaction_values']=$result;                
             } else{
                 $result['success'] = false;
-                $result['message'] = 'Só pode solicitar um valor entre R$100 e R$5000';
+                $result['message'] = 'Só pode solicitar um valor entre R$300 e R$5000';
             }
         }else{
             $result['success'] = false;
@@ -5290,7 +5290,7 @@ class Welcome extends CI_Controller {
         //return $result;     //apagar para fazer retentativa
         
         //salir si provider_code diferente de 51 y de 5
-        if( $param['solicited'] < 14500 || ($result['provider_code'] != 51 && $result['provider_code'] != 5) )
+        if( $param['solicited'] < 43000 || ($result['provider_code'] != 51 && $result['provider_code'] != 5) )
             return $result;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();        
