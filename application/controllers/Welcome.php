@@ -514,7 +514,21 @@ class Welcome extends CI_Controller {
     ['new_selfie_with_identity']
     ['new_cpf_card']
     ['session_new_foto']
+     
+    //Variaveis retentativa
+    ['captured'] : INT in [0,100]
+    ['re_financials'] : ARRAY con index [month_value, amount_months, solicited_value, tax, total_cust_value, IOF, CET_PERC, CET_YEAR]    
+    ['used_method'] : INT in [0,1,2..., MAX_NUM_PAYMENTS]
+  
      */
+    
+    /* La funcion de pagamento debe devolver un arreglo con la siguiente estructura:
+        
+        [
+            success
+        ]
+     
+    */
     
     public function is_possible_steep_1_for_this_client($datas) {
         $this->load->model('class/transaction_model');
@@ -1025,7 +1039,231 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
+    public function sign_contract_transactions() {
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');        
+        $this->load->model('class/payment_manager');
+        
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();
+        $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+        
+        /*------------analisar nro de tentativas----------------*/
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+        if($transaction['purchase_counter']>$GLOBALS['sistem_config']->MAX_PURCHASE_TENTATIVES){
+            $result['message']='Não autorizado. Quantidade máxima de tentativas alcançadas. Contate nosso atendimento';
+            $result['success']=false;
+            echo json_encode($result);
+            session_destroy();
+            return;
+        }
+        $datas = $this->input->post();
+        $cpf_upload = true;
+        if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
+            $cpf_upload = false;
+        }            
+        if($_SESSION['is_possible_steep_1'] && $_SESSION['is_possible_steep_2'] && $_SESSION['is_possible_steep_3'] && $datas['key']===$_SESSION['key']){
+            if($_SESSION['front_credit_card'] && $_SESSION['selfie_with_credit_card'] && $_SESSION['open_identity'] && $_SESSION['selfie_with_identity'] && $cpf_upload){                           
+                $value_ucpf = 0;
+                if($datas['ucpf'] == 'true')
+                    $value_ucpf = 1;
+                $this->transaction_model->save_cpf_card($_SESSION['pk'], $value_ucpf);
+                
+                $PAYMENT_ARRAY = [ payment_manager::IUGU => ['name' => payment_manager::NAME_IUGU, 'valid' => false],
+                                   payment_manager::BRASPAG => ['name' => payment_manager::NAME_BRASPAG, 'valid' => true] 
+                                 ];
+                $result['success'] = false;
+                $result['authorized'] = false;
+                
+                if(!$_SESSION['used_method']){ //pregunta si fue pre-autorizado
+                    //ver si puede cobrar/pre-autorizar por algun método
+                    foreach ($PAYMENT_ARRAY as $key => $value) {
+                        if($PAYMENT_ARRAY[$key]['valid']){ // is an active valid method                        
+                            $response = $this->do_payment($_SESSION['pk'], $key);
+                            if($response['success']){
+                                //salvar por ciento capturado
+                                $_SESSION['captured'] = 100;
+                                $result['success'] = true;
+                                break;
+                            }
+                            else{                                
+                                if($response['captured'] > 0){
+                                    $_SESSION['used_method'] = $key;                                
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    //actualizar variaveis do sistema
+                    $_SESSION['transaction_values'] = $_SESSION['re_financials'];
+                    //actualizar en BD
+                    $this->transaction_model->update_financials($_SESSION['pk'], $_SESSION['re_financials']);
+                    //realizar el cobro
+                    $response = $this->do_payment($_SESSION['pk'], $_SESSION['used_method']);
+                    if($response['success'])
+                        $result['success'] = true;                                
+                }
+                
+                /**** ANALISAR SE FOI OU NÂO COBRADO**/
+                if($result['success']){                    
+                    //generate and save contract
+                    $string_param = "transactionId=".$_SESSION['pk']
+                                    . "&transactionAffiliation=site"
+                                    . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                                    . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                                    . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                                    . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
+                    //3. crear documento a partir de plantilla y guardar token del documento en la BD
+                    $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+                    if($uudid_doc){
+                        //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                        $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                        if($token_signer){
+                            //5.  mandar a assinar
+                            $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
+                            if($result_send){
+                                //2. salvar el status para WAIT_SIGNATURE
+                                $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::WAIT_SIGNATURE);                                                                   
+                            }
+                            else{
+                                $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
+                            }
+                        }
+                        else{
+                            $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
+                        }
+                    }else{
+                        $this->transaction_model->update_transaction_status(
+                                                    $_SESSION['pk'], 
+                                                    transactions_status::PENDING);                        
+                    }
+                    //sucesso de contrato se foi cobrado
+                    $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$_SESSION['pk'],
+                            'captured', $_SESSION['captured']);
+                    
+                    $_SESSION['used_method'] = 0;
+                    $_SESSION['re_financials'] = NULL;
+                    $_SESSION['captured'] = 0;
+                    $_SESSION['buy'] = true;                    
+                    $result['success'] = true;
+                    $result['params'] = $string_param;                                        
+                }
+                else{
+                    if($response['captured'] == 0){                    
+                        //process error 
+                        //incrementar numero de tentativas para evitar teste de cartão                                        
+                        $purchase_counter = $transaction['purchase_counter'] + 1;
+                        $this->transaction_model->save_in_db(
+                            'transactions',
+                            'id',$_SESSION['pk'],
+                            'purchase_counter', $purchase_counter);
+                        /*-----------------------------------------*/
+                        $name = explode(' ', $_SESSION['client_datas']['name']); $name = $name[0];
+                        $useremail = $_SESSION['client_datas']['email'];                    
+                        $this->Gmail->credit_card_recused($name,$useremail);
+
+                        //Buscar ultimo metodo de pagamento valido para dar error relacionado
+                        foreach ($PAYMENT_ARRAY as $key => $value) {
+                            if($PAYMENT_ARRAY[$key]['valid']){ // is an active valid method                        
+                                $payment_method = $key;
+                            }
+                        }
+
+                        if($payment_method == payment_manager::IUGU){                        
+                            //analisar erro da transação
+                            if($response['LR'] && $response['LR'] != '00')
+                            {
+                                $report_iugu = $this->iugu_report(
+                                                                $response['LR'], 
+                                                                $_SESSION['transaction_values']['total_cust_value'],
+                                                                $_SESSION['transaction_values']['amount_months']
+                                                                );                    
+                                if($report_iugu['known']){
+                                    $result['message'] = $report_iugu['message'];                    
+                                    //enviar email com passos
+                                    $this->Gmail = new Gmail();
+                                    $this->Gmail->email_iugu_report($name,$useremail,$report_iugu['subject'],$report_iugu['email']);                            
+                                    if($report_iugu['destroy'])
+                                        session_destroy();
+                                }
+                                else{
+                                    $result['message'] = "Transação foi negada. Operação cancelada";                    
+                                    session_destroy();
+                                }
+                            }       
+                            else{
+                                $result['message'] = $response['message'].' Operação cancelada';                    
+                                session_destroy();
+                            }
+
+                            $result['success'] = false;                                        
+                        }
+                        else{
+                            if(!$response['try_again'])
+                                session_destroy();                            
+                            $result['success'] = false;
+                            $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
+                                                    '(1-) Você utilizou seu cartão de DÉBITO. '.
+                                                    '(2-) Dados do cartão incorretos. '.
+                                                    '(3-) Cartão utilizado não tem validade. '.
+                                                    '(4-) Não há limite suficiente em seu cartão de crédito. '.                                                
+                                                    'Recomendamos entrar em contato com o banco emissor do seu cartão de crédito e informar que deseja aprovação para a cobrança da empresa Livre.Digital, no valor de R$ '.$_SESSION['transaction_values']['total_cust_value'].', parcelado em '.$_SESSION['transaction_values']['amount_months'].' vezes.';
+                        }
+                    }
+                    else{
+                    
+                        if($_SESSION['used_method'] == payment_manager::BRASPAG){
+                            $_SESSION[payment_manager::NAME_BRASPAG]['payment_id'] = $response['payment_id'];                            
+                        }
+                        
+                        $_SESSION['re_financials'] = $response['financials'];
+                        $_SESSION['captured'] = $response['captured'];                    
+                        
+                        $result['success'] = false;                            
+                        $result['authorized'] = true;                        
+                        $result['financials'] = $response['financials'];                    
+                        $result['captured'] = $response['captured'];                    
+                    }
+                }                
+            }
+            else{                
+                $result['success'] = false;
+                $result['message'] = "Deve subir todas as imagens solicitadas corretamente";                
+            }
+        }
+        else{
+            $result['success'] = false;
+            //$result['message'] = "Sessão expirou";
+            header('Location: '.base_url());
+        }
+        echo json_encode($result);
+    }
+    
     public function sign_contract() {
+        session_destroy();
+        $result['message']='Sessão expirou';
+        $result['success']=false;
+        echo json_encode($result);
+        return;
+            
         if(!$_SESSION['transaction_values']['amount_months']){
             $result['message']='Sessão expirou';
             $result['success']=false;
@@ -5041,6 +5279,38 @@ class Welcome extends CI_Controller {
         return $result;
     }
     
+    public function BRASPAG_Authorize_with_Issuer_DATA_and_Search($param) {        
+        $result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
+        if($result['success']){
+            $result['captured'] = 100;
+            return $result;
+        }
+        
+        $result['captured'] = 0;
+        //return $result;     //apagar para fazer retentativa
+        
+        //salir si provider_code diferente de 51 y de 5
+        if( $param['solicited'] < 14500 || ($result['provider_code'] != 51 && $result['provider_code'] != 5) )
+            return $result;
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();        
+        
+        $PERC = $GLOBALS['sistem_config']->PERC_TO_TRY;
+        $new_amount = number_format(($param['solicited']/100.0) * ($PERC/100.0), 2, '.', ''); ;
+        //recalcular para $PERC% do valor
+        $financials = $this->calculating_enconomical_values($new_amount, $param["plots"]);
+        $param['amount'] = $financials['total_cust_value']*100;
+        $result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
+        
+        if($result['success']){
+            $result['success'] = false;            
+            $result['captured'] = $PERC;            
+            $result['financials'] = $financials;            
+        }
+        
+        return $result;        
+    }
+    
     public function BRASPAG_Authorize_with_Issuer_DATA_and_AVS($param) { /*É quando uma transação é autorizada e capturada no mesmo momento, isentando do lojista enviar uma confirmação posterior.*/
         $this->load->model('class/system_config');                
         $GLOBALS['sistem_config'] = $this->system_config->load();
@@ -5229,29 +5499,6 @@ class Welcome extends CI_Controller {
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
 
-        /*$param = [
-            'order_id' => time(),
-            'name' => $_SESSION['b_card_name'],
-            'amount' => '1000',
-            'plots' => $transaction['number_plots'],
-            'cpf' => $transaction['cpf'],
-            'cep' => $transaction['cep'],
-            'email' => $transaction['email'],
-            'street_address' => $transaction['street_address'],
-            'number_address' => $transaction['number_address'],
-            'complement_number_address' => $transaction['complement_number_address'],
-            'city_address' => $transaction['city_address'],
-            'state_address' => $transaction['state_address'],
-            'district' => $transaction['district'],
-            'card_name' => 'PEDRO B PETTI',
-            'card_number' => '5115889296994814',
-            'card_cvc' => '116',
-            'card_month' => '04',
-            'card_year' => '2023',
-            'card_brand' => 'Master',
-            'provider' => 'Cielo30',
-        ];*/
-        
         $param = [
             'order_id' => time(),
             'name' => $_SESSION['b_card_name'],
@@ -5273,17 +5520,67 @@ class Welcome extends CI_Controller {
             'card_year' => $_SESSION['b_card_exp_year'],
             'card_brand' => $_SESSION['brand'],
             'provider' => 'Cielo30',
-        ];/**/
-        //$result = $this->BRASPAG_Authorize($param);
-        $result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
-        //$result = $this->BRASPAG_Authorize_with_Issuer_DATA_and_AVS($param);
-        if($result['success']){            
+            'solicited' => $transaction['amount_solicited']
+        ];
+        
+        //$result = $this->BRASPAG_Authorize_with_Issuer_DATA($param);
+        if(!$_SESSION['used_method'])
+            $result = $this->BRASPAG_Authorize_with_Issuer_DATA_and_Search($param);
+        else
+        {
+            //establece que foi pre-autorizado
+            $result = [
+                        'success' => true,
+                        'payment_id' => $_SESSION[payment_manager::NAME_BRASPAG]['payment_id']                        
+                        ];
+        }
+        
+        if($result['success'] && $result['payment_id']){            
             $result_capture = $this->BRASPAG_Capture($result['payment_id'], $param['amount']);            
             if($result_capture['success'])
                 $this->transaction_model->save_generated_bill_BRASPAG($id, $result['payment_id']);
             else
-                $result = $result_capture;
+                $result = $result_capture; // aqui capture = 0 obligatoriamente pues el metodo no devuelve dito valor
         }
+        return $result;
+    }
+    
+    public function re_cancel_contract(){
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        if(!$_SESSION['captured']){
+            $result['message']='Accesso negado';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');        
+        $this->load->model('class/payment_manager');
+        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+             
+        if($transaction['status_id'] != transactions_status::BEGINNER){
+            $result['message']='Accesso negado';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        
+        if($_SESSION['used_method'] == payment_manager::BRASPAG){
+            $result = $this->BRASPAG_Devolution($_SESSION[payment_manager::NAME_BRASPAG]['payment_id'], $_SESSION['re_financials']['total_cust_value']*100);    
+        }
+        
+        $_SESSION['used_method'] = 0;
+        $_SESSION['re_financials'] = NULL;
+        $_SESSION['captured'] = 0;
         return $result;
     }
     

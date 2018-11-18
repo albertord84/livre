@@ -592,7 +592,7 @@ $(document).ready(function () {
         });
     }
     
-    $("#btn_verify_phone_number").click(function () {
+    $("#btn_verify_phone_number").click(function () {       
         phone_ddd = validate_element('#phone_ddd', '^[0-9]{2}$');
         phone_number = validate_element('#phone_number', '^[0-9]{7,10}$');
         if(phone_ddd && phone_number){
@@ -892,10 +892,10 @@ $(document).ready(function () {
         });
     };
     
-    $("#do_sign").click(function () {                
+    $("#do_sign").click(function () {                        
         $('#wait').show();
         $.ajax({
-            url: base_url+'index.php/welcome/sign_contract',
+            url: base_url+'index.php/welcome/sign_contract_transactions',
             data:{
                 'ucpf': $('#ucpf').is(":checked"),
                 'key': key
@@ -907,14 +907,78 @@ $(document).ready(function () {
                 if(response['success']){
                     url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
                     $(location).attr('href',url);
-                } else
-                    modal_alert_message(response['message']);                
+                } else{
+                    if(response['authorized']){
+                        $('#re_captured').text(response['captured']);
+                        $('#re_plot_value').text(response['financials']['month_value']);
+                        $('#re_num_plot').text(response['financials']['amount_months']);
+                        $('#re_solicited_value').text(response['financials']['solicited_value']);
+                        $('#re_tax').text(response['financials']['tax']);
+                        $('#re_total').text(response['financials']['total_cust_value']);
+                        $('#re_IOF').text(response['financials']['IOF']);
+                        $('#re_CET').text(response['financials']['CET_PERC']);
+                        $('#re_CET_ANUAL').text(response['financials']['CET_YEAR']);
+                        $('#modal_captured').modal('show');
+                    }
+                    else
+                        modal_alert_message(response['message']);                
+                }
             },
             error: function (xhr, status) {
                 $('#wait').hide();
             }
         });        
     });
+    
+    $("#btn_accept_pre_contract").click(function () {                                
+        $('#wait').show();
+        $.ajax({
+            url: base_url+'index.php/welcome/sign_contract_transactions',
+            data:{
+                'ucpf': $('#ucpf').is(":checked"),
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                $('#wait').hide();
+                if(response['success']){
+                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                    $(location).attr('href',url);
+                } else{                    
+                    modal_alert_message(response['message']);                
+                }
+            },
+            error: function (xhr, status) {
+                $('#wait').hide();
+            }
+        });
+        $('#modal_captured').modal('hide');
+    });
+    
+    $("#btn_cancel_pre_contract").click(function () {                                
+        $('#wait').show();
+        $.ajax({
+            url: base_url+'index.php/welcome/re_cancel_contract',
+            data:{                
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {                
+                $('#wait').hide();
+                modal_alert_message(response['message']);                                
+            },
+            error: function (xhr, status) {
+                $('#wait').hide();
+            }
+        });
+        $('#modal_captured').modal('hide');
+    });
+    
+//    $("#modal_captured").on("hidden.bs.modal", function () {
+//        modal_alert_message("Dinheiro liberado");
+//    });
     
     $("#phone_number").keydown(function (e) {   
         if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||

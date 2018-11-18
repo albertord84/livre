@@ -211,6 +211,17 @@ Facebook: https://www.facebook.com/felipe.golfetto
   font-size: 15px;
 }
 
+.bverdeNEW{
+  background: url('../img/icones/topleft.png') top left, url('../img/icones/topright.png') top right, url('../img/icones/bottomleft.png') bottom left, url('../img/icones/bottomright.png') bottom right;
+  background-repeat: no-repeat;
+  border: none;
+  padding: 5px 5px;  
+  text-align: center;
+  width: 95%;
+  float: left;
+  font-size: 15px;
+}
+
 .sradius{
   border-radius: 30px;
 }
@@ -652,6 +663,10 @@ button.close{
 
 .tmgreen{
   background-color: #00ff66;
+}
+
+.tmgray{
+  background-color: #40bf80;
 }
 
 .tmred{
