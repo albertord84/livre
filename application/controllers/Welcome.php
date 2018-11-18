@@ -1259,7 +1259,7 @@ class Welcome extends CI_Controller {
     
     public function sign_contract() {
         session_destroy();
-        $result['message']='Sessão expirou';
+        $result['message']='Sessão expirou. Por favor, vá para a página inicial do site.';
         $result['success']=false;
         echo json_encode($result);
         return;
