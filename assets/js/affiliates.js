@@ -156,7 +156,7 @@ $(document).ready(function () {
     });
     
     $("#btn_afiliate_login").click(function () {
-        email = validate_element('#affiliate_email_login', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,4}$');
+        email = validate_element('#affiliate_email_login', '^[a-zA-Z0-9\._-]+@([a-zA-Z0-9-]{2,}[.])*[a-zA-Z]{2,10}$');
         if(email){
             $.ajax({
                 url: base_url + 'index.php/welcome/login_affiliate',
