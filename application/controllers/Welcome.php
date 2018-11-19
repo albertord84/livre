@@ -1900,7 +1900,8 @@ class Welcome extends CI_Controller {
             exit;                                    }
     }
     
-    public function update_old_tax() {        
+    public function update_old_tax() {
+        die('Not page found');
         $this->load->model('class/transaction_model');        
         $this->load->model('class/system_config');
         $this->load->model('class/tax_model');
@@ -1939,12 +1940,19 @@ class Welcome extends CI_Controller {
     }
     
     public function clean_begginer_images() {   
-        die('Access forbidden');
+        //die('Access forbidden');
         $this->load->model('class/transaction_model'); 
         $this->load->model('class/transactions_status');
         $this->load->model('class/system_config');        
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->load->model('class/affiliate_model');       
+        
+        $dayofweek = date('w', time());
+        $hour = date('H');
+        
+        if($dayofweek != 1 || $hour > 5 || $hour < 4){
+            die('Access forbidden');
+        }
         //if($_SESSION['logged_role'] === 'ADMIN'){            
             
             $page = 1; //descargar todos los registros de la consulta
