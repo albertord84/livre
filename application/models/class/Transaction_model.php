@@ -208,7 +208,7 @@
             }
         }
 
-        public function delete_washdog_by_id_transaction($id){
+        /*public function delete_washdog_by_id_transaction($id){
             try {
                 $this->db->where('user_id', $id);
                 $resp = $this->db->delete('washdog');
@@ -217,7 +217,7 @@
                 echo $exc->getTraceAsString();
                 return false; 
             }
-        }
+        }*/
         
         public function get_client($key, $value, $status=NULL){
             $this->db->select('*');
