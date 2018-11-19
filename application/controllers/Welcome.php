@@ -469,6 +469,12 @@ class Welcome extends CI_Controller {
     }
         
     public function logout() {
+        $this->load->model('class/watchdog');
+        $this->load->model('class/watchdog_type');
+            
+        $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::LOGOUT, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['logged_id']];
+        $this->watchdog->add_watchdog($register);
+        
         session_unset();
         session_destroy();
         header('Location: '.base_url().'index.php/welcome/afhome');
@@ -1599,6 +1605,15 @@ class Welcome extends CI_Controller {
             $_SESSION['logged_role'] = $afiliate[$N-1]['role'];            
             $result['resource'] = 'filiados';
             $result['success'] = true;
+            //registrar login
+            $ip = $this->getUserIP();
+            $_SESSION['ip'] = $ip;
+            $this->load->model('class/watchdog');
+            $this->load->model('class/watchdog_type');
+            
+            $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::LOGIN, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['logged_id']];
+            $this->watchdog->add_watchdog($register);
+            
         } else{
             $_SESSION['logged_id'] = -1;
             $result['message'] = 'Você deve se cadastrar primeiro';
@@ -2071,6 +2086,13 @@ class Welcome extends CI_Controller {
                         transactions_status::TOPAZIO_IN_ANALISYS,
                         true,
                         $resp['ccb']);
+                //registrar accion
+                $this->load->model('class/watchdog');
+                $this->load->model('class/watchdog_type');
+
+                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::APPROVE, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+                $this->watchdog->add_watchdog($register);
+                
                 //email de bem sucedido
                 $GLOBALS['sistem_config'] = $this->system_config->load();
                 require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
@@ -2149,6 +2171,12 @@ class Welcome extends CI_Controller {
             }
             //else             
             //    $result['message'] = 'Falha enviando email de solicitação de novas fotos. Tente depois.';                
+            //registrar accion
+            $this->load->model('class/watchdog');
+            $this->load->model('class/watchdog_type');
+
+            $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SOLICITED_PHOTO, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+            $this->watchdog->add_watchdog($register);
         }
         echo json_encode($result);
     }
@@ -2213,6 +2241,12 @@ class Welcome extends CI_Controller {
             }
             else             
                 $result['message'] = 'Falha enviando email de solicitação de nova conta. Tente depois.';                
+            //registrar accion
+            $this->load->model('class/watchdog');
+            $this->load->model('class/watchdog_type');
+
+            $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SOLICITED_ACCOUNT, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+            $this->watchdog->add_watchdog($register);
         }
         echo json_encode($result);
     }
@@ -2347,6 +2381,12 @@ class Welcome extends CI_Controller {
                         }
                         else             
                             $result['message'] = 'Falha enviando email de solicitação de nova assinatura. Tente depois.';                
+                        //registrar accion
+                        $this->load->model('class/watchdog');
+                        $this->load->model('class/watchdog_type');
+
+                        $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SOLICITED_SIGNATURE, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+                        $this->watchdog->add_watchdog($register);
                     }
                     else{
                                 //session_destroy();
@@ -2388,6 +2428,14 @@ class Welcome extends CI_Controller {
                 $this->transaction_model->update_transaction_status(
                     $_SESSION['transaction_requested_id'], 
                     transactions_status::REVERSE_MONEY);
+                
+                //registrar accion
+                $this->load->model('class/watchdog');
+                $this->load->model('class/watchdog_type');
+
+                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::REFUND, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+                $this->watchdog->add_watchdog($register);
+                
                 //3. enviar email de estorno
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
@@ -2484,6 +2532,12 @@ class Welcome extends CI_Controller {
             else
                 $result['message'].="Dados da conta armazenandos corretamente";
             $result['success']=true;
+            //registrar accion
+            $this->load->model('class/watchdog');
+            $this->load->model('class/watchdog_type');
+
+            $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::UPDATE, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
+            $this->watchdog->add_watchdog($register);
         }
         echo json_encode($result);
     }
@@ -2502,8 +2556,16 @@ class Welcome extends CI_Controller {
                     $b=$this->transaction_model->delete_credit_card_by_id_transaction($datas['id']);
                     $c=$this->transaction_model->delete_account_bank_by_id_transaction($datas['id']);
                     $d=$this->transaction_model->delete_transactions_dates_by_id_transaction($datas['id']);
-                    $d=$this->transaction_model->delete_washdog_by_id_transaction($datas['id']);
+                    //$d=$this->transaction_model->delete_washdog_by_id_transaction($datas['id']);
                     $result['success'] = true;                    
+                    
+                    //registrar accion
+                    $this->load->model('class/watchdog');
+                    $this->load->model('class/watchdog_type');
+
+                    $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::DELETE, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $datas['id']];
+                    $this->watchdog->add_watchdog($register);
+
                 } else{
                     $result['success'] = false;
                     $result['message'] = 'O status da transação não permite essa operação';
@@ -4632,6 +4694,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
+//        $_SESSION['ip'] = $this->getUserIP();
+//        $_SESSION['logged_id'] = -1;
+        
         $date = date("Y-m-d",time());
         echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s',time());
         $transactions = $this->topazio_conciliations($date);
@@ -4664,6 +4729,14 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
+                                
+                                /*registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SET_PENDING, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);*/
+                                
                                 echo "<br>\nID: ".$livre_tr['client_id'];
                                 echo "<br>\nCLIENTE: ".$livre_tr['name'];
                                 echo "<br>\nEMAIL: ".$livre_tr['email'];
@@ -4727,6 +4800,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
+//        $_SESSION['ip'] = $this->getUserIP();
+//        $_SESSION['logged_id'] = -1;
+        
         $date = date("Y-m-d",time());
         echo "<br>\n<br>\n----------  INIT CONCILIATION AT ".date('Y-m-d H:i:s',time());
         $transactions = $this->topazio_conciliations($date);
@@ -4761,6 +4837,14 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::PENDING);
+                                
+                                /*registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SET_PENDING, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);*/
+                                
                                 echo "<br>\nID: ".$livre_tr['client_id'];
                                 echo "<br>\nCLIENTE: ".$livre_tr['name'];
                                 echo "<br>\nEMAIL: ".$livre_tr['email'];
@@ -4806,6 +4890,14 @@ class Welcome extends CI_Controller {
                                 $this->transaction_model->update_transaction_status(
                                     $livre_tr['client_id'],
                                     transactions_status::TOPAZIO_APROVED);
+                                
+                                /*registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::ENDING, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);*/
+                                
                                 $name = explode(' ', $livre_tr['name']); $name = $name[0];                
                                 $this->Gmail = new Gmail();
                                 $this->Gmail->credor_ccb($name, $livre_tr['email'], $livre_tr['ccb_number']);
@@ -4845,6 +4937,9 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
+//        $_SESSION['ip'] = $this->getUserIP();
+//        $_SESSION['logged_id'] = -1;
+        
         $date = date("Y-m-d",time());
         echo "<br>\n<br>\n----------  INIT CHEKING CONTRACTS AT ".date('Y-m-d H:i:s',time());
        
@@ -5566,6 +5661,12 @@ class Welcome extends CI_Controller {
             echo json_encode($result);
             return;
         }
+        //registrar accion
+        $this->load->model('class/watchdog');
+        $this->load->model('class/watchdog_type');
+
+        $register = ['user_id' => $_SESSION['pk'], 'type' => Watchdog_type::REFUND_USER, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['pk']];
+        $this->watchdog->add_watchdog($register);
         
         $this->load->model('class/system_config');
         $this->load->model('class/transaction_model');
