@@ -90,7 +90,7 @@
                         <span class="fleft100 m-top12" style="color:white;">Qual valor deseja solicitar?</span>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 100 até R$ 3000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " >                        
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 300 até R$ 5000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " >                        
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
