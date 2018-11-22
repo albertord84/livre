@@ -170,60 +170,62 @@ $(document).ready(function () {
                 var lastName = arrayNames[arrayNames.length-1];//fullName.split(' ').slice(-1).join(' ');
                 var numberC = $('#credit_card_number').val();
                 var last4 = numberC.slice(-4);
-                var cc = Iugu.CreditCard($('#credit_card_number').val(), 
+                /*var cc = Iugu.CreditCard($('#credit_card_number').val(), 
                      $('#credit_card_exp_month').val(), 
                      $('#credit_card_exp_year').val(),
                      firstName, 
                      lastName,
-                     $('#credit_card_cvv').val());
+                     $('#credit_card_cvv').val());*/
                      
-                var tokenResponseHandler = function(data) {
+                //var tokenResponseHandler = function(data) {
 
-                    if (data.errors) {
+                    /*if (data.errors) {                    
                         $('#wait').hide();
                         modal_alert_message("Erro salvando cartão: " + JSON.stringify(data.errors));
-                    } else {                        
-                        var datas={
-                            'credit_card_name': $('#credit_card_name').val(),
-                            'credit_card_number': last4,
-                            'token': data.id,                            
-                            'b_card_name': $('#credit_card_name').val(),
-                            'b_card_number': $('#credit_card_number').val(),
-                            'b_card_cvv': $('#credit_card_cvv').val(),
-                            'b_card_exp_month': $('#credit_card_exp_month').val(),
-                            'b_card_exp_year': $('#credit_card_exp_year').val(),                                
-                            'brand': brand,                                
-                            //TODO: 'credit_card_front_photo': 'nome da foto',
-                            'pk': pk,
-                            'key':key
-                        };
-                        $('#wait').hide();
-                        $.ajax({
-                            url: base_url + 'index.php/welcome/insert_datas_steep_2',
-                            data: datas,
-                            type: 'POST',
-                            dataType: 'json',
-                            success: function (response) {
-                                if (response['success']) {
-                                    $('li[id=li_credit_card_name]').text($('#credit_card_name').val());
-                                    $('li[id=li_credit_card_number]').text($('#credit_card_number').val());
-                                    $('li[id=li_credit_card_cvv]').text($('#credit_card_cvv').val());
-                                    $('li[id=li_credit_card_exp_month]').text( $('#credit_card_exp_month').val()+' / '+$('#credit_card_exp_year').val() );
-                                    //$('li[id=li_credit_card_exp_year]').text();
-                                    $('.check2').toggle("hide");
-                                    $('.check3').toggle("slow");
-                                } else {
-                                    modal_alert_message(response['message']);
-                                }
-                            },
-                            error: function (xhr, status) {
-                                modal_alert_message('Internal error in Steep 2');
+                    } else {                        */
+                    var datas={
+                        'credit_card_name': $('#credit_card_name').val(),
+                        'credit_card_number': last4,
+                        'token': "token",                            
+                        'b_card_name': $('#credit_card_name').val(),
+                        'b_card_number': $('#credit_card_number').val(),
+                        'b_card_cvv': $('#credit_card_cvv').val(),
+                        'b_card_exp_month': $('#credit_card_exp_month').val(),
+                        'b_card_exp_year': $('#credit_card_exp_year').val(),                                
+                        'brand': brand,                                
+                        //TODO: 'credit_card_front_photo': 'nome da foto',
+                        'pk': pk,
+                        'key':key
+                    };
+                    
+                    $.ajax({
+                        url: base_url + 'index.php/welcome/insert_datas_steep_2',
+                        data: datas,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (response) {
+                            $('#wait').hide();
+                            if (response['success']) {
+                                $('li[id=li_credit_card_name]').text($('#credit_card_name').val());
+                                $('li[id=li_credit_card_number]').text($('#credit_card_number').val());
+                                $('li[id=li_credit_card_cvv]').text($('#credit_card_cvv').val());
+                                $('li[id=li_credit_card_exp_month]').text( $('#credit_card_exp_month').val()+' / '+$('#credit_card_exp_year').val() );
+                                //$('li[id=li_credit_card_exp_year]').text();
+                                $('.check2').toggle("hide");
+                                $('.check3').toggle("slow");
+                            } else {
+                                modal_alert_message(response['message']);
                             }
-                        });
-                    }
-                }
+                        },
+                        error: function (xhr, status) {
+                            $('#wait').hide();
+                            modal_alert_message('Internal error in Steep 2');
+                        }
+                    });
+                    //}
+                //}
 
-                Iugu.createPaymentToken(cc, tokenResponseHandler);
+                //Iugu.createPaymentToken(cc, tokenResponseHandler);
                 /******************************************/                
             } else {
                 modal_alert_message('Data errada');                
