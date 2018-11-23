@@ -222,6 +222,7 @@ $(document).ready(function () {
                     $("#trans_cep").text(response['message']['cep']);                                        
                     $("#way_to_spend_name").text(response['message']['way_to_spend_name']);    
                     $("#trans_payment_str").text(response['message']['payment_source_str']);    
+                    $("#numb_transactions").text(response['message']['numb_transactions']);    
                     //financials values
                     $("#trans_numb_plots").text(response['message']['number_plots']);    
                     $("#trans_value_plots").text(response['message']['month_value']);    

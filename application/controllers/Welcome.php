@@ -4042,6 +4042,9 @@ class Welcome extends CI_Controller {
                     $transactions['CET_PERC'] =$financials['CET_PERC'];
                     $transactions['CET_YEAR'] =$financials['CET_YEAR'];
                     $transactions['payment_source_str'] = "---";
+                    
+                    //numero de compras
+                    $transactions['numb_transactions'] = $this->affiliate_model->get_client_num_transactions($transactions['cpf']);
                     if($transactions['payment_source'] == payment_manager::IUGU)
                         $transactions['payment_source_str'] = "IUGU";
                     if($transactions['payment_source'] == payment_manager::BRASPAG)
