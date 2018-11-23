@@ -787,6 +787,15 @@ class Affiliate_model extends CI_Model{
         }
     }
     
+    public function get_client_num_transactions($cpf){
+        $this->load->model('class/transactions_status');
+        $this->db->select('COUNT(cpf) as transactions_payed');
+        $this->db->from('transactions');
+        $this->db->where('status_id <>', transactions_status::BEGINNER);        
+        $this->db->where('cpf', $cpf);        
+        return $this->db->get()->row_array()['transactions_payed'];
+    }
+    
     public function my_filter_like($token){
         $this->db->like('sender',$token);
         $this->db->or_like('msg',$token);

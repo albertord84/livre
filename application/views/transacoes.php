@@ -55,6 +55,10 @@
                                         <p>                                        
                                             <span id="trans_payment_str"></span><br>                                        
                                         </p>
+                                        <small class="fleft100 cl-silver m-top20">Número de transações:</small>
+                                        <p>                                        
+                                            <span id="numb_transactions"></span><br>                                        
+                                        </p>
 				</div>
 				<div class="w20 fw-500 text-left center-xs m-top10-xs">
 					<small class="fleft100 cl-silver">Dados bancários</small>
