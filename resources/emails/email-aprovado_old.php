@@ -2,30 +2,23 @@
     <tbody>
         <tr>
             <td colspan="3" height="180" bgcolor="#00ff66" align="center">
-                <h1 style="font-weight: 600;font-size: 30px;line-height: 30px">Empréstimo aprovado!</h1>
+                <h1 style="font-weight: 600;font-size: 30px;line-height: 30px">Aprovado!</h1>
             </td>
         </tr>
         <tr>
             <td width="105"></td>
             <td width="440" valign="top" align="center" height="40">
                 <br><br>
-                <img src="../../assets/img/icones/11 - dinheiro na conta2.png" alt="">   
+                <img src="../../assets/img/icones/11 - dinheiro na conta.png" alt="">   
                 <br><br>
                 <div style="text-align: left;">
-                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>, pode comemorar!</h2>
+                    <h2 style="color: #20a7d3;">Oi <?php echo urldecode($_GET["name"]);?>!</h2>
                     <p>
-                        O valor solicitado acaba de ser aprovado, está sendo processado e será transferido para sua conta.    <br>                        
-                    <br><h3>Prazo para depósito: 1 dia útil.</h3>
+                        Sua transferencia já está em processamento, se os dados de sua conta bancária estiverem corretos, em breve o dinheiro será depositado.
+                        Ficamos felizes por poder ajudar você e agradecemos por utilizar a Livre.digital como sistema de crédito.    <br>                        
+                        <br>Se você gostou, divulgue para seus amigos sua experiência!
                     </p> 					
-                    Dados bancários:<br>
-                    <?php echo urldecode($_GET["bank_name"]);?><br>
-                    Conta <?php echo urldecode($_GET["account"]);?><br>
-                    Agência <?php echo urldecode($_GET["agency"]);?><br>
-                    <?php echo urldecode($_GET["full_name"]);?><br>                    
                 </div> 
-                <div>
-                    <p>Ficamos felizes por poder ajudar você e agradecemos por usar a Livre.Digital. Se você gostou divulgue para seus amigos sua experiência!</p>
-                </div>
                 <div>
                     <br><br>
                     <h2 style="color: #20a7d3;">Está com dúvidas?</h2>

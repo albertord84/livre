@@ -2075,7 +2075,7 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
-            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);            
+            $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);                        
             if($resp['success']){
                 $this->transaction_model->save_in_db(
                         'transactions',
@@ -2099,7 +2099,12 @@ class Welcome extends CI_Controller {
                 $this->Gmail = new Gmail();      
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
-                $result = $this->Gmail->transaction_email_approved($name,$useremail);
+                $account = $_SESSION['transaction_requested_datas']['account']."-".$_SESSION['transaction_requested_datas']['dig'];
+                $agency = $_SESSION['transaction_requested_datas']['agency'];
+                $bank_name = $_SESSION['transaction_requested_datas']['bank_name'];
+                $full_name = $_SESSION['transaction_requested_datas']['name'];
+                
+                $result = $this->Gmail->transaction_email_approved($name, $useremail, $account, $agency, $bank_name, $full_name);
                 if ($result['success']){
                     $result['message'] = 'Transação aprovada e transferência agendada com sucesso!!';
                     $result['reload'] = 1;

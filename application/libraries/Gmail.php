@@ -102,7 +102,7 @@
             return $result;
         }
         
-        public function transaction_email_approved($name, $useremail) {
+        public function transaction_email_approved($name, $useremail, $account, $agency, $bank_name, $full_name) {
             $this->mail->clearAddresses();
             $this->mail->addAddress($useremail, $name);
             $this->mail->clearCCs();
@@ -114,9 +114,13 @@
             $this->mail->Port = 465;
             $this->mail->isHTML(true);
             $name = urlencode($name);           
+            $account = urlencode($account);           
+            $bank_name = urlencode($bank_name);           
+            $agency = urlencode($agency);           
+            $full_name = urlencode($full_name);           
             $lang = $GLOBALS['sistem_config']->LANGUAGE;
             //$this->mail->Body = $this->curl_get_contents("https://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name");
-            $file = "http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name";
+            $file = "http://" . $_SERVER['SERVER_NAME'] . "/livre/resources/emails/email-aprovado.php?name=$name&account=$account&agency=$agency&bank_name=$bank_name&full_name=$full_name";
             $this->mail->msgHTML(file_get_contents($file), dirname(__FILE__));            
             if (!$this->mail->send()) {
                 $result['success'] = false;
