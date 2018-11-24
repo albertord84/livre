@@ -52,8 +52,8 @@
                 </div>
                 <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <!--<h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>-->
-                        <h3 class="fw-400 ft-Rajdhani"><i><b><span style="color: #33cccc"> BLACK FRIDAY </span></b></i></h3><h5><span style="color: #bbbbbb"> SÓ HOJE! <br></span><span style="color: #00e673"> Taxa mais barata do Brasil</span><span style="color: #bbbbbb">, a partir de </span><span style="color: #00e673">0,45%</span> <span style="color: #bbbbbb"> am.</span></h5>
+                        <h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>
+                        <!--<h3 class="fw-400 ft-Rajdhani"><i><b><span style="color: #33cccc"> BLACK FRIDAY </span></b></i></h3><h5><span style="color: #bbbbbb"> SÓ HOJE! <br></span><span style="color: #00e673"> Taxa mais barata do Brasil</span><span style="color: #bbbbbb">, a partir de </span><span style="color: #00e673">0,45%</span> <span style="color: #bbbbbb"> am.</span></h5>-->
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-12 pd-0 text-right center-xs m-top20 spacement">
@@ -70,24 +70,24 @@
             </div>
         </div>
     </header>
-    <!--<section class="fleft100 cover text-center" id="banner" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/home.jpg);">-->
-    <section class="fleft100 cover text-center" id="banner" style="background:#000000">
-        <!--<div class="container">-->
-        <div class="container" style="background:#000000">
+    <section class="fleft100 cover text-center" id="banner" style="background-image: url(<?php echo base_url().'assets/'?>img/banners/home.jpg);">
+    <!--<section class="fleft100 cover text-center" id="banner" style="background:#000000">-->
+        <div class="container">
+        <!--<div class="container" style="background:#000000">-->
             <div class="fleft100 m-top150">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-                        <!--<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
-                        <h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>
+                        <h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>
+                        <!--<h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                     </div>
                 </div>
-                <div class="fleft100"><img src="<?php echo base_url().'assets/'?>img/icones/down-ar-white.png" class="i-block m-top50 m-b30"></div>
+                <div class="fleft100"><img src="<?php echo base_url().'assets/'?>img/icones/down-ar.png" class="i-block m-top50 m-b30"></div>
             </div>
             <div class="verific prelative m-top40 m-top20-xs text-right center-xs">
                 <div id="verify_container">
                     <div class="col-md-4 col-sm-4 col-xs-12">
-                        <!--<span class="fleft100 m-top12">Qual valor deseja solicitar?</span>-->
-                        <span class="fleft100 m-top12" style="color:white;">Qual valor deseja solicitar?</span>
+                        <span class="fleft100 m-top12">Qual valor deseja solicitar?</span>
+                        <!--<span class="fleft100 m-top12" style="color:white;">Qual valor deseja solicitar?</span>-->
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 300 até R$ 5000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " >                        
