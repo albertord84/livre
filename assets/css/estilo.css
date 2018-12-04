@@ -875,3 +875,17 @@ button.close{
 .pred .passo-red{
   display: block;
 }
+
+/*NUEVO*/
+
+.i{
+  border-radius: 10px;
+  border: 1px solid white;
+  float: left;
+  width: 100%;
+  padding: 20px 25px;
+  background-image: url(../img/icones/i.png);
+  background-repeat: no-repeat;
+  background-position: 10px 15px;
+  background-size: 19px;
+}
