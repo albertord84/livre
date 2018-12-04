@@ -807,6 +807,11 @@ b{
     z-index: 999;
 }
 
+.pabsolute2{
+    position: absolute;
+    z-index: 999;
+}
+
 /* Z-Indexs */
 .z-9{
     z-index: 9;

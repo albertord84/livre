@@ -44,7 +44,7 @@
         <?php include_once "pixel_crazy_egg.php";?>
         <?php date_default_timezone_set('America/Sao_Paulo'); ?>
     </head>
-    <body>
+<!--    <body>
 	<header class="fleft100 pd-tb30 pabsolute m-top50 m-none-xs text-center">
             <div class="container">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
@@ -69,6 +69,49 @@
                     </div>
                 </div>
             </div>
+	</header>-->
+
+    <body>
+	<header class="fleft100 m-none-xs text-center m-top20"  id="bcheck">
+		<div class="container">
+			<div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
+				<div class="logo col-md-3 col-sm-3 col-xs-12 pd-0 center-xs m-top12 text-left"><a href="<?php echo base_url();?>"><img src="<?php echo base_url().'assets/'?>img/icones/logo.png" alt=""></a></div>
+				<div class="col-md-9 col-sm-9 col-xs-12 pd-0 text-right center-xs m-top20">
+<!--					<ul class="menu i-block m-top10-xs">				
+						<li><a href="">Suporte</a></li>
+						<li class="tv cl-fff">|</li>
+						<li><a href="">Afiliados</a></li>
+					</ul>-->
+                                        <ul class=" sociais i-block">
+                                            <li><a href="https://www.instagram.com/livre.digital/" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/ig.png"></a></li>
+                                            <li class="tv cl-fff">|</li>
+                                            <li><a href="https://m.facebook.com/Livre.dig/?tsid=0.714847921740313&source=result&__nodl&_rdr" target="_blank"><img src="<?php echo base_url().'assets/'?>img/icones/fb.png"></a></li>
+                                            <li class="tv cl-fff">|</li>
+                                        </ul>
+                                        <ul class="menu i-block m-top10-xs">				
+                                            <li><a href="#contact_me">Suporte</a></li>
+                                        </ul>
+				</div>				
+			</div>
+                        <div class="fleft100 m-top20">
+                            <div class="col-md-3 col-sm-12 col-xs-12 text-left center-sm">
+                                    <div class="fleft100">
+                                            <h1 class="fw-600 ft-Rajdhani cl-green"><i>Falta pouco!</i></h1>
+                                            <h3 class="cl-fff ft-Rajdhani">Só precisamos de mais alguns dados:</h3>
+                                    </div>
+                            </div>
+                            <div class="col-md-9 col-sm-12 col-xs-12 m-top20-sm">
+                                    <div class="i">
+                                            <div class="col-md-5 col-sm-6 col-xs-12">
+                                                    <p align="left" class="cl-green m-none ft-size12">Além dos valores aplicados pelo Livre.digital, será acrescido os juros cobrados pelo seu própio banco. Este valor não aparece em nosso RESUMO. A média de juros nessa modalidade é em torno de 2% a.m.</p>
+                                            </div>
+                                            <div class="col-md-7 col-sm-6 col-xs-12 pd-0 pd-lr15-xs m-top20-xs">
+                                                    <p align="left" class="m-none ft-size11 cl-fff"><b class="fleft100">Não é permitido:</b> <br>- Não é permitido usar o cartão de outra pessoa para solicitar o crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora. <br>- Não é permitido utilizar cartões virtuais <br>- As fotos devem ser enviadas direto da câmera do seu celular</p>
+                                            </div>
+                                    </div>
+                            </div>
+                    </div>
+		</div>
 	</header>
 
 <!--         ASSINATURA MODAL 
@@ -223,7 +266,7 @@
 
     <section class="fleft100 pd-tb40 fmr-check" id="bcheck">
 	<div class="container">	
-		<hr class="fleft100 m-top150 m-b40">	
+		<hr class="fleft100 m-b40">	
 		<div class="col-md-9 col-sm-12 col-xs-12 pd-0 center-sm">
                     
                     <!--PASO 1.1-->
