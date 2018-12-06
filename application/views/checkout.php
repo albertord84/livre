@@ -93,24 +93,14 @@
                                         </ul>
 				</div>				
 			</div>
-                        <div class="fleft100 m-top20">
-                            <div class="col-md-3 col-sm-12 col-xs-12 text-left center-sm">
+                        <div class="fleft100">
+                            <div class="col-md-12 col-sm-12 col-xs-12 text-left center-sm">
                                     <div class="fleft100">
-                                            <h1 class="fw-600 ft-Rajdhani cl-green"><i>Falta pouco!</i></h1>
-                                            <h3 class="cl-fff ft-Rajdhani">Só precisamos de mais alguns dados:</h3>
+                                        <span class="fw-600 ft-Rajdhani cl-green" style="font-size: 2.5em;"><i>Falta pouco!</i></span>
+                                            <span class="cl-fff ft-Rajdhani" style="font-size: 1.7em; padding-left: 10px">Só precisamos de mais alguns dados:</span>
                                     </div>
-                            </div>
-                            <div class="col-md-9 col-sm-12 col-xs-12 m-top20-sm">
-                                    <div class="i">
-                                            <div class="col-md-5 col-sm-6 col-xs-12">
-                                                    <p align="left" class="cl-green m-none ft-size12">Além dos valores aplicados pelo Livre.digital, será acrescido os juros cobrados pelo seu própio banco. Este valor não aparece em nosso RESUMO. A média de juros nessa modalidade é em torno de 2% a.m.</p>
-                                            </div>
-                                            <div class="col-md-7 col-sm-6 col-xs-12 pd-0 pd-lr15-xs m-top20-xs">
-                                                    <p align="left" class="m-none ft-size11 cl-fff"><b class="fleft100">Não é permitido:</b> <br>- Não é permitido usar o cartão de outra pessoa para solicitar o crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora. <br>- Não é permitido utilizar cartões virtuais <br>- As fotos devem ser enviadas direto da câmera do seu celular</p>
-                                            </div>
-                                    </div>
-                            </div>
-                    </div>
+                            </div>                            
+                        </div>
 		</div>
 	</header>
 
@@ -264,7 +254,7 @@
             </div>
         </div><!-- /SMS -->
 
-    <section class="fleft100 pd-tb40 fmr-check" id="bcheck">
+    <section class="fleft100 fmr-check" id="bcheck">
 	<div class="container">	
 		<hr class="fleft100 m-b40">	
 		<div class="col-md-9 col-sm-12 col-xs-12 pd-0 center-sm">
@@ -906,6 +896,16 @@
                     </div>
 		</div> -->
 	</div>
+        <div class="col-md-12 col-sm-12 col-xs-12 m-top20-sm pd-20">
+                <div class="i">
+                        <div class="col-md-5 col-sm-6 col-xs-12">
+                                <p align="left" class="cl-green m-none ft-size12">Além dos valores aplicados pelo Livre.digital, será acrescido os juros cobrados pelo seu própio banco. Este valor não aparece em nosso RESUMO. A média de juros nessa modalidade é em torno de 2% a.m.</p>
+                        </div>
+                        <div class="col-md-7 col-sm-6 col-xs-12 pd-0 pd-lr15-xs m-top20-xs">
+                                <p align="left" class="m-none ft-size11 cl-fff"><b class="fleft100">Não é permitido:</b> <br>- Não é permitido usar o cartão de outra pessoa para solicitar o crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora. <br>- Não é permitido utilizar cartões virtuais <br>- As fotos devem ser enviadas direto da câmera do seu celular</p>
+                        </div>
+                </div>
+        </div>
 </section>
 <div class="modal fade"  id="show_sign" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
     <div id="show_sign_modal" class="modal-dialog modal-sm" role="document">                                                          
