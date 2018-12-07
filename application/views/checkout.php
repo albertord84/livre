@@ -899,7 +899,7 @@
         <div class="col-md-12 col-sm-12 col-xs-12 m-top20-sm pd-20">
                 <div class="i">
                         <div class="col-md-5 col-sm-6 col-xs-12">
-                                <p align="left" class="cl-green m-none ft-size12">Além dos valores aplicados pelo Livre.digital, será acrescido os juros cobrados pelo seu própio banco. Este valor não aparece em nosso RESUMO. A média de juros nessa modalidade é em torno de 2% a.m.</p>
+                                <p align="left" class="cl-fff m-none ft-size12">Além dos valores aplicados pelo Livre.digital, será acrescido os juros cobrados pelo seu própio banco. Este valor não aparece em nosso RESUMO. A média de juros nessa modalidade é em torno de 2% a.m.</p>
                         </div>
                         <div class="col-md-7 col-sm-6 col-xs-12 pd-0 pd-lr15-xs m-top20-xs">
                                 <p align="left" class="m-none ft-size11 cl-fff"><b class="fleft100">Não é permitido:</b> <br>- Não é permitido usar o cartão de outra pessoa para solicitar o crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora. <br>- Não é permitido utilizar cartões virtuais <br>- As fotos devem ser enviadas direto da câmera do seu celular</p>

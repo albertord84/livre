@@ -93,7 +93,8 @@
                         <!--<span class="fleft100 m-top12" style="color:white;">Qual valor deseja solicitar?</span>-->
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
-                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 300 até R$ 5000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " >                        
+                        <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 300 até R$ 5000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " > <br>
+                        <!--<div class="m-top10" style="font-size:11px; color: black">Quanto mais parcelas, menor os juros !</div>-->
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
