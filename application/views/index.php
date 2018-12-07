@@ -78,7 +78,7 @@
             <div class="fleft100 m-top150">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-                        <h2 class="ft-size30 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Quer pagar o menor juro possível? <h2> 
+                        <h2 class="ft-size30 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Quer pagar o menor juros possível? <h2> 
                                 <h2 class="ft-size22 ft-Rajdhani fleft100 text-left center-xs" style="margin-left: -4px;"> Saque R$ 5.000,00 em 12x com <b>taxa de 1,89%</b>.</h2>
                         <!--<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                         <!--<h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
