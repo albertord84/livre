@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <input id="input_verify" type="text" class="bverde ph-fff cl-fff" title="de R$ 300 até R$ 5000" placeholder="R$ 0.00" maxlength="13" data-thousands="." data-decimal="," data-prefix="R$ " > <br>
-                        <!--<div class="m-top10" style="font-size:11px; color: black">Quanto mais parcelas, menor os juros !</div>-->
+                        <div class="m-top10" style="font-weight: bold; font-size:11px; color: #e6ffe6">Quanto mais parcelas, menor os juros !</div>
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-12 text-center">
                         <button id="btn_verify" class="bt-white m-top5 btn-verificar">VERIFICAR</button>
@@ -108,7 +108,10 @@
                                     <div class="ft-size13 col-md-7 col-sm-7 col-xs-12 pd-0 fw-600 text-right m-top5">
                                         Para solicitar o valor acima, você precisa ter este valor ou mais de limite disponível no seu cartão de crédito:
                                     </div>
-                                    <h3 id="total_cust_value" class="ft-size22 i-block col-md-5 col-sm-5 col-xs-12 pd-0 fw-400 m-top15">R$ 5.000,00</h3>
+                                    <div class="col-md-5 col-sm-5 col-xs-12 m-top10">
+                                        <small>CUSTO TOTAL (CET)</small>
+                                        <h3 id="total_cust_value" class="ft-size22 i-block pd-0 fw-400">R$ 5.000,00</h3>
+                                    </div>
                                 </div>
                                 <div class="col-md-5 col-sm-5 col-xs-12 text-center m-top10-xs">
                                     <div class="fleft100 parc m-top10-xs">
@@ -135,13 +138,13 @@
                             </div>
                         </div>
                         <div class="fleft100 bk-silver pd-30  pd-10-xs">
-                            <div class="col-md-3 col-sm-3 col-xs-12 text-left center-xs">
+                            <div class="col-md-1 col-sm-1 col-xs-12 text-left center-xs">
                                 <div class="fleft100">
-                                    <small>CUSTO TOTAL (CET)</small>
-                                    <h3 class="fleft100" id="total_cust_value1"><i><strong >R$ 6.225,00</strong></i></h3>
+<!--                                    <small>CUSTO TOTAL (CET)</small>
+                                    <h3 class="fleft100" id="total_cust_value1"><i><strong >R$ 6.225,00</strong></i></h3>-->
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-4 col-xs-12 m-top10-xs">
+                            <div class="col-md-6 col-sm-6 col-xs-12 m-top10-xs">
                                 <small>SELECIONE COMO IRÁ USAR O DINHEIRO</small>
                                 <select id="money_use_form" class="fleft100 bk-fff pd-5 m-top5 cl-grafite sradius border-1px">
                                     <option value="00">Selecione     ...</option>
