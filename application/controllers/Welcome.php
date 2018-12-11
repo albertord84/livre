@@ -2075,6 +2075,15 @@ class Welcome extends CI_Controller {
         $this->load->model('class/system_config');
         $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
+            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+               $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
+               $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
+                $result['message'] = "O estado atual da transação não permite que seja aprovada";    
+                $result['success'] = false;    
+                echo json_encode($result);
+                return;
+            }
             $resp = $this->topazio_emprestimo($_SESSION['transaction_requested_id']);                        
             if($resp['success']){
                 $this->transaction_model->save_in_db(
@@ -2154,6 +2163,15 @@ class Welcome extends CI_Controller {
         $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
+            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+               $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
+               $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
+                $result['message'] = "O estado atual da transação não permite que sejam solicitadas novas fotos";    
+                $result['success'] = false;    
+                echo json_encode($result);
+                return;
+            }
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $this->Gmail = new Gmail();      
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
@@ -2224,6 +2242,15 @@ class Welcome extends CI_Controller {
         $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");        
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
+            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+               $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
+               $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
+                $result['message'] = "O estado atual da transação não permite que seja solicitada uma nova conta";    
+                $result['success'] = false;    
+                echo json_encode($result);
+                return;
+            }
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
@@ -2354,6 +2381,15 @@ class Welcome extends CI_Controller {
         $result['success'] = false;
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
+            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+               $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
+               $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
+                $result['message'] = "O estado atual da transação não permite que seja solicitada nova assinatura";    
+                $result['success'] = false;    
+                echo json_encode($result);
+                return;
+            }
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
@@ -2425,6 +2461,15 @@ class Welcome extends CI_Controller {
         $this->Gmail = new Gmail();
         $result['success'] = false;
         if($_SESSION['logged_role'] === 'ADMIN'){
+            $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
+            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+               $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
+               $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
+                $result['message'] = "O estado atual da transação não permite que seja estornada";    
+                $result['success'] = false;    
+                echo json_encode($result);
+                return;
+            }
             //1. estornar dinero
             //$resp = $this->refund_bill_iugu($_SESSION['transaction_requested_id']);
             $resp = $this->refund_transactions($_SESSION['transaction_requested_id']);
@@ -5062,7 +5107,8 @@ class Welcome extends CI_Controller {
         else
             $B10 = $tax/100;
         $num_days = 30*($num_parcelas-1) + 10;
-        $B20 = 0.1;
+        //$B20 = 0.1;
+        $B20 = 0.2; //20%
         $B21 = number_format($B20*$B11, 2, '.', ''); //TAC
         $IOF_YEAR = 0.0038; 
         $IOF_DAY = 0.000082;
@@ -5329,7 +5375,7 @@ class Welcome extends CI_Controller {
                         "  \"Amount\":".$param['amount'].",\n   ".
                         "  \"ServiceTaxAmount\":0,\n   ".                        
                         "  \"Installments\":".$param['plots'].",\n  ".
-                        "  \"Interest\":\"ByIssuer\",\n   ".                                
+                        "  \"Interest\":\"ByMerchant\",\n   ".                                
                         "  \"Capture\":false,\n  ".
                         "   \"CreditCard\":{\n     ".
                         "     \"CardNumber\":\"".$param['card_number']."\",\n    ".
@@ -5445,7 +5491,7 @@ class Welcome extends CI_Controller {
                         "  \"Amount\":".$param['amount'].",\n   ".
                         "  \"ServiceTaxAmount\":0,\n   ".                        
                         "  \"Installments\":".$param['plots'].",\n  ".
-                        "  \"Interest\":\"ByIssuer\",\n   ".                                
+                        "  \"Interest\":\"ByMerchant\",\n   ".                                
                         "  \"Capture\":false,\n  ".
                         "   \"Avs\":{\n     ".
                         "     \"Cpf\":\"".$param['cpf']."\",\n    ".
