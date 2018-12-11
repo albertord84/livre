@@ -52,7 +52,7 @@
                 </div>
                 <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h4 class="fw-400 ft-Rajdhani"> Saque de R$ 300,00 a 5.000,00 em até 12x, com taxa a partir de 2,99 a.m.</h4>
+                        <h4 class="fw-400 ft-Rajdhani"> Saque de R$ 300,00 a 5.000,00 em até 12x, com taxa a partir de 2,99% a.m.</h4>
 <!--                        <h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>-->
                         <!--<h3 class="fw-400 ft-Rajdhani"><i><b><span style="color: #33cccc"> BLACK FRIDAY </span></b></i></h3><h5><span style="color: #bbbbbb"> SÓ HOJE! <br></span><span style="color: #00e673"> Taxa mais barata do Brasil</span><span style="color: #bbbbbb">, a partir de </span><span style="color: #00e673">0,45%</span> <span style="color: #bbbbbb"> am.</span></h5>-->
                     </div>
