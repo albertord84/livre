@@ -347,7 +347,7 @@ class Welcome extends CI_Controller {
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
-                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"], $transaction["tac"]);
                     $sum_iof += $financials['IOF'];
                     $sum_tax += $financials['tax'];
                 }                
@@ -411,7 +411,7 @@ class Welcome extends CI_Controller {
             while($has_next_page){
                 $result = $this->affiliate_model->iof_tax_value($datas, $page, $amount_by_page, $has_next_page);
                 foreach($result as $transaction){
-                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
+                    $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"], $transaction["tac"]);
                     $sum_iof += $financials['IOF'];
                     $sum_tax += $financials['tax'];
                 }                
@@ -737,6 +737,7 @@ class Welcome extends CI_Controller {
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
                     $datas['tax'] = $_SESSION['transaction_values']['tax'];
+                    $datas['tac'] = $_SESSION['transaction_values']['TAC'];
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
                     $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
@@ -3494,7 +3495,7 @@ class Welcome extends CI_Controller {
             return $response;
         }
         
-        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"], $client["tax"]);
+        $financials = $this->calculating_enconomical_values($client["amount_solicited"]/100, $client["number_plots"], $client["tax"], $client["tac"]);
         
         $token = $response_client['token'];
         $postData = array(
@@ -3804,7 +3805,7 @@ class Welcome extends CI_Controller {
         {
             return ['success' => false, 'code_error' => 3001,'message' => 'Contrato ainda não passou pelo estado de esperar assinatura'];
         }
-        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"], $transaction["tac"]);
         
         //********************************
         $num_plots = $financials["amount_months"];
@@ -4084,7 +4085,7 @@ class Welcome extends CI_Controller {
                     $transactions["credit_card_final"] = substr($credit_card["credit_card_number"],-4);
                     
                     //adicionar datos da transacao                    
-                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"], $transactions["tax"]);
+                    $financials = $this->calculating_enconomical_values($transactions["amount_solicited"]/100, $transactions["number_plots"], $transactions["tax"], $transactions["tac"]);
                     $transactions['total_cust_value'] = $financials['total_cust_value'];                        
                     $transactions['month_value'] =$financials['month_value'];
                     $transactions['tax'] =$financials['tax'];
@@ -4532,7 +4533,7 @@ class Welcome extends CI_Controller {
         
         $transaction = $this->transaction_model->get_client('id', $id)[0];
         
-        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"]);
+        $financials = $this->calculating_enconomical_values($transaction["amount_solicited"]/100, $transaction["number_plots"], $transaction["tax"], $transaction["tac"]);
         
         $address = $transaction['street_address']." ".$transaction['number_address'].", ".$transaction['city_address'].", ".$transaction['state_address'];
         $tomorrow = $this->topazio_util_day($this->next_available_day());
@@ -5098,8 +5099,11 @@ class Welcome extends CI_Controller {
         return number_format(-1*($remainingBalanceAtEnd - $remainingBalanceAtStart), 2, '.', '');
     }
     
-    public function calculating_enconomical_values($valor_solicitado, $num_parcelas, $tax = NULL){
+    public function calculating_enconomical_values($valor_solicitado, $num_parcelas, $tax = NULL, $tac_transaction = NULL){
         $this->load->model('class/tax_model');
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        
         $B11 = number_format($valor_solicitado, 2, '.', '');
         $B16 = $num_parcelas;
         if(!$tax)
@@ -5108,7 +5112,10 @@ class Welcome extends CI_Controller {
             $B10 = $tax/100;
         $num_days = 30*($num_parcelas-1) + 10;
         //$B20 = 0.1;
-        $B20 = 0.2; //20%
+        if(!$tac_transaction)
+            $B20 = $GLOBALS['sistem_config']->TAC/100; //20%
+        else
+            $B20 = $tac_transaction;
         $B21 = number_format($B20*$B11, 2, '.', ''); //TAC
         $IOF_YEAR = 0.0038; 
         $IOF_DAY = 0.000082;
