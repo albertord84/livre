@@ -52,7 +52,7 @@
                 </div>
                 <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h4 class="fw-400 ft-Rajdhani"> Saque o limite disponível do seu cartão de crédito e receba na sua conta em 1 dia útil</h4>
+                        <h4 class="fw-400 ft-Rajdhani"> Saque de R$ 300,00 a 5.000,00 em até 12x, com taxa a partir de 2,99 a.m.</h4>
 <!--                        <h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>-->
                         <!--<h3 class="fw-400 ft-Rajdhani"><i><b><span style="color: #33cccc"> BLACK FRIDAY </span></b></i></h3><h5><span style="color: #bbbbbb"> SÓ HOJE! <br></span><span style="color: #00e673"> Taxa mais barata do Brasil</span><span style="color: #bbbbbb">, a partir de </span><span style="color: #00e673">0,45%</span> <span style="color: #bbbbbb"> am.</span></h5>-->
                     </div>
@@ -78,8 +78,8 @@
             <div class="fleft100 m-top150">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-                        <h2 class="ft-size30 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Quer pagar o menor juros possível? <h2> 
-                                <h2 class="ft-size22 ft-Rajdhani fleft100 text-left center-xs" style="margin-left: -4px;"> Saque R$ 5.000,00 em 12x com <b>taxa de 1,89%</b>.</h2>
+                        <h2 class="ft-size25 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Transforme o limite do seu cartão de crédito <br> em dinheiro na conta em 1 dia útil.<h2> 
+                        <!--<h2 class="ft-size22 ft-Rajdhani fleft100 text-left center-xs" style="margin-left: -4px;"> Saque R$ 5.000,00 em 12x com <b>taxa de 1,89%</b>.</h2>-->
                         <!--<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                         <!--<h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                     </div>
@@ -212,7 +212,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 1.89%.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 2.99%.</h4>
                         </div>
                     </div>
                 </div>
@@ -244,9 +244,9 @@
 				<div class="ft-size17">
 					<h3 class="ft-size30"><i><b>E melhor!</b></i></h3>
 					O envio dos documentos é totalmente digital.<br><br>
-                                        <p>
+<!--                                        <p>
                                             A Livre.digital faz o parcelamento do seu empréstimo através do banco emissor do seu cartão de crédito (a taxa de juros varia de um banco para outro). A média de juros nessa modalidade é em torno de 2% a.m., além dos valores aplicados pela Livre.digital, na simulação feita aqui no site. Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.
-                                        </p>    
+                                        </p>    -->
 				</div>
 			</div>
 		</div>
@@ -259,7 +259,7 @@
 <section id="i" class="fleft100 pd-tb40">
 	<div class="container">
 		<div class="i i-block fnone pd-tb15 col-md-10">
-			<div class="col-md-1 col-sm-2 col-xs-12 text-center"><img src="<?php echo base_url().'assets/'?>img/icones/i.png" width="30"></div>
+			<div class="col-md-1 col-sm-2 col-xs-12 text-center"></div>
 			<div class="col-md-11 col-sm-10 col-xs-12 pd-0 m-top20-xs text-left ft-size11">
 				<h5>IMPORTANTE:</h5> Para solicitar crédito o dono do cartão de crédito e da conta bancária devem ser a mesma pessoa (mesmo CPF). Não é permitido usar o cartão de outra pessoa para solicitar crédito. Em caso de titulares diferentes o crédito não será efetivado, sendo negado na hora.
 			</div>
