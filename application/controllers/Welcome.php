@@ -737,7 +737,7 @@ class Welcome extends CI_Controller {
                     $datas['amount_solicited'] = $_SESSION['transaction_values']['solicited_value']*100;
                     $datas['total_effective_cost'] = $_SESSION['transaction_values']['total_cust_value']*100;
                     $datas['tax'] = $_SESSION['transaction_values']['tax'];
-                    $datas['tac'] = $_SESSION['transaction_values']['TAC'];
+                    $datas['tac'] = $_SESSION['transaction_values']['TAC_PERC'];
                     $datas['way_to_spend'] = $_SESSION['transaction_values']['frm_money_use_form'];
                     $new_beginner_date = false;
                     if($possible['action']==='insert_beginner'){
@@ -2772,6 +2772,7 @@ class Welcome extends CI_Controller {
                 $result['tax'] =$financials['tax'];
                 $result['IOF'] =$financials['IOF']; //valor a cobrar por IOF
                 $result['TAC'] =$financials['TAC'];
+                $result['TAC_PERC'] =$financials['TAC_PERC'];
                 $result['CET_PERC'] =$financials['CET_PERC'];
                 $result['CET_YEAR'] =$financials['CET_YEAR'];
                 $result['success'] = true;                
@@ -5197,7 +5198,8 @@ class Welcome extends CI_Controller {
             'CET_PERC' => $cet_month,
             'CET_YEAR' => $cet_year,                            
             'tax_value' => number_format($total_cust - $B8 , 2, '.', '') ,
-            'TAC_API' => number_format($total_cust - $B8 , 2, '.', '') 
+            'TAC_API' => number_format($total_cust - $B8 , 2, '.', '') ,
+            'TAC_PERC' => number_format($B20 , 2, '.', '') 
             );
         return $result;
     }
