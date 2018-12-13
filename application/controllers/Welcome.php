@@ -2244,7 +2244,7 @@ class Welcome extends CI_Controller {
         require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");        
         if($_SESSION['logged_role'] === 'ADMIN'){
             $tr_data = $this->transaction_model->get_client('id', $_SESSION['transaction_requested_id'])[0];
-            if($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS ||
+            if(($tr_data['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS && $_SESSION['robot'] != true) ||
                $tr_data['status_id'] == transactions_status::TOPAZIO_APROVED ||
                $tr_data['status_id'] == transactions_status::REVERSE_MONEY){
                 $result['message'] = "O estado atual da transação não permite que seja solicitada uma nova conta";    
@@ -4744,6 +4744,7 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
+        $_SESSION['robot'] = true;
 //        $_SESSION['ip'] = $this->getUserIP();
 //        $_SESSION['logged_id'] = -1;
         
@@ -4794,13 +4795,7 @@ class Welcome extends CI_Controller {
                                 echo "<br>\n<br>\nREASON: ".$transaction->reason;
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                                //1. pedir nova conta
-                                $this->load->model('class/transactions_status');
-                                $this->load->model('class/transaction_model');
-                                $this->transaction_model->update_transaction_status(
-                                    $livre_tr['client_id'],
-                                    transactions_status::PENDING);//temporalmente para depois pedir nova conta
-                                
+                                //1. pedir nova conta                                
                                 $account_bank_reasonCodes = array(
                                     1 /*Conta Destinatária do Crédito Encerrada*/,
                                     2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
@@ -4856,6 +4851,7 @@ class Welcome extends CI_Controller {
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $this->Gmail = new Gmail();
         $_SESSION['logged_role'] = 'ADMIN';
+        $_SESSION['robot'] = true;
 //        $_SESSION['ip'] = $this->getUserIP();
 //        $_SESSION['logged_id'] = -1;
         
@@ -4909,13 +4905,7 @@ class Welcome extends CI_Controller {
                                 echo "<br>\n----------------------------------------------<br>\n";
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
-                                //1. pedir nova conta
-                                $this->load->model('class/transactions_status');
-                                $this->load->model('class/transaction_model');
-                                $this->transaction_model->update_transaction_status(
-                                    $livre_tr['client_id'],
-                                    transactions_status::PENDING);//temporalmente pendente para depois pedir nova conta
-                                
+                                //1. pedir nova conta                                
                                 $account_bank_reasonCodes = array(
                                     1 /*Conta Destinatária do Crédito Encerrada*/,
                                     2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
