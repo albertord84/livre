@@ -4795,6 +4795,12 @@ class Welcome extends CI_Controller {
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);//temporalmente para depois pedir nova conta
+                                
                                 $account_bank_reasonCodes = array(
                                     1 /*Conta Destinatária do Crédito Encerrada*/,
                                     2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
@@ -4904,6 +4910,12 @@ class Welcome extends CI_Controller {
                                 break;
                             case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
                                 //1. pedir nova conta
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);//temporalmente pendente para depois pedir nova conta
+                                
                                 $account_bank_reasonCodes = array(
                                     1 /*Conta Destinatária do Crédito Encerrada*/,
                                     2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
