@@ -45,11 +45,13 @@ class Welcome extends CI_Controller {
             print_r("ok");
         }/**/
         //var_dump($resp);
+        /*
         $phone_country_code = '+55';            
         $phone_ddd = "21";
         $phone_number = "982856319";
         $message = "Um email foi enviado a seu email jjj@gmail.com. \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
-        $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+        $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);         
+         */
     }    
         
     public function test_sig(){
@@ -107,8 +109,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {    
-        //$this->test3();
+    public function index() {            
         if($this->is_ip_hacker_response()){
             die('Sitio atualmente inacessível');
             return;
