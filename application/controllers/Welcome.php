@@ -45,6 +45,11 @@ class Welcome extends CI_Controller {
             print_r("ok");
         }/**/
         //var_dump($resp);
+        $phone_country_code = '+55';            
+        $phone_ddd = "21";
+        $phone_number = "982856319";
+        $message = "Um email foi enviado a seu email jjj@gmail.com. \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+        $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
     }    
         
     public function test_sig(){
@@ -102,7 +107,8 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {         
+    public function index() {    
+        //$this->test3();
         if($this->is_ip_hacker_response()){
             die('Sitio atualmente inacessível');
             return;
@@ -173,6 +179,17 @@ class Welcome extends CI_Controller {
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params = $this->input->get();        
             $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            
+            //sending SMS for succes 
+            $phone_country_code = '+55';            
+            $phone_ddd = $_SESSION['client_datas']['phone_ddd'];
+            $phone_number = $_SESSION['client_datas']['verified_phone'];            
+            $message = "Seu pedido foi aprovado pelo Livre.digital, parabens!".
+                       " Agora so falta assinar o contrato que foi enviado para seu e-mail ".
+                        $_SESSION['client_datas']['email'].
+                        " \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+            $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+            
             session_destroy();
             $this->load->view('sucesso-compra',$params);
             $this->load->view('inc/footer');
@@ -775,7 +792,7 @@ class Welcome extends CI_Controller {
         echo json_encode($result);
     }
     
-    public function is_possible_steep_2_for_this_client($datas) { 
+    public function is_possible_steep_2_for_this_client($datas) {         
         $this->load->model('class/transaction_model');
         $_SESSION['is_possible_steep_2']=false;
         //1. Analisar se IP tem sido marcado como hacker
@@ -2103,6 +2120,16 @@ class Welcome extends CI_Controller {
                 $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::APPROVE, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
                 $this->watchdog->add_watchdog($register);
                 
+                //sending SMS for approved 
+                $phone_country_code = '+55';            
+                $phone_ddd = $tr_data['phone_ddd'];
+                $phone_number = $tr_data['phone_number'];            
+                $message = "Seus dados ja foram analisados pela nossa equipe. Em 24h seu credito sera liberado.".
+                           " Vamos enviar e-mails de atualizacoes sobre o seu pedido ao seu e-mail ".
+                            $tr_data['email'].
+                            " \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+                $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+
                 //email de bem sucedido
                 $GLOBALS['sistem_config'] = $this->system_config->load();
                 require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
@@ -2173,6 +2200,17 @@ class Welcome extends CI_Controller {
                 echo json_encode($result);
                 return;
             }
+            
+            //sending SMS for new photos 
+            $phone_country_code = '+55';            
+            $phone_ddd = $tr_data['phone_ddd'];
+            $phone_number = $tr_data['phone_number'];            
+            $message = "Infelizmente suas fotos nao estao legiveis ou os dados nao batem com a conta informada.".
+                       " Para enviar novamente suas fotos use o link enviado para seu e-mail ".
+                        $tr_data['email'].
+                        " \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+            $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+            
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $this->Gmail = new Gmail();      
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
@@ -2252,6 +2290,17 @@ class Welcome extends CI_Controller {
                 echo json_encode($result);
                 return;
             }
+            
+            //sending SMS for new account 
+            $phone_country_code = '+55';            
+            $phone_ddd = $tr_data['phone_ddd'];
+            $phone_number = $tr_data['phone_number'];            
+            $message = "Verificamos que os dados bancarios fornecidos nao foram preenchidos corretamente ou nao sao os mesmos do titular do cartao de credito (requerimento obrigatorio).".
+                       " Para enviar novamente suas fotos use o link enviado ao seu e-mail ".
+                        $tr_data['email'].
+                        " \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+            $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+                        
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $this->Gmail = new Gmail();
             $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
@@ -2487,7 +2536,16 @@ class Welcome extends CI_Controller {
                 $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::REFUND, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['transaction_requested_id']];
                 $this->watchdog->add_watchdog($register);
                 
-                //3. enviar email de estorno
+                //3. enviar SMS e email de estorno
+                $phone_country_code = '+55';            
+                $phone_ddd = $tr_data['phone_ddd'];
+                $phone_number = $tr_data['phone_number'];            
+                $message = "As informacoes fornecidas ou os documentos enviados nao estao de acordo com nossa politica de compliance.".
+                           " Por este motivo sua transacao foi cancelada, incluindo a operacao no seu cartao de credito.".
+                            " \\n\\n Se precisar fale conosco pelo e-mail seja@livre.digital";
+                $response_sms = $this->sms_message($phone_country_code, $phone_ddd, $phone_number, $message);
+
+                
                 $name = explode(' ', $_SESSION['transaction_requested_datas']['name']); $name = $name[0];
                 $useremail = $_SESSION['transaction_requested_datas']['email'];
                 $result = $this->Gmail->transaction_request_recused($name,$useremail);
@@ -3075,7 +3133,54 @@ class Welcome extends CI_Controller {
         }        
         return $response;
     }
-            
+    
+    public function sms_message($phone_country_code, $phone_ddd, $phone_number, $message){        
+        //com kaio_api
+        //$response['success'] = TRUE;    //remover essas dos lineas
+        //return $response;
+        
+        $this->load->model('class/system_config');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $authenticationtoken = $GLOBALS['sistem_config']->AUTENTICATION_TOKEN_SMS;
+        $username = $GLOBALS['sistem_config']->USER_NAME_SMS;
+        
+        $full_number = $phone_country_code.$phone_ddd.$phone_number;
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api-messaging.movile.com/v1/send-sms",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          //CURLOPT_POSTFIELDS => "{\"destination\": \"".$full_number."\" ,  \"messageText\": \"Code number\\n".$message."\"}",
+          CURLOPT_POSTFIELDS => '{"destination": "'.$full_number.'" ,  "messageText": "'.$message.'"}',
+          CURLOPT_HTTPHEADER => array(
+            "authenticationtoken: ".$authenticationtoken,
+            "username: ".$username,
+            "content-type: application/json"
+          ),
+        ));
+
+        $response_curl = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+        
+        $response = [];
+        if ($err) {
+          //echo "cURL Error #:" . $err;
+            $response['success'] = FALSE;
+            $response['message'] = $err;
+        } else {
+            $response['success'] = TRUE;
+        }        
+        return $response;
+    }
+    
     //-------UPLOADING PHOTO---------------------------------------
     public function upload_file(){
         $this->load->model('class/transaction_model');
