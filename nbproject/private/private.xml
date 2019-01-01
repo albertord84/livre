@@ -10,6 +10,7 @@
             <file>file:/opt/lampp/htdocs/livre/assets/js/affiliates.js</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/checkout.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/transacoes.php</file>
+            <file>file:/opt/lampp/htdocs/livre/system/core/Common.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/views/inc/footer.php</file>
             <file>file:/opt/lampp/htdocs/livre/application/controllers/Welcome.php</file>
         </group>

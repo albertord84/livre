@@ -4293,8 +4293,6 @@ class Welcome extends CI_Controller {
     }
     
     public function topazio_util_day($date, $token = NULL){
-        $tomorrow = array('year' => '2019','mon' => '01','mday' => '02');
-        return $tomorrow;
         $this->load->model('class/system_config');
         $GLOBALS['sistem_config'] = $this->system_config->load();
         $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;        
