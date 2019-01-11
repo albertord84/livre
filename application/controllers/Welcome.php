@@ -1177,6 +1177,21 @@ class Welcome extends CI_Controller {
             session_destroy();
             return;
         }
+        
+        /*Bloquando BA e CE*/
+        if($transaction['state_address']=="BA" || $transaction['state_address']=="CE"){
+            $result['success'] = false;
+            $result['message'] = 'Sua transação foi negada. Aqui estão os erros mais prováveis: '.
+                                '(1-) Você utilizou seu cartão de DÉBITO. '.
+                                '(2-) Dados do cartão incorretos. '.
+                                '(3-) Cartão utilizado não tem validade. '.
+                                '(4-) Não há limite suficiente em seu cartão de crédito. '.                                                
+                                'Recomendamos entrar em contato com o banco emissor do seu cartão de crédito e informar que deseja aprovação para a cobrança da empresa Livre.Digital, no valor de R$ '.$_SESSION['transaction_values']['total_cust_value'].', parcelado em '.$_SESSION['transaction_values']['amount_months'].' vezes.';            
+            echo json_encode($result);
+            //session_destroy();
+            return;
+        }
+        
         $datas = $this->input->post();
         $cpf_upload = true;
         if($datas['ucpf'] == 'true' && !$_SESSION['cpf_card']){            
