@@ -175,7 +175,7 @@ class Welcome extends CI_Controller {
     }
     
     public function suceso_compra(){
-        if($_SESSION['buy'] == true){
+        if($_SESSION['buy_confirm'] == true){
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params = $this->input->get();        
@@ -199,6 +199,93 @@ class Welcome extends CI_Controller {
             session_destroy();
             header('Location: '.base_url());
         }
+    }
+    
+    public function resumo_emprestimo(){
+        if($_SESSION['buy'] == true){
+            $this->load->model('class/system_config');
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            //$params = $this->input->get();        
+            $params['SCRIPT_VERSION']=$GLOBALS['sistem_config']->SCRIPT_VERSION;
+            
+            if($_SESSION['BIN'] == true){
+                $this->load->view('resumo-emprestimo1',$params);                
+            }
+            else{
+                $this->load->view('resumo-emprestimo2',$params);                
+            }
+            $this->load->view('inc/footer');
+        }
+        else{
+            session_destroy();
+            header('Location: '.base_url());
+        }
+    }
+    
+    public function accept_resume(){
+        $result['success'] = false;
+        if($_SESSION['buy'] == true){
+            $this->load->model('class/system_config');
+            $this->load->model('class/transaction_model');
+            $this->load->model('class/transactions_status');        
+            
+            $GLOBALS['sistem_config'] = $this->system_config->load();
+            
+            //generate and save contract
+            $string_param = "transactionId=".$_SESSION['pk']
+                            . "&transactionAffiliation=site"
+                            . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
+                            . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
+                            . "&amount_months=".$_SESSION['transaction_values']['amount_months']
+                            . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
+            //3. crear documento a partir de plantilla y guardar token del documento en la BD
+            $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
+            if($uudid_doc){
+                //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
+                $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
+                if($token_signer){
+                    //5.  mandar a assinar
+                    $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
+                    if($result_send){
+                        //2. salvar el status para WAIT_SIGNATURE
+                        $this->transaction_model->update_transaction_status(
+                                            $_SESSION['pk'], 
+                                            transactions_status::WAIT_SIGNATURE);                                                                   
+                    }
+                    else{
+                        $this->transaction_model->update_transaction_status(
+                                            $_SESSION['pk'], 
+                                            transactions_status::PENDING);                        
+                    }
+                }
+                else{
+                    $this->transaction_model->update_transaction_status(
+                                            $_SESSION['pk'], 
+                                            transactions_status::PENDING);                        
+                }
+            }else{
+                $this->transaction_model->update_transaction_status(
+                                            $_SESSION['pk'], 
+                                            transactions_status::PENDING);                        
+            }
+            //sucesso de contrato se foi cobrado
+            $this->transaction_model->save_in_db(
+                    'transactions',
+                    'id',$_SESSION['pk'],
+                    'captured', $_SESSION['captured']);
+            
+            $result['params'] = $string_param;                                        
+            $result['success'] = true;
+            $_SESSION['buy_confirm'] = true;            
+            $_SESSION['buy'] = false;            
+        }
+        else{
+            $result['message'] = "Sessão expirou";
+            session_destroy();
+            header('Location: '.base_url());
+        }
+        
+        echo json_encode($result);
     }
     
     public function list_afiliados() {
@@ -1116,12 +1203,14 @@ class Welcome extends CI_Controller {
                             if($response['success']){
                                 //salvar por ciento capturado
                                 $_SESSION['captured'] = 100;
+                                $_SESSION['used_method_to_recuse'] = $key;
                                 $result['success'] = true;
                                 break;
                             }
                             else{                                
                                 if($response['captured'] > 0){
                                     $_SESSION['used_method'] = $key;                                
+                                    $_SESSION['used_method_to_recuse'] = $key;                                
                                     break;
                                 }
                             }
@@ -1140,56 +1229,12 @@ class Welcome extends CI_Controller {
                 }
                 
                 /**** ANALISAR SE FOI OU NÂO COBRADO**/
-                if($result['success']){                    
-                    //generate and save contract
-                    $string_param = "transactionId=".$_SESSION['pk']
-                                    . "&transactionAffiliation=site"
-                                    . "&transactionTotal=".$_SESSION['transaction_values']['total_cust_value']
-                                    . "&solicited_value=".$_SESSION['transaction_values']['solicited_value']
-                                    . "&amount_months=".$_SESSION['transaction_values']['amount_months']
-                                    . "&name=".explode(' ',$_SESSION['client_datas']['name'])[0] ;                                           
-                    //3. crear documento a partir de plantilla y guardar token del documento en la BD
-                    $uudid_doc = $this->upload_document_template_D4Sign($_SESSION['pk']);
-                    if($uudid_doc){
-                        //4. cadastrar un signatario para ese docuemnto y guardar token del signatario
-                        $token_signer = $this->signer_for_doc_D4Sign($_SESSION['pk']);
-                        if($token_signer){
-                            //5.  mandar a assinar
-                            $result_send = $this->send_for_sign_document_D4Sign($_SESSION['pk']);
-                            if($result_send){
-                                //2. salvar el status para WAIT_SIGNATURE
-                                $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::WAIT_SIGNATURE);                                                                   
-                            }
-                            else{
-                                $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
-                            }
-                        }
-                        else{
-                            $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
-                        }
-                    }else{
-                        $this->transaction_model->update_transaction_status(
-                                                    $_SESSION['pk'], 
-                                                    transactions_status::PENDING);                        
-                    }
-                    //sucesso de contrato se foi cobrado
-                    $this->transaction_model->save_in_db(
-                            'transactions',
-                            'id',$_SESSION['pk'],
-                            'captured', $_SESSION['captured']);
-                    
+                if($result['success']){
                     $_SESSION['used_method'] = 0;
                     $_SESSION['re_financials'] = NULL;
                     $_SESSION['captured'] = 0;
                     $_SESSION['buy'] = true;                    
-                    $result['success'] = true;
-                    $result['params'] = $string_param;                                        
+                    $result['success'] = true;                    
                 }
                 else{
                     if($response['captured'] == 0){                    
@@ -4906,7 +4951,8 @@ class Welcome extends CI_Controller {
                                     1 /*Conta Destinatária do Crédito Encerrada*/,
                                     2 /*Agência ou Conta Destinatária do Crédito Inválida*/,
                                     3 /*Ausência ou Divergência na Indicação do CPF/CNPJ*/,
-                                    5 /*Divergência na Titularidade*/
+                                    5 /*Divergência na Titularidade*/,
+                                    61 /*TRANSFERÊNCIA SUPERA LIMINTE PARA O TIPO DE CONTA DESTINO*/
                                 );
                                 if(in_array($transaction->reasonCode,$account_bank_reasonCodes)){
                                     $_SESSION['transaction_requested_datas']['name']=$livre_tr['name'];
@@ -5492,7 +5538,7 @@ class Welcome extends CI_Controller {
                         "  \"Amount\":".$param['amount'].",\n   ".
                         "  \"ServiceTaxAmount\":0,\n   ".                        
                         "  \"Installments\":".$param['plots'].",\n  ".
-                        "  \"Interest\":\"ByMerchant\",\n   ".                                
+                        "  \"Interest\":\"ByIssuer\",\n   ".                                
                         "  \"Capture\":false,\n  ".
                         "   \"CreditCard\":{\n     ".
                         "     \"CardNumber\":\"".$param['card_number']."\",\n    ".
@@ -5857,6 +5903,64 @@ class Welcome extends CI_Controller {
         $_SESSION['re_financials'] = NULL;
         $_SESSION['captured'] = 0;
         return $result;
+    }
+    
+    public function cancel_resume(){        
+        $result['success']=false;
+        
+        if(!$_SESSION['transaction_values']['amount_months']){
+            $result['message']='Sessão expirou';            
+            echo json_encode($result);
+            return;
+        }
+        if(!$_SESSION['buy']){
+            $result['message']='Accesso negado';            
+            echo json_encode($result);
+            return;
+        }
+        if(!$_SESSION['used_method_to_recuse']){
+            $result['message']='Accesso negado';            
+            echo json_encode($result);
+            return;
+        }
+        //registrar accion
+        $this->load->model('class/watchdog');
+        $this->load->model('class/watchdog_type');
+
+        $register = ['user_id' => $_SESSION['pk'], 'type' => Watchdog_type::REFUND_USER, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $_SESSION['pk']];
+        $this->watchdog->add_watchdog($register);
+        
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $this->load->model('class/transactions_status');        
+        $this->load->model('class/payment_manager');
+        
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $transaction = $this->transaction_model->get_client('id', $_SESSION['pk'])[0];
+             
+        if($transaction['status_id'] != transactions_status::BEGINNER){
+            $result['message']='Accesso negado';
+            $result['success']=false;
+            echo json_encode($result);
+            return;
+        }
+        
+        if($_SESSION['used_method_to_recuse'] == payment_manager::BRASPAG){
+            $result = $this->BRASPAG_Devolution($transaction['braspag_id'], $transaction['total_effective_cost']);    
+        }
+        
+        $_SESSION['used_method_to_recuse'] = 0;
+        $_SESSION['financials'] = NULL;
+        $_SESSION['captured'] = 0;
+        $_SESSION['buy'] = 0;
+        session_destroy();
+        if($result['success']){
+            $result['message'] = "Transação foi cancelada com sucesso.";
+        }
+        else{
+            $result['message'] = "Transação não foi cancelada. Entre em contato com os nossos atendentes.";
+        }
+        echo json_encode($result);
     }
     
     public function do_braspag_devolution($id){

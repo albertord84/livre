@@ -449,6 +449,11 @@ $(document).ready(function () {
         $('#message_text').text(text_message);
     }
     
+    function modal_alert_message_emprestimo(text_message){       
+        $('#modal_alert_message_empr').modal('show');        
+        $('#message_text_empr').text(text_message);
+    }
+    
     $("#accept_modal_alert_message").click(function () {
         $('#modal_alert_message').modal('hide');
     });
@@ -907,7 +912,7 @@ $(document).ready(function () {
             success: function (response) {
                 $('#wait').hide();
                 if(response['success']){
-                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                    url=base_url+"index.php/welcome/resumo_emprestimo";
                     $(location).attr('href',url);
                 } else{
                     if(response['authorized']){
@@ -944,8 +949,8 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (response) {
                 $('#wait').hide();
-                if(response['success']){
-                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                if(response['success']){                    
+                    url=base_url+"index.php/welcome/resumo_emprestimo";
                     $(location).attr('href',url);
                 } else{                    
                     modal_alert_message(response['message']);                
@@ -976,6 +981,54 @@ $(document).ready(function () {
             }
         });
         $('#modal_captured').modal('hide');
+    });
+    
+    $("#btn_cancel_resume").click(function () {                                
+        $('#wait_emp').show();
+        $.ajax({
+            url: base_url+'index.php/welcome/cancel_resume',
+            data:{                
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {                
+                $('#wait_emp').hide();                
+                modal_alert_message_emprestimo(response['message']);                
+            },
+            error: function (xhr, status) {
+                $('#wait_emp').hide();
+            }
+        });        
+    });
+    
+    $("#btn_accept_resume").click(function () {                                
+        $('#wait_emp').show();
+        $.ajax({
+            url: base_url+'index.php/welcome/accept_resume',
+            data:{                
+                'key': key
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {                
+                $('#wait_emp').hide();
+                if(response['success']){                    
+                    url=base_url+"index.php/welcome/suceso_compra?"+response['params'];
+                    $(location).attr('href',url);
+                } else{                    
+                    modal_alert_message(response['message']);                
+                }
+            },
+            error: function (xhr, status) {
+                $('#wait_emp').hide();
+            }
+        });        
+    });
+    
+    $("#modal_alert_message_empr").on("hidden.bs.modal", function () {
+        url=base_url+"index.php/welcome";
+        $(location).attr('href',url);
     });
     
 //    $("#modal_captured").on("hidden.bs.modal", function () {

@@ -52,7 +52,7 @@
                 </div>
                 <div class="col-md-5 col-sm-5 col-xs-12 fr text-left">
                     <div class="fleft100">
-                        <h4 class="fw-400 ft-Rajdhani"> Saque de R$ 300,00 a 5.000,00 em até 12x, com taxa a partir de 3,99% a.m.</h4>
+                        <h4 class="fw-400 ft-Rajdhani"> Saque o limite do seu cartão de crédito e receba na sua conta em qualquer banco em 1 dia útil.</h4>
 <!--                        <h3 class="fw-400 ft-Rajdhani">Crédito Online em 2 minutos <br>através do seu <b>cartão de crédito.</b></h3>-->
                         <!--<h3 class="fw-400 ft-Rajdhani"><i><b><span style="color: #33cccc"> BLACK FRIDAY </span></b></i></h3><h5><span style="color: #bbbbbb"> SÓ HOJE! <br></span><span style="color: #00e673"> Taxa mais barata do Brasil</span><span style="color: #bbbbbb">, a partir de </span><span style="color: #00e673">0,45%</span> <span style="color: #bbbbbb"> am.</span></h5>-->
                     </div>
@@ -78,7 +78,7 @@
             <div class="fleft100 m-top150">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-                        <h2 class="ft-size25 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Transforme o limite do seu cartão de crédito <br> em dinheiro na conta em 1 dia útil.<h2> 
+                        <h2 class="ft-size25 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Empréstimos de R$ 300,00 a R$ 5.000,00 <br> com taxa a partir de 1,47%<h2> 
                         <!--<h2 class="ft-size22 ft-Rajdhani fleft100 text-left center-xs" style="margin-left: -4px;"> Saque R$ 5.000,00 em 12x com <b>taxa de 1,89%</b>.</h2>-->
                         <!--<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                         <!--<h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
@@ -212,7 +212,7 @@
                             <img src="<?php echo base_url().'assets/'?>img/icones/tx.png" alt="">
                         </div>
                         <div class="col-md-9 col-sm-9 col-xs-12">
-                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 3.99%.</h4>
+                            <h4 class="ft-size20 fw-300">Taxa de juros a partir de 1.47%.</h4>
                         </div>
                     </div>
                 </div>
@@ -222,14 +222,16 @@
 
     <section class="fleft100 pd-tb80 m-b100" id="leao">
 	<div class="container">
-		<div class="fleft100">
-			<div class="col-md-6 col-sm-6 col-xs-12">
-				<h1 class="fw-300 fleft100 text-left">crédito<b class="">fácil</b> <span>{</span></h1>
-			</div>
-			<div class="col-md-6 col-sm-6 col-xs-12 center-xs">
-				<h2>Solicitar um crédito no Livre.digital leva apenas <b>2 minutos</b> e a resposta é instantânea!</h2>
-			</div>			
-		</div>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+                        <h1 class="fw-300 fleft100 text-left">fácil<b class="">fácil</b> <span>{</span></h1>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 center-xs ft-size18">
+                        <p>
+                            *<span style="color: #20a7d3;">A Livre.digital faz o parcelamento do seu empréstimo através do banco emissor do seu cartão de crédito (a taxa de juros varia de um banco para outro). A média de juros nessa modalidade é em torno de 2% a.m., além dos valores aplicados pela Livre.digital, na simulação feita aqui no site.</span> 
+                                <br><br>
+                                <span style="color: #3a595c;">Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.</span>
+                        </p>
+                </div>
 
 		<div class="col-md-6 col-sm-6 col-xs-12 m-top80">
 			<div class="fleft100 bleftgreen pd-bottom20">
