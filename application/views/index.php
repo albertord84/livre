@@ -78,7 +78,7 @@
             <div class="fleft100 m-top150">
                 <div class="col-md-10 col-sm-12 col-xs-12 fnone i-block">
                     <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3 pd-0">
-                        <h2 class="ft-size25 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Empréstimos de R$ 300,00 a R$ 5.000,00 <br> com taxa a partir de 1,47%<h2> 
+                        <h2 class="ft-size25 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Saque de R$ 300,00 a R$ 5.000,00 <br> do limite do seu cartão de crédito,<br> com taxa a partir de 1,47%<h2> 
                         <!--<h2 class="ft-size22 ft-Rajdhani fleft100 text-left center-xs" style="margin-left: -4px;"> Saque R$ 5.000,00 em 12x com <b>taxa de 1,89%</b>.</h2>-->
                         <!--<h1 class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
                         <!--<h1 style="color:white;" class="ft-size55 ft-Rajdhani fleft100 m-top60 text-left center-xs" style="margin-left: -4px;">Dinheiro na conta em 24h.</h1>-->
