@@ -15,6 +15,7 @@ class Watchdog_type {
     const SET_PENDING = 11;
     const ENDING = 12;
     const REFUND_USER = 13;
+    const SET_APPROVED = 14;
     
     static public function Defines($const) {
         $cls = new ReflectionClass(__CLASS__);
