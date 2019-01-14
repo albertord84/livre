@@ -5140,6 +5140,128 @@ class Welcome extends CI_Controller {
         echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());
         session_destroy();
     }
+    
+    public function robot_conciliation_manual() {
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;            
+        } 
+        
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        require_once ($_SERVER['DOCUMENT_ROOT']."/livre/application/libraries/Gmail.php");
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $this->Gmail = new Gmail();       
+        $datas = $this->input->get();
+        $date = $datas['date'];//date("Y-m-d",time());
+               
+//        $_SESSION['ip'] = $this->getUserIP();
+//        $_SESSION['logged_id'] = -1;        
+        
+        echo "<br>\n<br>\n----------  INIT CONCILIATION FROM ".$date;
+        $transactions = $this->topazio_conciliations($date);
+        echo "<br>\n Number of loans: ".count($transactions->data);
+        echo "<br>\n----------------------------------------------<br>\n";
+        if($transactions->success){
+            foreach ($transactions->data as $transaction) {
+                if($transaction->ccbNumber){
+                    $livre_tr = $this->affiliate_model->load_transaction_by_ccbNumber($transaction->ccbNumber);
+                    if($livre_tr['status_id'] == transactions_status::TOPAZIO_IN_ANALISYS){
+                        switch ($transaction->statusCode) {
+                            case 2000: //TOPAZIO - "EM PROCESSAMENTO"
+                                /* não devemos fazer nada, porque esa transacción ya esta en el status de livre TOPAZIO_IN_ANALISYS*/
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\n<br>\nEM PROCESSAMENTO: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
+                                break;
+                             case 2400: //TOPAZIO - "AGUARDANDO FUNDING"
+                                /* não devemos fazer nada, até esperar que a transação mude para outro status*/
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\n<br>\nAGUARDANDO FUNDING: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
+                                break;
+                            case 2100: //TOPAZIO - "CANCELADA"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                
+                                //registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SET_PENDING, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);
+                                
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\nCANCELADA 2100: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\nREASON: ".$transaction->reason;
+                                echo "<br>\n----------------------------------------------<br>\n";
+                                break;
+                            case 2300: //TOPAZIO - "CANCELADA / DEVOLUCAO DE PAGAMENTO"
+                                //1. enviar para PENDING
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::PENDING);
+                                
+                                //registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SET_PENDING, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);
+                                
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\nCANCELADA 2300: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\nREASON: ".$transaction->reason;
+                                break;                                
+                            case 2500: //TOPAZIO - "PAGA CONFIRMADA"
+                                //TODO: email com dinheiro enviado
+                                //1. enviar para TOPAZIO_APROVED
+                                $this->load->model('class/transactions_status');
+                                $this->load->model('class/transaction_model');
+                                $this->transaction_model->update_transaction_status(
+                                    $livre_tr['client_id'],
+                                    transactions_status::TOPAZIO_APROVED);
+                                
+                                //registrar accion
+                                $this->load->model('class/watchdog');
+                                $this->load->model('class/watchdog_type');
+
+                                $register = ['user_id' => $_SESSION['logged_id'], 'type' => Watchdog_type::SET_APPROVED, 'date' => time(), 'ip' => $_SESSION['ip'], 'data' => $livre_tr['client_id']];
+                                $this->watchdog->add_watchdog($register);
+                                
+                                echo "<br>\nID: ".$livre_tr['client_id'];
+                                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                                echo "<br>\nPAGA CONFIRMADA: ccb - ".$transaction->ccbNumber;
+                                echo "<br>\n----------------------------------------------<br>\n";
+                                break;
+                        }
+                    }
+                }
+            }
+        }else{
+            /*$administrators_emails = array("josergm86@gmail.com","jorge85.mail@gmail.com","pedro@livre.digital");
+            foreach ($administrators_emails as $useremail) {
+                $this->Gmail->send_mail($useremail, $useremail, 'Impossivel fazer conciliação com Topazio', "Impossivel fazer conciliação com Topazio devido a que a requicisao de esta respondendo success = false");
+            }*/
+        }
+        echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());      
+    }
+    
     /* 
         Status dos documentos na D4Sign
         ID 1 - Processando
