@@ -228,8 +228,10 @@
                 <div class="col-md-6 col-sm-6 col-xs-12 center-xs ft-size18">
                         <p>
                             *<span style="color: #20a7d3;">A Livre.digital faz o parcelamento do seu empréstimo através do banco emissor do seu cartão de crédito (a taxa de juros varia de um banco para outro). A média de juros nessa modalidade é em torno de 2% a.m., além dos valores aplicados pela Livre.digital, na simulação feita aqui no site.</span> 
+                                <!--<br><br>-->
+                                <span style="color: #20a7d3;">Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.</span>
                                 <br><br>
-                                <span style="color: #3a595c;">Então, o valor final da sua operação é a soma do juros aplicados aqui no site Livre.digital mais a taxa aplicada pelo seu banco (em torno de 2% a.m.) nessa modalidade.</span>
+                                <span style="color: #3a595c;">Ao final da solicitação de empréstimo, caso seu banco divulgue os juros aplicados para o modelo Crédito Parcelado Emissor, você será informado sobre o valor que irá pagar de juros. Caso seu banco não informe os juros praticados, será informado o valor aproximado.</span>
                         </p>
                 </div>
 
