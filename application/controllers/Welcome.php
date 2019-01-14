@@ -5007,6 +5007,7 @@ class Welcome extends CI_Controller {
             }*/
         }
         echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());
+        session_destroy();
     }
     
     /*Vamos resolver con dos funciones separadas*/
@@ -5137,6 +5138,7 @@ class Welcome extends CI_Controller {
             }*/
         }
         echo "<br>\n<br>\n----------  END CONCILIATION AT ".date('Y-m-d H:i:s',time());
+        session_destroy();
     }
     /* 
         Status dos documentos na D4Sign
@@ -5148,6 +5150,7 @@ class Welcome extends CI_Controller {
         ID 6 - Cancelado
      */
     public function robot_checking_contracts() {
+        die('Forbidden access');
         $this->load->model('class/affiliate_model');
         $this->load->model('class/transaction_model');
         $this->load->model('class/transactions_status');
@@ -5190,6 +5193,7 @@ class Welcome extends CI_Controller {
         }while(true);
         
         //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
+        session_destroy();
     }
     
     public function new_robot_checking_contracts() {
@@ -5239,6 +5243,7 @@ class Welcome extends CI_Controller {
         fwrite($file, $content);
         //print_r("<br>\n<br>\n----------  END CHEKING CONTRACTS AT ".date('Y-m-d H:i:s'),time());
         fclose($file);
+        session_destroy();
     }
     
     public function ARRED ($value){
