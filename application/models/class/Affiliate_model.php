@@ -179,8 +179,22 @@ class Affiliate_model extends CI_Model{
             $this->load->model('class/transactions_status');
             $this->db->select('*');
             $this->db->from('transactions');            
-            if($status != 0)
-                $this->db->where('transactions.status_id',$status);   
+            if($status==transactions_status::BEGINNER){
+                $this->db->join('transactions_dates', 'transactions.id = transactions_dates.transaction_id');
+                $this->db->where('transactions_dates.status_id', $status);
+                if($start_period!=''){
+                    $this->db->where('transactions_dates.date >=', $start_period);                                    
+                }
+                if( $end_period!=''){
+                    $this->db->where('transactions_dates.date <=', $end_period);                                                
+                }
+            }
+            else{
+                if($start_period!='')
+                    $this->db->where('transactions.pay_date >=', $start_period);                
+                if( $end_period!='')
+                    $this->db->where('transactions.pay_date <=', $end_period);                            
+            }
             
             if( $token!=''){
                 if( strpos($token, 'cpf: ')!== false ){
