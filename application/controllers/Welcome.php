@@ -3911,6 +3911,7 @@ class Welcome extends CI_Controller {
         
         $ch = curl_init();
 
+        //curl_setopt($ch, CURLOPT_URL, "http://sandbox-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/cli/v1/basic-customers");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
@@ -4038,9 +4039,10 @@ class Welcome extends CI_Controller {
 
         //return;
         $ch = curl_init();
+        
+        //curl_setopt($ch, CURLOPT_URL, "http://sandbox-topazio.sensedia.com/emd/v1/loans");
         curl_setopt($ch, CURLOPT_URL, "http://api-topazio.sensedia.com/emd/v1/loans");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n  \"client\": {\n    \"document\": \"06335968762\",\n    \"nameOrCompanyName\": \"Julio Petro\",\n    \"score\": 2,\n    \"rating\": \"2\",\n    \"billing\": 2\n  },\n  \"loans\": {\n    \"partnerId\": 1000001,\n    \"releaseDate\": \"2018-08-01\",\n    \"totalValue\": \"1113.31\",\n    \"amountPay\": \"1000.00\",\n    \"rate\": \"0.0299\",\n    \"indexer\": \"\",\n    \"indexerPercentage\": 0.02,\n    \"quotaAmount\": 2,\n    \"iofValue\": \"8.80\",\n    \"wayPaymentLoan\": \"DBC\",\n    \"productCode\": 211,\n    \"repurchaseDocument\": \"30.472.737/0001-78\",\n    \"guaranteeDescription\": \"\",\n    \"TAC\": \"104.51\",\n    \"payment\": {\n      \"formSettlement\": \"ONL\",\n      \"bankCode\": \"001\",\n      \"branch\": \"4459\",\n      \"accountNumber\": \"12570-9\",\n      \"accountType\": \"CC\"\n    },\n    \"planQuota\": [\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-08-02\",\n        \"quotaNumber\": 1\n      },\n      {\n        \"quotaValue\": \"579.64\",\n        \"quotaDueDate\": \"2018-09-02\",\n        \"quotaNumber\": 2\n      }\n    ]\n  }\n}");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
         curl_setopt($ch, CURLOPT_POSTFIELDS,$fields);
         curl_setopt($ch, CURLOPT_POST, 1);
         $headers = array();
@@ -4090,6 +4092,114 @@ class Welcome extends CI_Controller {
             }
         }
         return $response_loans;
+    }
+    
+    public function payload() {
+        if($_SESSION['logged_role'] !== 'ADMIN'){ //segurança
+            return;
+        }
+        
+        $this->load->model('class/affiliate_model');
+        $this->load->model('class/system_config');
+        $this->load->model('class/transactions_status');
+        $this->load->model('class/transaction_model');
+        
+        $GLOBALS['sistem_config'] = $this->system_config->load();        
+        $_SESSION['logged_role'] = 'ADMIN';
+        $_SESSION['robot'] = true;
+
+        $date = date("Y-m-d",time());
+        echo "<br>\n<br>\n----------  INIT PAYLOAD AT ".date('Y-m-d H:i:s',time());
+        $transactions = $this->transaction_model->get_client('status_id', transactions_status::TOPAZIO_IN_ANALISYS);
+        
+        echo "<br>\n Number in analysis: ".count($transactions);
+        echo "<br>\n----------------------------------------------<br>\n";
+        
+        //crear token
+        $API_token = $this->get_topazio_API_token();
+        if($API_token){
+            foreach ($transactions as $livre_tr) {
+
+                $result_payload = $this->payloadTopazio($livre_tr['id'], $API_token);
+                echo "<br>\nID: ".$livre_tr['client_id'];
+                echo "<br>\nCLIENTE: ".$livre_tr['name'];
+                echo "<br>\nEMAIL: ".$livre_tr['email'];
+                if($result_payload['success'])
+                    echo "<br>\n<br>\nCONFIRMADA: ccb - ".$livre_tr['ccb_number'];
+                else
+                    echo "<br>\n<br>\nNÂO CONFIRMADA: ccb - ".$livre_tr['ccb_number'];
+            }        
+        }
+        else{
+            echo "Não foi possível criar token";
+        }
+        echo "<br>\n<br>\n----------  END PAYLOAD AT ".date('Y-m-d H:i:s',time());
+        session_destroy();
+    }
+    
+    public function payloadTopazio($id, $API_token){        
+        
+        $this->load->model('class/system_config');
+        $this->load->model('class/transaction_model');
+        $GLOBALS['sistem_config'] = $this->system_config->load();
+        $client_id = $GLOBALS['sistem_config']->CLIENT_ID_TOPAZIO;
+        
+        $client = $this->transaction_model->get_client('id', $id)[0];
+                
+        $ccb = $client["ccb_number"];
+        $partnerId = $client["contract_id"];
+        $cpf = $client["cpf"];
+        
+        $fields =   "{\n  \"ccbNumber\": \"".$ccb
+                    ."\",\n  \"partnerId\": \"".$partnerId                    
+                    ."\",\n  \"document\": \"".$cpf
+                    ."\"\n}";
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "http://sandbox-topazio.sensedia.com/mp/v1/confirms");
+        //curl_setopt($ch, CURLOPT_URL, "https://api-topazio.sensedia.com/mp/v1/confirms");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);        
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = "Content-Type: application/json";
+        $headers[] = "client_id: ".$client_id;
+        $headers[] = "access_token: ".$API_token;
+        $headers[] = "Accept: text/plain";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $num_tentativas = 0;
+        while($num_tentativas < 10){
+            
+            $result = curl_exec($ch);
+            $num_tentativas++;
+            if($result != "Bad Gateway" && $result != "Gateway Timeout"){
+                $num_tentativas = 10;
+            }
+        }
+        
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        
+        $result_query['success'] = false;
+        if(is_object($parsed_response) && $parsed_response->success == TRUE){
+            $result_query['success'] = true;
+        }
+        else{
+            if($result == "Bad Gateway" || $result == "Gateway Timeout"){
+                $result_query['message'] = "Impossivel comunicar com API de Topazio";
+                $result_query['code_error'] = 2003;
+            }
+            else{                
+                $result_query['message'] = (string)($result);//$parsed_response->errors->values[0]->error[0];
+                $result_query['code_error'] = 2004;
+            }
+        }
+        
+        return $result_query;
     }
     
     public function next_available_day($hoje = NULL){
