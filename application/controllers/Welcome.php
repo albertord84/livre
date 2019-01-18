@@ -176,6 +176,7 @@ class Welcome extends CI_Controller {
     
     public function suceso_compra(){
         if($_SESSION['buy_confirm'] == true){
+            $_SESSION['buy_confirm'] == false;
             $this->load->model('class/system_config');
             $GLOBALS['sistem_config'] = $this->system_config->load();
             $params = $this->input->get();        
