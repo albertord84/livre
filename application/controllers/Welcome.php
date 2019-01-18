@@ -2046,9 +2046,9 @@ class Welcome extends CI_Controller {
         $dayofweek = date('w', time());
         $hour = date('H');
         
-        if($dayofweek != 1 || $hour > 5 || $hour < 4){
+        /*if($dayofweek != 1 || $hour > 5 || $hour < 4){
             die('Access forbidden');
-        }
+        }*/
         //if($_SESSION['logged_role'] === 'ADMIN'){            
             
             $page = 1; //descargar todos los registros de la consulta
