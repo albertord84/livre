@@ -85,14 +85,14 @@
 				<div class="fleft100 pd-30 bk-fff cl-green2 text-center fw-600">						
 					<p>
 						Custo de serviço cobrado pela Livre:
-						<span class="cl-black ft-size17 fw-800 fleft100">12 parcelas de R$300,00</span>
+						<span class="cl-black ft-size17 fw-800 fleft100"><?php echo $_SESSION['transaction_values']['amount_months'];?> parcelas de R$<?php echo $_SESSION['transaction_values']['month_value'];?></span>
 						<br><br><br>
 						Acréscimo de juros cobrado pelo seu cartão de <br>
 						crédito pelo parcelamento do saque:
-						<span class="cl-black ft-size17 fw-800 fleft100">12 parcelas de R$150,00.</span>
+						<span class="cl-black ft-size17 fw-800 fleft100"><?php echo $_SESSION['transaction_values']['amount_months'];?> parcelas de R$150,00.</span>
 						<span class="fleft100 pd-tb10">--------------------------------------------------------</span>
 						<span class="fleft100 ft-size17">Valor final: </span>
-						<span class="cl-black ft-size17 fw-800 fleft100">12 parcelas de R$450,00. </span>
+						<span class="cl-black ft-size17 fw-800 fleft100"><?php echo $_SESSION['transaction_values']['amount_months'];?> parcelas de R$450,00. </span>
 						<span class="cl-black ft-size17 fw-800 fleft100">Custo Efetivo Total (CET): 85%</span>
 						<span class="fleft100 pd-tb10">--------------------------------------------------------</span>
 					</p>						
