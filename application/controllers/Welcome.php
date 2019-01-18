@@ -109,7 +109,7 @@ class Welcome extends CI_Controller {
     
     //-------VIEWS FUNCTIONS--------------------------------    
 
-    public function index() {   
+    public function index() {         
         if($this->is_ip_hacker_response()){
             die('Sitio atualmente inacessível');
             return;
@@ -1011,6 +1011,7 @@ class Welcome extends CI_Controller {
                     $_SESSION['b_card_exp_month'] = $datas['b_card_exp_month'];
                     $_SESSION['b_card_exp_year'] = $datas['b_card_exp_year'];
                     $_SESSION['brand'] = $datas['brand'];
+                    $_SESSION['card_prefix'] = substr($datas['b_card_number'],0,6);
                     
                     if($possible['action']==='insert_credit_card'){
                         $id_row = $this->transaction_model->insert_db_steep_2($datas);
@@ -2762,6 +2763,25 @@ class Welcome extends CI_Controller {
         $_SESSION['key']=$key;
     }
 
+    public function bank_by_card_prefix(){
+        $card_prefix = $_SESSION['card_prefix'];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://lookup.binlist.net/".$card_prefix);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        
+        $headers = array();
+        $headers[] = "Accept-Version: 3";
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        curl_close ($ch);
+        
+        $parsed_response = json_decode($result);
+        if(is_object($parsed_response))
+            return $parsed_response->bank->name;
+        return NULL;
+    }
+    
     public function is_ip_hacker(){                        
         if($this->is_ip_hacker_response()){            
             session_destroy();
