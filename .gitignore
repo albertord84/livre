@@ -1,3 +1,7 @@
-/nbproject/private/
-assets/data_users/
-assets/data_affiliates/
+/nbproject/
+/.idea/*
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
